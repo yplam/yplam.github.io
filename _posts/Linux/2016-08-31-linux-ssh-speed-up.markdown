@@ -1,6 +1,6 @@
 ---
 title:  "Linux 初始化 SSH 会话慢的解决方法"
-date:   2016-09-01 10:51:00 +0800
+date:   2016-09-01
 categories: Linux
 ---
 
