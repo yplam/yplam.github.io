@@ -1,0 +1,44 @@
+---
+layout: default
+---
+
+<div class="news-v3 bg-color-white margin-bottom-30"><div class="news-v3-in">
+    <div class="headline-center margin-bottom-60">
+        <h2>YPLam</h2>
+    </div>
+    {% for post in site.posts %}
+    <div class="magazine-news{% for category in post.categories %} category-{{ category }}{% endfor %}">
+        <h3><a href="{{ post.url | prepend: site.baseurl }}">{{ post.title | escape }}</a></h3>
+        <ul class="list-inline posted-info">
+          <li>In 
+            {% for category in post.categories %}
+            <a class="filter" href="#category-{{ category }}">{{ category }}</a>{% unless forloop.last %}, {% endunless %}
+            {% endfor %}
+          </li>
+          <li>Posted {{ post.date | date: "%b %-d, %Y" }}</li>
+        </ul>
+        <p>{{ post.excerpt }}</p>
+        {% unless forloop.last %}
+        <hr class="hr-md">
+        {% endunless %}
+
+    </div>
+    {% endfor %}
+</div></div>
+<script   src="https://code.jquery.com/jquery-2.2.4.min.js"   integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="   crossorigin="anonymous"></script>
+<script>
+currentShow = null;
+jQuery(function(){
+  $('a.filter').click(function(){
+    if(currentShow == $(this).attr('href')){
+      currentShow = null;
+      $('.magazine-news').show();
+    }
+    else{
+      currentShow = $(this).attr('href')
+      $('.magazine-news').hide();
+      $('.'+$(this).attr('href').substring(1)).show();
+    }
+  });
+});
+</script>

@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<!--[if IE 8]> <html lang="en" class="ie8"> <![endif]-->
+<!--[if IE 9]> <html lang="en" class="ie9"> <![endif]-->
+<html lang="{{ page.lang | default: site.lang | default: "en" }}">
+
+  {% include head.html %}
+
+  <body><div class="wrapper bg-color-light">
+    <!--=== Content Part ===-->
+    <div class="container content" aria-label="Content">
+        {{ content }}
+    </div>
+
+    {% include footer.html %}
+
+  </div></body>
+</html>
