@@ -6,7 +6,7 @@ layout: default
   <div class="news-v3-in">
     <ul class="list-inline posted-info">
       <li>In
-      {% for category in post.categories %}
+      {% for category in page.categories %}
         <a href="{{ site.url }}/category/{{ category }}/" rel="category">{{ category }}</a>{% unless forloop.last %}, {% endunless %}
       {% endfor %}
       </li>
