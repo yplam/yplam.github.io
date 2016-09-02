@@ -28,3 +28,10 @@ a.navbar-brand{ color:#687074; z-index: 1;height:40px;line-height: 40px;position
 ul.blog-info{
     margin-bottom:0px;
 }
+
+body {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-size: 14px;
+    line-height: 1.6;
+}
