@@ -10406,3 +10406,7 @@ body {
     font-size: 14px;
     line-height: 1.6;
 }
+
+.post-content li a {
+   color: #72c02c;
+}
