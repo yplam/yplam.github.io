@@ -110,6 +110,8 @@ python neural_style.py --content examples/1-content.jpg --styles examples/1-styl
 跑一次neural-style大概需要7分钟。
 
 
+测试后记得讲实例停掉，然后制作image，留作下次测试用，讲运行中的实例删除，毕竟$0.9/小时也不便宜。
+
 
 
 
