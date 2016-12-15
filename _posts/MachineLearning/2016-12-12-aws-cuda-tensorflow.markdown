@@ -119,9 +119,9 @@ python neural_style.py --content examples/1-content.jpg --styles examples/1-styl
 
 测试后记得讲实例停掉，然后制作image，留作下次测试用，讲运行中的实例删除，毕竟$0.9/小时也不便宜（image保存在EBS中，也会消耗小量的费用）。
 
-玩了一天5个小时，消耗4.5刀，虽然不算便宜，但相比动辄过万的深度学习工作站，平时玩玩的话还算便宜。
+玩了一天5个小时，消耗4.5刀，虽然不算便宜，但相比动辄两三万的深度学习工作站，平时玩玩的话还算可以。
 
-作品：
+成果：
 
 ![input]({{ site.url }}/assets/2016/in.jpeg "input") ![output]({{ site.url }}/assets/2016/out.jpg "output")
 
