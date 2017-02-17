@@ -22,7 +22,7 @@ url: "http://yplam.com" # the base hostname & protocol for your site
 github_username:  yplam
 
 # Build settings
-markdown: kramdown
+markdown: Kramdown
 timezone: Asia/Shanghai
 
 gems: [jekyll-assets]
