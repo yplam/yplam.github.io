@@ -13,10 +13,10 @@
 # you will see them accessed via {{ site.title }}, {{ site.email }}, and so on.
 # You can create any custom variable you would like, and they will be accessible
 # in the templates via {{ site.myvariable }}.
-title: YPLam
+title: YPLam - 关于PHP, Linux, Embedded C/C++, 机器学习
 email: yplam@yplam.com
 description: > # this means to ignore newlines until "baseurl:"
-  YPLam的个人技术博客，关于Linux, PHP, Symfony, Drupal。
+  YPLam的个人技术博客，关于PHP, Linux, Embedded C/C++, 机器学习。
 baseurl: "" # the subpath of your site, e.g. /blog
 url: "http://yplam.com" # the base hostname & protocol for your site
 github_username:  yplam
