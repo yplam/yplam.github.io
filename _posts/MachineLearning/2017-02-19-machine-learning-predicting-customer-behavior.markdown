@@ -23,4 +23,4 @@ categories: MachineLearning
 
 4、最终，该公司的转化率上升并且稳定在7.4%.
 
-
+![用户行为预测]({{ site.url }}/assets/2017/strongio.png "用户行为预测")
