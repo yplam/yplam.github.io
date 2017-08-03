@@ -5,6 +5,9 @@ categories: MachineLearning
 
 Netflix Prize 是2006年Netflix启动的一个机器学习和数据挖掘比赛，旨在解决电影评分预测问题。
 
+训练集包含 480,189 名用户对 17,770 部电影的 100,480,507 份评分，评分为 1-5 分。
+
+
 **数据集下载：**
 
 * [百度网盘](http://pan.baidu.com/s/1hAdpU)
