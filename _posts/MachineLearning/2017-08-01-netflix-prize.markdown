@@ -32,6 +32,7 @@ probe.txt 相当于测试集，与 qualifying.txt 的区别在于你可以在训
 * [关于Netflix Prize的总结(翻译)](http://blog.csdn.net/songzitea/article/details/42024399)
 * [Winning the Netflix Prize: A Summary](http://blog.echen.me/2011/10/24/winning-the-netflix-prize-a-summary/)
 * [Netflix推荐系统：从评分预测到消费者法则](http://blog.csdn.net/lzt1983/article/details/7696578)
+* 《推荐系统 技术、评估及高效算法》第5章 协同过滤算法的高级课题
 
 **参考资料**
 
