@@ -1,5 +1,5 @@
 ---
-title:  "关于《 Hands-On Machine Learning with Scikit-Learn and TensorFlow 》"
+title:  "《 Hands-On Machine Learning with Scikit-Learn and TensorFlow 》笔记"
 categories: MachineLearning
 ---
 
@@ -8,7 +8,7 @@ categories: MachineLearning
 的分成两个部分，但看下去就会发现两部分的内容结合得很紧密，你需要不断的翻回前面去复习，在这个过程中也可以通过比对 sklearn 与 Tensorflow 对同一个模型的
 不同实现来加深理解。
 
-这本书还有一个很有特色的地方是在介绍深度网络的训练与调参的章节，会涉及一些非常新的内容，并且他的叙述方式可以让你明白为什么这么做，譬如关于梯度消失/爆炸问题：
+这本书还有一个很有特色的地方是在介绍深度网络的训练与调参的章节，会涉及一些非常新的内容，并且他的叙述方式可以让你明白为什么这么做，譬如关于梯度消失/爆炸问题（位于第十一章）：
 
 * BackPropagation 算法中，越低层的学习速度越慢，甚至出现梯度过小导致权重值一直保持不变的情况
 * 然后 2010 年，avier Glorot 与 Yoshua Bengio 发表的paper “Understanding the Difficulty of Training Deep Feedforward Neural Networks” 中提出了一些猜想的方式，结合 logistic sigmoid 激活函数与均值为 0，标准差为 1 的正态分布来对权重进行初始化；然而效果并不好，因为...
@@ -32,3 +32,6 @@ categories: MachineLearning
 8. Launch, monitor, and maintain your system.
 
 书中对每一个步骤都有解释，推荐到 O'Reilly 上购买一份电子版（可以Google一下，有50%的优惠券）。
+
+
+![note]({{ site.url }}/assets/2017/hands-on-machine-learning.png "Hands-On Machine Learning with Scikit-Learn and TensorFlow")
