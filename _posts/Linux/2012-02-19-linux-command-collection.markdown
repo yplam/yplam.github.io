@@ -1,5 +1,5 @@
 ---
-title:  "[持续更新] Linux 下的一些命令技巧"
+title:  "Linux 下的一些技巧"
 categories: Linux
 ---
 
@@ -33,7 +33,88 @@ find . -mtime -10 -mtime +4
 
 {% endhighlight %}
 
-### 相关文章
+### 自动压缩旧日志文件的shell脚本
 
-* [自动压缩旧日志文件的shell脚本](http://yplam.com/linux/2016/10/12/shell-gzip-log-file.html)
-* [Crontab 控制脚本运行时间段](http://yplam.com/linux/2016/08/12/linux-crontab-run-time.html)
+logrotate 是 Linux 自带的日志分割压缩工具，但它有个比较让人不爽的缺点就是无法精确的按时间点分割（譬如日志严格的按天）。因此考虑App日志直接按 ×××-Y-m-d.log的方式来按天记录，然后用crontab定时压缩。
+
+下面是自动gzip压缩多个目录下log文件，并且自动跳过当天文件的shell脚本：
+
+
+{% highlight shell %}
+
+#!/bin/sh
+
+FOLDERS=(/data/logs/view/ /data/logs/search/)
+NOW="$(date +"%Y-%m-%d")"
+for FOLDER in ${FOLDERS[@]}
+do
+	echo "Zipping $FOLDER"
+	for FILE in ${FOLDER}*.log
+	do
+		if [[ ! $FILE =~ $NOW ]]; then
+			echo "$FILE"
+			gzip -9 $FILE
+		fi
+	done
+done
+
+
+{% endhighlight %}
+
+### Linux 初始化 SSH 会话慢的解决方法
+
+使用ssh登录Linux服务器，就算是在内网环境中，也需要等待比较长的时间才弹出密码输入界面。
+
+检查：
+
+ssh -vvv 加上 v参数，通过分析ssh打印的debug信息，即可找到时间消耗的环节。
+
+{% highlight shell %}
+
+$ ssh -vvv root@*****
+OpenSSH_6.6.1, OpenSSL 1.0.1f 6 Jan 2014
+debug1: Reading configuration data /etc/ssh/ssh_config
+debug1: /etc/ssh/ssh_config line 19: Applying options for *
+debug2: ssh_connect: needpriv 0
+debug1: Connecting to @***** port 22.
+debug1: Connection established.
+debug3: Incorrect RSA1 identifier
+debug1: Enabling compatibility mode for protocol 2.0
+debug1: Local version string SSH-2.0-OpenSSH_6.6.1p1 Ubuntu-2ubuntu2.8
+debug1: Remote protocol version 2.0, remote software version OpenSSH_5.3
+debug1: match: OpenSSH_5.3 pat OpenSSH_5* compat 0x0c000000
+debug2: fd 3 setting O_NONBLOCK
+
+{% endhighlight %}
+
+可能原因：
+
+服务端 /etc/ssh/sshd_config，修改 "UseDNS no"
+
+客户端  /etc/ssh/ssh_config，修改 "GSSAPIAuthentication no"
+
+### Crontab 控制脚本运行时间段
+
+Cronjob 通常用来在指定时间点运行某个命令（脚本），而有时我们不但需要定时启动脚本，还需要定时关闭，譬如需要在空闲时段备份服务器文件到新机器。
+
+我们可以使用两个cronjob，一个定时启动，一个定时关闭，或者使用类似下面的脚本，启动后后台运行一个进程，通过获取时间来定时关闭：
+
+
+{% highlight shell %}
+
+#!/bin/bash
+
+rsync ... &
+pid=$!
+
+while /bin/true; do
+  if [ $(date +%H) -ge 8 ]; then
+    kill -TERM $pid
+    exit 0
+  else
+    sleep 60
+  fi
+done
+
+{% endhighlight %}
+
