@@ -33,5 +33,6 @@ categories: MachineLearning
 
 书中对每一个步骤都有解释，推荐到 O'Reilly 上购买一份电子版（可以Google一下，有50%的优惠券）。
 
+**目录：**
 
-![note]({{ site.url }}/assets/2017/hands-on-machine-learning.png "Hands-On Machine Learning with Scikit-Learn and TensorFlow")
+[<img src="{{ site.url }}/assets/2017/hands-on-machine-learning.png" width="1000" />]({{ site.url }}/assets/2017/hands-on-machine-learning.png)
