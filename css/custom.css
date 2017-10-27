@@ -35,3 +35,14 @@ body {
     font-size: 14px;
     line-height: 1.6;
 }
+.news-v3 h1{
+	font-size:32px;
+}
+
+.news-v3 h2{
+	font-size:28px;
+}
+
+.news-v3 h3{
+	font-size:24px;
+}

@@ -12,7 +12,7 @@ layout: default
       </li>
       <li>Posted {{ page.date | date: "%b %-d, %Y" }}</li>
     </ul>
-    <h2>{{ page.title | escape }}</h2>
+    <h1>{{ page.title | escape }}</h1>
     <div class="post-content margin-bottom-30" itemprop="articleBody">
     {{ content }}
     </div>
@@ -22,3 +22,4 @@ layout: default
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.6.0/styles/pojoaque.min.css">
 <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.6.0/highlight.min.js"></script>
 <script>hljs.initHighlightingOnLoad();</script>
+{% include mathjax_support.html %}

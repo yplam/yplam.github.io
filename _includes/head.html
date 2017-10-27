@@ -8,14 +8,8 @@
 
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
   <link rel="stylesheet" href="{{ "/css/main.css" | prepend: site.baseurl }}">
-  {% comment %}
-  <link rel="stylesheet" href="{{ "/css/blocks.css" | prepend: site.baseurl }}">
-  <link rel="stylesheet" href="{{ "/css/style.css" | prepend: site.baseurl }}">
-  <link rel="stylesheet" href="{{ "/css/header-default.css" | prepend: site.baseurl }}">
-  <link rel="stylesheet" href="{{ "/css/footer-default.css" | prepend: site.baseurl }}">
-  <link rel="stylesheet" href="{{ "/css/app.css" | prepend: site.baseurl }}">
   <link rel="stylesheet" href="{{ "/css/custom.css" | prepend: site.baseurl }}">
-  {% endcomment %}
+  
   <link rel="canonical" href="{{ page.url | replace:'index.html','' | prepend: site.baseurl | prepend: site.url }}">
   {% if page.use_math %}
     {% include mathjax_support.html %}

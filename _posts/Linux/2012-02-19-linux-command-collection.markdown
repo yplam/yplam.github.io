@@ -118,3 +118,13 @@ done
 
 {% endhighlight %}
 
+### rsync 只同步匹配的目录文件
+
+通常我们的图片、文件会根据某中规则（譬如2016-09-09）的格式存储在文件系统中，有时我们需要将适合某个
+
+{% highlight shell %}
+
+rsync -aPv --include='**/2016-09-09/*' --include='*/' --exclude='*' rsync://...
+
+{% endhighlight %}
+
