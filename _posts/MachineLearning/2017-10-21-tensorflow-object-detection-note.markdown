@@ -22,7 +22,7 @@ published: true
 
 ## 安装
 
-CPU 环境下的 Tensorflow 安装非常简单，可以参考[官网安装文档](https://www.tensorflow.org/install/install_linux)，其中 python 版本建议选择 2.7（Google Cloud Machine Learning 的命令行对python3支持有问题）。
+CPU 环境下的 Tensorflow 安装非常简单，可以参考[官网安装文档](https://www.tensorflow.org/install/install_linux)，其中 python 版本建议选择 2.7，因为现时（2017年10月） Google Cloud Machine Learning 的命令行对 python3 支持有问题。
 
 GPU 下的安装稍微复杂，主要是需要解决 NVIDIA 显卡驱动问题，可以参考之前的文章 [http://yplam.com/machinelearning/2016/12/12/aws-cuda-tensorflow.html](http://yplam.com/machinelearning/2016/12/12/aws-cuda-tensorflow.html)。需要注意的是1.3官方编译版本的Tensorflow使用的是8.0版本的cuda以及6.0版本的cudnn，可以在[发布说明页面](https://github.com/tensorflow/tensorflow/releases)搜"CUDA"找到相关说明。
 
@@ -124,7 +124,7 @@ tar -xvf faster_rcnn_resnet101_coco_11_06_2017.tar.gz
 gsutil cp faster_rcnn_resnet101_coco_11_06_2017/model.ckpt.* gs://${YOUR_GCS_BUCKET}/data/
 ```
 
-参考 faster_rcnn_resnet101_pets.config ，编写我们的config文件，主要是修改 num_classes，fine_tune_checkpoint，input_path，label_map_path，可以先使用本地路径，而不是官方教程中的 "gs://***" 路径，方便本地调试好再发上去正式训练。因为发到Google Cloud训练会有个初始化等待过程，并且由于调用的GPU数量较多，在这过程中可能会浪费比较多的费用。
+参考 faster_rcnn_resnet101_pets.config ，编写我们的config文件，主要是修改 num_classes，fine_tune_checkpoint，input_path，label_map_path，可以先使用本地路径，而不是官方教程中的 "gs://***" 路径，方便本地调试好再发上去正式训练。因为发到 Google Cloud 训练会有个初始化等待过程，并且由于调用的GPU数量较多，如果因为配置文件不符而导致需要不断修改调试，在这过程中可能会浪费比较多的时间跟费用。
 
 现在，你本地会有以下文件(名字可能不一样)：
 
@@ -145,7 +145,7 @@ python object_detection/train.py --train_dir=tmp --pipeline_config_path=${YOUR_C
 
 ```
 
-如果能正常进入训练进程，则说明各种配置正常，那么可以将 faster_rcnn_resnet101_pets.config 中的文件路径设为 gs:// 上面路径。然后提交训练
+如果能正常进入训练进程，则说明各种配置正常，那么可以将 faster_rcnn_resnet101_pets.config 中的文件路径设为 gs:// 上面路径。然后提交训练（提交前先将本地faster_rcnn_resnet101_pets.config拷贝到gs://${YOUR_GCS_BUCKET}/data）
 
 ```
 
@@ -189,12 +189,14 @@ python object_detection/export_inference_graph.py \
     
 ```
 
-output_inference_graph.pb 文件可以留作后续使用。
+output_inference_graph.pb 文件就是导出后的模型文件，可以留作后续使用。
 
 
 ## 在阿里云上运行训练后的模型
 
-使用[这个Ansible脚本](https://github.com/yplam/AliyunTensorflowGPUAnsible)进行快速初始化Tensorflow环境。
+Resnet 101 模型在本地 i5 台式机上跑预测一次时间大概是30秒，而在阿里云最低配的 M40 GPU AWS 上运行一次只需要不到1秒，所以对于大批量的预测任务，配置一台阿里云的GPU服务器来跑是一个不错的选择。现时阿里云 M40 服务器价格为 ￥10 一小时，相对于动辄过万的GPU台式机，还算是个相对便宜的选择。
+
+使用[这个Ansible脚本](https://github.com/yplam/AliyunTensorflowGPUAnsible)进行快速初始化Tensorflow环境，本脚本在 阿里云M40 GPU AWS、UBUNTU 16.04、cuda 8、tensorflow 1.3 上测试通过。
 
 
 参考资料：
