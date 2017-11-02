@@ -96,6 +96,8 @@ item {
 
 ## 配置与提交到 Google Cloud 进行模型训练
 
+**20171102更新：** 突然发现阿里云的GPU竞价实例是个性价比不错的选择，可能是现在用GPU服务器的人不多，竞价实例可以以N分之一的价格拿到，值得一试，还免去科学上网的麻烦。
+
 Tensorflow models 项目页面提供多中模型的[配置范例](https://github.com/tensorflow/models/tree/master/research/object_detection/samples/configs)，在此我们使用预训练的 faster_rcnn_resnet101 模型。
 
 由于需要使用 Google Cloud Machine Learning 服务进行模型训练，所以需要先安装 Google Cloud 相关的客户端，开通 Google Cloud 账号，并且启用 Machine Learning 与 Cloud Storage。可参考下面链接：
