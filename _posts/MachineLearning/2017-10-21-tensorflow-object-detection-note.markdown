@@ -10,7 +10,7 @@ published: true
 
 **目的：**在一批图片中找出包含物体A的图片，并且标出图片中各物体A的位置。
 
-**环境：**Ubuntu 16.04，python 2.7，virtualenv
+**环境：**Ubuntu 16.04，python 2.7，virtualenv, tensorflow 1.3, tensorflow-models@d43c736eae267f98061b2cc9aa4f1936e10e2c4e (注：tensorflow models在快速变化中，并且无release版本，如果您按照本文的方式测试出错的话可以尝试checkout这个commit，然后重新生成protobuf)
 
 **过程：**
 
@@ -194,7 +194,7 @@ output_inference_graph.pb 文件就是导出后的模型文件，可以留作后
 
 ## 在阿里云上运行训练后的模型
 
-Resnet 101 模型在本地 i5 台式机上跑预测一次时间大概是30秒，而在阿里云最低配的 M40 GPU AWS 上运行一次只需要不到1秒，所以对于大批量的预测任务，配置一台阿里云的GPU服务器来跑是一个不错的选择。现时阿里云 M40 服务器价格为 ￥10 一小时，相对于动辄过万的GPU台式机，还算是个相对便宜的选择。
+Resnet 101 模型在本地 i5 台式机上跑预测一次时间大概是30秒，而在阿里云最低配的 M40 GPU AWS 上运行一次只需要不到1秒，所以对于大批量的预测任务，配置一台阿里云的GPU服务器来跑是一个不错的选择。现时阿里云 M40 服务器价格为 ￥10 一小时，相对于动辄过万的GPU台式机，还算是个相对便宜的选择(ps: 如果只是用来测试，可以购买阿里云的竞价实例，可以省更多)。
 
 使用[这个Ansible脚本](https://github.com/yplam/AliyunTensorflowGPUAnsible)进行快速初始化Tensorflow环境，本脚本在 阿里云M40 GPU AWS、UBUNTU 16.04、cuda 8、tensorflow 1.3 上测试通过。
 
