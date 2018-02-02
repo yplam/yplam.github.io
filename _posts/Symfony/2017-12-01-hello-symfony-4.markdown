@@ -38,3 +38,17 @@ composer require --dev profiler
 Flex 会根据需要将默认配置文件下到本地。
 
 
+**模板**
+
+twig 变化不大，只是模板位置变到了项目根目录下的templates文件夹
+
+
+**前端**
+
+虽然 Assetic 还可以用，但官方推荐使用 Webpack Encore，带来的好处就是前端开发更加专业，并且asset版本控制之类的变得更加方便。
+
+
+**deployer**
+
+由于 Symfony 4 使用 env 来设定运行环境参数，发布方式变化较大，之前使用的 php deployer 工具需要做较多修改。
+
