@@ -1,10 +1,23 @@
 ---
 title:  "Linux 下的一些技巧"
 categories: Linux
+layout: post_toc
+showToc: true
 ---
 
 此笔记记录 Linux 下的一些命令使用技巧，作为工作中的备忘。
 
+* [导入数据库时跳过某个表](#no1)
+* [找出最近修改、创建的文件](#no2)
+* [自动压缩旧日志文件的shell脚本](#no3)
+* [Linux 初始化 SSH 会话慢的解决方法](#no4)
+* [Crontab 控制脚本运行时间段](#no5)
+* [rsync 只同步匹配的目录文件](#no6)
+* [Ubuntu 下切换 PHP 版本](#no7)
+{:#toc-src}
+{:.nav}
+
+<a name="no1"/>
 
 ### 导入数据库时跳过某个表
 
@@ -16,6 +29,8 @@ sed '/INSERT INTO `sessions`/d' db.sql > db_new.sql
 
 {% endhighlight %}
 
+<a name="no2"/>
+
 ### 找出最近修改、创建的文件
 
 以下命令可以用来简单的检查最近目录下哪些文件被修改过。
@@ -26,12 +41,10 @@ find . -newermt "2013-01-01 00:00:00" ! -newermt "2013-01-02 00:00:00"
 
 find . -mtime -10 -mtime +4
 
-# find has + and - operartor, Also *time : mtime, atime and ctime : 
-# atime == Acccess Time 
-# mtime == Modified Time 
-# ctime == Create Time
 
 {% endhighlight %}
+
+<a name="no3"/>
 
 ### 自动压缩旧日志文件的shell脚本
 
@@ -60,6 +73,8 @@ done
 
 
 {% endhighlight %}
+
+<a name="no4"/>
 
 ### Linux 初始化 SSH 会话慢的解决方法
 
@@ -93,6 +108,8 @@ debug2: fd 3 setting O_NONBLOCK
 
 客户端  /etc/ssh/ssh_config，修改 "GSSAPIAuthentication no"
 
+<a name="no5"/>
+
 ### Crontab 控制脚本运行时间段
 
 Cronjob 通常用来在指定时间点运行某个命令（脚本），而有时我们不但需要定时启动脚本，还需要定时关闭，譬如需要在空闲时段备份服务器文件到新机器。
@@ -118,6 +135,8 @@ done
 
 {% endhighlight %}
 
+<a name="no6"/>
+
 ### rsync 只同步匹配的目录文件
 
 通常我们的图片、文件会根据某中规则（譬如2016-09-09）的格式存储在文件系统中，有时我们需要将适合某个
@@ -125,6 +144,18 @@ done
 {% highlight shell %}
 
 rsync -aPv --include='**/2016-09-09/*' --include='*/' --exclude='*' rsync://...
+
+{% endhighlight %}
+
+<a name="no7"/>
+
+### Ubuntu 下切换 PHP 版本
+
+偶尔需要维护一些旧项目，而这些项目无法做到php7兼容，此时就需要安装多个PHP版本，并且用类似下面的命令进行切换
+
+{% highlight shell %}
+
+sudo a2dismod php7.1 ; sudo a2enmod php5.6 ; sudo service apache2 restart ; sudo update-alternatives --set php /usr/bin/php5.6 ; sudo update-alternatives --set phar /usr/bin/phar5.6 ; sudo update-alternatives --set phar.phar /usr/bin/phar.phar5.6 ;  sudo update-alternatives --set phpize /usr/bin/phpize5.6 ;  sudo update-alternatives --set php-config /usr/bin/php-config5.6
 
 {% endhighlight %}
 
