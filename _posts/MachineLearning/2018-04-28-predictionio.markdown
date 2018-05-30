@@ -1,7 +1,7 @@
 ---
 title:  "PredictionIO实现论坛广告贴过滤"
 categories: MachineLearning PredictionIO
-published: false
+published: true
 ---
 
 关注 Apache PredictionIO 已有一段时间，最近需要做一个过滤论坛广告贴的功能，调研了一番市面上提供文本检测的API服务，发现靠谱的公司都比较贵，并且准确率不高（一个可能性是他们使用的训练数据集是互联网上的通用信息，而我们是一个垂直行业论坛，攻击来源也可能是固定的那么若干个），于是尝试自己实现个文本分类器来过滤广告。
@@ -181,8 +181,15 @@ spark-submit --class com.yplam.SpamFilterTrainer spark-scala-playground.jar --tr
 
 ### PredictionIO 实现
 
-由于 PredictionIO 社区提供了大量的引擎模板，因此实现自己模型的最简单方式就是在官方模板的基础上进行修改，譬如 [Text Classification](https://github.com/apache/predictionio-template-text-classifier)中就包含基于贝叶斯算法的文本分类器实现，我们只需要拷贝此项目，然后加入 ansj 分词功能，然后 done。
+由于 PredictionIO 社区提供了大量的引擎模板，因此实现自己模型的最简单方式就是在官方模板的基础上进行修改，譬如 [Text Classification](https://github.com/apache/predictionio-template-text-classifier)中就包含基于贝叶斯算法的文本分类器实现，得益于 PredictionIO 的 DASE 模型，我们只需要拷贝此项目，根据项目实际情况做小修改，然后加入 ansj 分词功能，完成。
 
+针对 DataSource，我们需要根据我们模型实际数据结构，设定 entityType，eventNames，以及对 Observation 结构的处理。
+
+针对 Preparator，我们用 ansj 替换原有的分词方式，同时限制了内容长度。
+
+相关代码地址：https://github.com/yplam/predictionio-spam-detection-cn
+
+后记：通过分析“漏网之鱼”的内容，发现已经有针对贝叶斯算法的攻击，也就是在长篇内容中夹入少量垃圾信息，通过只截取标题+内容头尾各500个字的方式，可以有一定的效果提示。
 
 
 

@@ -6,6 +6,7 @@ categories: MachineLearning
 最近迷上了机器学习，花了不少时间学习相关的基础内容；虽然数学跟不上，也不妨碍跟风玩玩各位大牛的开源成果。
 本文记录了购买AWS GPU服务器，安装cuda、 TensorFlow，运行 Neural Style 测试的过程。
 
+update: 2018-05-17，本文内容可能已不适合，请参考末尾命令行日志做修改。
 
 ### 购买AWS EC2 p2.xlarge
 
@@ -124,6 +125,33 @@ python neural_style.py --content examples/1-content.jpg --styles examples/1-styl
 成果：
 
 ![input]({{ site.url }}/assets/2016/in.jpeg "input") ![output]({{ site.url }}/assets/2016/out.jpg "output")
+
+
+update: 2018-05-17,新版安装流程
+
+```
+
+export LC_ALL="en_US.UTF-8"
+export LC_CTYPE="en_US.UTF-8"
+sudo dpkg-reconfigure locales
+lspci | grep -i nvidia
+sudo apt-get update
+sudo apt-cache search nvidia
+wget http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64/cuda-repo-ubuntu1604_9.0.176-1_amd64.deb
+sudo dpkg -i cuda-repo-ubuntu1604_9.0.176-1_amd64.deb 
+sudo apt-key adv --fetch-keys http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64/7fa2af80.pub
+sudo apt-get update
+sudo apt-get install cuda-9-0
+wget "https://developer.download.nvidia.com/compute/machine-learning/cudnn/secure/v7.0.5/prod/9.0_20171129/Ubuntu16_04-x64/libcudnn7_7.0.5.15-1%2Bcuda9.0_amd64.deb?***
+dpkg -i libcudnn7_7.0.5.15-1+cuda9.0_amd64.deb 
+sudo dpkg -i libcudnn7_7.0.5.15-1+cuda9.0_amd64.deb 
+nvidia-smi
+sudo apt-get install python-pip python-dev
+sudo pip install --upgrade pip
+sudo pip install tensorflow-gpu
+sudo pip install scikit-image
+
+```
 
 
 
