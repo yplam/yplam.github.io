@@ -189,7 +189,7 @@ spark-submit --class com.yplam.SpamFilterTrainer spark-scala-playground.jar --tr
 
 相关代码地址：[https://github.com/yplam/predictionio-spam-detection-cn](https://github.com/yplam/predictionio-spam-detection-cn)
 
-后记：通过分析“漏网之鱼”的内容，发现已经有针对贝叶斯算法的攻击，也就是在长篇内容中夹入少量垃圾信息，通过只截取标题+内容头尾各500个字的方式，可以有一定的效果提示。
+后记：通过分析“漏网之鱼”的内容，发现已经有针对贝叶斯算法的攻击，也就是在长篇内容中夹入少量垃圾信息，通过只截取标题+内容头尾各500个字的方式，可以有一定的效果提升。
 
 
 
