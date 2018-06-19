@@ -38,7 +38,158 @@ URAlgorithm 根据 URAlgorithmParams 配置训练模型，保存，然后做预�
 
 ```
 
-然后创建 Elasticsearch 表索引，然后将 RDD 保存到 Elasticsearch
+然后创建 Elasticsearch 表索引，最后将 RDD 保存到 Elasticsearch，我们可以先看看数据在 Elasticsearch 中的存在方式，这样会更加清晰：
 
+```
+GET /urindex_1529048147127/_search
+```
 
+```
+  {
+    "_index": "urindex_1529048147127",
+    "_type": "items",
+    "_id": "Iphone 4",
+    "_score": 1,
+    "_source": {
+      "defaultRank": 5,
+      "expires": "2018-06-18T10:45:41.677+08:00",
+      "countries": [
+        "United States",
+        "Canada",
+        "Estados Unidos Mexicanos"
+      ],
+      "id": "Iphone 4",
+      "date": "2018-06-16T10:45:41.677+08:00",
+      "category-pref": [
+        "tablets"
+      ],
+      "categories": [
+        "Phones",
+        "Electronics",
+        "Apple"
+      ],
+      "available": "2018-06-14T10:45:41.677+08:00",
+      "purchase": [
+        "Ipad-retina",
+        "Iphone 6"
+      ],
+      "popRank": 4,
+      "view": [
+        "Soap",
+        "Tablets"
+      ]
+    }
+  }
+```
+
+很明显这是一个基于产品的推荐系统，主事件为 purchase ，所以直观的解释就是 “购买了 Iphone 4 的用户还购买了 Ipad-retina，Iphone 6；购买了 Iphone 4 的用户浏览了 Soap，Tablets；Iphone 4 属于 Phones，Electronics，Apple 分类……”
+
+UR 模型的 predict 过程实际就是根据查询输入以及用户的历史事件（从Event Storage中查出），构造 ES 的 json query。
+
+模型定义查询结构如下：
+
+```
+
+case class Query(
+  user: Option[String] = None, // must be a user or item id
+  userBias: Option[Float] = None, // default: whatever is in algorithm params or 1
+  item: Option[String] = None, // must be a user or item id
+  itemBias: Option[Float] = None, // default: whatever is in algorithm params or 1
+  itemSet: Option[List[String]] = None, // item-set query, shpping cart for instance.
+  itemSetBias: Option[Float] = None, // default: whatever is in algorithm params or 1
+  fields: Option[List[Field]] = None, // default: whatever is in algorithm params or None
+  currentDate: Option[String] = None, // if used will override dateRange filter, currentDate must lie between the item's
+  // expireDateName value and availableDateName value, all are ISO 8601 dates
+  dateRange: Option[DateRange] = None, // optional before and after filter applied to a date field
+  blacklistItems: Option[List[String]] = None, // default: whatever is in algorithm params or None
+  returnSelf: Option[Boolean] = None, // means for an item query should the item itself be returned, defaults
+  // to what is in the algorithm params or false
+  num: Option[Int] = None, // default: whatever is in algorithm params, which itself has a default--probably 20
+  from: Option[Int] = None, // paginate from this position return "num"
+  eventNames: Option[List[String]], // names used to ID all user actions
+  withRanks: Option[Boolean] = None) // Add to ItemScore rank fields values, default false
+    extends Serializable
+    
+```
+
+然后转换为类似下面的请求：
+
+```
+  {
+    "size": 20
+    "query": {
+      "bool": {
+        "should": [
+          {
+            "terms": {
+              "rate": ["0", "67", "4"]
+            }
+          },
+          {
+            "terms": {
+              "buy": ["0", "32"],
+              "boost": 2
+            }
+          },
+          { // categorical boosts
+            "terms": {
+              "category": ["cat1"],
+              "boost": 1.05
+            }
+          }
+        ],
+        "must": [ // categorical filters
+          {
+            "terms": {
+              "category": ["cat1"],
+              "boost": 0
+            }
+          },
+         {
+        "must_not": [//blacklisted items
+          {
+            "ids": {
+              "values": ["items-id1", "item-id2", ...]
+            }
+          },
+         {
+           "constant_score": {// date in query must fall between the expire and available dates of an item
+             "filter": {
+               "range": {
+                 "availabledate": {
+                   "lte": "2015-08-30T12:24:41-07:00"
+                 }
+               }
+             },
+             "boost": 0
+           }
+         },
+         {
+           "constant_score": {// date range filter in query must be between these item property values
+             "filter": {
+               "range" : {
+                 "expiredate" : {
+                   "gte": "2015-08-15T11:28:45.114-07:00"
+                   "lt": "2015-08-20T11:28:45.114-07:00"
+                 }
+               }
+             }, "boost": 0
+           }
+         },
+         {
+           "constant_score": { // this orders popular items for backfill
+              "filter": {
+                 "match_all": {}
+              },
+              "boost": 0.000001 // must have as least a small number to be boostable
+           }
+        }
+      }
+    }
+  }
+```
+
+Universal Recommender 虽然原理比较简单，不过它巧妙地利用 Elasticsearch 将业务规则整合进来的方式确实可以给人带来启发。
+
+以上仅为个人总结笔记，能力所限可能有比较多错误，欢迎交流指正 yplam(at)yplam.com
 
