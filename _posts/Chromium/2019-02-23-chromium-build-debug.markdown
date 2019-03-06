@@ -5,15 +5,17 @@ categories: Chromium
 
 最近手上有个小项目需要兼容 Chrome CRX3 版本的扩展格式，Google 了一下竟然完全没有相关介绍文档，于是决定啃一下相关代码。
 
-上次编译 Chromium 已经是 N 年前的事情，那时伟大的墙还没现在那么大存在感，按官方步骤编译就可以，然而现时（2019年2月）按官方文档竟然连代码都下不下来。本文作为此过程的记录（主要是解决墙的问题），如有问题欢迎联系 yplam(at)yplam.com
+本文会持续更新，最后更新时间： 2019-03-06，如有问题欢迎联系 yplam(at)yplam.com。
+
+上次编译 Chromium 已经是 N 年前的事情，那时伟大的墙还没现在那么大存在感，按官方步骤编译就可以，然而现时（2019年2月）按官方文档竟然连代码都下不下来。本文作为此过程的记录（主要是解决墙的问题）。
 
 环境：P52(CPU i7-8850H + 16GB内存 + 250GB SSD) + Manjaro 18 Linux（如果你使用的是 Windows 环境，可以参考本文末尾关于 Windows 下的编译方法）。
 
 环境要求：
 * 64位系统，需要 8GB 内存（建议16G以上）跟 100GB 硬盘，经测试编译后大概用掉60GB空间，但按默认选项用掉的空间应该会多点。
-* 需要保证有一个高速的科学上网环境，因为源码大概有 30GB，并且提供 http proxy。
+* 需要保证有一个高速的科学上网环境，并且需要提供 http proxy，源码大概有 30GB。
 * git
-* python2，经测试 virtualenv 下的 python2 无法使用，可能是因为某些脚步会调用 bash，跳出 virtualenv 的环境。
+* python2，经测试 virtualenv 下的 python2 无法使用，可能是因为某些脚步会调用 bash，跳出 virtualenv 的环境。（如果您解决了这个问题，欢迎反馈，谢谢）
 
 ### 编译 Chromium
 
@@ -33,7 +35,7 @@ python --version
 cd $(dirname $(which python)) && sudo rm python && sudo ln -s python2 python
 ```
 
-假设 http proxy 端口为 8123，创建 boto.cfg 文件：
+假设 http proxy 端口为 8123，创建 boto.cfg 文件，记下保存路径：
 
 ```
 [Boto]
@@ -53,6 +55,8 @@ git config --global http.proxy 127.0.0.1:8123
 至此，可以按照[官方文档](https://chromium.googlesource.com/chromium/src/+/master/docs/linux_build_instructions.md)进行编译。
 
 下面为相关命令，运行前需要先保证有稳定的网络，以及接上外部电源，在我的 P52 上下载源码大概需要 2小时，编译大概需要 3 小时：
+
+**注意：下面为Manjaro下的编译方式，其他系统请按需修改或者参考官方文档。**
 
 ```
 sudo pacman -S --needed python perl gcc gcc-libs bison flex gperf pkgconfig nss alsa-lib glib2 gtk3 nspr ttf-ms-fonts freetype2 cairo dbus libgnome-keyring
@@ -87,9 +91,34 @@ git config --global --unset-all http.proxy
 cd $(dirname $(which python)) && sudo rm python && sudo ln -s python3 python
 ```
 
+### 编译与运行TEST
+
+使用 gn ls 命令可以列出所有可编译的 target，譬如，我想跑跑 ui/gfx/color_utils_unittest.cc ，那么可以使用类似命令找出来:
+```
+gn ls out/Default | grep test | grep ui | grep gfx
+```
+
+可以看到 //ui/gfx:gfx_unittests 的存在， gfx_unittests 定义在 ui/gfx/BUILD.gn，包含 color_utils_unittest.cc。
+
+可以通过下面命令编译与运行：
+
+```
+ninja -C out/Default ui/gfx:gfx_unittests
+out/Default/gfx_unittests --gtest_filter="ColorUtils.*"
+```
+
+因为编译 TEST 比编译整个 Chromium 要快得多，可以通过此方式比较简单的了解与跟踪某些代码的运行。
+
 ### GDB 调试 Chromium
 
 官方文档在此：[https://chromium.googlesource.com/chromium/src/+/master/docs/linux_debugging.md](https://chromium.googlesource.com/chromium/src/+/master/docs/linux_debugging.md)
+
+由于GDB启动较慢，如果只是想简单的跟踪一下程序运行信息，可以直接使用 base/logging.h 中定义的方法，如：
+```
+LOG(INFO) << "Found " << num_cookies << " cookies";
+```
+
+再结合上面提到的 TEST，用来跟踪一些小功能的代码比较有效率。当然，如果要对浏览器运行时的状态进行细致一点的跟踪，那么应该还是用 gdb 好点。
 
 在开始调试前请保证你的电脑有足够内存（应该需要 10GB+ 的内存，反正我 16GB 内存如果运行其他应用的话有时会内存耗尽），在 src 目录运行下面命令：
 
@@ -137,7 +166,7 @@ q
 
 因为对 GDB 也不熟悉，上面只演示了一个基础操作。（ps: GDB的官方文档较枯燥，在网上找找别人的使用心得分享，譬如[100-gdb-tips](https://www.kancloud.cn/itfanr/i-100-gdb-tips/81849), [gdb Debugging Full Example](http://www.brendangregg.com/blog/2016-08-09/gdb-example-ncurses.html)）
 
-### 关于CRX3格式的调试结果
+### 关于CRX3格式的调试结果记录
 
 CRX3格式相关代码位于：
 
@@ -258,9 +287,16 @@ set HTTPS_PROXY=%HTTP_PROXY%
 netsh winhttp reset proxy
 ```
 
+### 后记
+
+折腾了几天 Chromium，解决了 CRX3 文件格式编码问题，突然有点不想就此打住的念头。Chromium 算是自己能遇到的最复杂最优秀的开源项目以及代码库了吧，难得有机会，要不继续学习下去？ Why not？
+
 ### 参考资料
 
 * [Checking out and building Chromium on Linux](https://chromium.googlesource.com/chromium/src/+/master/docs/linux_build_instructions.md)
 * [Tips for debugging on Linux](https://chromium.googlesource.com/chromium/src/+/master/docs/linux_debugging.md)
 * [Sync Chromium src behind proxy](https://colinxu.wordpress.com/2018/04/28/sync-chromium-src-behind-proxy/)
+* [http://blog.gclxry.com/](http://blog.gclxry.com/)
+
+
 
