@@ -120,16 +120,19 @@ LOG(INFO) << "Found " << num_cookies << " cookies";
 
 再结合上面提到的 TEST，用来跟踪一些小功能的代码比较有效率。当然，如果要对浏览器运行时的状态进行细致一点的跟踪，那么应该还是用 gdb 好点。
 
+譬如，chrome/browser/themes/theme_service.cc 提供 Theme 服务类，通过阅读代码，可以知道对 Theme 的更新是通过外部调用 ThemeObserver 的 OnExtensionLoaded 方法更新的，但对于是如何调用 OnExtensionLoaded 的
+却不是那么容易可以看出来，那么我们可以简单的使用 GDB 的 backtrace 来查看。
+
 在开始调试前请保证你的电脑有足够内存（应该需要 10GB+ 的内存，反正我 16GB 内存如果运行其他应用的话有时会内存耗尽），在 src 目录运行下面命令：
 
 ```
 gdb -tui --args out/Default/chrome --disable-seccomp-sandbox http://google.com
 ```
 
-加载需要点时间，加载后设置断点，譬如我要看加载旧版 crx 的报错，在 extensions/browser/sandboxed_unpacker.cc 的 856 行设置断点：
+加载需要点时间，加载后设置断点，在 theme_service.cc 的 264 行设置断点：
 
 ```
-b sandboxed_unpacker.cc:856
+b theme_service.cc:264
 ```
 
 然后运行
@@ -146,13 +149,40 @@ c
 
 继续运行。
 
-然后进入 extension 页面，打开 developer 模式，拖一个 crx 扩展进去，此时会进入我们的断点，然后
+然后进入 extension 页面，打开 developer 模式，拖一个 crx Theme 扩展进去，此时会进入我们的断点，然后
 
 ```
-p result
+bt
 ```
 
-查看 result 变量值，如果CRX格式正确，则为 crx_file::VerifierResult::OK_FULL，如果拖入的是一个 CRX2 版本的扩展，则为 crx_file::VerifierResult::ERROR_HEADER_INVALID，我们继续执行：
+或者如果只需要看最近8个 backtrace：
+
+```
+bt 8
+```
+
+得到下面关于 ThemeService::ThemeObserver::OnExtensionLoaded 的调用回溯：
+```
+#0  0x000055555916362b in ThemeService::ThemeObserver::OnExtensionLoaded(content::BrowserContext*, extensions::Extension const*)
+    (this=0x30e87097be90, browser_context=0x30e86f3abca0, extension=0x30e871bd6260) at ../../chrome/browser/themes/theme_service.cc:264
+#1  0x000055555794596c in extensions::ExtensionRegistry::TriggerOnLoaded(extensions::Extension const*) (this=0x30e86f412a20, extension=0x30e871bd6260) at ../../extensions/browser/extension_registry.cc:64
+#2  0x0000555557941c1e in extensions::ExtensionRegistrar::ActivateExtension(extensions::Extension const*, bool) (this=0x30e86f9dda60, extension=0x30e871bd6260, is_newly_added=true)
+    at ../../extensions/browser/extension_registrar.cc:450)] 244
+#3  0x00005555579419df in extensions::ExtensionRegistrar::AddNewExtension(scoped_refptr<extensions::Extension const>) (this=0x30e86f9dda60, extension=...)
+    at ../../extensions/browser/extension_registrar.cc:140
+#4  0x0000555557940bf1 in extensions::ExtensionRegistrar::AddExtension(scoped_refptr<extensions::Extension const>) (this=0x30e86f9dda60, extension=...)
+    at ../../extensions/browser/extension_registrar.cc:105
+#5  0x000055555a1f88d3 in extensions::ExtensionService::AddExtension(extensions::Extension const*) (this=0x30e86f9dd820, extension=0x30e871bd6260)
+    at ../../chrome/browser/extensions/extension_service.cc:1188
+#6  0x000055555a1fad83 in extensions::ExtensionService::FinishInstallation(extensions::Extension const*) (this=0x30e86f9dd820, extension=0x30e871bd6260)
+    at ../../chrome/browser/extensions/extension_service.cc:1617
+#7  0x000055555a1f90c5 in extensions::ExtensionService::AddNewOrUpdatedExtension(extensions::Extension const*, extensions::Extension::State, int, syncer::Ordinal<syncer::StringOrdinalTraits> const&, std::_
+_Cr::basic_string<char, std::__Cr::char_traits<char>, std::__Cr::allocator<char> > const&, base::Optional<int> const&)
+    (this=0x30e86f9dd820, extension=0x30e871bd6260, initial_state=extensions::Extension::ENABLED, install_flags=0, page_ordinal=..., install_parameter=..., dnr_ruleset_checksum=...)
+
+```
+
+我们继续执行：
 
 ```
 c
