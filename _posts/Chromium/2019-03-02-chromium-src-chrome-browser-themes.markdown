@@ -4,7 +4,7 @@ categories: Chromium
 published: false
 ---
 
-前言：最近花了几天时间解决 Chromium CRX3 文件格式编码问题，然后决定将 2019 年的学习计划定为学习 Chromium 源码，从 UI/Theme/Extension 开始，此为第一篇。（因为7,8年前曾经马马虎虎地看了一遍 Theme 以及其渲染过程的代码，并且写了一个简单的[ Theme 打包工具](https://www.themebeta.com/chrome-theme-creator-online.html)，所以现在决定还是以此作为入口。）
+前言：最近花了几天时间解决 Chromium CRX3 文件格式编码问题，然后决定用部分业余时间学习 Chromium 源码，从 UI/Theme/Extension 开始，此为第一篇。（因为7,8年前曾经马马虎虎地看了一遍 Theme 以及其渲染过程的代码，并且写了一个简单的[ Theme 打包工具](https://www.themebeta.com/chrome-theme-creator-online.html)，所以现在决定还是以此作为入口。）
 
 chrome/browser/themes/ 目录包含跟 Theme 格式定义相关代码，Theme 加载相关代码，以及全局的 ThemeService，但并不包含关于 Theme 如何渲染浏览器外观的代码,不包含关于 CRX 打包解包相关代码。
 
@@ -48,7 +48,7 @@ theme_service_unittest.cc
 theme_service_browsertest.cc
 ```
 ThemeService 为 Theme 服务类，负责加载用户设置的 Theme，删除无用的 Theme（监听 extensions::NOTIFICATION_EXTENSIONS_READY_DEPRECATED， 并且延时后），启动 Theme 同步服务。
-并且响应 OnExtensionLoaded 事件，更新 Theme。
+并且响应 OnExtensionLoaded 事件，更新 Theme。同时为 UI 层提供 ThemeProvide。
 
 **ThemeServiceWin**
 ```
@@ -80,7 +80,24 @@ theme_syncable_service_unittest.cc
 ThemeSyncableService 为 Theme 同步服务，本地安装新 Theme 后同步到后端，并且响应后端同步信息的改变。
 
 
-### 核心流程
+### 一些流程
+
+**为 UI 层提供数据**
+
+浏览器 UI 层，如 chrome/browser/ui/views/bookmarks/bookmark_bar_view.cc 均继承自 views::View (ui/views/view.h) 所有 View 都可以通过 ui::ThemeProvider* GetThemeProvider() ，获取 ThemeProvider 句柄，然后通过 ThemeProvider 获取经过 Theme 后的 UI 颜色、图片等。GetThemeProvider 最终会调用 ThemeService::GetThemeProviderForProfile 或者 ThemeService::GetDefaultThemeProviderForProfile，返回的为 ThemeService 的内部类： 
+```
+class BrowserThemeProvider : public ui::ThemeProvider
+```
+在此完成 ThemeService 与 ui::ThemeProvider 的解耦与调用。
+
+**Theme 安装流程**
+
+ThemeService 通过加载安装的 Theme，通过 BrowserThemeProvider 内部类提供 UI 层所需的数据，然后通过内部类：
+```
+class ThemeService::ThemeObserver
+    : public extensions::ExtensionRegistryObserver
+```
+与 Extension 子系统的的 ExtensionRegistry 关联，当安装新扩展时，ExtensionRegistry 服务就会回调所有 ExtensionRegistryObserver 的 OnExtensionLoaded 方法，如果此扩展为 Theme，则通过 theme service 更新。
 
 ThemeService::ThemeObserver::OnExtensionLoaded 调用回溯：
 
