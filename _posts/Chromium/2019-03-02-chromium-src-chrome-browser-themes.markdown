@@ -3,7 +3,7 @@ title:  "Chromium 源码阅读：chrome/browser/themes"
 categories: Chromium
 ---
 
-前言：最近花了几天时间解决 Chromium CRX3 文件格式编码问题，然后决定用部分业余时间学习 Chromium 源码，从 UI/Theme/Extension 开始。（因为7,8年前曾经马马虎虎地看了一遍 Theme 以及其渲染过程的代码，并且写了一个简单的[ Theme 打包工具](https://www.themebeta.com/chrome-theme-creator-online.html)，所以现在决定还是以此作为入口。）
+前言：最近花了几天时间解决 Chromium CRX3 文件格式编码问题，然后决定用部分业余时间学习 Chromium 源码，从 UI/Theme/Extension 开始。（因为7,8年前曾经马马虎虎地看了一遍 Theme 以及其渲染过程的代码，并且写了一个简单的 Theme 打包工具，所以现在决定还是以此作为入口。）
 
 **chrome/browser/themes/**
 
