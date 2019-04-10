@@ -123,7 +123,7 @@ LOG(INFO) << "Found " << num_cookies << " cookies";
 譬如，chrome/browser/themes/theme_service.cc 提供 Theme 服务类，通过阅读代码，可以知道对 Theme 的更新是通过外部调用 ThemeObserver 的 OnExtensionLoaded 方法更新的，但对于是如何调用 OnExtensionLoaded 的
 却不是那么容易可以看出来，那么我们可以简单的使用 GDB 的 backtrace 来查看。
 
-在开始调试前请保证你的电脑有足够内存（应该需要 10GB+ 的内存，反正我 16GB 内存如果运行其他应用的话有时会内存耗尽），在 src 目录运行下面命令：
+在开始调试前请保证你的电脑有足够内存（应该需要 5GB+ 的内存，反正我 16GB 内存如果运行其他应用的话有时会内存耗尽），在 src 目录运行下面命令：
 
 ```
 gdb -tui --args out/Default/chrome --disable-seccomp-sandbox http://google.com
