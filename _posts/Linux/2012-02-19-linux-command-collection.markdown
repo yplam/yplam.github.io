@@ -1,5 +1,5 @@
 ---
-title:  "Linux 下的一些技巧"
+title:  "Linux 小笔记"
 categories: Linux
 layout: post_toc
 showToc: true
@@ -14,6 +14,7 @@ showToc: true
 * [Crontab 控制脚本运行时间段](#no5)
 * [rsync 只同步匹配的目录文件](#no6)
 * [Ubuntu 下切换 PHP 版本](#no7)
+* [ttyACM 插入后被占用问题](#no8)
 {:#toc-src}
 {:.nav}
 
@@ -158,4 +159,19 @@ rsync -aPv --include='**/2016-09-09/*' --include='*/' --exclude='*' rsync://...
 sudo a2dismod php7.1 ; sudo a2enmod php5.6 ; sudo service apache2 restart ; sudo update-alternatives --set php /usr/bin/php5.6 ; sudo update-alternatives --set phar /usr/bin/phar5.6 ; sudo update-alternatives --set phar.phar /usr/bin/phar.phar5.6 ;  sudo update-alternatives --set phpize /usr/bin/phpize5.6 ;  sudo update-alternatives --set php-config /usr/bin/php-config5.6
 
 {% endhighlight %}
+
+
+<a name="no8"/>
+
+### ttyACM 插入后被占用问题
+
+最近在调试 STM32 的 USB 功能的过程中发现，将 STM32 插入电脑的 USB 口后 STM32 模拟出来的串口 ttyACM0 会被占用，使用 lsof 也看不出问题，十几秒中后又会自动释放。
+
+后来将 USB 口收到的数据包 printf 出来后发现是一堆 AT 指令，看了一下系统进程发现一个可以的 ModemManager。
+
+Google 了一下，大概就是 ModemManager 检测到 ttyACM* 接入后会尝试进行通讯，看对方是否为合法的 Modem。
+
+解决方法：将 ModemManager 禁用，或者将设备 id 加入忽略列表。
+
+
 
