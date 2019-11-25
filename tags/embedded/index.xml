@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Embedded on 关于互联网, Linux, 嵌入式系统, 机器学习</title>
+    <link>https://yplam.com/tags/embedded/</link>
+    <description>Recent content in Embedded on 关于互联网, Linux, 嵌入式系统, 机器学习</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    <lastBuildDate>Tue, 23 Feb 2016 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="https://yplam.com/tags/embedded/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Configuring 6lbr for Ubuntu and SensorTag CC2650</title>
+      <link>https://yplam.com/post/embedded/configuring-6lbr-ubuntu-sensortag-cc2650/</link>
+      <pubDate>Tue, 23 Feb 2016 00:00:00 +0000</pubDate>
+      
+      <guid>https://yplam.com/post/embedded/configuring-6lbr-ubuntu-sensortag-cc2650/</guid>
+      <description>&lt;p&gt;This post show you how to configure Ubuntu as 6LoWPAN router and bridge 6LoWPAN devices to the IPv4/IPv6 Internet.&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

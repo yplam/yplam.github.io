@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+<section class="g-bg-gray-light-v5"><head>
+	
+	<title>关于互联网, Linux, 嵌入式系统, 机器学习  | 如何将一个Drupal网站转到Symfony</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<meta http-equiv="x-ua-compatible" content="ie=edge">
+
+	<link rel="stylesheet" href="//stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css">
+	
+	<link rel="stylesheet" href="https://yplam.com/scss/unify.min.css">
+
+	
+
+	
+	
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-83586141-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+	
+</head>
+
+<body>    <div class="container">
+        <div class="d-sm-flex text-center">
+            <div class="align-self-center ml-auto">
+                <ul class="u-list-inline float-right g-py-20">
+                    <li class="list-inline-item g-mr-5">
+                        <a class="u-link-v5 g-color-gray-dark-v5 g-color-primary--hover" href="/">HOME</a>
+                        <i class="g-color-gray-light-v2 g-ml-5">/</i>
+                    </li>
+                    <li class="list-inline-item g-color-primary g-mr-5">
+                        <a class="u-link-v5 g-color-gray-dark-v5 g-color-primary" href="/about/">ABOUT</a>
+                        <i class="g-color-gray-light-v2 g-ml-5">/</i>
+                    </li>
+                    <li class="list-inline-item g-color-primary g-mr-5">
+                        <a class="u-link-v5 g-color-gray-dark-v5 g-color-primary" href="https://github.com/yplam">GITHUB</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+<div class="container" aria-label="Content">
+            <div class="g-bg-white">
+                <div class="g-px-35 g-py-30 g-mb-30">
+<article>
+    <ul class="list-inline g-color-gray-dark-v4">
+        <li class="list-inline-item mr-0">
+            In
+             
+            
+            
+            
+            <a href="https://yplam.com/tags/php/">PHP</a>
+            
+            
+            
+            
+            <a href="https://yplam.com/tags/symfony/">Symfony</a>
+            
+            
+            
+            
+            <a href="https://yplam.com/tags/drupal/">Drupal</a>
+            
+            
+        </li>
+        <li class="list-inline-item mx-2">/</li>
+        <li class="list-inline-item">Posted 2015-08-11</li>
+    </ul>
+    <h1 class="g-mb-30">如何将一个Drupal网站转到Symfony</h1>
+    <div class="justify-content-center article-content">
+        <p>最近尝试将自己的一些Drupal网站转移到Symfony（这个个人博客就是其中之一），下面分享一些转移过程的心得，主要包括Drupal基本功能在Symfony上的实现。</p>
+
+<p><strong>用户管理</strong></p>
+
+<p>FOSUserBundle提供用户登录、注册、找回密码等基本功能，并且提供个可选的Group功能，将用户分组，按组设定权限。</p>
+
+<p><strong>权限管理</strong></p>
+
+<ul>
+<li>对于常规路径的权限（类似Drupal的HookMenu），Symfony 可以在security中根据角色权限配置，结合FOSUserBundle的分组功能可以容易搞掂。</li>
+<li>对于某个特定内容的CRUD权限，Symfony可以用<a href="http://symfony.com/doc/current/cookbook/security/voters_data_permission.html">Voter</a>的方式来设定</li>
+</ul>
+
+<p><strong>管理后台</strong></p>
+
+<p>使用SonataAdminBundle，只需要简单的编写一个服务，就可以完成常规的CRUD后台，对于特定需求，可以通过extend CRUD Controller的方式完成，而针对非CRUD类的管理后台，可以<a href="http://yplam.com/post/69">使用自定义页面</a>。</p>
+
+<p><strong>Hook钩子</strong></p>
+
+<p>Drupal中钩子可以说是最基础的功能，而Symfony中可以很方便的用Event来实现。</p>
+
+<p><strong>数据迁移</strong></p>
+
+<ul>
+<li><p>对于简单型网站（如这个博客），可以使用 <a href="https://www.drupal.org/project/node_export">node_export</a> 模块导出XML文件，然后在Symfony下写个Command导入内容。</p></li>
+
+<li><p>用户或者内容结构较为复杂的网站，可以直接写Command，通过分析数据库结构用SQL语句导入内容。</p></li>
+
+<li><p>由于Symfony与Drupal的密码加密方式不一致，我们可以使用自己的PasswordEncoder服务，覆盖 isPasswordValid 方法，对旧密码加密方式做兼容。</p></li>
+
+<li><p>对path的兼容比较麻烦，在此的处理方式是使用一个controller专门做旧内容的跳转。当然，也可以通过监听 NotFoundHttpException 事件来进行处理跳转</p></li>
+</ul>
+
+<p><strong>比Drupal更好用的功能</strong></p>
+
+<p>首先，最明显的就是网站速度变快了，并且Symfony可以有多种方式来管理缓存，优化性能，而Drupal针对登录用户的缓存功能相对较弱。</p>
+
+<p>针对开发者而言，网站deploy变得非常简单，使用capifony以及doctrine migrations，一条命令可以搞掂。</p>
+
+<p>网站模板不在是一件痛苦的事情，使用twig基本上可以完美的将一个html模板重现；而Drupal，可能70%以上的时间需要花在模板上。</p>
+
+<p>更新：现在网站已迁移到github。</p>
+    </div>
+
+
+</article>
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.6.0/styles/darcula.min.css">
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.6.0/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+
+                </div>
+
+            </div>
+        </div><div id="footer-default" class="g-bg-gray-dark-v1 g-color-white-opacity-0_8 text-center g-py-20">
+    <div class="container">
+        <div class="g-font-size-default g-mr-10 g-mb-10 g-mb-0--md">
+            <p>本站内容如非特别说明，均基于<a rel="license" target="_blank" href="http://creativecommons.org/licenses/by-sa/3.0/">Creative Commons Attribution-Share Alike 3.0 Unported License</a>发布。</p>
+        </div>
+    </div>
+</div></body>
+</section>
+</html>

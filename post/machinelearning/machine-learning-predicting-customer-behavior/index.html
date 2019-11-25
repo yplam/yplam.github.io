@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<section class="g-bg-gray-light-v5"><head>
+	
+	<title>关于互联网, Linux, 嵌入式系统, 机器学习  | [翻译]用户行为预测：使用机器学习技术预测付费用户</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<meta http-equiv="x-ua-compatible" content="ie=edge">
+
+	<link rel="stylesheet" href="//stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css">
+	
+	<link rel="stylesheet" href="https://yplam.com/scss/unify.min.css">
+
+	
+
+	
+	
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-83586141-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+	
+</head>
+
+<body>    <div class="container">
+        <div class="d-sm-flex text-center">
+            <div class="align-self-center ml-auto">
+                <ul class="u-list-inline float-right g-py-20">
+                    <li class="list-inline-item g-mr-5">
+                        <a class="u-link-v5 g-color-gray-dark-v5 g-color-primary--hover" href="/">HOME</a>
+                        <i class="g-color-gray-light-v2 g-ml-5">/</i>
+                    </li>
+                    <li class="list-inline-item g-color-primary g-mr-5">
+                        <a class="u-link-v5 g-color-gray-dark-v5 g-color-primary" href="/about/">ABOUT</a>
+                        <i class="g-color-gray-light-v2 g-ml-5">/</i>
+                    </li>
+                    <li class="list-inline-item g-color-primary g-mr-5">
+                        <a class="u-link-v5 g-color-gray-dark-v5 g-color-primary" href="https://github.com/yplam">GITHUB</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+<div class="container" aria-label="Content">
+            <div class="g-bg-white">
+                <div class="g-px-35 g-py-30 g-mb-30">
+<article>
+    <ul class="list-inline g-color-gray-dark-v4">
+        <li class="list-inline-item mr-0">
+            In
+             
+            
+            
+            
+            <a href="https://yplam.com/tags/machinelearning/">MachineLearning</a>
+            
+            
+        </li>
+        <li class="list-inline-item mx-2">/</li>
+        <li class="list-inline-item">Posted 2017-02-19</li>
+    </ul>
+    <h1 class="g-mb-30">[翻译]用户行为预测：使用机器学习技术预测付费用户</h1>
+    <div class="justify-content-center article-content">
+        <p><strong>注</strong>：本文为 <a href="http://www.strong.io/blog/predicting-customer-behavior-machine-learning-to-identify-paying-customers">Predicting customer behavior: How we use machine learning to identify paying customers before they subscribe</a> 的简单翻译版本，详细内容请阅读原文。</p>
+
+<p>本案例为 strong.io 公司的一位创业公司客户，该客户开发了一个类SaaS软件，但在经过多年的稳固发展后，他们的每月收入增长却开始变得很缓慢。他们曾经尝试改善他们的产品，但效果可能不好，因此现在将重点放在客户获取上面。</p>
+
+<p>该产品现在每月有超过3000个试用下载，但只有大约3%的用户转化为付费版。</p>
+
+<p>为了弄清是什么原因，他们开始做一个试验：雇佣一些人员，用整整一个月时间，打电话或者email给那些下载了试用版的用户，问问他们对产品的看法，并且帮助他们解决问题。这样一个月过去后，他们的转化率从3.7%上升到5.4%；同时，他们知道了其中很多用户根本对购买付费版没兴趣，他们仅仅是想使用一下免费版里面带的一些工具&ndash;他们并不是目标客户！</p>
+
+<p>他们希望 strong.io 通过技术手段将潜在的付费用户区分出来，然后让客户支持团队将精力集中在该潜在客户上。</p>
+
+<h3 id="解决方案">解决方案</h3>
+
+<p>1、记录完整的用户行为信息，每一个用户都会记录维度为70的数据。</p>
+
+<p>2、测试各种机器学习方法。使用 AUC (Area Under the Curve) 方法进行评价；使用一年的数据进行模型训练，使用随后半年的数据进行测试； 其中 Logistic 模型最好可以达到 78% AUC，随机森林模型可以达到 80% AUC，梯度提升模型可以达到 93% AUC。最后，选用了RNN， 可以达到 95% AUC。</p>
+
+<p>3、生成每个试用用户的转化概率，集成到CRM中</p>
+
+<p>4、最终，该公司的转化率上升并且稳定在7.4%.</p>
+
+<p><img src="{{ site.url }}/assets/2017/strongio.png" alt="用户行为预测" title="用户行为预测" /></p>
+    </div>
+
+
+</article>
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.6.0/styles/darcula.min.css">
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.6.0/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+
+                </div>
+
+            </div>
+        </div><div id="footer-default" class="g-bg-gray-dark-v1 g-color-white-opacity-0_8 text-center g-py-20">
+    <div class="container">
+        <div class="g-font-size-default g-mr-10 g-mb-10 g-mb-0--md">
+            <p>本站内容如非特别说明，均基于<a rel="license" target="_blank" href="http://creativecommons.org/licenses/by-sa/3.0/">Creative Commons Attribution-Share Alike 3.0 Unported License</a>发布。</p>
+        </div>
+    </div>
+</div></body>
+</section>
+</html>

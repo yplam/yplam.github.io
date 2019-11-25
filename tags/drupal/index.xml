@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Drupal on 关于互联网, Linux, 嵌入式系统, 机器学习</title>
+    <link>https://yplam.com/tags/drupal/</link>
+    <description>Recent content in Drupal on 关于互联网, Linux, 嵌入式系统, 机器学习</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    <lastBuildDate>Tue, 11 Aug 2015 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="https://yplam.com/tags/drupal/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>如何将一个Drupal网站转到Symfony</title>
+      <link>https://yplam.com/post/symfony/drupal-2-symfony/</link>
+      <pubDate>Tue, 11 Aug 2015 00:00:00 +0000</pubDate>
+      
+      <guid>https://yplam.com/post/symfony/drupal-2-symfony/</guid>
+      <description>&lt;p&gt;最近尝试将自己的一些Drupal网站转移到Symfony（这个个人博客就是其中之一），下面分享一些转移过程的心得，主要包括Drupal基本功能在Symfony上的实现。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Drupal 8服务与依赖注入</title>
+      <link>https://yplam.com/post/drupal/drupal-services-and-dependency-injection/</link>
+      <pubDate>Thu, 28 Aug 2014 00:00:00 +0000</pubDate>
+      
+      <guid>https://yplam.com/post/drupal/drupal-services-and-dependency-injection/</guid>
+      <description>&lt;p&gt;原文地址：&lt;a href=&#34;https://www.drupal.org/node/2133171&#34;&gt;Services and dependency injection in Drupal 8&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;Drupal 8 引入了服务的概念，用来解耦可复用的功能，并且可以通过在服务容器中注册这些服务，让它们可插拔与可替换。身为开发者，最佳的方式就是通过服务容器来访问Drupal提供的所有服务，这样可以保证遵循系统的解耦特性。在&lt;a href=&#34;http://symfony.com/doc/current/book/service_container.html&#34;&gt;Symfony 2的文档&lt;/a&gt;中对服务有非常好的介绍。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Drupal 专题页面模块</title>
+      <link>https://yplam.com/post/drupal/drupal-special-topic/</link>
+      <pubDate>Wed, 18 Jun 2014 00:00:00 +0000</pubDate>
+      
+      <guid>https://yplam.com/post/drupal/drupal-special-topic/</guid>
+      <description>&lt;p&gt;Drupal Special Topic 模块提供一种通用并且可定制的 Drupal 专题页面功能。&lt;/p&gt;
+
+&lt;p&gt;这里的专题页面，指的是将网站中与某个话题相关的内容聚合到一个页面中，具有特殊的布局与样式设计。国内常见的专题页面大多以区块的形式展现，不同的位置显示不同的内容列表，有链接与图文混合等展示形式。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Drupal微信公众平台模块</title>
+      <link>https://yplam.com/post/drupal/drupal-wechat/</link>
+      <pubDate>Wed, 23 Apr 2014 00:00:00 +0000</pubDate>
+      
+      <guid>https://yplam.com/post/drupal/drupal-wechat/</guid>
+      <description>&lt;p&gt;最近在用Drupal做一个微信公众平台后台，决定发扬一下开源精神，将微信部分的module分享出来，给有需要的朋友参考使用。现在还是不稳定版本，有任何建议请反馈 yplam#yplam.com 欢迎关注测试反馈：&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

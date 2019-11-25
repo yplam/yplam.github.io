@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html>
+<section class="g-bg-gray-light-v5"><head>
+	
+	<title>关于互联网, Linux, 嵌入式系统, 机器学习  | 使用 Jenkins 与 Github 对 Symfony 2 应用进行持续集成</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<meta http-equiv="x-ua-compatible" content="ie=edge">
+
+	<link rel="stylesheet" href="//stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css">
+	
+	<link rel="stylesheet" href="https://yplam.com/scss/unify.min.css">
+
+	
+
+	
+	
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-83586141-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+	
+</head>
+
+<body>    <div class="container">
+        <div class="d-sm-flex text-center">
+            <div class="align-self-center ml-auto">
+                <ul class="u-list-inline float-right g-py-20">
+                    <li class="list-inline-item g-mr-5">
+                        <a class="u-link-v5 g-color-gray-dark-v5 g-color-primary--hover" href="/">HOME</a>
+                        <i class="g-color-gray-light-v2 g-ml-5">/</i>
+                    </li>
+                    <li class="list-inline-item g-color-primary g-mr-5">
+                        <a class="u-link-v5 g-color-gray-dark-v5 g-color-primary" href="/about/">ABOUT</a>
+                        <i class="g-color-gray-light-v2 g-ml-5">/</i>
+                    </li>
+                    <li class="list-inline-item g-color-primary g-mr-5">
+                        <a class="u-link-v5 g-color-gray-dark-v5 g-color-primary" href="https://github.com/yplam">GITHUB</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+<div class="container" aria-label="Content">
+            <div class="g-bg-white">
+                <div class="g-px-35 g-py-30 g-mb-30">
+<article>
+    <ul class="list-inline g-color-gray-dark-v4">
+        <li class="list-inline-item mr-0">
+            In
+             
+            
+            
+            
+            <a href="https://yplam.com/tags/php/">PHP</a>
+            
+            
+            
+            
+            <a href="https://yplam.com/tags/symfony/">Symfony</a>
+            
+            
+        </li>
+        <li class="list-inline-item mx-2">/</li>
+        <li class="list-inline-item">Posted 2015-11-16</li>
+    </ul>
+    <h1 class="g-mb-30">使用 Jenkins 与 Github 对 Symfony 2 应用进行持续集成</h1>
+    <div class="justify-content-center article-content">
+        <p>持续集成是一种软件开发实践，对于提高软件开发效率并保障软件开发质量提供了理论基础。Jenkins 是一个开源软件项目，旨在提供一个开放易用的软件平台，使持续集成变成可能。本文记录如何使用 Jenkins 与 Github 对 Symfony 2 应用进行持续集成。</p>
+
+<p><strong>服务器环境</strong></p>
+
+<p>下面的内容基于Debian 7, Linode 2GB, PHP 5.5, Nginx 1.8, 理论上应该适用于最近版本的Debian、Ubuntu。</p>
+
+<h3 id="持续集成概述">持续集成概述</h3>
+
+<p><strong>什么是持续集成</strong></p>
+
+<p>随着软件开发复杂度的不断提高，团队开发成员间如何更好地协同工作以确保软件开发的质量已经慢慢成为开发过程中不可回避的问题。尤其是近些年来，敏捷（Agile） 在软件工程领域越来越红火，如何能再不断变化的需求中快速适应和保证软件的质量也显得尤其的重要。</p>
+
+<p>持续集成正是针对这一类问题的一种软件开发实践。它倡导团队开发成员必须经常集成他们的工作，甚至每天都可能发生多次集成。而每次的集成都是通过自动化的构建来验证，包括自动编译、发布和测试，从而尽快地发现集成错误，让团队能够更快的开发内聚的软件。</p>
+
+<p>持续集成的核心价值在于：</p>
+
+<ul>
+<li>持续集成中的任何一个环节都是自动完成的，无需太多的人工干预，有利于减少重复过程以节省时间、费用和工作量；</li>
+<li>持续集成保障了每个时间点上团队成员提交的代码是能成功集成的。换言之，任何时间点都能第一时间发现软件的集成问题，使任意时间发布可部署的软件成为了可能；</li>
+<li>持续集成还能利于软件本身的发展趋势，这点在需求不明确或是频繁性变更的情景中尤其重要，持续集成的质量能帮助团队进行有效决策，同时建立团队对开发产品的信心。</li>
+</ul>
+
+<p><strong>持续集成的原则</strong></p>
+
+<p>业界普遍认同的持续集成的原则包括：</p>
+
+<ul>
+<li>需要版本控制软件保障团队成员提交的代码不会导致集成失败。常用的版本控制软件有 IBM Rational ClearCase、CVS、Subversion 等；</li>
+<li>开发人员必须及时向版本控制库中提交代码，也必须经常性地从版本控制库中更新代码到本地；</li>
+<li>需要有专门的集成服务器来执行集成构建。根据项目的具体实际，集成构建可以被软件的修改来直接触发，也可以定时启动，如每半个小时构建一次；</li>
+<li>必须保证构建的成功。如果构建失败，修复构建过程中的错误是优先级最高的工作。一旦修复，需要手动启动一次构建。</li>
+</ul>
+
+<p><strong>持续集成系统的组成</strong></p>
+
+<p>由此可见，一个完整的构建系统必须包括：</p>
+
+<ul>
+<li>一个自动构建过程，包括自动编译、分发、部署和测试等。</li>
+<li>一个代码存储库，即需要版本控制软件来保障代码的可维护性，同时作为构建过程的素材库。</li>
+<li>一个持续集成服务器。本文中介绍的 Jenkins 就是一个配置简单和使用方便的持续集成服务器。</li>
+</ul>
+
+<p>以上内容引用自 <a href="https://www.ibm.com/developerworks/cn/java/j-lo-jenkins/">https://www.ibm.com/developerworks/cn/java/j-lo-jenkins/</a></p>
+
+<h3 id="安装jenkins">安装Jenkins</h3>
+
+<p>Jenkins 是一个开源项目，提供了一种易于使用的持续集成系统，使开发者从繁杂的集成中解脱出来，专注于更为重要的业务逻辑实现上。同时 Jenkins 能实施监控集成中存在的错误，提供详细的日志文件和提醒功能，还能用图表的形式形象地展示项目构建的趋势和稳定性。</p>
+
+<p>Debian 下 Jenkins 的安装非常简单</p>
+
+<pre><code>wget -q -O - https://jenkins-ci.org/debian/jenkins-ci.org.key | sudo apt-key add -
+sudo sh -c 'echo deb http://pkg.jenkins-ci.org/debian binary/ &gt; /etc/apt/sources.list.d/jenkins.list'
+sudo apt-get update
+sudo apt-get install jenkins
+</code></pre>
+
+<p>安装完成后，可以通过 /etc/default/jenkins 文件修改jenkins的启动参数；然后启动服务</p>
+
+<pre><code>service jenkins start
+</code></pre>
+
+<p>也可以将jenkins加入到自动启动服务中</p>
+
+<pre><code>update-rc.d jenkins defaults
+</code></pre>
+
+<p>在默认配置下，访问服务器的8080端口，就可以看到Jenkins的界面；当然，你的服务器可能只开了nginx的80端口，那么需要配置nginx反向代理，以下是一个简单的配置：</p>
+
+<pre><code>server {
+
+    listen 80;
+    server_name ****.com; # 你的服务器域名
+
+    location / {
+
+      proxy_set_header        Host $host;
+      proxy_set_header        X-Real-IP $remote_addr;
+      proxy_set_header        X-Forwarded-For $proxy_add_x_forwarded_for;
+      proxy_set_header        X-Forwarded-Proto $scheme;
+
+      proxy_pass          http://127.0.0.1:8080;
+      proxy_read_timeout  90;
+
+    }
+}
+
+</code></pre>
+
+<p>这样你就可以通过 80 端口访问jenkins。</p>
+
+<p>安装完Jenkins后你会发现，Jenkins默认没有开启任何安全认证，所以第一步就是在 Manage Jenkins &gt; Configure Global Security 中勾选 Enable security，使用 Jenkins’ own user database，Allow users to sign up，Logged-in users can do anything；然后注册、登录一个账号；再取消 Allow users to sign up选项；这里的操作有点繁琐，目的只是为了在你配置好Jenkins之前不会被别人捣乱。</p>
+
+<p><strong>配置插件与PHP库</strong></p>
+
+<p>在 Manage Jenkins &gt; Manage Plugin 的 Available 标签中搜索安装以下插件</p>
+
+<pre><code>CheckStyle
+Clover PHP
+HTML Publisher
+DRY
+JDepend
+PMD
+Violations
+xUnit
+Git
+Github
+Green Balls
+</code></pre>
+
+<p>然后安装对应的PHP库，可以手动下载或者用 PEAR :</p>
+
+<pre><code>pear channel-discover pear.pdepend.org
+pear channel-discover pear.phpmd.org
+pear channel-discover pear.phpunit.de
+pear channel-discover pear.phpdoc.org
+pear channel-discover components.ez.no
+pear channel-discover pear.symfony-project.com
+
+pear install pdepend/PHP_Depend
+pear install phpmd/PHP_PMD
+pear install phpunit/phpcpd
+pear install phpunit/phploc
+pear install --alldeps phpunit/PHP_CodeBrowser
+pear install --alldeps phpunit/PHPUnit
+pear install phpdoc/phpDocumentor-alpha
+pear install PHP_CodeSniffer
+
+</code></pre>
+
+<p>对于Symfony2 项目，我们还需要安装Symfony codeing standard，参考：<a href="https://github.com/escapestudios/Symfony2-coding-standard">https://github.com/escapestudios/Symfony2-coding-standard</a></p>
+
+<p><strong>配置ANT BUILD</strong></p>
+
+<p>在代码的根目录添加build.xml文件：</p>
+
+<pre><code>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;project name=&quot;name-of-project&quot; default=&quot;build-local&quot;&gt;
+    &lt;property name=&quot;workspace&quot; value=&quot;${basedir}&quot; /&gt;
+    &lt;property name=&quot;sourcedir&quot; value=&quot;${basedir}/src&quot; /&gt;
+    &lt;property name=&quot;builddir&quot; value=&quot;${workspace}/app/build&quot; /&gt;
+
+    &lt;target name=&quot;build&quot; depends=&quot;prepare,parameters,vendors,lint,phploc,pdepend,phpmd-ci,phpcs-ci,phpcpd,phpunit,phpcb&quot;/&gt;
+    &lt;target name=&quot;build-local&quot; depends=&quot;prepare,lint,phploc,pdepend,phpmd-ci,phpcs-ci,phpcpd,phpunit&quot;/&gt;
+
+    &lt;target name=&quot;clean&quot; description=&quot;Cleanup build artifacts&quot;&gt;
+        &lt;delete dir=&quot;${basedir}/app/build/api&quot;/&gt;
+        &lt;delete dir=&quot;${basedir}/app/build/code-browser&quot;/&gt;
+        &lt;delete dir=&quot;${basedir}/app/build/coverage&quot;/&gt;
+        &lt;delete dir=&quot;${basedir}/app/build/logs&quot;/&gt;
+        &lt;delete dir=&quot;${basedir}/app/build/pdepend&quot;/&gt;
+    &lt;/target&gt;
+
+    &lt;target name=&quot;prepare&quot; depends=&quot;clean&quot; description=&quot;Prepare for build&quot;&gt;
+        &lt;mkdir dir=&quot;${basedir}/app/build/api&quot;/&gt;
+        &lt;mkdir dir=&quot;${basedir}/app/build/code-browser&quot;/&gt;
+        &lt;mkdir dir=&quot;${basedir}/app/build/coverage&quot;/&gt;
+        &lt;mkdir dir=&quot;${basedir}/app/build/logs&quot;/&gt;
+        &lt;mkdir dir=&quot;${basedir}/app/build/pdepend&quot;/&gt;
+        &lt;mkdir dir=&quot;${basedir}/app/build/phpdox&quot;/&gt;
+    &lt;/target&gt;
+
+    &lt;target name=&quot;phpunit&quot; description=&quot;Run unit tests with PHPUnit&quot;&gt;
+        &lt;exec executable=&quot;phpunit&quot; failonerror=&quot;true&quot;&gt;
+            &lt;arg value=&quot;-c&quot; /&gt;
+            &lt;arg path=&quot;app&quot; /&gt;
+        &lt;/exec&gt;
+    &lt;/target&gt;
+
+    &lt;target name=&quot;lint&quot; description=&quot;Perform syntax check of sourcecode files&quot;&gt;
+        &lt;apply executable=&quot;php&quot; failonerror=&quot;true&quot;&gt;
+            &lt;arg value=&quot;-l&quot; /&gt;
+            &lt;fileset dir=&quot;${sourcedir}&quot;&gt;
+                &lt;include name=&quot;**/*.php&quot; /&gt;
+                &lt;modified /&gt;
+            &lt;/fileset&gt;
+            &lt;fileset dir=&quot;${basedir}/src/&quot;&gt;
+                &lt;include name=&quot;**/*Test.php&quot; /&gt;
+                &lt;modified /&gt;
+            &lt;/fileset&gt;
+        &lt;/apply&gt;
+    &lt;/target&gt;
+
+    &lt;target name=&quot;phploc&quot; description=&quot;Measure project size using PHPLOC&quot;&gt;
+        &lt;exec executable=&quot;phploc&quot;&gt;
+            &lt;arg value=&quot;--log-csv&quot; /&gt;
+            &lt;arg value=&quot;${basedir}/app/build/logs/phploc.csv&quot; /&gt;
+            &lt;arg path=&quot;${basedir}/src&quot; /&gt;
+        &lt;/exec&gt;
+    &lt;/target&gt;
+
+    &lt;target name=&quot;pdepend&quot; description=&quot;Calculate software metrics using PHP_Depend&quot;&gt;
+        &lt;exec executable=&quot;pdepend&quot;&gt;
+            &lt;arg value=&quot;--jdepend-xml=${basedir}/app/build/logs/jdepend.xml&quot; /&gt;
+            &lt;arg value=&quot;--jdepend-chart=${basedir}/app/build/pdepend/dependencies.svg&quot; /&gt;
+            &lt;arg value=&quot;--overview-pyramid=${basedir}/app/build/pdepend/overview-pyramid.svg&quot; /&gt;
+            &lt;arg path=&quot;${basedir}/src&quot; /&gt;
+        &lt;/exec&gt;
+    &lt;/target&gt;
+
+    &lt;target name=&quot;phpmd-ci&quot; description=&quot;Perform project mess detection using PHPMD creating a log file for the continuous integration server&quot;&gt;
+        &lt;exec executable=&quot;phpmd&quot;&gt;
+            &lt;arg path=&quot;${basedir}/src&quot; /&gt;
+            &lt;arg value=&quot;xml&quot; /&gt;
+            &lt;arg value=&quot;${basedir}/app/Resources/jenkins/phpmd.xml&quot; /&gt;
+            &lt;arg value=&quot;--reportfile&quot; /&gt;
+            &lt;arg value=&quot;${basedir}/app/build/logs/pmd.xml&quot; /&gt;
+        &lt;/exec&gt;
+    &lt;/target&gt;
+
+    &lt;target name=&quot;phpcs-ci&quot; description=&quot;Find coding standard violations using PHP_CodeSniffer creating a log file for the continuous integration server&quot;&gt;
+        &lt;exec executable=&quot;phpcs&quot;&gt;
+            &lt;arg value=&quot;--report=checkstyle&quot; /&gt;
+            &lt;arg value=&quot;--report-file=${basedir}/app/build/logs/checkstyle.xml&quot; /&gt;
+            &lt;arg value=&quot;--standard=Symfony2&quot; /&gt;
+            &lt;arg path=&quot;${basedir}/src&quot; /&gt;
+        &lt;/exec&gt;
+    &lt;/target&gt;
+
+    &lt;target name=&quot;phpcpd&quot; description=&quot;Find duplicate code using PHPCPD&quot;&gt;
+        &lt;exec executable=&quot;phpcpd&quot;&gt;
+            &lt;arg value=&quot;--log-pmd&quot; /&gt;
+            &lt;arg value=&quot;${basedir}/app/build/logs/pmd-cpd.xml&quot; /&gt;
+            &lt;arg path=&quot;${basedir}/src&quot; /&gt;
+        &lt;/exec&gt;
+    &lt;/target&gt;
+
+    &lt;target name=&quot;phpcb&quot; description=&quot;Aggregate tool output with PHP_CodeBrowser&quot;&gt;
+        &lt;exec executable=&quot;phpcb&quot;&gt;
+            &lt;arg value=&quot;--log&quot; /&gt;
+            &lt;arg path=&quot;${basedir}/app/build/logs&quot; /&gt;
+            &lt;arg value=&quot;--source&quot; /&gt;
+            &lt;arg path=&quot;${basedir}/src&quot; /&gt;
+            &lt;arg value=&quot;--output&quot; /&gt;
+            &lt;arg path=&quot;${basedir}/app/build/code-browser&quot; /&gt;
+        &lt;/exec&gt;
+    &lt;/target&gt;
+
+
+    &lt;target name=&quot;vendors&quot; description=&quot;Update vendors&quot;&gt;
+        &lt;exec executable=&quot;composer&quot; failonerror=&quot;true&quot;&gt;
+            &lt;arg value=&quot;update&quot; /&gt;
+        &lt;/exec&gt;
+    &lt;/target&gt;
+
+    &lt;target name=&quot;parameters&quot; description=&quot;Copy parameters&quot;&gt;
+        &lt;exec executable=&quot;cp&quot; failonerror=&quot;true&quot;&gt;
+            &lt;arg path=&quot;app/config/parameters.yml.dist&quot; /&gt;
+            &lt;arg path=&quot;app/config/parameters.yml&quot; /&gt;
+        &lt;/exec&gt;
+    &lt;/target&gt;
+
+&lt;/project&gt;
+</code></pre>
+
+<p>添加 app/Resources/jenkins/phpmd.xml 文件：</p>
+
+<pre><code>
+&lt;?xml version=&quot;1.0&quot;?&gt;
+&lt;ruleset name=&quot;Symfony2 ruleset&quot; xmlns=&quot;http://pmd.sf.net/ruleset/1.0.0&quot; xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+         xsi:schemaLocation=&quot;http://pmd.sf.net/ruleset/1.0.0 http://pmd.sf.net/ruleset_xml_schema.xsd&quot; xsi:noNamespaceSchemaLocation=&quot;http://pmd.sf.net/ruleset_xml_schema.xsd&quot;&gt;
+    &lt;description&gt;
+        Custom ruleset.
+    &lt;/description&gt;
+
+    &lt;rule ref=&quot;rulesets/design.xml&quot; /&gt;
+    &lt;rule ref=&quot;rulesets/unusedcode.xml&quot; /&gt;
+    &lt;rule ref=&quot;rulesets/codesize.xml&quot; /&gt;
+    &lt;rule ref=&quot;rulesets/naming.xml&quot; /&gt;
+
+&lt;/ruleset&gt;
+
+</code></pre>
+
+<p>以上的配置仅作为参考，您可以根据自己的项目有所增删；需要注意的是，上面配置中，要求 app/config/parameters.yml.dist 中的内容为测试机上面的环境配置，譬如：当你的phpunit中需要跟数据库有交互，这些配置选项必须正确。</p>
+
+<p><strong>配置Github</strong></p>
+
+<p>在开始创建Jenkins工程前，需要先确保你的服务器能正常访问Github。</p>
+
+<ul>
+<li>点击 Manage Jenkins &gt; Configure System 找到 GitHub Plugin Configuration，选择Add github server config</li>
+<li>选择下边的 Advanced&hellip; 在 Additional actions 中选择cover login and password to token，输入github的用户名与密码，点击create token，会生成一个token供以后使用（这个可以在github后台进行管理）</li>
+<li>由于新生成的token不会自动刷新，在此需要先保存，然后重新进入此配置页面，这样在github配置的Credentials选项里就会多了上面生成的token</li>
+<li>选择该token，然后点击validate credentials，会返回验证成功的信息</li>
+</ul>
+
+<p>完成上面步骤后Jenkins就有权限访问你的github项目，譬如Jenkins可以自动更新项目的Webhooks，而无需在Github网站进行手动操作。</p>
+
+<p>另外，如果你使用的时私有工程，那么你需要为Jenkins用户配置访问github的ssh keys，详情请参考：</p>
+
+<p><strong>创建Jenkins工程</strong></p>
+
+<ul>
+<li>点击 Create New Job，选择 Free Style Project</li>
+<li>配置github相关地址</li>
+<li>选择 Build when a change is pushed to GitHub</li>
+<li>Build类型选择ANT，地址为build.xml</li>
+<li>根据需要添加POST Action，如 CheckStype  **/app/build/logs/checkstyle.xml</li>
+<li>pmd  **/app/build/logs/pmd.xml</li>
+<li>Duplicate code results **/app/build/logs/cpd.xml</li>
+</ul>
+
+<p><strong>运行</strong></p>
+
+<p>配置完成后，点击Build Now开始运行，此时可以在该任务页面中打开终端查看运行状态，进行调错。如无意外，你每次push到github后就会自动触发Jenkins对项目进行Build。</p>
+
+<p><strong>安全配置</strong></p>
+
+<p>至此，Jenkins已经可以正常运行，然而，你会发现：就算是没有登录的用户，都可以随意的查看你网站上的项目概况，这对于私有项目来说很不好，因此我们需要配置基于角色的权限管理。</p>
+
+<ul>
+<li>安装 Role-based Authorization Strategy 插件</li>
+<li>在安全配置处启用 Role-Based Strategy</li>
+<li>Manage Jenkins &gt; Manage and Assign Roles 中按需进行配置，如果只有一个用户，也可以使用默认配置</li>
+</ul>
+
+<p>这样，没登录用户将无法查看关于Jenkins的项目信息。</p>
+
+<p><strong>参考资料</strong></p>
+
+<p><a href="http://blog.lazycloud.net/en/using-jenkins-for-a-symfony2-project/">http://blog.lazycloud.net/en/using-jenkins-for-a-symfony2-project/</a></p>
+    </div>
+
+
+</article>
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.6.0/styles/darcula.min.css">
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.6.0/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+
+                </div>
+
+            </div>
+        </div><div id="footer-default" class="g-bg-gray-dark-v1 g-color-white-opacity-0_8 text-center g-py-20">
+    <div class="container">
+        <div class="g-font-size-default g-mr-10 g-mb-10 g-mb-0--md">
+            <p>本站内容如非特别说明，均基于<a rel="license" target="_blank" href="http://creativecommons.org/licenses/by-sa/3.0/">Creative Commons Attribution-Share Alike 3.0 Unported License</a>发布。</p>
+        </div>
+    </div>
+</div></body>
+</section>
+</html>

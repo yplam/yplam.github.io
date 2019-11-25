@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Mbed on 关于互联网, Linux, 嵌入式系统, 机器学习</title>
+    <link>https://yplam.com/tags/mbed/</link>
+    <description>Recent content in Mbed on 关于互联网, Linux, 嵌入式系统, 机器学习</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    <lastBuildDate>Sat, 10 Nov 2018 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="https://yplam.com/tags/mbed/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Mbed Bootloader配置笔记</title>
+      <link>https://yplam.com/post/mbed/mbed-custom-bootloader/</link>
+      <pubDate>Sat, 10 Nov 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://yplam.com/post/mbed/mbed-custom-bootloader/</guid>
+      <description>&lt;p&gt;此笔记记录 Mbed OS 在 STM32F405RG 下配置 Bootloader 的过程。 Mbed OS 是 Arm 公司推出的专门面向 Arm 微处理器以及物联网应用的开源实时操作系统。&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

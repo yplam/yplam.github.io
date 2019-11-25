@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Tags on 关于互联网, Linux, 嵌入式系统, 机器学习</title>
+    <link>https://yplam.com/tags/</link>
+    <description>Recent content in Tags on 关于互联网, Linux, 嵌入式系统, 机器学习</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    <lastBuildDate>Sat, 06 Apr 2019 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="https://yplam.com/tags/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>C&#43;&#43;</title>
+      <link>https://yplam.com/tags/c&#43;&#43;/</link>
+      <pubDate>Sat, 06 Apr 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://yplam.com/tags/c&#43;&#43;/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Chromium,</title>
+      <link>https://yplam.com/tags/chromium/</link>
+      <pubDate>Sat, 06 Apr 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://yplam.com/tags/chromium/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Mbed</title>
+      <link>https://yplam.com/tags/mbed/</link>
+      <pubDate>Sat, 10 Nov 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://yplam.com/tags/mbed/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>MachineLearning</title>
+      <link>https://yplam.com/tags/machinelearning/</link>
+      <pubDate>Wed, 13 Jun 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://yplam.com/tags/machinelearning/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>PredictionIO</title>
+      <link>https://yplam.com/tags/predictionio/</link>
+      <pubDate>Wed, 13 Jun 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://yplam.com/tags/predictionio/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>PHP</title>
+      <link>https://yplam.com/tags/php/</link>
+      <pubDate>Fri, 01 Dec 2017 00:00:00 +0000</pubDate>
+      
+      <guid>https://yplam.com/tags/php/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Symfony</title>
+      <link>https://yplam.com/tags/symfony/</link>
+      <pubDate>Fri, 01 Dec 2017 00:00:00 +0000</pubDate>
+      
+      <guid>https://yplam.com/tags/symfony/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>ROS</title>
+      <link>https://yplam.com/tags/ros/</link>
+      <pubDate>Sat, 25 Mar 2017 00:00:00 +0000</pubDate>
+      
+      <guid>https://yplam.com/tags/ros/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>UserProfiling</title>
+      <link>https://yplam.com/tags/userprofiling/</link>
+      <pubDate>Sat, 11 Feb 2017 00:00:00 +0000</pubDate>
+      
+      <guid>https://yplam.com/tags/userprofiling/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>HTML5</title>
+      <link>https://yplam.com/tags/html5/</link>
+      <pubDate>Sun, 11 Sep 2016 00:00:00 +0000</pubDate>
+      
+      <guid>https://yplam.com/tags/html5/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Javascript</title>
+      <link>https://yplam.com/tags/javascript/</link>
+      <pubDate>Sun, 11 Sep 2016 00:00:00 +0000</pubDate>
+      
+      <guid>https://yplam.com/tags/javascript/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>ELK</title>
+      <link>https://yplam.com/tags/elk/</link>
+      <pubDate>Fri, 09 Sep 2016 00:00:00 +0000</pubDate>
+      
+      <guid>https://yplam.com/tags/elk/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Embedded</title>
+      <link>https://yplam.com/tags/embedded/</link>
+      <pubDate>Tue, 23 Feb 2016 00:00:00 +0000</pubDate>
+      
+      <guid>https://yplam.com/tags/embedded/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Linux</title>
+      <link>https://yplam.com/tags/linux/</link>
+      <pubDate>Thu, 29 Oct 2015 00:00:00 +0000</pubDate>
+      
+      <guid>https://yplam.com/tags/linux/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Nginx</title>
+      <link>https://yplam.com/tags/nginx/</link>
+      <pubDate>Thu, 29 Oct 2015 00:00:00 +0000</pubDate>
+      
+      <guid>https://yplam.com/tags/nginx/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Redis</title>
+      <link>https://yplam.com/tags/redis/</link>
+      <pubDate>Wed, 28 Oct 2015 00:00:00 +0000</pubDate>
+      
+      <guid>https://yplam.com/tags/redis/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>AWS</title>
+      <link>https://yplam.com/tags/aws/</link>
+      <pubDate>Thu, 27 Aug 2015 00:00:00 +0000</pubDate>
+      
+      <guid>https://yplam.com/tags/aws/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Apache</title>
+      <link>https://yplam.com/tags/apache/</link>
+      <pubDate>Tue, 25 Aug 2015 00:00:00 +0000</pubDate>
+      
+      <guid>https://yplam.com/tags/apache/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Drupal</title>
+      <link>https://yplam.com/tags/drupal/</link>
+      <pubDate>Tue, 11 Aug 2015 00:00:00 +0000</pubDate>
+      
+      <guid>https://yplam.com/tags/drupal/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Discuz</title>
+      <link>https://yplam.com/tags/discuz/</link>
+      <pubDate>Wed, 26 Nov 2014 00:00:00 +0000</pubDate>
+      
+      <guid>https://yplam.com/tags/discuz/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>I</title>
+      <link>https://yplam.com/tags/i/</link>
+      <pubDate>Sat, 01 Jan 2011 00:00:00 +0000</pubDate>
+      
+      <guid>https://yplam.com/tags/i/</guid>
+      <description></description>
+    </item>
+    
+  </channel>
+</rss>
