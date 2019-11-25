@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Redis on 关于互联网, Linux, 嵌入式系统, 机器学习</title>
+    <title>Redis on YP.Lam</title>
     <link>https://yplam.com/tags/redis/</link>
-    <description>Recent content in Redis on 关于互联网, Linux, 嵌入式系统, 机器学习</description>
+    <description>Recent content in Redis on YP.Lam</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
     <lastBuildDate>Wed, 28 Oct 2015 00:00:00 +0000</lastBuildDate>
