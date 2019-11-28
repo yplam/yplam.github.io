@@ -37,12 +37,12 @@ if (!doNotTrack) {
                         <a class="u-link-v5 g-color-gray-dark-v5 g-color-primary--hover" href="/">HOME</a>
                         <i class="g-color-gray-light-v2 g-ml-5">/</i>
                     </li>
-                    <li class="list-inline-item g-color-primary g-mr-5">
-                        <a class="u-link-v5 g-color-gray-dark-v5 g-color-primary" href="/about/">ABOUT</a>
+                    <li class="list-inline-item g-mr-5">
+                        <a class="u-link-v5 g-color-gray-dark-v5 g-color-primary--hover" href="/about/">ABOUT</a>
                         <i class="g-color-gray-light-v2 g-ml-5">/</i>
                     </li>
-                    <li class="list-inline-item g-color-primary g-mr-5">
-                        <a class="u-link-v5 g-color-gray-dark-v5 g-color-primary" href="https://github.com/yplam">GITHUB</a>
+                    <li class="list-inline-item">
+                        <a class="u-link-v5 g-color-gray-dark-v5 g-color-primary--hover" href="https://github.com/yplam">GITHUB</a>
                     </li>
                 </ul>
             </div>
@@ -80,6 +80,7 @@ if (!doNotTrack) {
 <li><a href="#no7">Ubuntu 下切换 PHP 版本</a></li>
 <li><a href="#no8">ttyACM 插入后被占用问题</a></li>
 <li><a href="#no9">P52 Manjaro 外接显示器输出问题</a></li>
+<li><a href="#no10">Manjaro zsh 新标签页保持路径</a></li>
 </ul>
 
 <p><a name="no1"/></p>
@@ -251,6 +252,16 @@ Section &quot;Device&quot;
     #Option &quot;AllowEmptyInitialConfiguration&quot;
     #Option &quot;ConnectedMonitor&quot; &quot;DFP&quot;
 EndSection
+
+</code></pre>
+
+<p><a name="no10"/></p>
+
+<h3 id="manjaro-zsh-新标签页保持路径">Manjaro zsh 新标签页保持路径</h3>
+
+<p>Manjaro 下默认配置的 zsh，当使用 ctrl-T 打开新标签时，会自动将路径变成用户主目录，会稍微影响效率，修改 ~/.zshrc , 增加下面配置行，可以使新标签依然保持原路径：</p>
+
+<pre><code>[[ -f /etc/profile.d/vte.sh ]] &amp;&amp; . /etc/profile.d/vte.sh
 
 </code></pre>
     </div>
