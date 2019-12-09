@@ -6,10 +6,28 @@
     <description>Recent content in Tags on YP.Lam</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Sat, 06 Apr 2019 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Tue, 03 Dec 2019 15:32:35 +0800</lastBuildDate>
     
 	<atom:link href="https://yplam.com/tags/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>MachineLearning</title>
+      <link>https://yplam.com/tags/machinelearning/</link>
+      <pubDate>Tue, 03 Dec 2019 15:32:35 +0800</pubDate>
+      
+      <guid>https://yplam.com/tags/machinelearning/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Tensorflow</title>
+      <link>https://yplam.com/tags/tensorflow/</link>
+      <pubDate>Tue, 03 Dec 2019 15:32:35 +0800</pubDate>
+      
+      <guid>https://yplam.com/tags/tensorflow/</guid>
+      <description></description>
+    </item>
     
     <item>
       <title>C&#43;&#43;</title>
@@ -21,7 +39,7 @@
     </item>
     
     <item>
-      <title>Chromium,</title>
+      <title>Chromium</title>
       <link>https://yplam.com/tags/chromium/</link>
       <pubDate>Sat, 06 Apr 2019 00:00:00 +0000</pubDate>
       
@@ -35,15 +53,6 @@
       <pubDate>Sat, 10 Nov 2018 00:00:00 +0000</pubDate>
       
       <guid>https://yplam.com/tags/mbed/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>MachineLearning</title>
-      <link>https://yplam.com/tags/machinelearning/</link>
-      <pubDate>Wed, 13 Jun 2018 00:00:00 +0000</pubDate>
-      
-      <guid>https://yplam.com/tags/machinelearning/</guid>
       <description></description>
     </item>
     

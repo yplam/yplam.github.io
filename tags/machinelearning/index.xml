@@ -6,10 +6,21 @@
     <description>Recent content in MachineLearning on YP.Lam</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Wed, 13 Jun 2018 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Tue, 03 Dec 2019 15:32:35 +0800</lastBuildDate>
     
 	<atom:link href="https://yplam.com/tags/machinelearning/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Tensorflow Serving Nsfw</title>
+      <link>https://yplam.com/post/tensorflow/tensorflow-serving-nsfw/</link>
+      <pubDate>Tue, 03 Dec 2019 15:32:35 +0800</pubDate>
+      
+      <guid>https://yplam.com/post/tensorflow/tensorflow-serving-nsfw/</guid>
+      <description>&lt;p&gt;两年多前曾经在服务器上部署了个 Tensorflow 模型，由于 Tensorflow serving 刚公布不久，并且还没阅读相关文档，所以当时就粗暴的用 Flask 写了个接口就放到线上跑了两年。&lt;/p&gt;
+
+&lt;p&gt;最近又需要在服务器上部署些模型，决定用回比较官方的方式，研究一下 Tensorflow serving。&lt;/p&gt;</description>
+    </item>
     
     <item>
       <title>PredictionIO Universal Recommender 笔记</title>
@@ -44,10 +55,10 @@ AUC
     
     <item>
       <title>Tensorflow Object Detection API 入门笔记 - 基于 Google Cloud 与 阿里云</title>
-      <link>https://yplam.com/post/machinelearning/tensorflow-object-detection-note/</link>
+      <link>https://yplam.com/post/tensorflow/tensorflow-object-detection-note/</link>
       <pubDate>Sat, 21 Oct 2017 00:00:00 +0000</pubDate>
       
-      <guid>https://yplam.com/post/machinelearning/tensorflow-object-detection-note/</guid>
+      <guid>https://yplam.com/post/tensorflow/tensorflow-object-detection-note/</guid>
       <description>&lt;p&gt;跟风关注机器学习已有一段时间，最近需要做一个图像识别的项目，刚好 Google 开源了 &lt;a href=&#34;https://github.com/tensorflow/models/tree/master/research/object_detection&#34;&gt;Tensorflow Object Detection API&lt;/a&gt; ，
 于是在此基础上做了一次尝试。本笔记从一名程序员的角度记录一次基于 Tensorflow Object Detection API 的图像物体识别项目过程，项目使用 Google Cloud Machine Learning 进行模型训练，
 使用阿里云 GPU 服务器进行模型测试评估。&lt;/p&gt;</description>
@@ -93,10 +104,10 @@ AUC
     
     <item>
       <title>AWS TensorFlow 安装与测试</title>
-      <link>https://yplam.com/post/machinelearning/aws-cuda-tensorflow/</link>
+      <link>https://yplam.com/post/tensorflow/aws-cuda-tensorflow/</link>
       <pubDate>Mon, 12 Dec 2016 00:00:00 +0000</pubDate>
       
-      <guid>https://yplam.com/post/machinelearning/aws-cuda-tensorflow/</guid>
+      <guid>https://yplam.com/post/tensorflow/aws-cuda-tensorflow/</guid>
       <description>&lt;p&gt;最近迷上了机器学习，花了不少时间学习相关的基础内容；虽然数学跟不上，也不妨碍跟风玩玩各位大牛的开源成果。
 本文记录了购买AWS GPU服务器，安装cuda、 TensorFlow，运行 Neural Style 测试的过程。&lt;/p&gt;</description>
     </item>

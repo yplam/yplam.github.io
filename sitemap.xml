@@ -3,12 +3,37 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
-    <loc>https://yplam.com/tags/c&#43;&#43;/</loc>
-    <lastmod>2019-04-06T00:00:00+00:00</lastmod>
+    <loc>https://yplam.com/tags/machinelearning/</loc>
+    <lastmod>2019-12-03T15:32:35+08:00</lastmod>
   </url>
   
   <url>
-    <loc>https://yplam.com/post/chromium/chromium-image-decode-error/</loc>
+    <loc>https://yplam.com/post/</loc>
+    <lastmod>2019-12-03T15:32:35+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://yplam.com/tags/</loc>
+    <lastmod>2019-12-03T15:32:35+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://yplam.com/tags/tensorflow/</loc>
+    <lastmod>2019-12-03T15:32:35+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://yplam.com/post/tensorflow/tensorflow-serving-nsfw/</loc>
+    <lastmod>2019-12-03T15:32:35+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://yplam.com/</loc>
+    <lastmod>2019-12-03T15:32:35+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://yplam.com/tags/c&#43;&#43;/</loc>
     <lastmod>2019-04-06T00:00:00+00:00</lastmod>
   </url>
   
@@ -18,17 +43,7 @@
   </url>
   
   <url>
-    <loc>https://yplam.com/post/</loc>
-    <lastmod>2019-04-06T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://yplam.com/tags/</loc>
-    <lastmod>2019-04-06T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://yplam.com/</loc>
+    <loc>https://yplam.com/post/chromium/chromium-image-decode-error/</loc>
     <lastmod>2019-04-06T00:00:00+00:00</lastmod>
   </url>
   
@@ -60,11 +75,6 @@
   <url>
     <loc>https://yplam.com/post/mbed/mbed-custom-bootloader/</loc>
     <lastmod>2018-11-10T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://yplam.com/tags/machinelearning/</loc>
-    <lastmod>2018-06-13T00:00:00+00:00</lastmod>
   </url>
   
   <url>
@@ -103,7 +113,7 @@
   </url>
   
   <url>
-    <loc>https://yplam.com/post/machinelearning/tensorflow-object-detection-note/</loc>
+    <loc>https://yplam.com/post/tensorflow/tensorflow-object-detection-note/</loc>
     <lastmod>2017-10-21T00:00:00+00:00</lastmod>
   </url>
   
@@ -148,7 +158,7 @@
   </url>
   
   <url>
-    <loc>https://yplam.com/post/machinelearning/aws-cuda-tensorflow/</loc>
+    <loc>https://yplam.com/post/tensorflow/aws-cuda-tensorflow/</loc>
     <lastmod>2016-12-12T00:00:00+00:00</lastmod>
   </url>
   
