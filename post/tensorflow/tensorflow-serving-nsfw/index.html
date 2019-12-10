@@ -150,6 +150,8 @@ signature_def['serving_default']:
 <pre><code>{&quot;instances&quot;: [&quot;_9j_4AAQSkZ......UUCP__Z&quot;]}
 </code></pre>
 
+<p>需要注意的是这里的base64 encode图片需要为urlsafe格式，如果客户端为PHP的话需要对encode的字符串做替换处理。</p>
+
 <p>然后测试一下：</p>
 
 <pre><code>curl -d '@test.txt' -X POST http://localhost:8501/v1/models/nsfw:predict
