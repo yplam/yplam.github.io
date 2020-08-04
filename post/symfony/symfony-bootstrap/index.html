@@ -12,8 +12,6 @@
 	<link rel="stylesheet" href="https://yplam.com/scss/unify.min.css">
 
 	
-
-	
 	
 <script type="application/javascript">
 var doNotTrack = false;
@@ -74,9 +72,7 @@ if (!doNotTrack) {
     <h1 class="g-mb-30">Symfony2 启动流程分析</h1>
     <div class="justify-content-center article-content">
         <p>Symfony2 启动流程分析</p>
-
 <p><strong>入口文件app.php</strong></p>
-
 <p><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-php" data-lang="php">    <span style="color:#75715e">&lt;?php</span>
     
     <span style="color:#66d9ef">use</span> <span style="color:#a6e22e">Symfony\Component\ClassLoader\ApcClassLoader</span>;
@@ -105,7 +101,6 @@ if (!doNotTrack) {
     $kernel<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">terminate</span>($request, $response);
 </code></pre></div>
 入口文件app_dev.php</p>
-
 <p><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-php" data-lang="php">    <span style="color:#75715e">&lt;?php</span>
     
     <span style="color:#66d9ef">use</span> <span style="color:#a6e22e">Symfony\Component\HttpFoundation\Request</span>;
@@ -139,15 +134,10 @@ if (!doNotTrack) {
     $kernel<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">terminate</span>($request, $response);
 </code></pre></div>
 app_dev.php相对于app.php的主要区别在于 environment 与 debug 参数。</p>
-
 <p><strong>app/bootstrap.php.cache：</strong></p>
-
 <p>bootstrap.php.cache 在运行composer update或者composer install 的时候由脚本生成，主要的功能是将Symfony中必须要用到的核心类打包到单个文件中，同时提供classloader。</p>
-
 <p><strong>app/AppKernel.php</strong></p>
-
 <p>扩展自Kernel类，对系统进行配置。创建AppKernel的时候会传入environment 与 debug 参数，environment参数会影响配置文件路径，缓存文件路径，debug参数会影响到缓存文件路径以及系统对cache的处理。</p>
-
 <p><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-php" data-lang="php">    <span style="color:#75715e">&lt;?php</span>
     
     <span style="color:#66d9ef">use</span> <span style="color:#a6e22e">Symfony\Component\HttpKernel\Kernel</span>;
@@ -185,21 +175,13 @@ app_dev.php相对于app.php的主要区别在于 environment 与 debug 参数�
     }
 </code></pre></div>
 <strong>$kernel-&gt;loadClassCache();</strong></p>
-
 <p>做一个需要加载cache的标记，但不会进行加载工作。</p>
-
 <p><strong>Request::enableHttpMethodParameterOverride()</strong></p>
-
 <p>是否允许通过发送的参数来修改请求的方法，只对POST有效。</p>
-
 <p><strong>$request = Request::createFromGlobals();</strong></p>
-
 <p>创建request对象，通过获取$_GET,$_POST等数据，创建request对象。</p>
-
 <p><strong>$response = $kernel-&gt;handle($request);</strong></p>
-
 <p>处理请求。symfony内核在此处启动。</p>
-
 <p><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-php" data-lang="php">        public function handle(Request $request, $type = HttpKernelInterface::MASTER_REQUEST, $catch = true)
         {
             if (false === $this-&gt;booted) {
@@ -209,7 +191,6 @@ app_dev.php相对于app.php的主要区别在于 environment 与 debug 参数�
             return $this-&gt;getHttpKernel()-&gt;handle($request, $type, $catch);
         }</code></pre></div>
 boot方法启动内核，进行初始化配置</p>
-
 <p><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-php" data-lang="php">        public function boot()
         {
             if (true === $this-&gt;booted) {
@@ -234,7 +215,6 @@ boot方法启动内核，进行初始化配置</p>
             $this-&gt;booted = true;
         }</code></pre></div>
 doLoadClassCache会根据前面loadClassCache的调用，将加载cache目录下的classes.php，如果缓存不存在，则根据classes.map文件来生成。如果debug=true则还会检测每个classes对应原文件的修改时间来判断是否需要重新生成。 初始化bundle，主要是处理bundle的继承关系</p>
-
 <p><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-php" data-lang="php">        /**
          * Initializes the data structures related to the bundle management.
          *
@@ -298,7 +278,6 @@ doLoadClassCache会根据前面loadClassCache的调用，将加载cache目录下
     
         }</code></pre></div>
 初始化container，为symfony的核心，原理与实现方式请参考下面的文章。基本流程为：如果container缓存存在，则直接使用缓存，如果不存在则创建container，获取每个bundle与container相关的信息，加载配置文件，配置每个bundle，打包生成缓存。 <a href="http://fabien.potencier.org/article/13/introduction-to-the-symfony-service-container">Introduction to the Symfony Service Container</a> <a href="http://symfony.com/doc/current/components/dependency_injection/index.html">Dependency Injection</a>  </p>
-
 <p><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-php" data-lang="php">        /**
          * Initializes the service container.
          *

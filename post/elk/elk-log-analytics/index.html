@@ -12,8 +12,6 @@
 	<link rel="stylesheet" href="https://yplam.com/scss/unify.min.css">
 
 	
-
-	
 	
 <script type="application/javascript">
 var doNotTrack = false;
@@ -69,17 +67,11 @@ if (!doNotTrack) {
     <h1 class="g-mb-30">ELK日志分析入门</h1>
     <div class="justify-content-center article-content">
         <p>ELK Stack 由 Elastic.co 公司名下的 Elasticsearch、Logstash、Kibana 三个开源软件的组成，用于日志的快速搜索和分析。</p>
-
-<p><img src="{{ site.url }}/assets/2016/elk.png" alt="ELK stack" title="ELK stack" /></p>
-
+<p>![ELK stack]({{ site.url }}/assets/2016/elk.png &ldquo;ELK stack&rdquo;)</p>
 <p>本文整理了 ELK 的相关基础知识，并且结合最近对nginx日志分析的一个需求进行记录。</p>
-
 <h2 id="elk-简介">ELK 简介</h2>
-
 <p>ELK Stack 是 Elasticsearch、Logstash、Kibana 三个开源软件的组合。在实时数据检索和分析场合，三者通常是配合共用，而且又都先后归于 Elastic.co 公司名下，故有此简称。</p>
-
 <p>ELK Stack 在最近两年迅速崛起，成为机器数据分析，或者说实时日志处理领域，开源界的第一选择。和传统的日志处理方案相比，ELK Stack 具有如下几个优点：</p>
-
 <ul>
 <li>处理方式灵活。Elasticsearch 是实时全文索引，不需要像 storm 那样预先编程才能使用；</li>
 <li>配置简易上手。Elasticsearch 全部采用 JSON 接口，Logstash 是 Ruby DSL 设计，都是目前业界最通用的配置语法设计；</li>
@@ -87,25 +79,16 @@ if (!doNotTrack) {
 <li>集群线性扩展。不管是 Elasticsearch 集群还是 Logstash 集群都是可以线性扩展的；</li>
 <li>前端操作炫丽。Kibana 界面上，只需要点击鼠标，就可以完成搜索、聚合功能，生成炫丽的仪表板。</li>
 </ul>
-
 <p>摘自 <a href="http://kibana.logstash.es/content/">ELKstack 中文指南</a></p>
-
 <h2 id="使用elk的原因">使用ELK的原因</h2>
-
 <p>公司的资讯网站运行在一个相对老旧的CMS上，虽然有记录nginx访问日志，但通常是用于数据后分析上，对服务器突发的CPU、带宽暴涨，缺乏快速的分析响应。使用ELK后可以很直观的在Kibana面板
 上看到关于网站访问的实时数据，并且可以针对重点需求设置特定面板，通过快速查看实时日志分析各种服务器资源波动原因。</p>
-
 <h2 id="elk-安装">ELK 安装</h2>
-
 <p>ELK的安装相对简单，只需要安装好java，然后添加官方源就可以使用系统自带的包管理工具安装。</p>
-
 <p>详细安装过程可以参考下面两个链接 <a href="https://www.digitalocean.com/community/tutorials/how-to-install-elasticsearch-logstash-and-kibana-elk-stack-on-ubuntu-14-04">ubuntu</a>, <a href="https://developers.redhat.com/blog/2016/06/07/how-to-install-elastic-stack-elk-on-red-hat-enterprise-linux-rhel/">Centos</a></p>
-
 <h2 id="logstash">Logstash</h2>
-
 <p>Logstash 可以看作是一个ETL工具，负责对日志的抽取、转换、加载，在ELK栈中，Logstash 负责监听日志文件，从日志文件中抽取有用数据，拆分，转换，然后保存到 Elasticsearch。Logstash 除了可以监听日志文件以外，
 还可以跟filebeat等工具配合使用，将多个服务器的日志集合到一起，再中转存储。Logstash 会将日志按天来生成 Type，添加到索引中。</p>
-
 <pre><code>input {
     beats {
 		host =&gt; &quot;1.2.3.4&quot;
@@ -133,12 +116,8 @@ output {
     } 
 }
 
-</code></pre>
-
-<h2 id="elasticsearch">Elasticsearch</h2>
-
+</code></pre><h2 id="elasticsearch">Elasticsearch</h2>
 <p>在Logstash发送日志信息过来之前，Elasticsearch 需要先创建好索引mapping。</p>
-
 <pre><code>{
   &quot;mappings&quot;: {
     &quot;_default_&quot;: {
@@ -195,18 +174,11 @@ output {
   }
 }
 
-</code></pre>
-
-<h2 id="kibana">Kibana</h2>
-
+</code></pre><h2 id="kibana">Kibana</h2>
 <p>Kibana 不需要太多的配置，只需要访问到 Elasticsearch，并且发现相关的索引。</p>
-
 <p>Kibana 按照 搜索 -&gt; 可视化 -&gt; 面板 的流程，将你需要看到的信息逐步构建出来。</p>
-
 <h2 id="使用phantomjs定期发送kibana报告">使用phantomjs定期发送Kibana报告</h2>
-
 <p>下面是使用 phantomjs 发送Kibana报告的测试代码。其原理是使用 phantomjs 模拟浏览器访问 Kibana，然后对访问内容进行截图，然后将生成的截图通过 http post的方式调用 sendcloud 接口发送邮件。（发送邮件的调用有点繁琐，因为找不到很好的读取本地文件的方式，而 phantomjs webpage 模块的 renderBuffer 实际上又无法使用）</p>
-
 <pre><code>
 var page = require('webpage').create();
 var fs = require('fs');
@@ -266,17 +238,11 @@ page.open(url, function(status) {
 });
 
 
-</code></pre>
-
-<p>将上面内容保存为js文件，然后用下面命令调用</p>
-
+</code></pre><p>将上面内容保存为js文件，然后用下面命令调用</p>
 <pre><code>
 phantomjs --web-security=false --local-to-remote-url-access=true ***.js
 
-</code></pre>
-
-<h3 id="参考资料">参考资料</h3>
-
+</code></pre><h3 id="参考资料">参考资料</h3>
 <ul>
 <li><a href="http://logz.io/learn/complete-guide-elk-stack/">The Complete Guide to the ELK Stack</a></li>
 <li><a href="http://kibana.logstash.es/content/">ELKstack 中文指南</a></li>

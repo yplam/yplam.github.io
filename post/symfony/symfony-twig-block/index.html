@@ -12,8 +12,6 @@
 	<link rel="stylesheet" href="https://yplam.com/scss/unify.min.css">
 
 	
-
-	
 	
 <script type="application/javascript">
 var doNotTrack = false;
@@ -75,16 +73,11 @@ if (!doNotTrack) {
     <div class="justify-content-center article-content">
         <p>所谓区块，就是在页面中展示的一块内容，可以与当前页面内容相关或者无关。譬如常见的在网站侧边栏展示
 “最新文章”区块，或者在文章内容页展示“相关文章”区块。</p>
-
 <p>对于与当前页面相关的区块，我们可以在页面的控制器中通过查询数据库等方式获取数据，在模板中
 渲染；而对于与当前页面内容无关的区块，我们则需要通过其他方式。</p>
-
 <p>Symfony在处理这些区块时，提供两种种方式：</p>
-
-<p>(来源：<a href="http://symfony.com/doc/current/book/templating.html">http://symfony.com/doc/current/book/templating.html</a>)</p>
-
+<p>(来源：http://symfony.com/doc/current/book/templating.html)</p>
 <p><strong>include，用来渲染页面相关内容</strong></p>
-
 <pre><code>{% raw  %}
 {# app/Resources/views/article/list.html.twig #}
 {% extends 'layout.html.twig' %}
@@ -97,10 +90,7 @@ if (!doNotTrack) {
     {% endfor %}
 {% endblock %}
 {% endraw %}
-</code></pre>
-
-<p><strong>render，用来渲染页面无关内容</strong></p>
-
+</code></pre><p><strong>render，用来渲染页面无关内容</strong></p>
 <pre><code>{% raw  %}
 
 {# app/Resources/views/base.html.twig #}
@@ -114,16 +104,10 @@ if (!doNotTrack) {
 &lt;/div&gt;
 
 {% endraw %}
-</code></pre>
-
-<p>然而，由render的运行原理可以看出，它会发送一个子请求，调用子控制器。虽然官方说它很快，但是测试过后发现有很明显的时间消耗。</p>
-
+</code></pre><p>然而，由render的运行原理可以看出，它会发送一个子请求，调用子控制器。虽然官方说它很快，但是测试过后发现有很明显的时间消耗。</p>
 <p><strong>使用Twig扩展函数</strong></p>
-
 <p>Twig扩展函数是另一个很好的输出区块内容的方式（虽然Symfony官方的介绍不多）。</p>
-
 <p>譬如：</p>
-
 <pre><code>&lt;?php
 
 namespace AppBundle\Twig\Extension;
@@ -175,18 +159,12 @@ class AppExtension extends \Twig_Extension {
 }
 
 
-</code></pre>
-
-<p>上面是一个简单的Twig扩展，其作用就是提供app_sidemenu函数，在页面中显示网站侧边栏分类菜单。
+</code></pre><p>上面是一个简单的Twig扩展，其作用就是提供app_sidemenu函数，在页面中显示网站侧边栏分类菜单。
 renderSideMenu方法从数据库中获取分类信息，用twig模板渲染成菜单html，然后缓存到redis里。</p>
-
 <p>需要注意的是 getFunctions 方法中，返回数据的 needs_environment 参数，如果设为true，它会为你的回调函数
 传入 \Twig_Environment $twig，使你在回调函数中方便地进行模板渲染。</p>
-
 <p>使用 twigExtension 来渲染区块还有个好处就是可以很方便的管理缓存，因为我们可以将render出来的内容存在cache中，这样不同的区块可以有自己的缓存清理逻辑。</p>
-
 <p>下面我们尝试在扩展中使用Redis来缓存区块内容。</p>
-
 <pre><code>
 namespace AppBundle\Twig\Extension;
 
@@ -245,12 +223,8 @@ class AppSiteExtension extends \Twig_Extension {
     }
 }
 
-</code></pre>
-
-<p>上面是一个使用redis缓存区块内容的简单应用，跟yii的widget缓存类似（对yii了解不多，错了请指正）。</p>
-
+</code></pre><p>上面是一个使用redis缓存区块内容的简单应用，跟yii的widget缓存类似（对yii了解不多，错了请指正）。</p>
 <p>我们在扩展的构造函数中注入 $redis 实例，然后将渲染后的网站头部模板内容缓存到rendis中，在下一次访问中直接输出。</p>
-
 <p>ps:在此只是给缓存信息一个定期的过期时间，实际应用场景中对cache的处理可能会更复杂。</p>
     </div>
 

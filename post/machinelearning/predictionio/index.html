@@ -12,8 +12,6 @@
 	<link rel="stylesheet" href="https://yplam.com/scss/unify.min.css">
 
 	
-
-	
 	
 <script type="application/javascript">
 var doNotTrack = false;
@@ -74,15 +72,10 @@ if (!doNotTrack) {
     <h1 class="g-mb-30">PredictionIO实现论坛广告贴过滤</h1>
     <div class="justify-content-center article-content">
         <p>关注 Apache PredictionIO 已有一段时间，最近需要做一个过滤论坛广告贴的功能，调研了一番市面上提供文本检测的API服务，发现靠谱的公司都比较贵，并且准确率不高（一个可能性是他们使用的训练数据集是互联网上的通用信息，而我们是一个垂直行业论坛，攻击来源也可能是固定的那么若干个），于是尝试自己实现个文本分类器来过滤广告。</p>
-
 <p>关于文本分类，首先想到的就是朴素贝叶斯分类器，其理论清晰简单，并且各大机器学习框架均支持。</p>
-
 <p><strong>朴素贝叶斯分类器</strong> 关于贝叶斯分类器的的原理可以参考以下文档：<a href="http://www.cnblogs.com/leoo2sk/archive/2010/09/17/naive-bayesian-classifier.html">算法杂货铺——分类算法之朴素贝叶斯分类(Naive Bayesian classification)</a></p>
-
 <h3 id="spark实现">Spark实现</h3>
-
 <p>下面是 Spark 贝叶斯分类器的实现，主要流程为:</p>
-
 <ol>
 <li>读入数据集</li>
 <li>使用 ansj 分词，生成 (label, words) 结构的 dataframe</li>
@@ -92,9 +85,7 @@ if (!doNotTrack) {
 <li>训练出 bestModal，保存到指定路径</li>
 <li>通过最佳模型与测试集得出模型评估</li>
 </ol>
-
 <p>实现代码如下：</p>
-
 <pre><code>
 package com.yplam
 
@@ -226,37 +217,21 @@ object SpamFilterTrainer {
 }
 
 
-</code></pre>
-
-<p>打包，然后在 Spark 中训练：</p>
-
+</code></pre><p>打包，然后在 Spark 中训练：</p>
 <pre><code>
 spark-submit --class com.yplam.SpamFilterTrainer spark-scala-playground.jar --train /home/yplam/spark/work/data/bbs --output /home/yplam/spark/work/model/bbs
 
-</code></pre>
-
-<p>结果还算可以，约 93% 的准确率。由于我们之前已经保存好最佳模型，可以编写一个简单的json API接口对外提供服务，而另一个可能更加适合的方式就是将模型移到 PredictionIO 上。</p>
-
+</code></pre><p>结果还算可以，约 93% 的准确率。由于我们之前已经保存好最佳模型，可以编写一个简单的json API接口对外提供服务，而另一个可能更加适合的方式就是将模型移到 PredictionIO 上。</p>
 <h3 id="predictionio-简介">PredictionIO 简介</h3>
-
 <p><a href="https://predictionio.apache.org">PredictionIO</a> 是一个开源的机器学习平台，用于构建、评估与发布机器学习算法引擎。PredictionIO 提供事件服务器( Event Server ) 用于接收与保存数据，用于生成训练数据集；引擎模板( engine template )提供各种不同场景应用所需的机器学习算法模板。模型训练出来后 PredictionIO 提供保存与发布服务，发布后的模型可以通过接收 REST API 提供预测结果。对开发者而言，只需要按照 PredictionIO 提供的 DASE 模式实现数据源与预处理(D)、算法(A)、服务(S)、评估指标(E)。PredictionIO 使开发者专注于模型本身，其他的事情它都已经帮你实现。</p>
-
-<p><img src="{{ site.url }}/assets/2018/predictionio-intro.png" alt="PredictionIO" title="PredictionIO" /></p>
-
+<p>![PredictionIO]({{ site.url }}/assets/2018/predictionio-intro.png &ldquo;PredictionIO&rdquo;)</p>
 <p>上面为 PredictionIO 的单模型引擎框架图。</p>
-
 <p>事件服务器接收与存储事件数据，数据可以有多种格式，譬如对于文本分类器可以是 { &ldquo;entityId&rdquo; : 123, &ldquo;entityType&rdquo; : &ldquo;content&rdquo;, &ldquo;event&rdquo; : &ldquo;$set&rdquo;, &ldquo;properties&rdquo; : { &ldquo;label&rdquo; : &ldquo;spam&rdquo;, &ldquo;text&rdquo; : &ldquo;哈哈哈&rdquo;} }，对于推荐引擎可以是 { &ldquo;entityId&rdquo; : 1, &ldquo;entityType&rdquo; : &ldquo;user&rdquo;, &ldquo;event&rdquo; : &ldquo;buy&rdquo;, &ldquo;targetEntityType&rdquo;:&ldquo;item&rdquo;, &ldquo;targetEntityId&rdquo;:&ldquo;123&rdquo; } 等。关于事件模型的更多内容可以参考 <a href="https://predictionio.apache.org/datacollection/eventmodel/">Events Modeling</a> 。 PredictionIO 提供 REST 接口用于接收事件 多种存储后端，包括mysql，pgsql 跟 hbase。</p>
-
 <h3 id="predictionio-实现">PredictionIO 实现</h3>
-
 <p>由于 PredictionIO 社区提供了大量的引擎模板，因此实现自己模型的最简单方式就是在官方模板的基础上进行修改，譬如 <a href="https://github.com/apache/predictionio-template-text-classifier">Text Classification</a>中就包含基于贝叶斯算法的文本分类器实现，得益于 PredictionIO 的 DASE 模型，我们只需要拷贝此项目，根据项目实际情况做小修改，然后加入 ansj 分词功能，完成。</p>
-
 <p>针对 DataSource，我们需要根据我们模型实际数据结构，设定 entityType，eventNames，以及对 Observation 结构的处理。</p>
-
 <p>针对 Preparator，我们用 ansj 替换原有的分词方式，同时限制了内容长度。</p>
-
 <p>相关代码地址：<a href="https://github.com/yplam/predictionio-spam-detection-cn">https://github.com/yplam/predictionio-spam-detection-cn</a></p>
-
 <p>后记：通过分析“漏网之鱼”的内容，发现已经有针对贝叶斯算法的攻击，也就是在长篇内容中夹入少量垃圾信息，通过只截取标题+内容头尾各500个字的方式，可以有一定的效果提升。</p>
     </div>
 

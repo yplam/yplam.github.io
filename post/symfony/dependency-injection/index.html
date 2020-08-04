@@ -12,8 +12,6 @@
 	<link rel="stylesheet" href="https://yplam.com/scss/unify.min.css">
 
 	
-
-	
 	
 <script type="application/javascript">
 var doNotTrack = false;
@@ -74,9 +72,7 @@ if (!doNotTrack) {
     <h1 class="g-mb-30">依赖注入 ( Dependency Injection )</h1>
     <div class="justify-content-center article-content">
         <p>这是一篇关于Symfony依赖注入（Dependency Injection）的笔记，原文地址：<a href="http://fabien.potencier.org/article/11/what-is-dependency-injection">http://fabien.potencier.org/article/11/what-is-dependency-injection</a></p>
-
 <p>假设需要实现下面的需求：<strong>编写一个User类，需要实现Session的相关操作</strong> 下面是一种简单的实现方式：</p>
-
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-php" data-lang="php">    class SessionStorage
     {
       function __construct($cookieName = &#39;PHP_SESS_ID&#39;)
@@ -119,15 +115,11 @@ if (!doNotTrack) {
     
       // ...
     }</code></pre></div>
-
 <p>我们可以这样调用上面的代码：</p>
-
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-php" data-lang="php">    $user = new User();
     $user-&gt;setLanguage(&#39;fr&#39;);
     $user_language = $user-&gt;getLanguage();</code></pre></div>
-
 <p>但这里有一个问题：代码中将User的storage属性写死了，第三方调用User时无法对storage进行配置。因此，对User代码进行下面的修改：</p>
-
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-php" data-lang="php">    class User
     {
       function __construct($storage)
@@ -137,11 +129,8 @@ if (!doNotTrack) {
     
       // ...
     }</code></pre></div>
-
 <p>不在User类中创建SessionStorage对象，而是将storage对象作为参数传递给User的构造函数，这就是依赖注入。 &ldquo;Dependency Injection is where components are given their dependencies through their constructors, methods, or directly into fields.&rdquo; 上面就是依赖注入的定义，根据其定义，依赖注入可以通过下面三种方式进行：</p>
-
 <p><strong>构造器注入 Constructor Injection：</strong></p>
-
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-php" data-lang="php">    class User
     {
       function __construct($storage)
@@ -151,9 +140,7 @@ if (!doNotTrack) {
     
       // ...
     }</code></pre></div>
-
 <p><strong>设值注入 Setter Injection：</strong></p>
-
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-php" data-lang="php">    class User
     {
       function setSessionStorage($storage)
@@ -163,22 +150,16 @@ if (!doNotTrack) {
     
       // ...
     }</code></pre></div>
-
 <p><strong>属性 Property Injection：</strong></p>
-
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-php" data-lang="php">    class User
     {
       public $sessionStorage;
     }
     
     $user-&gt;sessionStorage = $storage;</code></pre></div>
-
 <p><strong>相关资料：</strong></p>
-
 <p><a href="http://fabien.potencier.org/article/11/what-is-dependency-injection">http://fabien.potencier.org/article/11/what-is-dependency-injection</a></p>
-
 <p><a href="http://www.martinfowler.com/articles/injection.html">http://www.martinfowler.com/articles/injection.html</a></p>
-
 <p><a href="http://www.cnblogs.com/xingyukun/archive/2007/10/20/931331.html">http://www.cnblogs.com/xingyukun/archive/2007/10/20/931331.html</a></p>
     </div>
 

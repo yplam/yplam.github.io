@@ -6,10 +6,30 @@
     <description>Recent content in Embedded on YP.Lam</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Tue, 23 Feb 2016 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sun, 02 Aug 2020 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="https://yplam.com/tags/embedded/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>基于 OpenWRT 与 MT7688 DIY 4G WIFI 路由器</title>
+      <link>https://yplam.com/post/embedded/openwrt-mt7688-4g/</link>
+      <pubDate>Sun, 02 Aug 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://yplam.com/post/embedded/openwrt-mt7688-4g/</guid>
+      <description>&lt;p&gt;最近经常要到一些没有有线网络的地方，虽然手机可以共享WIFI出来，但总不能24小时开着，刚好手上空闲着一块 EC20 4G 模块，
+于是淘宝弄了块最便宜的 MT7688 4G 路由板回来，DIY 自己的 4G WIFI共享路由器。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>SX1280 LoraRanging 功能测试</title>
+      <link>https://yplam.com/post/embedded/lora-ranging-test/</link>
+      <pubDate>Wed, 19 Dec 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://yplam.com/post/embedded/lora-ranging-test/</guid>
+      <description>&lt;p&gt;之前用现成的Lora串口模块感觉挺顺手，最近偶尔看到带 LoraRanging 功能的 SX1280，于是买了两个模块回来测试一下。&lt;/p&gt;
+&lt;p&gt;源码地址 &lt;a href=&#34;https://github.com/yplam/LoraRangingTest&#34;&gt;https://github.com/yplam/LoraRangingTest&lt;/a&gt;&lt;/p&gt;</description>
+    </item>
     
     <item>
       <title>Configuring 6lbr for Ubuntu and SensorTag CC2650</title>

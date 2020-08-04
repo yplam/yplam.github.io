@@ -12,8 +12,6 @@
 	<link rel="stylesheet" href="https://yplam.com/scss/unify.min.css">
 
 	
-
-	
 	
 <script type="application/javascript">
 var doNotTrack = false;
@@ -69,17 +67,11 @@ if (!doNotTrack) {
     <h1 class="g-mb-30">Centos Nginx PHP-FPM Mysql 服务器环境配置</h1>
     <div class="justify-content-center article-content">
         <p>此笔记基于Linode Centos 5.x 64 bit 系统，安装与配置LNMP服务器环境，此配置主要用于运行Drupal。</p>
-
 <p>安装Mysql：</p>
-
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">yum install mysql-server mysql-devel</code></pre></div>
-
 <p>安装编译库：</p>
-
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">make gcc patch flex bison autoconf libjpeg libjpeg-devel libpng libpng-devel gd gd-devel libxml2 libxml2-devel zlib zlib-devel glib2 glib2-devel bzip2 bzip2-devel libevent libevent-devel ncurses ncurses-devel curl curl-devel openssl openssl-devel libmcrypt libmcrypt-devel mhash-devel libxslt-devel pcre-devel</code></pre></div>
-
 <p>下载、编译、安装PHP-FPM</p>
-
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">    wget http://us.php.net/distributions/php-5.2.17.tar.gz
     tar -xvzf php-5.2.17.tar.gz
     wget http://php-fpm.org/downloads/php-5.2.17-fpm-0.5.14.diff.gz
@@ -106,21 +98,16 @@ if (!doNotTrack) {
     pecl install syck-beta
     
     cp php.ini-recommended /usr/local/lib/php.ini</code></pre></div>
-
 <p>更改php-fpm.conf配置，设置运行用户。位置大概在51、52、63、66行。</p>
-
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-xml" data-lang="xml">    <span style="color:#f92672">&lt;value</span> <span style="color:#a6e22e">name=</span><span style="color:#e6db74">&#34;owner&#34;</span><span style="color:#f92672">&gt;</span>www<span style="color:#f92672">&lt;/value&gt;</span>
     <span style="color:#f92672">&lt;value</span> <span style="color:#a6e22e">name=</span><span style="color:#e6db74">&#34;group&#34;</span><span style="color:#f92672">&gt;</span>www<span style="color:#f92672">&lt;/value&gt;</span>
     <span style="color:#f92672">&lt;value</span> <span style="color:#a6e22e">name=</span><span style="color:#e6db74">&#34;user&#34;</span><span style="color:#f92672">&gt;</span>www<span style="color:#f92672">&lt;/value&gt;</span>
     <span style="color:#f92672">&lt;value</span> <span style="color:#a6e22e">name=</span><span style="color:#e6db74">&#34;group&#34;</span><span style="color:#f92672">&gt;</span>www<span style="color:#f92672">&lt;/value&gt;</span></code></pre></div>
-
 <p>安装nginx</p>
-
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">    wget ...nginx
     ./configure --sbin-path<span style="color:#f92672">=</span>/usr/local/sbin --with-http_ssl_module --user<span style="color:#f92672">=</span>www --group<span style="color:#f92672">=</span>www --with-http_gzip_static_module
     make
     make install</code></pre></div>
-
 <p>nginx 与 drupal 的配置可以参考 github项目 <a href="https://github.com/yhager/nginx_drupal">https://github.com/yhager/nginx_drupal</a></p>
     </div>
 

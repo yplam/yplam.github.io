@@ -12,8 +12,6 @@
 	<link rel="stylesheet" href="https://yplam.com/scss/unify.min.css">
 
 	
-
-	
 	
 <script type="application/javascript">
 var doNotTrack = false;
@@ -75,11 +73,9 @@ if (!doNotTrack) {
     <div class="justify-content-center article-content">
         <p>偶尔有收到用户关于 &ldquo;Could not decode image: ***&rdquo; 的反馈，并且最近频率有增加的趋势，解开
 Theme 文件除了图片有点大以外看不出其他问题，所以决定花点时间跟踪一下 Chromium 源码。</p>
-
 <p>本来以为是一个非常简单的问题，只需要找到报错信息，然后打印 backtrace，再断点跟踪一下。然而由于
 Chromium 多线程的特性，以及 crx 文件的安装是在 sandbox 中进行的，断点到出错信息，得到的是下面
 的 backtrace：</p>
-
 <pre><code>#0  0x0000555557b3e373 in extensions::SandboxedUnpacker::ImageSanitizationDone(std::__Cr::unique_ptr&lt;base::DictionaryValue, std::__Cr::default_delete&lt;base::DictionaryValue&gt; &gt;, extensions::ImageSanitizer::Status, base::FilePath const&amp;) (this=0x2f1d9794c020, manifest=..., status=extensions::ImageSanitizer::Status::kDecodingError, file_path_for_error=...) at ../../extensions/browser/sandboxed_unpacker.cc:548
 #1  0x0000555557b430f9 in base::internal::FunctorTraits&lt;void (extensions::SandboxedUnpacker::*)(std::__Cr::unique_ptr&lt;base::DictionaryValue, std::__Cr::default_delete&lt;base::DictionaryValue&gt; &gt;, extensions::ImageSanitizer::Status, base::FilePath const&amp;), void&gt;::Invoke&lt;void (extensions::SandboxedUnpacker::*)(std::__Cr::unique_ptr&lt;base::DictionaryValue, std::__Cr::default_delete&lt;base::DictionaryValue&gt; &gt;, extensions::ImageSanitizer::Status, base::FilePath const&amp;), scoped_refptr&lt;extensions::SandboxedUnpacker&gt;, std::__Cr::unique_ptr&lt;base::DictionaryValue, std::__Cr::default_delete&lt;base::DictionaryValue&gt; &gt;, extensions::ImageSanitizer::Status, base::FilePath const&amp;&gt;(void (extensions::SandboxedUnpacker::*)(std::__Cr::unique_ptr&lt;base::DictionaryValue, std::__Cr::default_delete&lt;base::DictionaryValue&gt; &gt;, extensions::ImageSanitizer::Status, base::FilePath const&amp;), scoped_refptr&lt;extensions::SandboxedUnpacker&gt;&amp;&amp;, std::__Cr::unique_ptr&lt;base::DictionaryValue, std::__Cr::default_delete&lt;base::DictionaryValue&gt; &gt;&amp;&amp;, extensions::ImageSanitizer::Status&amp;&amp;, base::FilePath const&amp;) (method=
     (void (extensions::SandboxedUnpacker::*)(extensions::SandboxedUnpacker * const, std::__Cr::unique_ptr&lt;base::DictionaryValue, std::__Cr::default_delete&lt;base::DictionaryValue&gt; &gt;, extensions::ImageSanitizer::Status, const base::FilePath &amp;)) 0x555557b3e340 &lt;extensions::SandboxedUnpacker::ImageSanitizationDone(std::__Cr::unique_ptr&lt;base::DictionaryValue, std::__Cr::default_delete&lt;base::DictionaryValue&gt; &gt;, extensions::ImageSanitizer::Status, base::FilePath const&amp;)&gt;, receiver_ptr=..., args=..., args=@0x7fffbb8afb14: extensions::ImageSanitizer::Status::kDecodingError, args=...) at ../../base/bind_internal.h:499
@@ -98,18 +94,13 @@ Chromium 多线程的特性，以及 crx 文件的安装是在 sandbox 中进行
     at ../../extensions/browser/image_sanitizer.cc:157
 #8  0x0000555557326b0c in base::internal::FunctorTraits&lt;void (OAuth2TokenService::RequestImpl::*)(GoogleServiceAuthError const&amp;, OAuth2AccessTokenConsumer::TokenResponse const&amp;), void&gt;::Invoke&lt;void (OAuth2TokenService::RequestImpl::*)(GoogleServiceAuthError const&amp;, OAuth2AccessTokenConsumer::TokenResponse const&amp;), base::WeakPtr&lt;OAuth2TokenService::RequestImpl&gt;, GoogleServiceAuthError, OAuth2AccessTokenConsumer::TokenResponse&gt;(void (OAuth2TokenService::RequestImpl::*)(GoogleServiceAuthError const&amp;, OAuth2AccessTokenConsumer::TokenResponse const&amp;), base::WeakPtr&lt;OAuth2TokenService::RequestImpl&gt;&amp;&amp;, GoogleServiceAuthError&amp;&amp;, OAuth2AccessTokenConsumer::TokenResponse&amp;&amp;) (method=
     (void (OAuth2TokenService::RequestImpl::*)(OAuth2TokenService::RequestImpl * const, const GoogleServiceAuthError &amp;, const OAuth2AccessTokenConsumer::TokenResponse &amp;)) 0x555557b11fe0 &lt;extensions::ImageSanitizer::ImageDecoded(base::FilePath const&amp;, SkBitmap const&amp;)&gt;, receiver_ptr=..., args=..., args=...) at ../../base/bind_internal.h:499
-</code></pre>
-
-<p>除了知道报错是在 extensions::SandboxedUnpacker::ImageSanitizationDone 以外，其他都是一些
+</code></pre><p>除了知道报错是在 extensions::SandboxedUnpacker::ImageSanitizationDone 以外，其他都是一些
 复杂的函数指针。</p>
-
 <p>参考 Chromium 关于<a href="https://chromium.googlesource.com/chromium/src/+/master/docs/threading_and_tasks.md">线程与任务</a>
 ，<a href="https://chromium.googlesource.com/chromium/src/+/master/docs/callback.md">回调</a>
 的文档。扩展安装属于发送到线程上的序列化任务，底层通过偏函数，并且由于使用 mojo，使得对调用流程的跟踪
 异常麻烦。</p>
-
 <p>最终只能通过阅读源码 + dump 的方式反推整个流程如下：</p>
-
 <ul>
 <li>DownloadItemImpl::OnDownloadCompleting 下载完成</li>
 <li>DownloadFileImpl::RenameAndAnnotate 重命名，然后回调</li>
@@ -127,35 +118,22 @@ Chromium 多线程的特性，以及 crx 文件的安装是在 sandbox 中进行
 <li>ImageSanitizer::ImageFileRead</li>
 <li>data_decoder::ImageDecoderImpl::DecodeImage</li>
 </ul>
-
 <p><strong>结果：</strong></p>
-
 <p>由于 extensions/browser/image_sanitizer.cc 中定义 const int kMaxImageCanvas = 4096 * 4096。
 并且该值限制了所有 extension 中图片的大小，当图片大小</p>
-
 <pre><code>x*y*4+(skia::mojom::Bitmap::Data_) &gt; 4096 * 4096
-</code></pre>
-
-<p>时就会报错，然而由于现在 2k 甚至 4k 显示器的使用越来越多，当其使用一张全屏图作为主题背景时就会超出
+</code></pre><p>时就会报错，然而由于现在 2k 甚至 4k 显示器的使用越来越多，当其使用一张全屏图作为主题背景时就会超出
 此限制值。</p>
-
 <p>ps:跟 Chromium 的开发人员反馈了一下，然而对方认为只是简单的增大 kMaxImageCanvas 并不合适，可能
 需要分场景考虑，所以估计此问题短时间内不会解决。</p>
-
 <p><strong>技巧：</strong></p>
-
 <p>因为 Chromium 源码分层比较清晰，查找调用时只在模块内部查找可以提高效率。</p>
-
 <p>如果源码中有调用 mojo 定义的服务，可以先查看 mojo 定义文件如：services/data_decoder/public/mojom/image_decoder.mojom
 然后查看生成的接口定义 gen/services/data_decoder/public/mojom/image_decoder.mojom.h，
 然后查找 include 了 image_decoder.mojom.h 的文件，一般可以找到该 mojo 服务的实现。</p>
-
 <p>##一些 backtrace</p>
-
 <p>由于 Chromium 多线程特性，在 gdb 中跟踪流程变得比较困难，下面是一些断点的 backtrace。</p>
-
 <p><strong>extensions::CrxInstaller::InstallCrxFile</strong></p>
-
 <pre><code>#0  0x000055555a367bcd in extensions::CrxInstaller::InstallCrxFile(extensions::CRXFileInfo const&amp;) (this=0x164ebed6d5a0, source_file=...) at ../../chrome/browser/extensions/crx_installer.cc:180
 #1  0x000055555a367b6a in extensions::CrxInstaller::InstallCrx(base::FilePath const&amp;) (this=0x164ebed6d5a0, source_file=...) at ../../chrome/browser/extensions/crx_installer.cc:176
 #2  0x00005555590ae5f6 in download_crx_util::OpenChromeExtension(Profile*, download::DownloadItem const&amp;) (profile=0x164ebcaae020, download_item=...)
@@ -173,10 +151,7 @@ Chromium 多线程的特性，以及 crx 文件的安装是在 sandbox 中进行
 #8  0x00007fffea0b9a2c in base::internal::Invoker&lt;base::internal::BindState&lt;void (download::DownloadItemImpl::*)(download::DownloadInterruptReason, base::FilePath const&amp;), base::WeakPtr&lt;download::DownloadItemImpl&gt; &gt;, void (download::DownloadInterruptReason, base::FilePath const&amp;)&gt;::RunImpl&lt;void (download::DownloadItemImpl::* const&amp;)(download::DownloadInterruptReason, base::FilePath const&amp;), std::__Cr::tuple&lt;base::WeakPtr&lt;download::DownloadItemImpl&gt; &gt; const&amp;, 0ul&gt;(void (download::DownloadItemImpl::* const&amp;)(download::DownloadInterruptReason, base::FilePath const&amp;), std::__Cr::tuple&lt;base::WeakPtr&lt;download::DownloadItemImpl&gt; &gt; const&amp;, std::__Cr::integer_sequence&lt;unsigned long, 0ul&gt;, download::DownloadInterruptReason&amp;&amp;, base::FilePath const&amp;) (functor=
     @0x164ec0be71c0: (void (download::DownloadItemImpl::*)(download::DownloadItemImpl * const, download::DownloadInterruptReason, const base::FilePath &amp;)) 0x7fffea0ad520 &lt;download::DownloadItemImpl::OnDownloadRenamedToFinalName(download::DownloadInterruptReason, base::FilePath const&amp;)&gt;, bound=..., unbound_args=@0x7fffffffb574: download::DOWNLOAD_INTERRUPT_REASON_NONE, unbound_args=...)
     at ../../base/bind_internal.h:672
-</code></pre>
-
-<p><strong>extensions::SandboxedUnpacker::ReadManifestDone</strong></p>
-
+</code></pre><p><strong>extensions::SandboxedUnpacker::ReadManifestDone</strong></p>
 <pre><code>#0  0x0000555557b3d20d in extensions::SandboxedUnpacker::ReadManifestDone(base::Optional&lt;base::Value&gt;, base::Optional&lt;std::__Cr::basic_string&lt;char, std::__Cr::char_traits&lt;char&gt;, std::__Cr::allocator&lt;char&gt; &gt; &gt; const&amp;) (this=0x29624dac2820, manifest=..., error=...) at ../../extensions/browser/sandboxed_unpacker.cc:437
 #1  0x0000555557b429b7 in base::internal::FunctorTraits&lt;void (extensions::SandboxedUnpacker::*)(base::Optional&lt;base::Value&gt;, base::Optional&lt;std::__Cr::basic_string&lt;char, std::__Cr::char_traits&lt;char&gt;, std::__Cr::allocator&lt;char&gt; &gt; &gt; const&amp;), void&gt;::Invoke&lt;void (extensions::SandboxedUnpacker::*)(base::Optional&lt;base::Value&gt;, base::Optional&lt;std::__Cr::basic_string&lt;char, std::__Cr::char_traits&lt;char&gt;, std::__Cr::allocator&lt;char&gt; &gt; &gt; const&amp;), scoped_refptr&lt;extensions::SandboxedUnpacker&gt;, base::Optional&lt;base::Value&gt;, base::Optional&lt;std::__Cr::basic_string&lt;char, std::__Cr::char_traits&lt;char&gt;, std::__Cr::allocator&lt;char&gt; &gt; &gt; const&amp;&gt;(void (extensions::SandboxedUnpacker::*)(base::Optional&lt;base::Value&gt;, base::Optional&lt;std::__Cr::basic_string&lt;char, std::__Cr::char_traits&lt;char&gt;, std::__Cr::allocator&lt;char&gt; &gt; &gt; const&amp;), scoped_refptr&lt;extensions::SandboxedUnpacker&gt;&amp;&amp;, base::Optional&lt;base::Value&gt;&amp;&amp;, base::Optional&lt;std::__Cr::basic_string&lt;char, std::__Cr::char_traits&lt;char&gt;, std::__Cr::allocator&lt;char&gt; &gt; &gt; const&amp;) (method=
     (void (extensions::SandboxedUnpacker::*)(extensions::SandboxedUnpacker * const, base::Optional&lt;base::Value&gt;, const base::Optional&lt;std::__Cr::basic_string&lt;char&gt; &gt; &amp;)) 0x555557b3d1e0 &lt;extensions::SandboxedUnpacker::ReadManifestDone(base::Optional&lt;base::Value&gt;, base::Optional&lt;std::__Cr::basic_string&lt;char, std::__Cr::char_traits&lt;char&gt;, std::__Cr::allocator&lt;char&gt; &gt; &gt; const&amp;)&gt;, receiver_ptr=..., args=..., args=...) at ../../base/bind_internal.h:499

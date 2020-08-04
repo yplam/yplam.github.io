@@ -12,8 +12,6 @@
 	<link rel="stylesheet" href="https://yplam.com/scss/unify.min.css">
 
 	
-
-	
 	
 <script type="application/javascript">
 var doNotTrack = false;
@@ -74,15 +72,10 @@ if (!doNotTrack) {
     <h1 class="g-mb-30">Tensorflow Serving Nsfw</h1>
     <div class="justify-content-center article-content">
         <p>两年多前曾经在服务器上部署了个 Tensorflow 模型，由于 Tensorflow serving 刚公布不久，并且还没阅读相关文档，所以当时就粗暴的用 Flask 写了个接口就放到线上跑了两年。</p>
-
 <p>最近又需要在服务器上部署些模型，决定用回比较官方的方式，研究一下 Tensorflow serving。</p>
-
 <h3 id="安装">安装</h3>
-
 <p>使用 docker compose 安装，需要注意的是，由于 Tensorflow 的接口不断在变化，Tensorflow serving 的版本需要与模型训练、模型导出的版本一致，否则可能会出现某些操作符不存在的错误。</p>
-
 <p>docker-compose.yml</p>
-
 <pre><code>version: '3.7'
 services:
   tensorflow_serving:
@@ -93,30 +86,16 @@ services:
       - ./models:/models
     environment:
       - MODEL_NAME=nsfw
-</code></pre>
-
-<p>bin/TensorflowServing/Dockerfile，虽然是默认镜像，但习惯加个 Dockerfile</p>
-
+</code></pre><p>bin/TensorflowServing/Dockerfile，虽然是默认镜像，但习惯加个 Dockerfile</p>
 <pre><code>FROM tensorflow/serving:1.12.0
 
-</code></pre>
-
-<h3 id="测试">测试</h3>
-
+</code></pre><h3 id="测试">测试</h3>
 <p>在此测试的是 <a href="https://github.com/mdietrichstein/tensorflow-open_nsfw">tensorflow-open_nsfw</a> 模型，此模型提供模型导出以及数据请求格式生成相关的脚本，适合用来快速测试。</p>
-
 <p>用 virtualenv 安装 tensorflow 1.12 版本，以及 numpy==1.16.1 ，然后运行下面命令导出模型：</p>
-
 <pre><code>python tools/export_savedmodel.py -i base64_jpeg -v 1 -m data/open_nsfw-weights.npy nsfw
-</code></pre>
-
-<p>使用以下命令查看模型输入输出格式：</p>
-
+</code></pre><p>使用以下命令查看模型输入输出格式：</p>
 <pre><code>saved_model_cli show --dir nsfw/1 --all
-</code></pre>
-
-<p>结果如下，输入是一个 base64 encode 的 jpeg 图片字符串：</p>
-
+</code></pre><p>结果如下，输入是一个 base64 encode 的 jpeg 图片字符串：</p>
 <pre><code>
 MetaGraphDef with tag-set: 'serve' contains the following SignatureDefs:
 
@@ -133,39 +112,21 @@ signature_def['serving_default']:
         name: predictions:0
   Method name is: tensorflow/serving/predict
 
-</code></pre>
-
-<p>将导出的模型放到 docker compose 工作目录下的 models 下，然后启动 docker ：</p>
-
+</code></pre><p>将导出的模型放到 docker compose 工作目录下的 models 下，然后启动 docker ：</p>
 <pre><code>docker-compose up --build
-</code></pre>
-
-<p>拿一张需要测试的jpeg图片，运行下面命令：</p>
-
+</code></pre><p>拿一张需要测试的jpeg图片，运行下面命令：</p>
 <pre><code>python tools/create_predict_request.py -i base64_jpeg -l tensorflow -t tf-serving test.jpg &gt; test.txt
-</code></pre>
-
-<p>test.txt 中会生成用于请求 Tensorflow serving 的格式，大概如下：</p>
-
+</code></pre><p>test.txt 中会生成用于请求 Tensorflow serving 的格式，大概如下：</p>
 <pre><code>{&quot;instances&quot;: [&quot;_9j_4AAQSkZ......UUCP__Z&quot;]}
-</code></pre>
-
-<p>需要注意的是这里的base64 encode图片需要为urlsafe格式，如果客户端为PHP的话需要对encode的字符串做替换处理。</p>
-
+</code></pre><p>需要注意的是这里的base64 encode图片需要为urlsafe格式，如果客户端为PHP的话需要对encode的字符串做替换处理。</p>
 <p>然后测试一下：</p>
-
 <pre><code>curl -d '@test.txt' -X POST http://localhost:8501/v1/models/nsfw:predict
-</code></pre>
-
-<p>会返回类似下面结果：</p>
-
+</code></pre><p>会返回类似下面结果：</p>
 <pre><code>{
     &quot;predictions&quot;: [[0.337196, 0.662804]
     ]
 }
-</code></pre>
-
-<p>结果中第一个代表 sfw，第二个代表 nsfw，因此模型判断此图片包含不良内容。</p>
+</code></pre><p>结果中第一个代表 sfw，第二个代表 nsfw，因此模型判断此图片包含不良内容。</p>
     </div>
 
 

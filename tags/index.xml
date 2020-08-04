@@ -6,10 +6,55 @@
     <description>Recent content in Tags on YP.Lam</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Tue, 03 Dec 2019 15:32:35 +0800</lastBuildDate>
+    <lastBuildDate>Sun, 02 Aug 2020 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="https://yplam.com/tags/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Embedded</title>
+      <link>https://yplam.com/tags/embedded/</link>
+      <pubDate>Sun, 02 Aug 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://yplam.com/tags/embedded/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Linux</title>
+      <link>https://yplam.com/tags/linux/</link>
+      <pubDate>Sun, 02 Aug 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://yplam.com/tags/linux/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>OpenWRT</title>
+      <link>https://yplam.com/tags/openwrt/</link>
+      <pubDate>Sun, 02 Aug 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://yplam.com/tags/openwrt/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>PHP</title>
+      <link>https://yplam.com/tags/php/</link>
+      <pubDate>Sun, 29 Mar 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://yplam.com/tags/php/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Symfony</title>
+      <link>https://yplam.com/tags/symfony/</link>
+      <pubDate>Sun, 29 Mar 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://yplam.com/tags/symfony/</guid>
+      <description></description>
+    </item>
     
     <item>
       <title>MachineLearning</title>
@@ -39,7 +84,7 @@
     </item>
     
     <item>
-      <title>Chromium,</title>
+      <title>Chromium</title>
       <link>https://yplam.com/tags/chromium/</link>
       <pubDate>Sat, 06 Apr 2019 00:00:00 +0000</pubDate>
       
@@ -50,7 +95,7 @@
     <item>
       <title>Mbed</title>
       <link>https://yplam.com/tags/mbed/</link>
-      <pubDate>Sat, 10 Nov 2018 00:00:00 +0000</pubDate>
+      <pubDate>Wed, 19 Dec 2018 00:00:00 +0000</pubDate>
       
       <guid>https://yplam.com/tags/mbed/</guid>
       <description></description>
@@ -62,24 +107,6 @@
       <pubDate>Wed, 13 Jun 2018 00:00:00 +0000</pubDate>
       
       <guid>https://yplam.com/tags/predictionio/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>PHP</title>
-      <link>https://yplam.com/tags/php/</link>
-      <pubDate>Fri, 01 Dec 2017 00:00:00 +0000</pubDate>
-      
-      <guid>https://yplam.com/tags/php/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Symfony</title>
-      <link>https://yplam.com/tags/symfony/</link>
-      <pubDate>Fri, 01 Dec 2017 00:00:00 +0000</pubDate>
-      
-      <guid>https://yplam.com/tags/symfony/</guid>
       <description></description>
     </item>
     
@@ -125,24 +152,6 @@
       <pubDate>Fri, 09 Sep 2016 00:00:00 +0000</pubDate>
       
       <guid>https://yplam.com/tags/elk/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Embedded</title>
-      <link>https://yplam.com/tags/embedded/</link>
-      <pubDate>Tue, 23 Feb 2016 00:00:00 +0000</pubDate>
-      
-      <guid>https://yplam.com/tags/embedded/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Linux</title>
-      <link>https://yplam.com/tags/linux/</link>
-      <pubDate>Thu, 29 Oct 2015 00:00:00 +0000</pubDate>
-      
-      <guid>https://yplam.com/tags/linux/</guid>
       <description></description>
     </item>
     

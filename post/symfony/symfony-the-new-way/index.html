@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html>
+<section class="g-bg-gray-light-v5"><head>
+	
+	<title>YP.Lam  | Symfony 4 the new way</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<meta http-equiv="x-ua-compatible" content="ie=edge">
+
+	<link rel="stylesheet" href="//stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css">
+	
+	<link rel="stylesheet" href="https://yplam.com/scss/unify.min.css">
+
+	
+	
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-83586141-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+	
+</head>
+
+<body>    <div class="container">
+        <div class="d-sm-flex text-center">
+            <div class="align-self-center ml-auto">
+                <ul class="u-list-inline float-right g-py-20">
+                    <li class="list-inline-item g-mr-5">
+                        <a class="u-link-v5 g-color-gray-dark-v5 g-color-primary--hover" href="/">HOME</a>
+                        <i class="g-color-gray-light-v2 g-ml-5">/</i>
+                    </li>
+                    <li class="list-inline-item g-mr-5">
+                        <a class="u-link-v5 g-color-gray-dark-v5 g-color-primary--hover" href="/about/">ABOUT</a>
+                        <i class="g-color-gray-light-v2 g-ml-5">/</i>
+                    </li>
+                    <li class="list-inline-item">
+                        <a class="u-link-v5 g-color-gray-dark-v5 g-color-primary--hover" href="https://github.com/yplam">GITHUB</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+<div class="container" aria-label="Content">
+            <div class="g-bg-white">
+                <div class="g-px-35 g-py-30 g-mb-30">
+<article>
+    <ul class="list-inline g-color-gray-dark-v4">
+        <li class="list-inline-item mr-0">
+            In
+             
+            
+            
+            
+            <a href="https://yplam.com/tags/php/">PHP</a>
+            
+            
+            
+            
+            <a href="https://yplam.com/tags/symfony/">Symfony</a>
+            
+            
+        </li>
+        <li class="list-inline-item mx-2">/</li>
+        <li class="list-inline-item">Posted 2020-03-29</li>
+    </ul>
+    <h1 class="g-mb-30">Symfony 4 the new way</h1>
+    <div class="justify-content-center article-content">
+        <p>Symfony 5 已经发布了一段时间，Symfony 4 也出了 4.4 LTS 版本，于是准备把手上一个历史遗留项目升级到 4.4，然而一动手就遇到麻烦，因为现在官方已经不推荐使用之前那种传统的大 bundle，而是倾向于更通用的组件（作为一个从 Symfony 2 过来的用户，不得不说挺支持官方的做法，因为经常会因为有 bundle 不及时更新而导致 composer 冲突）。</p>
+<p>本文章将尝试从头开始创建一个 Symfony 4 基础应用。</p>
+<h2 id="搭建-docker-开发环境">搭建 Docker 开发环境</h2>
+<p>Docker 在持续集成与环境部署方面提供不少便利性，因此此项目用 Docker 作为开发环境，发布环境还是使用之前比较熟悉的 deployer。</p>
+<p>习惯上 docker-compose.yml 放根目录，项目源码放 src 下，各个镜像基本上是按官方配置，然后适当修改一下</p>
+<pre><code>version: '3.7'
+services:
+  nginx:
+    build:
+      context: ./docker/nginx
+    ports: [&quot;80:80&quot;]
+    volumes:
+      - ./.:/www
+      - ./docker/nginx/nginx-sites.conf:/etc/nginx/conf.d/site.conf
+      - ./docker/nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./data/log/nginx:/var/log/nginx
+    links:
+      - php73fpm
+  
+  php73fpm:
+    build:
+      context: ./docker/php73fpm
+      args:
+        TIMEZONE: Asia/Shanghai
+    links:
+      - mysql
+    volumes:
+      - ./.:/www
+      - ./data/composer:/var/www/.composer
+    entrypoint: 
+      - /bin/sh
+      - -c 
+      - ip -4 route list match 0/0 | awk '{print $$3&quot; host.docker.internal&quot;}' &gt;&gt; /etc/hosts &amp;&amp; php-fpm
+  
+  mysql:
+    image: percona:5.7
+    ports: ['3306:3306']
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=symfony
+      - MYSQL_USER=symfony
+      - MYSQL_PASSWORD=123456
+    volumes:
+      - ./data/mysql_data:/var/lib/mysql
+      - ./docker/mysql/mysql-docker.cnf:/etc/mysql/conf.d/docker.cnf
+  
+
+</code></pre><h2 id="创建应用">创建应用</h2>
+<p>官方提供两种方式创建 Symfony 应用，个人更倾向于 composer</p>
+<pre><code>composer create-project symfony/website-skeleton:4.4.* .
+</code></pre><p>开始之前也可以先配置一下 composer 国内镜像：</p>
+<pre><code>composer config -g repo.packagist composer https://mirrors.aliyun.com/composer/
+</code></pre><h2 id="用户登录">用户登录</h2>
+<p>以前 fosuserbundle 可以说是第一个必装的 bundle，因为太方便了，配置两下就可以具备完整的用户注册、登录、召回密码等功能，然而因为用户管理可以说是一个网站的基石功能，用上了 fosuserbundle 反而会影响到系统的灵活性，并且 fosuserbundle 为了通用与兼容性，会带来一下不太想要的复杂性。</p>
+<p>可能官方已经注意到这个情况，所以提供了一个 maker 命令生成模板。</p>
+<p>先创建用户：</p>
+<pre><code>bin/console make:user
+</code></pre><p>按需求选择各选项。因为我们要兼容旧版的密码加密方式，所以需要手动加上 salt 等字段：</p>
+<pre><code>bin/console make:entity User
+</code></pre><p>系统会自动生成User Entity并且配置使用：</p>
+<pre><code>created: src/Entity/User.php
+created: src/Repository/UserRepository.php
+updated: src/Entity/User.php
+updated: config/packages/security.yaml
+</code></pre><p>新版本的 Symfony 的用户密码加密方式有所改变，为了兼容旧版，并且为了后续的灵活性，这里需要创建一个 App 的 UserProvider。关于密码加密方式兼容相关的信息可以参考： <a href="https://symfony.com/doc/4.4/security/password_migration.html">https://symfony.com/doc/4.4/security/password_migration.html</a></p>
+<pre><code>use HWI\Bundle\OAuthBundle\Connect\AccountConnectorInterface;
+use HWI\Bundle\OAuthBundle\Form\RegistrationFormHandlerInterface;
+use HWI\Bundle\OAuthBundle\Security\Core\User\OAuthAwareUserProviderInterface;
+use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Security\Core\User\UserProviderInterface;
+
+class UserProvider implements UserProviderInterface, PasswordUpgraderInterface, OAuthAwareUserProviderInterface, AccountConnectorInterface, RegistrationFormHandlerInterface
+
+</code></pre><p>这里的 UserProvider 除了实现基本功能外，还增加了对 HWIOAuthBundle 的支持。</p>
+    </div>
+
+
+</article>
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.6.0/styles/darcula.min.css">
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.6.0/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+
+                </div>
+
+            </div>
+        </div><div id="footer-default" class="g-bg-gray-dark-v1 g-color-white-opacity-0_8 text-center g-py-20">
+    <div class="container">
+        <div class="g-font-size-default g-mr-10 g-mb-10 g-mb-0--md">
+            <p>本站内容如非特别说明，均基于<a rel="license" target="_blank" href="http://creativecommons.org/licenses/by-sa/3.0/">Creative Commons Attribution-Share Alike 3.0 Unported License</a>发布。</p>
+        </div>
+    </div>
+</div></body>
+</section>
+</html>

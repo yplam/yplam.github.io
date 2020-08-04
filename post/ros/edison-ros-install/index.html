@@ -12,8 +12,6 @@
 	<link rel="stylesheet" href="https://yplam.com/scss/unify.min.css">
 
 	
-
-	
 	
 <script type="application/javascript">
 var doNotTrack = false;
@@ -69,37 +67,21 @@ if (!doNotTrack) {
     <h1 class="g-mb-30">Install ROS Indigo on Edison Ubilinux</h1>
     <div class="justify-content-center article-content">
         <p>This tutorial shows you how to install ROS Indigo on Edison Ubilinux from source.</p>
-
 <p>You can mainly follow these instructions <a href="http://wiki.ros.org/wiki/edison">Installing ROS Indigo on Intel Edison</a>, <a href="http://wiki.ros.org/ROSberryPi/Installing%20ROS%20Indigo%20on%20Raspberry%20Pi">Installing ROS Indigo on Raspberry Pi</a> except the following differences:</p>
-
 <p><strong>compile and install boost 1.5.3</strong></p>
-
 <p>Follow this instruction <a href="http://www.boost.org/doc/libs/1_53_0/more/getting_started/unix-variants.html">Getting Started on Unix Variants</a> to install boost 1.5.3 because the default boost 1.4.9 on wheezy does not works with ROS Indigo.</p>
-
 <p>Without installing boost 1.5.3, you may get the error message like this:</p>
-
 <pre><code>error: macro &quot;BOOST_SCOPE_EXIT&quot; passed 2 arguments, but takes just 1
 
-</code></pre>
-
-<p><strong>1.2 console_bridge:</strong></p>
-
+</code></pre><p><strong>1.2 console_bridge:</strong></p>
 <p>In :</p>
-
 <pre><code>sudo checkinstall make install
 
-</code></pre>
-
-<p>Enter 2 and rename the package to &lsquo;libconsole_bridge&rsquo; .</p>
-
+</code></pre><p>Enter 2 and rename the package to &lsquo;libconsole_bridge&rsquo; .</p>
 <p><strong>3.2.2 Resolving Dependencies with rosdep</strong></p>
-
 <p>Run rosdep install without the -y argument and skip apt-get install libboost-all-dev lib.</p>
-
 <p><strong>error while loading shared libraries: libconsole_bridge.so.0.3: cannot open shared object file: No such file or directory</strong></p>
-
 <p>After the whole install, if you got this error while starting roscore, you can fix it like this:</p>
-
 <pre><code>cd /opt/ros/indigo/lib
 sudo ln -s /usr/local/lib/i386-linux-gnu/libconsole_bridge.so.0.3 libconsole_bridge.so.0.3
 

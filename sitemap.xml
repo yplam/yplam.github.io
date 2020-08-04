@@ -3,17 +3,57 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
-    <loc>https://yplam.com/tags/machinelearning/</loc>
-    <lastmod>2019-12-03T15:32:35+08:00</lastmod>
+    <loc>https://yplam.com/tags/embedded/</loc>
+    <lastmod>2020-08-02T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://yplam.com/tags/linux/</loc>
+    <lastmod>2020-08-02T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://yplam.com/tags/openwrt/</loc>
+    <lastmod>2020-08-02T00:00:00+00:00</lastmod>
   </url>
   
   <url>
     <loc>https://yplam.com/post/</loc>
-    <lastmod>2019-12-03T15:32:35+08:00</lastmod>
+    <lastmod>2020-08-02T00:00:00+00:00</lastmod>
   </url>
   
   <url>
     <loc>https://yplam.com/tags/</loc>
+    <lastmod>2020-08-02T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://yplam.com/</loc>
+    <lastmod>2020-08-02T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://yplam.com/post/embedded/openwrt-mt7688-4g/</loc>
+    <lastmod>2020-08-02T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://yplam.com/tags/php/</loc>
+    <lastmod>2020-03-29T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://yplam.com/tags/symfony/</loc>
+    <lastmod>2020-03-29T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://yplam.com/post/symfony/symfony-the-new-way/</loc>
+    <lastmod>2020-03-29T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://yplam.com/tags/machinelearning/</loc>
     <lastmod>2019-12-03T15:32:35+08:00</lastmod>
   </url>
   
@@ -28,22 +68,17 @@
   </url>
   
   <url>
-    <loc>https://yplam.com/</loc>
-    <lastmod>2019-12-03T15:32:35+08:00</lastmod>
-  </url>
-  
-  <url>
     <loc>https://yplam.com/tags/c&#43;&#43;/</loc>
     <lastmod>2019-04-06T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://yplam.com/post/chromium/chromium-image-decode-error/</loc>
+    <loc>https://yplam.com/tags/chromium/</loc>
     <lastmod>2019-04-06T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://yplam.com/tags/chromium/</loc>
+    <loc>https://yplam.com/post/chromium/chromium-image-decode-error/</loc>
     <lastmod>2019-04-06T00:00:00+00:00</lastmod>
   </url>
   
@@ -69,7 +104,12 @@
   
   <url>
     <loc>https://yplam.com/tags/mbed/</loc>
-    <lastmod>2018-11-10T00:00:00+00:00</lastmod>
+    <lastmod>2018-12-19T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://yplam.com/post/embedded/lora-ranging-test/</loc>
+    <lastmod>2018-12-19T00:00:00+00:00</lastmod>
   </url>
   
   <url>
@@ -95,16 +135,6 @@
   <url>
     <loc>https://yplam.com/post/machinelearning/recommender-system/</loc>
     <lastmod>2018-04-04T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://yplam.com/tags/php/</loc>
-    <lastmod>2017-12-01T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://yplam.com/tags/symfony/</loc>
-    <lastmod>2017-12-01T00:00:00+00:00</lastmod>
   </url>
   
   <url>
@@ -203,11 +233,6 @@
   </url>
   
   <url>
-    <loc>https://yplam.com/tags/embedded/</loc>
-    <lastmod>2016-02-23T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
     <loc>https://yplam.com/post/symfony/symfony-micro-framework/</loc>
     <lastmod>2015-11-19T00:00:00+00:00</lastmod>
   </url>
@@ -215,11 +240,6 @@
   <url>
     <loc>https://yplam.com/post/symfony/symfony-github-jenkins/</loc>
     <lastmod>2015-11-16T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://yplam.com/tags/linux/</loc>
-    <lastmod>2015-10-29T00:00:00+00:00</lastmod>
   </url>
   
   <url>

@@ -12,8 +12,6 @@
 	<link rel="stylesheet" href="https://yplam.com/scss/unify.min.css">
 
 	
-
-	
 	
 <script type="application/javascript">
 var doNotTrack = false;
@@ -74,31 +72,18 @@ if (!doNotTrack) {
     <h1 class="g-mb-30">Discuz移动接口原理简介</h1>
     <div class="justify-content-center article-content">
         <p>Discuz论坛内置提供针对移动端开发的json接口，下面根据源码进行一些分析。</p>
-
 <p><strong>入口 api/mobile/index.php</strong></p>
-
 <p>功能比较简单，指向source/plugins/mobile/mobile.php 或者check.php，check.php只有当类似$_GET[&lsquo;check&rsquo;] == &lsquo;check&rsquo;的情况下才运行，返回系统基本信息；其他请求均通过mobile.php接管。</p>
-
 <p><strong>mobile.php</strong></p>
-
 <p>mobile.php的基本思想是根据$_GET[&lsquo;module&rsquo;]以及$_GET[&lsquo;version&rsquo;]来调用相关的module文件，$_GET[&lsquo;version&rsquo;]参数可以做到版本兼容。</p>
-
 <p><strong>mobile/api/%version%/%module%.php</strong></p>
-
 <p>实现相当简单，根据需求设置$_GET[&lsquo;mod&rsquo;]等参数，然后将请求转到Discuz网页版页面，完成请求。同时，文件中定义mobile_api类。</p>
-
 <p><strong>mobile_api类</strong></p>
-
 <p>mobile_api类包含两个方法:common与output，common方法对应discuz的runhooks调用；output方法对应discuz的hookscriptoutput调用。</p>
-
 <p><strong>流程</strong></p>
-
 <p>Discuz调用runhooks时，调用mobile_plugin-&gt;common()，调用mobile_api-&gt;common()</p>
-
 <p>Discuz在模板中调用hookscriptoutput()时，调用mobile_plugin-&gt;global_mobile()，调用mobile_api-&gt;output()</p>
-
 <p><strong>总结</strong></p>
-
 <p>Discuz大量使用$_G全局变量来保存系统运行过程中的结果，这为移动端内容输出提供便利，只需要在模板输出前截获$_G变量，然后根据需求从$_G变量中提取所需数据，并使用json格式返回。这就是Discuz移动端接口的基本实现方式。</p>
     </div>
 

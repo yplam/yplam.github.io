@@ -18,7 +18,6 @@
       
       <guid>https://yplam.com/post/tensorflow/tensorflow-serving-nsfw/</guid>
       <description>&lt;p&gt;两年多前曾经在服务器上部署了个 Tensorflow 模型，由于 Tensorflow serving 刚公布不久，并且还没阅读相关文档，所以当时就粗暴的用 Flask 写了个接口就放到线上跑了两年。&lt;/p&gt;
-
 &lt;p&gt;最近又需要在服务器上部署些模型，决定用回比较官方的方式，研究一下 Tensorflow serving。&lt;/p&gt;</description>
     </item>
     

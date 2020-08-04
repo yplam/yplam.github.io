@@ -12,8 +12,6 @@
 	<link rel="stylesheet" href="https://yplam.com/scss/unify.min.css">
 
 	
-
-	
 	
 <script type="application/javascript">
 var doNotTrack = false;
@@ -69,25 +67,14 @@ if (!doNotTrack) {
     <h1 class="g-mb-30">Configuring 6lbr for Ubuntu and SensorTag CC2650</h1>
     <div class="justify-content-center article-content">
         <p>This post show you how to configure Ubuntu as 6LoWPAN router and bridge 6LoWPAN devices to the IPv4/IPv6 Internet.</p>
-
 <p><strong>Slip-radio</strong></p>
-
 <p>Because I do not have a CC2531 Dongle around, I use a SensorTag CC2650 with DevPack as Slip-radio.</p>
-
 <p>First, change dir to contiki/examples/ipv6/slip-radio, run command:</p>
-
 <pre><code>make TARGET=srf06-cc26xx BOARD=sensortag/cc2650
-</code></pre>
-
-<p>Then flash slip-radio.bin to SensorTag using uniflash.</p>
-
+</code></pre><p>Then flash slip-radio.bin to SensorTag using uniflash.</p>
 <p>You need to validate that slip radio is running:</p>
-
 <pre><code>sudo minicom -s
-</code></pre>
-
-<p>Config minicom to use /dev/ttyACM0 with 115200 8N1. Your will see message like this after resetting SensorTag:</p>
-
+</code></pre><p>Config minicom to use /dev/ttyACM0 with 115200 8N1. Your will see message like this after resetting SensorTag:</p>
 <pre><code>Starting Contiki-3.x-2102-g9f1376d
 With DriverLib v0.44336                                                   
 TI CC2650 SensorTag                                                       
@@ -96,14 +83,9 @@ TI CC2650 SensorTag
  RDC: ContikiMAC, Channel Check Interval: 16 ticks                           
  RF: Channel 25                                                              
 Slip Radio started...
-</code></pre>
-
-<p><strong>1) Edge Router</strong></p>
-
+</code></pre><p><strong>1) Edge Router</strong></p>
 <p>Follow the instructions on the following link to compile and install the 6lbr router: <a href="https://github.com/cetic/6lbr/wiki/Other-Linux-Software-Configuration">https://github.com/cetic/6lbr/wiki/Other-Linux-Software-Configuration</a></p>
-
 <p>Edit /etc/6lbr/6lbr.conf as follow:</p>
-
 <pre><code>MODE=ROUTER
 RAW_ETH=0
 DEV_TAP=tap0
@@ -116,26 +98,14 @@ ETH_JOIN_BRIDGE=0
 DEV_RADIO=/dev/ttyACM0
 BAUDRATE=115200
 
-</code></pre>
-
-<p>More about configure options: <a href="https://github.com/cetic/6lbr/wiki/6LBR-Configuration-file">https://github.com/cetic/6lbr/wiki/6LBR-Configuration-file</a></p>
-
+</code></pre><p>More about configure options: <a href="https://github.com/cetic/6lbr/wiki/6LBR-Configuration-file">https://github.com/cetic/6lbr/wiki/6LBR-Configuration-file</a></p>
 <p>Start 6lbr:</p>
-
 <pre><code>sudo service 6lbr start
-</code></pre>
-
-<p>Config 6LBR to access WSN network:</p>
-
+</code></pre><p>Config 6LBR to access WSN network:</p>
 <pre><code>sudo route -A inet6 add aaaa::/64 gw bbbb::100
-</code></pre>
-
-<p>Now open <a href="http://[bbbb::100]/">http://[bbbb::100]</a> in your browser and you can access the embedded web server.</p>
-
+</code></pre><p>Now open <a href="http://%5Bbbbb::100%5D/">http://[bbbb::100]</a> in your browser and you can access the embedded web server.</p>
 <p><strong>2) Use Smart Bridge to access localhost MQTT Server</strong></p>
-
 <p>Edit /etc/6lbr/6lbr.conf as follow:</p>
-
 <pre><code>MODE=ROUTER
 RAW_ETH=0
 DEV_TAP=tap0
@@ -148,10 +118,7 @@ ETH_JOIN_BRIDGE=0
 DEV_RADIO=/dev/ttyACM0
 BAUDRATE=115200
 
-</code></pre>
-
-<p>Add /etc/6lbr/ifup.d/60dev</p>
-
+</code></pre><p>Add /etc/6lbr/ifup.d/60dev</p>
 <pre><code>#!/bin/bash
 . $CETIC_6LBR_CONF
 . $1/6lbr-functions
@@ -164,10 +131,7 @@ ip -6 address add 2001:db8:2::2/64 dev tap0
 sysctl -w net.ipv4.conf.all.forwarding=1
 sysctl -w net.ipv6.conf.all.forwarding=1
 
-</code></pre>
-
-<p>Add /etc/6lbr/ifdown.d/60dev</p>
-
+</code></pre><p>Add /etc/6lbr/ifdown.d/60dev</p>
 <pre><code>#!/bin/bash
 . $CETIC_6LBR_CONF
 . $1/6lbr-functions
@@ -177,16 +141,10 @@ DEV=$3
 OS=`uname`
 sysctl -w net.ipv4.conf.all.forwarding=0
 sysctl -w net.ipv6.conf.all.forwarding=0
-</code></pre>
-
-<p>You alse need to run:</p>
-
+</code></pre><p>You alse need to run:</p>
 <pre><code>chmod +x /etc/6lbr/ifup.d/60dev
 chmod +x /etc/6lbr/ifdown.d/60dev
-</code></pre>
-
-<p>Install and configure radvd:</p>
-
+</code></pre><p>Install and configure radvd:</p>
 <pre><code>interface tap0
 {
    AdvSendAdvert on;
@@ -203,24 +161,14 @@ chmod +x /etc/6lbr/ifdown.d/60dev
    {
    };
 };
-</code></pre>
-
-<p>Start 6lbr and radvd, you can access router machine var 2001:db8:2::2 from a WSN node. And your WSN node will get an ipv6 address like 2001:db8:2:*<strong><em>:</em></strong>*:*<strong><em>:</em></strong>*:**** from radvd.</p>
-
+</code></pre><p>Start 6lbr and radvd, you can access router machine var 2001:db8:2::2 from a WSN node. And your WSN node will get an ipv6 address like 2001:db8:2:<strong><strong>:</strong></strong>:<strong><strong>:</strong></strong>:**** from radvd.</p>
 <p><strong>3) MQTT over IPV4 WAN</strong></p>
-
 <p>I only have IPV4 WAN access, and have a mosquitto server running on my Linode server. So I need a NAT64 tool to bridge ipv6 to ipv4 network.</p>
-
 <p>After trying jool with no luck, I decided to use 6tunnel to forward ipv6 traffic.</p>
-
 <pre><code>sudo apt-get install 6tunnel
 6tunnel -6 1883 your.mqtt.server.ip 1883
-</code></pre>
-
-<p>That&rsquo;s all!</p>
-
+</code></pre><p>That&rsquo;s all!</p>
 <p>See also:</p>
-
 <p><a href="http://processors.wiki.ti.com/index.php/Contiki-6LOWPAN-BBB">http://processors.wiki.ti.com/index.php/Contiki-6LOWPAN-BBB</a></p>
     </div>
 

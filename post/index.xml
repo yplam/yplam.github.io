@@ -6,10 +6,30 @@
     <description>Recent content in Posts on YP.Lam</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Tue, 03 Dec 2019 15:32:35 +0800</lastBuildDate>
+    <lastBuildDate>Sun, 02 Aug 2020 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="https://yplam.com/post/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>基于 OpenWRT 与 MT7688 DIY 4G WIFI 路由器</title>
+      <link>https://yplam.com/post/embedded/openwrt-mt7688-4g/</link>
+      <pubDate>Sun, 02 Aug 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://yplam.com/post/embedded/openwrt-mt7688-4g/</guid>
+      <description>&lt;p&gt;最近经常要到一些没有有线网络的地方，虽然手机可以共享WIFI出来，但总不能24小时开着，刚好手上空闲着一块 EC20 4G 模块，
+于是淘宝弄了块最便宜的 MT7688 4G 路由板回来，DIY 自己的 4G WIFI共享路由器。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Symfony 4 the new way</title>
+      <link>https://yplam.com/post/symfony/symfony-the-new-way/</link>
+      <pubDate>Sun, 29 Mar 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://yplam.com/post/symfony/symfony-the-new-way/</guid>
+      <description>&lt;p&gt;Symfony 5 已经发布了一段时间，Symfony 4 也出了 4.4 LTS 版本，于是准备把手上一个历史遗留项目升级到 4.4，然而一动手就遇到麻烦，因为现在官方已经不推荐使用之前那种传统的大 bundle，而是倾向于更通用的组件（作为一个从 Symfony 2 过来的用户，不得不说挺支持官方的做法，因为经常会因为有 bundle 不及时更新而导致 composer 冲突）。&lt;/p&gt;
+&lt;p&gt;本文章将尝试从头开始创建一个 Symfony 4 基础应用。&lt;/p&gt;</description>
+    </item>
     
     <item>
       <title>Tensorflow Serving Nsfw</title>
@@ -18,7 +38,6 @@
       
       <guid>https://yplam.com/post/tensorflow/tensorflow-serving-nsfw/</guid>
       <description>&lt;p&gt;两年多前曾经在服务器上部署了个 Tensorflow 模型，由于 Tensorflow serving 刚公布不久，并且还没阅读相关文档，所以当时就粗暴的用 Flask 写了个接口就放到线上跑了两年。&lt;/p&gt;
-
 &lt;p&gt;最近又需要在服务器上部署些模型，决定用回比较官方的方式，研究一下 Tensorflow serving。&lt;/p&gt;</description>
     </item>
     
@@ -68,6 +87,16 @@ Theme 文件除了图片有点大以外看不出其他问题，所以决定花�
       
       <guid>https://yplam.com/post/chromium/chromium-build-debug/</guid>
       <description>&lt;p&gt;最近手上有个小项目需要兼容 Chrome CRX3 版本的扩展格式，Google 了一下竟然完全没有相关介绍文档，于是决定啃一下相关代码。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>SX1280 LoraRanging 功能测试</title>
+      <link>https://yplam.com/post/embedded/lora-ranging-test/</link>
+      <pubDate>Wed, 19 Dec 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://yplam.com/post/embedded/lora-ranging-test/</guid>
+      <description>&lt;p&gt;之前用现成的Lora串口模块感觉挺顺手，最近偶尔看到带 LoraRanging 功能的 SX1280，于是买了两个模块回来测试一下。&lt;/p&gt;
+&lt;p&gt;源码地址 &lt;a href=&#34;https://github.com/yplam/LoraRangingTest&#34;&gt;https://github.com/yplam/LoraRangingTest&lt;/a&gt;&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -173,7 +202,6 @@ AUC
       
       <guid>https://yplam.com/post/machinelearning/machine-learning-predicting-customer-behavior/</guid>
       <description>&lt;p&gt;&lt;strong&gt;注&lt;/strong&gt;：本文为 &lt;a href=&#34;http://www.strong.io/blog/predicting-customer-behavior-machine-learning-to-identify-paying-customers&#34;&gt;Predicting customer behavior: How we use machine learning to identify paying customers before they subscribe&lt;/a&gt; 的简单翻译版本，详细内容请阅读原文。&lt;/p&gt;
-
 &lt;p&gt;本案例为 strong.io 公司的一位创业公司客户，该客户开发了一个类SaaS软件，但在经过多年的稳固发展后，他们的每月收入增长却开始变得很缓慢。他们曾经尝试改善他们的产品，但效果可能不好，因此现在将重点放在客户获取上面。&lt;/p&gt;</description>
     </item>
     
@@ -203,7 +231,6 @@ AUC
       
       <guid>https://yplam.com/post/machinelearning/machine-learning-notes/</guid>
       <description>&lt;p&gt;机器学习是人工智能的一个分支。人工智能的研究是从以“推理”为重点到以“知识”为重点，再到以“学习”为重点，一条自然、清晰的脉络。显然，机器学习是实现人工智能的一个途径，即以机器学习为手段解决人工智能中的问题。机器学习在近30多年已发展为一门多领域交叉学科，涉及概率论、统计学、逼近论、凸分析、计算复杂性理论等多门学科。机器学习理论主要是设计和分析一些让计算机可以自动“学习”的算法。机器学习算法是一类从数据中自动分析获得规律，并利用规律对未知数据进行预测的算法。因为学习算法中涉及了大量的统计学理论，机器学习与推断统计学联系尤为密切，也被称为统计学习理论。&lt;a href=&#34;https://zh.wikipedia.org/wiki/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0&#34;&gt;来源&lt;/a&gt;&lt;/p&gt;
-
 &lt;p&gt;本文记录机器学习相关的概念与资料索引。&lt;/p&gt;</description>
     </item>
     
@@ -304,9 +331,7 @@ AUC
       
       <guid>https://yplam.com/post/linux/ssd-raid-performance/</guid>
       <description>&lt;p&gt;最近拿到几块Intel的企业级SSD准备搭建新的服务器，下面分享一些这段时间的测试数据。&lt;/p&gt;
-
 &lt;p&gt;测试主要在DELL R610、阿里云4核非IO优化SSD服务器环境下进行，测试工具为sysbench。&lt;/p&gt;
-
 &lt;p&gt;测试过程主要是使用sysbench命令分别对 SATA、SAS、SSD盘进行测试，其中测试重点在于SSD性能对比。&lt;/p&gt;</description>
     </item>
     
@@ -381,7 +406,6 @@ AUC
       
       <guid>https://yplam.com/post/drupal/drupal-services-and-dependency-injection/</guid>
       <description>&lt;p&gt;原文地址：&lt;a href=&#34;https://www.drupal.org/node/2133171&#34;&gt;Services and dependency injection in Drupal 8&lt;/a&gt;&lt;/p&gt;
-
 &lt;p&gt;Drupal 8 引入了服务的概念，用来解耦可复用的功能，并且可以通过在服务容器中注册这些服务，让它们可插拔与可替换。身为开发者，最佳的方式就是通过服务容器来访问Drupal提供的所有服务，这样可以保证遵循系统的解耦特性。在&lt;a href=&#34;http://symfony.com/doc/current/book/service_container.html&#34;&gt;Symfony 2的文档&lt;/a&gt;中对服务有非常好的介绍。&lt;/p&gt;</description>
     </item>
     
@@ -392,7 +416,6 @@ AUC
       
       <guid>https://yplam.com/post/drupal/drupal-special-topic/</guid>
       <description>&lt;p&gt;Drupal Special Topic 模块提供一种通用并且可定制的 Drupal 专题页面功能。&lt;/p&gt;
-
 &lt;p&gt;这里的专题页面，指的是将网站中与某个话题相关的内容聚合到一个页面中，具有特殊的布局与样式设计。国内常见的专题页面大多以区块的形式展现，不同的位置显示不同的内容列表，有链接与图文混合等展示形式。&lt;/p&gt;</description>
     </item>
     
@@ -430,7 +453,6 @@ AUC
       
       <guid>https://yplam.com/post/symfony/symfony-service-container/</guid>
       <description>&lt;p&gt;这是一篇关于Symfony2服务容器实现的笔记，原文请查看文章末尾的相关资料部分。&lt;/p&gt;
-
 &lt;p&gt;上一篇笔记介绍了依赖注入容器，依赖注入容器使得对各种系统功能的调用变得简便，但同时引入了一个新的问题就是容器的编写与维护变得非常复杂。Symfony2试图通过ServiceContainer、ServiceContainerBuilder以及xml、yml配置文件来使容器的实现变得简单。&lt;/p&gt;</description>
     </item>
     
@@ -477,7 +499,6 @@ AUC
       
       <guid>https://yplam.com/post/linux/linux-command-collection/</guid>
       <description>&lt;p&gt;此笔记记录 Linux 下的一些命令使用技巧，作为工作中的备忘。&lt;/p&gt;
-
 &lt;ul&gt;
 &lt;li&gt;&lt;a href=&#34;#no1&#34;&gt;导入数据库时跳过某个表&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;#no2&#34;&gt;找出最近修改、创建的文件&lt;/a&gt;&lt;/li&gt;

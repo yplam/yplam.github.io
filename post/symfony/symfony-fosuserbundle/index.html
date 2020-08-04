@@ -12,8 +12,6 @@
 	<link rel="stylesheet" href="https://yplam.com/scss/unify.min.css">
 
 	
-
-	
 	
 <script type="application/javascript">
 var doNotTrack = false;
@@ -74,23 +72,14 @@ if (!doNotTrack) {
     <h1 class="g-mb-30">FOSUserBundle 入门</h1>
     <div class="justify-content-center article-content">
         <p>这是一篇介绍FOSUserBundle的安装与配置笔记，面向Symfony2.1+，更详细的内容请参考：<a href="https://github.com/FriendsOfSymfony/FOSUserBundle/blob/master/Resources/doc/index.md">https://github.com/FriendsOfSymfony/FOSUserBundle/blob/master/Resources/doc/index.md</a></p>
-
 <p>Symfony2的安全组件提供了一个具有扩展性的安全机制，允许你从配置文件、数据库或者任何你能想象到的地方加载用户。FOSUserBundle就是基于这种安全机制上建立的，为你提供一个简便的方式来将用户保存在数据库中。</p>
-
 <p><strong>下载FOSUserBundle</strong></p>
-
 <p>修改composer.json文件，在require部分增加以下内容：</p>
-
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json"><span style="color:#e6db74">&#34;friendsofsymfony/user-bundle&#34;</span><span style="color:#960050;background-color:#1e0010">:</span> <span style="color:#e6db74">&#34;~2.0@dev&#34;</span></code></pre></div>
-
 <p>使用composer更新</p>
-
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">$ php composer.phar update friendsofsymfony/user-bundle</code></pre></div>
-
 <p><strong>使能FOSUserBundle</strong></p>
-
 <p>修改app/AppKernel.php文件，使能FOSUserBundle</p>
-
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-php" data-lang="php">    <span style="color:#75715e">&lt;?php</span>
     <span style="color:#75715e">// app/AppKernel.php
 </span><span style="color:#75715e"></span>    
@@ -102,11 +91,8 @@ if (!doNotTrack) {
         );
     }
 </code></pre></div>
-
 <p><strong>创建用户类</strong></p>
-
 <p>创建一个自己的UserBundle，建立自己的User Entity。这样做有一个好处是以后可以用这个UserBundle来覆写FOSUserBundle。</p>
-
 <p><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-php" data-lang="php">    <span style="color:#75715e">&lt;?php</span>
     <span style="color:#75715e">// src/Acme/UserBundle/Entity/User.php
 </span><span style="color:#75715e"></span>    
@@ -138,77 +124,65 @@ if (!doNotTrack) {
  
  
 <strong>配置security.yml</strong></p>
-
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yml" data-lang="yml">    <span style="color:#75715e"># app/config/security.yml</span>
-    security:
-        encoders:
-            FOS\UserBundle\Model\UserInterface: sha512
+    <span style="color:#66d9ef">security</span>:
+        <span style="color:#66d9ef">encoders</span>:
+            <span style="color:#66d9ef">FOS\UserBundle\Model\UserInterface</span>: sha512
     
-        role_hierarchy:
-            ROLE_ADMIN:       ROLE_USER
-            ROLE_SUPER_ADMIN: ROLE_ADMIN
+        <span style="color:#66d9ef">role_hierarchy</span>:
+            <span style="color:#66d9ef">ROLE_ADMIN</span>:       ROLE_USER
+            <span style="color:#66d9ef">ROLE_SUPER_ADMIN</span>: ROLE_ADMIN
     
-        providers:
-            fos_userbundle:
-                id: fos_user.user_provider.username
+        <span style="color:#66d9ef">providers</span>:
+            <span style="color:#66d9ef">fos_userbundle</span>:
+                <span style="color:#66d9ef">id</span>: fos_user.user_provider.username
     
-        firewalls:
-            main:
-                pattern: ^/
-                form_login:
-                    provider: fos_userbundle
-                    csrf_provider: form.csrf_provider
-                logout:       <span style="color:#66d9ef">true</span>
-                anonymous:    <span style="color:#66d9ef">true</span>
+        <span style="color:#66d9ef">firewalls</span>:
+            <span style="color:#66d9ef">main</span>:
+                <span style="color:#66d9ef">pattern</span>: ^/
+                <span style="color:#66d9ef">form_login</span>:
+                    <span style="color:#66d9ef">provider</span>: fos_userbundle
+                    <span style="color:#66d9ef">csrf_provider</span>: form.csrf_provider
+                <span style="color:#66d9ef">logout</span>:       <span style="color:#66d9ef">true</span>
+                <span style="color:#66d9ef">anonymous</span>:    <span style="color:#66d9ef">true</span>
     
-        access_control:
-            - { path: ^/login$, role: IS_AUTHENTICATED_ANONYMOUSLY }
-            - { path: ^/register, role: IS_AUTHENTICATED_ANONYMOUSLY }
-            - { path: ^/resetting, role: IS_AUTHENTICATED_ANONYMOUSLY }
-            - { path: ^/admin/, role: ROLE_ADMIN }</code></pre></div>
-
+        <span style="color:#66d9ef">access_control</span>:
+            - { <span style="color:#66d9ef">path: ^/login$, role</span>: IS_AUTHENTICATED_ANONYMOUSLY }
+            - { <span style="color:#66d9ef">path: ^/register, role</span>: IS_AUTHENTICATED_ANONYMOUSLY }
+            - { <span style="color:#66d9ef">path: ^/resetting, role</span>: IS_AUTHENTICATED_ANONYMOUSLY }
+            - { <span style="color:#66d9ef">path: ^/admin/, role</span>: ROLE_ADMIN }</code></pre></div>
 <p><strong>配置FOSUserBundle</strong></p>
-
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yml" data-lang="yml">    <span style="color:#75715e"># app/config/config.yml</span>
-    fos_user:
-        db_driver: orm <span style="color:#75715e"># other valid values are &#39;mongodb&#39;, &#39;couchdb&#39; and &#39;propel&#39;</span>
-        firewall_name: main
-        user_class: Your\UserBundle\Entity\User</code></pre></div>
-
+    <span style="color:#66d9ef">fos_user</span>:
+        <span style="color:#66d9ef">db_driver</span>: orm <span style="color:#75715e"># other valid values are &#39;mongodb&#39;, &#39;couchdb&#39; and &#39;propel&#39;</span>
+        <span style="color:#66d9ef">firewall_name</span>: main
+        <span style="color:#66d9ef">user_class</span>: Your\UserBundle\Entity\User</code></pre></div>
 <p>user_class需要按照自己的需求来设置。</p>
-
 <p><strong>加载路由配置文件</strong></p>
-
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yml" data-lang="yml">    <span style="color:#75715e"># app/config/routing.yml</span>
-    fos_user_security:
-        resource: <span style="color:#e6db74">&#34;@FOSUserBundle/Resources/config/routing/security.xml&#34;</span>
+    <span style="color:#66d9ef">fos_user_security</span>:
+        <span style="color:#66d9ef">resource</span>: <span style="color:#e6db74">&#34;@FOSUserBundle/Resources/config/routing/security.xml&#34;</span>
     
-    fos_user_profile:
-        resource: <span style="color:#e6db74">&#34;@FOSUserBundle/Resources/config/routing/profile.xml&#34;</span>
-        prefix: /profile
+    <span style="color:#66d9ef">fos_user_profile</span>:
+        <span style="color:#66d9ef">resource</span>: <span style="color:#e6db74">&#34;@FOSUserBundle/Resources/config/routing/profile.xml&#34;</span>
+        <span style="color:#66d9ef">prefix</span>: /profile
     
-    fos_user_register:
-        resource: <span style="color:#e6db74">&#34;@FOSUserBundle/Resources/config/routing/registration.xml&#34;</span>
-        prefix: /register
+    <span style="color:#66d9ef">fos_user_register</span>:
+        <span style="color:#66d9ef">resource</span>: <span style="color:#e6db74">&#34;@FOSUserBundle/Resources/config/routing/registration.xml&#34;</span>
+        <span style="color:#66d9ef">prefix</span>: /register
     
-    fos_user_resetting:
-        resource: <span style="color:#e6db74">&#34;@FOSUserBundle/Resources/config/routing/resetting.xml&#34;</span>
-        prefix: /resetting
+    <span style="color:#66d9ef">fos_user_resetting</span>:
+        <span style="color:#66d9ef">resource</span>: <span style="color:#e6db74">&#34;@FOSUserBundle/Resources/config/routing/resetting.xml&#34;</span>
+        <span style="color:#66d9ef">prefix</span>: /resetting
     
-    fos_user_change_password:
-        resource: <span style="color:#e6db74">&#34;@FOSUserBundle/Resources/config/routing/change_password.xml&#34;</span>
-        prefix: /profile</code></pre></div>
-
+    <span style="color:#66d9ef">fos_user_change_password</span>:
+        <span style="color:#66d9ef">resource</span>: <span style="color:#e6db74">&#34;@FOSUserBundle/Resources/config/routing/change_password.xml&#34;</span>
+        <span style="color:#66d9ef">prefix</span>: /profile</code></pre></div>
 <p>需要注意的是，需要配置好SwiftmailerBundle后，重置密码等功能才能正常工作。</p>
-
 <p><strong>更新数据库</strong></p>
-
 <p>可以先看看是不是一切正常</p>
-
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">    $ php app/console doctrine:schema:update --dump-sql</code></pre></div>
-
 <p>然后更新数据库</p>
-
 <p><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">    $ php app/console doctrine:schema:update --force</code></pre></div>
 如无意外，至此FOSUserBundle的功能就已经可以正常功能。可以尝试访问 /login /register 等进行测试。</p>
     </div>

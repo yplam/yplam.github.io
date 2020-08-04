@@ -12,8 +12,6 @@
 	<link rel="stylesheet" href="https://yplam.com/scss/unify.min.css">
 
 	
-
-	
 	
 <script type="application/javascript">
 var doNotTrack = false;
@@ -70,42 +68,24 @@ if (!doNotTrack) {
     <div class="justify-content-center article-content">
         <p>最近迷上了机器学习，花了不少时间学习相关的基础内容；虽然数学跟不上，也不妨碍跟风玩玩各位大牛的开源成果。
 本文记录了购买AWS GPU服务器，安装cuda、 TensorFlow，运行 Neural Style 测试的过程。</p>
-
 <p>update: 2018-05-17，本文内容可能已不适合，请参考末尾命令行日志做修改。</p>
-
-<h3 id="购买aws-ec2-p2-xlarge">购买AWS EC2 p2.xlarge</h3>
-
+<h3 id="购买aws-ec2-p2xlarge">购买AWS EC2 p2.xlarge</h3>
 <p>购买p2.xlarge实例（1 NVIDIA K80 GPU， 4核CPU，61G内存，$0.9/小时），空间需要10G以上，建议20G，因为nvidia与cuda包的安装都需要不少的空间（按下面的安装方法，使用的空间接近10G）。
 选择 aws 提供的 ubuntu 16.04，跟需求配置安装。</p>
-
 <p>安装后建议设置一下locale，不然下面的步骤中可能会报错。</p>
-
 <pre><code>export LC_ALL=&quot;en_US.UTF-8&quot;
 export LC_CTYPE=&quot;en_US.UTF-8&quot;
 sudo dpkg-reconfigure locales
-</code></pre>
-
-<h3 id="安装nvidia显卡驱动">安装Nvidia显卡驱动</h3>
-
+</code></pre><h3 id="安装nvidia显卡驱动">安装Nvidia显卡驱动</h3>
 <p>首先，检查一下服务器中是否真的存在Nvidia显卡：</p>
-
 <pre><code>$ lspci | grep -i nvidia
-</code></pre>
-
-<p>直接使用ubuntu官方提供的Nvidia显卡驱动，目前版本是367：</p>
-
+</code></pre><p>直接使用ubuntu官方提供的Nvidia显卡驱动，目前版本是367：</p>
 <pre><code>apt-cache search nvidia
 sudo apt-get install nvidia-367 nvidia-modprobe
 
-</code></pre>
-
-<p>检测驱动是否正常安装：</p>
-
+</code></pre><p>检测驱动是否正常安装：</p>
 <pre><code>nvidia-smi
-</code></pre>
-
-<p>正常情况下会输出：</p>
-
+</code></pre><p>正常情况下会输出：</p>
 <pre><code>
 +-----------------------------------------------------------------------------+
 | NVIDIA-SMI 367.57                 Driver Version: 367.57                    |
@@ -125,39 +105,26 @@ sudo apt-get install nvidia-367 nvidia-modprobe
 +-----------------------------------------------------------------------------+
 
 
-</code></pre>
-
-<h3 id="安装cuda-cudnn">安装cuda cuDNN</h3>
-
+</code></pre><h3 id="安装cuda-cudnn">安装cuda cuDNN</h3>
 <p>到<a href="https://developer.nvidia.com/cuda-downloads">官网</a>下载最新版本的cuda，以及对应的cudnn，安装：</p>
-
 <pre><code>wget http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64/cuda-repo-ubuntu1604_8.0.44-1_amd64.deb
 
 sudo dpkg -i cuda-repo-ubuntu1604_8.0.44-1_amd64.deb
 sudo apt-get update
 sudo apt-get install cuda
-</code></pre>
-
-<p>下载与安装cuDNN（需要到官方注册登录后才能得到下载地址）</p>
-
+</code></pre><p>下载与安装cuDNN（需要到官方注册登录后才能得到下载地址）</p>
 <pre><code>tar xvzf cudnn-8.0-linux-x64-v5.1.tgz
 sudo cp -P cuda/include/cudnn.h /usr/local/cuda/include
 sudo cp -P cuda/lib64/libcudnn* /usr/local/cuda/lib64
 sudo chmod a+r /usr/local/cuda/include/cudnn.h /usr/local/cuda/lib64/libcudnn*
 
-</code></pre>
-
-<h3 id="安装tensorflow">安装TensorFlow</h3>
-
+</code></pre><h3 id="安装tensorflow">安装TensorFlow</h3>
 <pre><code>sudo apt-get install python-pip python-dev
 sudo pip install --upgrade pip
 
 sudo pip install tensorflow-gpu
 
-</code></pre>
-
-<h3 id="测试neural-style">测试Neural Style</h3>
-
+</code></pre><h3 id="测试neural-style">测试Neural Style</h3>
 <pre><code>sudo apt-get install libatlas-base-dev
 sudo pip install numpy scipy pillow
 
@@ -167,24 +134,14 @@ wget http://www.vlfeat.org/matconvnet/models/beta16/imagenet-vgg-verydeep-19.mat
 
 python neural_style.py --content examples/1-content.jpg --styles examples/1-style.jpg --output 1.jpg
 
-</code></pre>
-
-<p>完成。</p>
-
+</code></pre><p>完成。</p>
 <p>跑一次 Neural Style 大概需要7分钟。</p>
-
 <p>测试后记得讲实例停掉，然后制作image，留作下次测试用，讲运行中的实例删除，毕竟$0.9/小时也不便宜（image保存在EBS中，也会消耗小量的费用）。</p>
-
 <p>玩了一天5个小时，消耗4.5刀，虽然不算便宜，但相比动辄两三万的深度学习工作站，平时玩玩的话还算可以。</p>
-
 <p>成果：</p>
-
-<p><img src="/assets/2016/in.jpeg" alt="input" title="input" /></p>
-
-<p><img src="/assets/2016/out.jpg" alt="output" title="output" /></p>
-
+<p><img src="/assets/2016/in.jpeg" alt="input" title="input"></p>
+<p><img src="/assets/2016/out.jpg" alt="output" title="output"></p>
 <p>update: 2018-05-17,新版安装流程</p>
-
 <pre><code>
 export LC_ALL=&quot;en_US.UTF-8&quot;
 export LC_CTYPE=&quot;en_US.UTF-8&quot;
