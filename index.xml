@@ -127,19 +127,6 @@ Theme 文件除了图片有点大以外看不出其他问题，所以决定花�
     </item>
     
     <item>
-      <title>推荐系统笔记</title>
-      <link>https://yplam.com/post/machinelearning/recommender-system/</link>
-      <pubDate>Wed, 04 Apr 2018 00:00:00 +0000</pubDate>
-      
-      <guid>https://yplam.com/post/machinelearning/recommender-system/</guid>
-      <description>距离度量
-评估
-RMSE
-AUC
-算法</description>
-    </item>
-    
-    <item>
       <title>Symfony 4 尝鲜</title>
       <link>https://yplam.com/post/symfony/hello-symfony-4/</link>
       <pubDate>Fri, 01 Dec 2017 00:00:00 +0000</pubDate>

@@ -40,19 +40,6 @@
     </item>
     
     <item>
-      <title>推荐系统笔记</title>
-      <link>https://yplam.com/post/machinelearning/recommender-system/</link>
-      <pubDate>Wed, 04 Apr 2018 00:00:00 +0000</pubDate>
-      
-      <guid>https://yplam.com/post/machinelearning/recommender-system/</guid>
-      <description>距离度量
-评估
-RMSE
-AUC
-算法</description>
-    </item>
-    
-    <item>
       <title>Tensorflow Object Detection API 入门笔记 - 基于 Google Cloud 与 阿里云</title>
       <link>https://yplam.com/post/tensorflow/tensorflow-object-detection-note/</link>
       <pubDate>Sat, 21 Oct 2017 00:00:00 +0000</pubDate>
