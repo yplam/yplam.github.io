@@ -1,0 +1,10 @@
+/* :root {
+    --md-primary-bg-color:        #EE0F0F;
+    --md-primary-fg-color--light: #ECB7B7;
+    --md-primary-fg-color:  #72c02c;
+    --md-accent-fg-color: #72c02c;
+  } */
+
+ .md-typeset .admonition.note, .md-typeset details.note {
+     border-color: var(--md-accent-fg-color);
+ }
