@@ -34,6 +34,8 @@
     
     
     
+      <link rel="stylesheet" href="../../../assets/css/highlight.css">
+    
       <link rel="stylesheet" href="../../../assets/css/custom.css">
     
     
@@ -1573,16 +1575,7 @@
 <p>参考上面的 git 项目，在 OpenWRT 源码 target/linux 下添加一个 imx6ull 目录，然后将我们之前内核编译的 .config 文件拷贝到 target/linux/imx6ull/config-4.14 。</p>
 <p>由于我们用的是官方内核，所以 patch 相关的可以忽略掉。</p>
 <p>最小配置的 imx6ull 目录如下：</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
-<span class="normal"> 2</span>
-<span class="normal"> 3</span>
-<span class="normal"> 4</span>
-<span class="normal"> 5</span>
-<span class="normal"> 6</span>
-<span class="normal"> 7</span>
-<span class="normal"> 8</span>
-<span class="normal"> 9</span>
-<span class="normal">10</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>.
+<pre><code class="language-shell">.
 ├── base-files
 │   └── etc
 │       └── inittab
@@ -1591,149 +1584,86 @@
 │   └── Makefile
 ├── Makefile
 └── profiles
-    └── <span class="m">100</span>-generic.mk
-</code></pre></div>
-</td></tr></table>
+    └── 100-generic.mk
+</code></pre>
 <p>Makefile:</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
-<span class="normal"> 2</span>
-<span class="normal"> 3</span>
-<span class="normal"> 4</span>
-<span class="normal"> 5</span>
-<span class="normal"> 6</span>
-<span class="normal"> 7</span>
-<span class="normal"> 8</span>
-<span class="normal"> 9</span>
-<span class="normal">10</span>
-<span class="normal">11</span>
-<span class="normal">12</span>
-<span class="normal">13</span>
-<span class="normal">14</span>
-<span class="normal">15</span>
-<span class="normal">16</span>
-<span class="normal">17</span>
-<span class="normal">18</span>
-<span class="normal">19</span>
-<span class="normal">20</span>
-<span class="normal">21</span>
-<span class="normal">22</span>
-<span class="normal">23</span>
-<span class="normal">24</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="c">#</span>
-<span class="c"># Copyright (C) 2013-2014 OpenWrt.org</span>
-<span class="c">#</span>
-<span class="c"># This is free software, licensed under the GNU General Public License v2.</span>
-<span class="c"># See /LICENSE for more information.</span>
-<span class="c">#</span>
-<span class="cp">include $(TOPDIR)/rules.mk</span>
+<pre><code class="language-makefile">
+#
+# Copyright (C) 2013-2014 OpenWrt.org
+#
+# This is free software, licensed under the GNU General Public License v2.
+# See /LICENSE for more information.
+#
+include $(TOPDIR)/rules.mk
 
-<span class="nv">ARCH</span><span class="o">:=</span>arm
-<span class="nv">BOARD</span><span class="o">:=</span>imx6ull
-<span class="nv">BOARDNAME</span><span class="o">:=</span>Freescale i.MX <span class="m">6</span> ULL
-<span class="nv">FEATURES</span><span class="o">:=</span>audio display fpu gpio rtc usb usbgadget squashfs ext4 targz nand ubifs
-<span class="nv">CPU_TYPE</span><span class="o">:=</span>cortex-a7
-<span class="nv">CPU_SUBTYPE</span><span class="o">:=</span>neon-vfpv4
+ARCH:=arm
+BOARD:=imx6ull
+BOARDNAME:=Freescale i.MX 6 ULL
+FEATURES:=audio display fpu gpio rtc usb usbgadget squashfs ext4 targz nand ubifs
+CPU_TYPE:=cortex-a7
+CPU_SUBTYPE:=neon-vfpv4
 
-<span class="nv">KERNEL_PATCHVER</span><span class="o">:=</span><span class="m">4</span>.14
+KERNEL_PATCHVER:=4.14
 
-<span class="cp">include $(INCLUDE_DIR)/target.mk</span>
+include $(INCLUDE_DIR)/target.mk
 
-<span class="nv">KERNELNAME</span><span class="o">:=</span>zImage
+KERNELNAME:=zImage
 
-<span class="nv">DEFAULT_PACKAGES</span> <span class="o">+=</span> uboot-envtools 
+DEFAULT_PACKAGES += uboot-envtools 
 
-<span class="k">$(</span><span class="nv">eval</span> <span class="k">$(</span><span class="nv">call</span> <span class="nv">BuildTarget</span><span class="k">))</span>
-</code></pre></div>
-</td></tr></table>
+$(eval $(call BuildTarget))
+
+
+</code></pre>
 <p>profiles/100-generic.mk</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
-<span class="normal"> 2</span>
-<span class="normal"> 3</span>
-<span class="normal"> 4</span>
-<span class="normal"> 5</span>
-<span class="normal"> 6</span>
-<span class="normal"> 7</span>
-<span class="normal"> 8</span>
-<span class="normal"> 9</span>
-<span class="normal">10</span>
-<span class="normal">11</span>
-<span class="normal">12</span>
-<span class="normal">13</span>
-<span class="normal">14</span>
-<span class="normal">15</span>
-<span class="normal">16</span>
-<span class="normal">17</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="c">#</span>
-<span class="c"># Copyright (C) 2013 OpenWrt.org</span>
-<span class="c">#</span>
-<span class="c"># This is free software, licensed under the GNU General Public License v2.</span>
-<span class="c"># See /LICENSE for more information.</span>
-<span class="c">#</span>
+<pre><code class="language-makefile">#
+# Copyright (C) 2013 OpenWrt.org
+#
+# This is free software, licensed under the GNU General Public License v2.
+# See /LICENSE for more information.
+#
 
-<span class="cp">define Profile/Generic</span>
-  PRIORITY:<span class="o">=</span><span class="m">1</span>
-  NAME:<span class="o">=</span>Generic <span class="o">(</span>default<span class="o">)</span>
-<span class="cp">endef</span>
+define Profile/Generic
+  PRIORITY:=1
+  NAME:=Generic (default)
+endef
 
-<span class="cp">define Profile/Generic/Description</span>
- Package <span class="nb">set</span> compatible with most Freescale i.MX <span class="m">6</span> ull based boards.
-<span class="cp">endef</span>
+define Profile/Generic/Description
+ Package set compatible with most Freescale i.MX 6 ull based boards.
+endef
 
-<span class="k">$(</span><span class="nv">eval</span> <span class="k">$(</span><span class="nv">call</span> <span class="nv">Profile</span>,<span class="nv">Generic</span><span class="k">))</span>
-</code></pre></div>
-</td></tr></table>
+$(eval $(call Profile,Generic))
+
+</code></pre>
 <p>image/Makefile</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
-<span class="normal"> 2</span>
-<span class="normal"> 3</span>
-<span class="normal"> 4</span>
-<span class="normal"> 5</span>
-<span class="normal"> 6</span>
-<span class="normal"> 7</span>
-<span class="normal"> 8</span>
-<span class="normal"> 9</span>
-<span class="normal">10</span>
-<span class="normal">11</span>
-<span class="normal">12</span>
-<span class="normal">13</span>
-<span class="normal">14</span>
-<span class="normal">15</span>
-<span class="normal">16</span>
-<span class="normal">17</span>
-<span class="normal">18</span>
-<span class="normal">19</span>
-<span class="normal">20</span>
-<span class="normal">21</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="c">#</span>
-<span class="c"># Copyright (C) 2013 OpenWrt.org</span>
-<span class="c">#</span>
-<span class="c"># This is free software, licensed under the GNU General Public License v2.</span>
-<span class="c"># See /LICENSE for more information.</span>
-<span class="c">#</span>
-<span class="cp">include $(TOPDIR)/rules.mk</span>
-<span class="cp">include $(INCLUDE_DIR)/image.mk</span>
+<pre><code class="language-makefile">#
+# Copyright (C) 2013 OpenWrt.org
+#
+# This is free software, licensed under the GNU General Public License v2.
+# See /LICENSE for more information.
+#
+include $(TOPDIR)/rules.mk
+include $(INCLUDE_DIR)/image.mk
 
-<span class="nv">KERNEL_LOADADDR</span><span class="o">:=</span>0x80800000
+KERNEL_LOADADDR:=0x80800000
 
-<span class="cp">define Device/Default</span>
-  PROFILES :<span class="o">=</span> Generic
-  FILESYSTEMS :<span class="o">=</span> squashfs ext4
-  KERNEL_INSTALL :<span class="o">=</span> <span class="m">1</span>
-  KERNEL_SUFFIX :<span class="o">=</span> -uImage
-  KERNEL_NAME :<span class="o">=</span> zImage
-  KERNEL_PREFIX :<span class="o">=</span> <span class="nv">$$</span><span class="o">(</span>IMAGE_PREFIX<span class="o">)</span>
-<span class="cp">endef</span>
+define Device/Default
+  PROFILES := Generic
+  FILESYSTEMS := squashfs ext4
+  KERNEL_INSTALL := 1
+  KERNEL_SUFFIX := -uImage
+  KERNEL_NAME := zImage
+  KERNEL_PREFIX := $$(IMAGE_PREFIX)
+endef
 
-<span class="k">$(</span><span class="nv">eval</span> <span class="k">$(</span><span class="nv">call</span> <span class="nv">BuildImage</span><span class="k">))</span>
-</code></pre></div>
-</td></tr></table>
+$(eval $(call BuildImage))
+</code></pre>
 <p>base-files/etc/inittab</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
-<span class="normal">2</span>
-<span class="normal">3</span>
-<span class="normal">4</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>::sysinit:/etc/init.d/rcS S boot
+<pre><code class="language-conf">::sysinit:/etc/init.d/rcS S boot
 ::shutdown:/etc/init.d/rcS K shutdown
 ::askconsole:/usr/libexec/login.sh
 tty1::askfirst:/usr/libexec/login.sh
-</code></pre></div>
-</td></tr></table>
+</code></pre>
 <p>以上配置基于个人猜测以及参考以下文档：</p>
 <ul>
 <li>https://openwrt.org/docs/techref/image.makefile</li>
@@ -1781,6 +1711,10 @@ tty1::askfirst:/usr/libexec/login.sh
           }, typeof search !== "undefined" && search)
         })
       </script>
+      
+        <script src="../../../assets/js/highlight.min.js"></script>
+      
+        <script src="../../../assets/js/init.js"></script>
       
     
   </body>

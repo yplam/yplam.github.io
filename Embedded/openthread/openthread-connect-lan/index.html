@@ -34,6 +34,8 @@
     
     
     
+      <link rel="stylesheet" href="../../../assets/css/highlight.css">
+    
       <link rel="stylesheet" href="../../../assets/css/custom.css">
     
     
@@ -1490,9 +1492,8 @@
                 <h1 id="openthread">OpenThread 节点访问局域网服务器的配置方法<a class="headerlink" href="#openthread" title="Permanent link">&para;</a></h1>
 <p>搭建好 OpenThread 网络，并且可以通过 TAYGA NAT64 访问外部网络，然而却出现一个问题，就是 OpenThread 节点无法 PING 通局域网内的其他服务器，这对服务端应用的开发造成障碍。这是什么原因造成的呢？</p>
 <p>在该服务器上运行 Wireshark 抓包，发现服务器实际上已经接收到节点发送过来的 PING request 包，但却没有回复 PING reply。参考网上资料，添加以下路由：</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>sudo route -A inet6 add fd11:22::/64 gw fd40:2d04:3c20::1
-</code></pre></div>
-</td></tr></table>
+<pre><code class="language-shell">sudo route -A inet6 add fd11:22::/64 gw fd40:2d04:3c20::1
+</code></pre>
 <p>问题解决，猜想其原因是服务器不知道按哪个路径回复 PING 请求。</p>
 <p>参考资料：</p>
 <ul>
@@ -1536,6 +1537,10 @@
           }, typeof search !== "undefined" && search)
         })
       </script>
+      
+        <script src="../../../assets/js/highlight.min.js"></script>
+      
+        <script src="../../../assets/js/init.js"></script>
       
     
   </body>

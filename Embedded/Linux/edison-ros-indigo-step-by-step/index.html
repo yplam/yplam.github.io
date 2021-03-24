@@ -34,6 +34,8 @@
     
     
     
+      <link rel="stylesheet" href="../../../assets/css/highlight.css">
+    
       <link rel="stylesheet" href="../../../assets/css/custom.css">
     
     
@@ -1638,158 +1640,119 @@
 <p><a href="https://github.com/sarweshkumar47/Boot-Intel-Edison-from-SDCard-with-Debian-Ubilinux">https://github.com/sarweshkumar47/Boot-Intel-Edison-from-SDCard-with-Debian-Ubilinux</a></p>
 <h3 id="_1">系统初始化<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h3>
 <p>配置 wifi：</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>wpa_passphrase wifiid wifi_password
-</code></pre></div>
-</td></tr></table>
+<pre><code class="language-shell">wpa_passphrase wifiid wifi_password
+</code></pre>
 <p>然后修改 /etc/network/interfaces，禁用 usb 网卡，使用 wlan0，将 wpa-ssid 跟 wpa-psk 配置上。</p>
 <p>初始化的配置，顺便把 locale 配置一下</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
-<span class="normal">2</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>apt-get update
+<pre><code class="language-shell">apt-get update
 dpkg-reconfigure locale
-</code></pre></div>
-</td></tr></table>
+</code></pre>
 <h3 id="boost-153">安装 boost 1.5.3 库<a class="headerlink" href="#boost-153" title="Permanent link">&para;</a></h3>
 <p>Debian Wheezy 自带的 boost 库版本为 1.4.9，如果按此版本编译安装 ROS Indigo 的话会报以下错误：</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>error: macro <span class="s2">&quot;BOOST_SCOPE_EXIT&quot;</span> passed <span class="m">2</span> arguments, but takes just <span class="m">1</span>
-</code></pre></div>
-</td></tr></table>
+<pre><code class="language-shell">error: macro &quot;BOOST_SCOPE_EXIT&quot; passed 2 arguments, but takes just 1
+
+</code></pre>
 <p>查看相关文档得知，Indigo 对应的 boost 版本为 1.5.3，可以按 <a href="http://www.boost.org/doc/libs/1_53_0/more/getting_started/unix-variants.html">Getting Started on Unix Variants</a> 编译安装，也可以下载我编译好的 deb 包进行安装（编译一次需要 N 个小时）。当然，如果你有兴趣的话也可以尝试编译自己的deb包，参考 https://github.com/ulikoehler/deb-buildscripts/blob/master/deb-boost.sh</p>
 <p>下载 deb 包： <a href="/assets/2017/boost-all_1.53.0-1_i386.deb">boost-all_1.53.0-1_i386.deb</a> <a href="/assets/2017/boost-all-dev_1.53.0-1_i386.deb">boost-all-dev_1.53.0-1_i386.deb</a></p>
 <p>安装：</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
-<span class="normal">2</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>apt-get install libicu48
+<pre><code class="language-shell">apt-get install libicu48
 dpkg -i boost-all_1.53.0-1_i386.deb boost-all-dev_1.53.0-1_i386.deb
-</code></pre></div>
-</td></tr></table>
+
+</code></pre>
 <h3 id="opencv">安装 opencv 库<a class="headerlink" href="#opencv" title="Permanent link">&para;</a></h3>
 <p>编译安装：</p>
 <p>下载opencv 2.4.9 代码</p>
 <p>环境准备</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
-<span class="normal">2</span>
-<span class="normal">3</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>apt-get install build-essential
+<pre><code class="language-shell">apt-get install build-essential
 apt-get install cmake git libgtk2.0-dev pkg-config libavcodec-dev libavformat-dev libswscale-dev ffmpeg
 apt-get install python-dev python-numpy
-</code></pre></div>
-</td></tr></table>
+
+
+</code></pre>
 <p>根据这里对代码进行修改 <a href="https://github.com/NextThingCo/buildroot/blob/master/package/opencv/0002-superres-Fix-return-type-value-VideoFrameSource_GPU.patch">https://github.com/NextThingCo/buildroot/blob/master/package/opencv/0002-superres-Fix-return-type-value-VideoFrameSource_GPU.patch</a></p>
 <p>263 行</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
-<span class="normal">2</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>-    return new VideoFrameSource(fileName);
+<pre><code class="language-conf">
+-    return new VideoFrameSource(fileName);
 +    return new VideoFrameSource_GPU(fileName);
-</code></pre></div>
-</td></tr></table>
-<p>在 CMakeLists.txt 中 set(OPENCV_VCSVERSION "2.4.9")</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
-<span class="normal">2</span>
-<span class="normal">3</span>
-<span class="normal">4</span>
-<span class="normal">5</span>
-<span class="normal">6</span>
-<span class="normal">7</span>
-<span class="normal">8</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>mkdir release
-<span class="nb">cd</span> release
-cmake -D <span class="nv">CMAKE_BUILD_TYPE</span><span class="o">=</span>RELEASE -D <span class="nv">CMAKE_INSTALL_PREFIX</span><span class="o">=</span>/usr/local ..
 
-编辑 CMakeCache.txt CPACK_BINARY_DEB:BOOL<span class="o">=</span>ON
+</code></pre>
+<p>在 CMakeLists.txt 中 set(OPENCV_VCSVERSION "2.4.9")</p>
+<pre><code class="language-shell">mkdir release
+cd release
+cmake -D CMAKE_BUILD_TYPE=RELEASE -D CMAKE_INSTALL_PREFIX=/usr/local ..
+
+编辑 CMakeCache.txt CPACK_BINARY_DEB:BOOL=ON
 
 make
 make install
-</code></pre></div>
-</td></tr></table>
+</code></pre>
 <p>上面这步可能需要运行 N 个小时</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>make package
-</code></pre></div>
-</td></tr></table>
+<pre><code class="language-shell">make package
+
+</code></pre>
 <p>可能会出错</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>CPackDeb: dpkg-shlibdeps: dpkg-shlibdeps: need at least one executable
-</code></pre></div>
-</td></tr></table>
+<pre><code class="language-shell">CPackDeb: dpkg-shlibdeps: dpkg-shlibdeps: need at least one executable
+</code></pre>
 <p>按照这里的 patch 对 cmake 进行修正：https://public.kitware.com/Bug/view.php?id=13488</p>
 <p>附预编译的 deb 包： <a href="/assets/2017/OpenCV-2.4.9-i686-libs.deb">OpenCV-2.4.9-i686-libs.deb</a> <a href="/assets/2017/OpenCV-2.4.9-i686-dev.deb">OpenCV-2.4.9-i686-dev.deb</a> <a href="/assets/2017/OpenCV-2.4.9-i686-python.deb">OpenCV-2.4.9-i686-python.deb</a></p>
 <h2 id="ros">编辑安装 ROS<a class="headerlink" href="#ros" title="Permanent link">&para;</a></h2>
 <p>可以参考 <a href="http://wiki.ros.org/wiki/edison">Installing ROS Indigo on Intel Edison</a>, <a href="http://wiki.ros.org/ROSberryPi/Installing%20ROS%20Indigo%20on%20Raspberry%20Pi">Installing ROS Indigo on Raspberry Pi</a> 进行安装，但有两点区别：</p>
 <p><strong>1.2 console_bridge:</strong></p>
 <p>在运行下面命令后</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>sudo checkinstall make install
-</code></pre></div>
-</td></tr></table>
+<pre><code class="language-shell">sudo checkinstall make install
+
+</code></pre>
 <p>输入 2 并且将包名改为 'libconsole_bridge' .</p>
 <p><strong>3.2.2 Resolving Dependencies with rosdep</strong></p>
 <p>运行 rosdep install 的时候去掉 -y 参数，并且跳过 apt-get install libboost-all-dev.</p>
 <p><strong>error while loading shared libraries: libconsole_bridge.so.0.3: cannot open shared object file: No such file or directory</strong></p>
 <p>如果你遇到这个错误，可以通过下面方式处理</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
-<span class="normal">2</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="nb">cd</span> /opt/ros/indigo/lib
+<pre><code class="language-shell">cd /opt/ros/indigo/lib
 sudo ln -s /usr/local/lib/i386-linux-gnu/libconsole_bridge.so.0.3 libconsole_bridge.so.0.3
-</code></pre></div>
-</td></tr></table>
+
+</code></pre>
 <h2 id="usb_cam">编译 usb_cam<a class="headerlink" href="#usb_cam" title="Permanent link">&para;</a></h2>
 <p>usb_cam 的编译跟前面 ros_comm 类似：</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
-<span class="normal">2</span>
-<span class="normal">3</span>
-<span class="normal">4</span>
-<span class="normal">5</span>
-<span class="normal">6</span>
-<span class="normal">7</span>
-<span class="normal">8</span>
-<span class="normal">9</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>mkdir catkin_ws
-<span class="nb">cd</span> catkin_ws
+<pre><code class="language-shell">mkdir catkin_ws
+cd catkin_ws
 mkdir src
 rosinstall_generator usb_cam image_transport_plugins --rosdistro indigo --deps --wet-only --exclude roslisp --tar &gt; indigo-usb_cam.rosinstall
 wstool init src indigo-usb_cam.rosinstall
-rosdep install --from-paths src --ignore-src --rosdistro indigo -r --os<span class="o">=</span>debian:wheezy
-<span class="c1">#跳过opencv boost相关的包</span>
-<span class="nb">source</span> /opt/ros/indigo/setup.bash
+rosdep install --from-paths src --ignore-src --rosdistro indigo -r --os=debian:wheezy
+#跳过opencv boost相关的包
+source /opt/ros/indigo/setup.bash
 catkin_make
-</code></pre></div>
-</td></tr></table>
+</code></pre>
 <p>你也可以在之前的工作区上操作，因为新工作区会导致某些包又要重新编译，但好处就是以后 make 跑的时间会短一点。</p>
 <h2 id="usb_cam-edison">运行 usb_cam 将 Edison 图像传输到电脑<a class="headerlink" href="#usb_cam-edison" title="Permanent link">&para;</a></h2>
 <p>开始运行之前请确认主机跟从机都可以相互ping通，并且可以ping通自己。</p>
 <p>现在主机运行：</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>roscore
-</code></pre></div>
-</td></tr></table>
+<pre><code class="language-shell">roscore
+</code></pre>
 <p>主机上开多一个终端，运行：</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>rosrun rviz rviz
-</code></pre></div>
-</td></tr></table>
+<pre><code class="language-shell">rosrun rviz rviz
+</code></pre>
 <p>Edison上编辑 launch 文件，运行</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
-<span class="normal">2</span>
-<span class="normal">3</span>
-<span class="normal">4</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="nb">source</span> devel/setup.bash
+<pre><code class="language-shell">source devel/setup.bash
 roscd usb_cam
 vim launch/usb_cam.launch
 roslaunch usb_cam.launch
-</code></pre></div>
-</td></tr></table>
+
+</code></pre>
 <p>usb_cam.launch 的内容，假设你主机的名字为 lam</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
-<span class="normal"> 2</span>
-<span class="normal"> 3</span>
-<span class="normal"> 4</span>
-<span class="normal"> 5</span>
-<span class="normal"> 6</span>
-<span class="normal"> 7</span>
-<span class="normal"> 8</span>
-<span class="normal"> 9</span>
-<span class="normal">10</span>
-<span class="normal">11</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>&lt;launch&gt;
-  &lt;env <span class="nv">name</span><span class="o">=</span><span class="s2">&quot;ROS_MASTER_URI&quot;</span> <span class="nv">value</span><span class="o">=</span><span class="s2">&quot;http://lam.local:11311&quot;</span>/&gt; 
-  &lt;node <span class="nv">name</span><span class="o">=</span><span class="s2">&quot;usb_cam&quot;</span> <span class="nv">pkg</span><span class="o">=</span><span class="s2">&quot;usb_cam&quot;</span> <span class="nv">type</span><span class="o">=</span><span class="s2">&quot;usb_cam_node&quot;</span> <span class="nv">output</span><span class="o">=</span><span class="s2">&quot;screen&quot;</span> &gt;
-    &lt;param <span class="nv">name</span><span class="o">=</span><span class="s2">&quot;video_device&quot;</span> <span class="nv">value</span><span class="o">=</span><span class="s2">&quot;/dev/video0&quot;</span> /&gt;
-    &lt;param <span class="nv">name</span><span class="o">=</span><span class="s2">&quot;image_width&quot;</span> <span class="nv">value</span><span class="o">=</span><span class="s2">&quot;640&quot;</span> /&gt;
-    &lt;param <span class="nv">name</span><span class="o">=</span><span class="s2">&quot;image_height&quot;</span> <span class="nv">value</span><span class="o">=</span><span class="s2">&quot;480&quot;</span> /&gt;
-    &lt;param <span class="nv">name</span><span class="o">=</span><span class="s2">&quot;pixel_format&quot;</span> <span class="nv">value</span><span class="o">=</span><span class="s2">&quot;yuyv&quot;</span> /&gt;
-    &lt;param <span class="nv">name</span><span class="o">=</span><span class="s2">&quot;camera_frame_id&quot;</span> <span class="nv">value</span><span class="o">=</span><span class="s2">&quot;usb_cam&quot;</span> /&gt;
-    &lt;param <span class="nv">name</span><span class="o">=</span><span class="s2">&quot;io_method&quot;</span> <span class="nv">value</span><span class="o">=</span><span class="s2">&quot;mmap&quot;</span>/&gt;
+<pre><code class="language-shell">&lt;launch&gt;
+  &lt;env name=&quot;ROS_MASTER_URI&quot; value=&quot;http://lam.local:11311&quot;/&gt; 
+  &lt;node name=&quot;usb_cam&quot; pkg=&quot;usb_cam&quot; type=&quot;usb_cam_node&quot; output=&quot;screen&quot; &gt;
+    &lt;param name=&quot;video_device&quot; value=&quot;/dev/video0&quot; /&gt;
+    &lt;param name=&quot;image_width&quot; value=&quot;640&quot; /&gt;
+    &lt;param name=&quot;image_height&quot; value=&quot;480&quot; /&gt;
+    &lt;param name=&quot;pixel_format&quot; value=&quot;yuyv&quot; /&gt;
+    &lt;param name=&quot;camera_frame_id&quot; value=&quot;usb_cam&quot; /&gt;
+    &lt;param name=&quot;io_method&quot; value=&quot;mmap&quot;/&gt;
   &lt;/node&gt;
 &lt;/launch&gt;
-</code></pre></div>
-</td></tr></table>
+
+</code></pre>
 <p>在 rviz 窗口上添加一个 Image，topic 为 /usb_cam/image_raw ，使用 compressed 传输。</p>
 <p>Done.</p>
 <p><strong>Update 2017-04-22:</strong></p>
@@ -1835,6 +1798,10 @@ roslaunch usb_cam.launch
           }, typeof search !== "undefined" && search)
         })
       </script>
+      
+        <script src="../../../assets/js/highlight.min.js"></script>
+      
+        <script src="../../../assets/js/init.js"></script>
       
     
   </body>

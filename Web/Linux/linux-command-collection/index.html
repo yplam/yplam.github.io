@@ -34,6 +34,8 @@
     
     
     
+      <link rel="stylesheet" href="../../../assets/css/highlight.css">
+    
       <link rel="stylesheet" href="../../../assets/css/custom.css">
     
     
@@ -1671,38 +1673,26 @@
 <p><a name="no1"/></p>
 <h3 id="_1">导入数据库时跳过某个表<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h3>
 <p>有时我们需要将某天的数据库备份恢复到内网的机器，用来分析数据，但备份中的某些很大的表对我们的数据分析作用不大，却要占用大量的导入时间（譬如session表，message表），我们可以用简单的sed命令跳过对这些表的插入操作。</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>sed &#39;/INSERT INTO `sessions`/d&#39; db.sql &gt; db_new.sql
-</code></pre></div>
-</td></tr></table>
+<pre><code>
+sed '/INSERT INTO `sessions`/d' db.sql &gt; db_new.sql
+
+</code></pre>
 <p><a name="no2"/></p>
 <h3 id="_2">找出最近修改、创建的文件<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <p>以下命令可以用来简单的检查最近目录下哪些文件被修改过。</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
-<span class="normal">2</span>
-<span class="normal">3</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>find . -newermt &quot;2013-01-01 00:00:00&quot; ! -newermt &quot;2013-01-02 00:00:00&quot;
+<pre><code>
+find . -newermt &quot;2013-01-01 00:00:00&quot; ! -newermt &quot;2013-01-02 00:00:00&quot;
 
 find . -mtime -10 -mtime +4
-</code></pre></div>
-</td></tr></table>
+
+
+</code></pre>
 <p><a name="no3"/></p>
 <h3 id="shell">自动压缩旧日志文件的shell脚本<a class="headerlink" href="#shell" title="Permanent link">&para;</a></h3>
 <p>logrotate 是 Linux 自带的日志分割压缩工具，但它有个比较让人不爽的缺点就是无法精确的按时间点分割（譬如日志严格的按天）。因此考虑App日志直接按 ×××-Y-m-d.log的方式来按天记录，然后用crontab定时压缩。</p>
 <p>下面是自动gzip压缩多个目录下log文件，并且自动跳过当天文件的shell脚本：</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
-<span class="normal"> 2</span>
-<span class="normal"> 3</span>
-<span class="normal"> 4</span>
-<span class="normal"> 5</span>
-<span class="normal"> 6</span>
-<span class="normal"> 7</span>
-<span class="normal"> 8</span>
-<span class="normal"> 9</span>
-<span class="normal">10</span>
-<span class="normal">11</span>
-<span class="normal">12</span>
-<span class="normal">13</span>
-<span class="normal">14</span>
-<span class="normal">15</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>#!/bin/sh
+<pre><code>
+#!/bin/sh
 
 FOLDERS=(/data/logs/view/ /data/logs/search/)
 NOW=&quot;$(date +&quot;%Y-%m-%d&quot;)&quot;
@@ -1717,26 +1707,16 @@ do
         fi
     done
 done
-</code></pre></div>
-</td></tr></table>
+
+
+</code></pre>
 <p><a name="no4"/></p>
 <h3 id="linux-ssh">Linux 初始化 SSH 会话慢的解决方法<a class="headerlink" href="#linux-ssh" title="Permanent link">&para;</a></h3>
 <p>使用ssh登录Linux服务器，就算是在内网环境中，也需要等待比较长的时间才弹出密码输入界面。</p>
 <p>检查：</p>
 <p>ssh -vvv 加上 v参数，通过分析ssh打印的debug信息，即可找到时间消耗的环节。</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
-<span class="normal"> 2</span>
-<span class="normal"> 3</span>
-<span class="normal"> 4</span>
-<span class="normal"> 5</span>
-<span class="normal"> 6</span>
-<span class="normal"> 7</span>
-<span class="normal"> 8</span>
-<span class="normal"> 9</span>
-<span class="normal">10</span>
-<span class="normal">11</span>
-<span class="normal">12</span>
-<span class="normal">13</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>$ ssh -vvv root@*****
+<pre><code>
+$ ssh -vvv root@*****
 OpenSSH_6.6.1, OpenSSL 1.0.1f 6 Jan 2014
 debug1: Reading configuration data /etc/ssh/ssh_config
 debug1: /etc/ssh/ssh_config line 19: Applying options for *
@@ -1749,8 +1729,8 @@ debug1: Local version string SSH-2.0-OpenSSH_6.6.1p1 Ubuntu-2ubuntu2.8
 debug1: Remote protocol version 2.0, remote software version OpenSSH_5.3
 debug1: match: OpenSSH_5.3 pat OpenSSH_5* compat 0x0c000000
 debug2: fd 3 setting O_NONBLOCK
-</code></pre></div>
-</td></tr></table>
+
+</code></pre>
 <p>可能原因：</p>
 <p>服务端 /etc/ssh/sshd_config，修改 "UseDNS no"</p>
 <p>客户端  /etc/ssh/ssh_config，修改 "GSSAPIAuthentication no"</p>
@@ -1758,19 +1738,8 @@ debug2: fd 3 setting O_NONBLOCK
 <h3 id="crontab">Crontab 控制脚本运行时间段<a class="headerlink" href="#crontab" title="Permanent link">&para;</a></h3>
 <p>Cronjob 通常用来在指定时间点运行某个命令（脚本），而有时我们不但需要定时启动脚本，还需要定时关闭，譬如需要在空闲时段备份服务器文件到新机器。</p>
 <p>我们可以使用两个cronjob，一个定时启动，一个定时关闭，或者使用类似下面的脚本，启动后后台运行一个进程，通过获取时间来定时关闭：</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
-<span class="normal"> 2</span>
-<span class="normal"> 3</span>
-<span class="normal"> 4</span>
-<span class="normal"> 5</span>
-<span class="normal"> 6</span>
-<span class="normal"> 7</span>
-<span class="normal"> 8</span>
-<span class="normal"> 9</span>
-<span class="normal">10</span>
-<span class="normal">11</span>
-<span class="normal">12</span>
-<span class="normal">13</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>#!/bin/bash
+<pre><code>
+#!/bin/bash
 
 rsync ... &amp;
 pid=$!
@@ -1783,20 +1752,20 @@ while /bin/true; do
     sleep 60
   fi
 done
-</code></pre></div>
-</td></tr></table>
+
+</code></pre>
 <p><a name="no6"/></p>
 <h3 id="rsync">rsync 只同步匹配的目录文件<a class="headerlink" href="#rsync" title="Permanent link">&para;</a></h3>
 <p>通常我们的图片、文件会根据某中规则（譬如2016-09-09）的格式存储在文件系统中，有时我们需要将适合某个</p>
-<p><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>rsync -aPv --include=&#39;**/2016-09-09/*&#39; --include=&#39;*/&#39; --exclude=&#39;*&#39; rsync://...
-</code></pre></div>
-</td></tr></table>
-<a name="no7"/></p>
+<pre><code>rsync -aPv --include='**/2016-09-09/*' --include='*/' --exclude='*' rsync://...
+
+</code></pre>
+<p><a name="no7"/></p>
 <h3 id="ubuntu-php">Ubuntu 下切换 PHP 版本<a class="headerlink" href="#ubuntu-php" title="Permanent link">&para;</a></h3>
 <p>偶尔需要维护一些旧项目，而这些项目无法做到php7兼容，此时就需要安装多个PHP版本，并且用类似下面的命令进行切换</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>sudo a2dismod php7.1 ; sudo a2enmod php5.6 ; sudo service apache2 restart ; sudo update-alternatives --set php /usr/bin/php5.6 ; sudo update-alternatives --set phar /usr/bin/phar5.6 ; sudo update-alternatives --set phar.phar /usr/bin/phar.phar5.6 ;  sudo update-alternatives --set phpize /usr/bin/phpize5.6 ;  sudo update-alternatives --set php-config /usr/bin/php-config5.6
-</code></pre></div>
-</td></tr></table>
+<pre><code>sudo a2dismod php7.1 ; sudo a2enmod php5.6 ; sudo service apache2 restart ; sudo update-alternatives --set php /usr/bin/php5.6 ; sudo update-alternatives --set phar /usr/bin/phar5.6 ; sudo update-alternatives --set phar.phar /usr/bin/phar.phar5.6 ;  sudo update-alternatives --set phpize /usr/bin/phpize5.6 ;  sudo update-alternatives --set php-config /usr/bin/php-config5.6
+
+</code></pre>
 <p><a name="no8"/></p>
 <h3 id="ttyacm">ttyACM 插入后被占用问题<a class="headerlink" href="#ttyacm" title="Permanent link">&para;</a></h3>
 <p>最近在调试 STM32 的 USB 功能的过程中发现，将 STM32 插入电脑的 USB 口后 STM32 模拟出来的串口 ttyACM0 会被占用，使用 lsof 也看不出问题，十几秒中后又会自动释放。</p>
@@ -1806,26 +1775,7 @@ done
 <p><a name="no9"/></p>
 <h3 id="p52-manjaro">P52 Manjaro 外接显示器输出问题<a class="headerlink" href="#p52-manjaro" title="Permanent link">&para;</a></h3>
 <p>按官方文档安装相关软件后，修改 /etc/bumblebee/xorg.conf.nvidia</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
-<span class="normal"> 2</span>
-<span class="normal"> 3</span>
-<span class="normal"> 4</span>
-<span class="normal"> 5</span>
-<span class="normal"> 6</span>
-<span class="normal"> 7</span>
-<span class="normal"> 8</span>
-<span class="normal"> 9</span>
-<span class="normal">10</span>
-<span class="normal">11</span>
-<span class="normal">12</span>
-<span class="normal">13</span>
-<span class="normal">14</span>
-<span class="normal">15</span>
-<span class="normal">16</span>
-<span class="normal">17</span>
-<span class="normal">18</span>
-<span class="normal">19</span>
-<span class="normal">20</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>##
+<pre><code>##
 ## Generated by mhwd - Manjaro Hardware Detection
 ##
 
@@ -1845,14 +1795,14 @@ Section &quot;Device&quot;
     #Option &quot;AllowEmptyInitialConfiguration&quot;
     #Option &quot;ConnectedMonitor&quot; &quot;DFP&quot;
 EndSection
-</code></pre></div>
-</td></tr></table>
+
+</code></pre>
 <p><a name="no10"/></p>
 <h3 id="manjaro-zsh">Manjaro zsh 新标签页保持路径<a class="headerlink" href="#manjaro-zsh" title="Permanent link">&para;</a></h3>
 <p>Manjaro 下默认配置的 zsh，当使用 ctrl-T 打开新标签时，会自动将路径变成用户主目录，会稍微影响效率，修改 ~/.zshrc , 增加下面配置行，可以使新标签依然保持原路径：</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>[[ -f /etc/profile.d/vte.sh ]] &amp;&amp; . /etc/profile.d/vte.sh
-</code></pre></div>
-</td></tr></table>
+<pre><code>[[ -f /etc/profile.d/vte.sh ]] &amp;&amp; . /etc/profile.d/vte.sh
+
+</code></pre>
                 
                   
                 
@@ -1892,6 +1842,10 @@ EndSection
           }, typeof search !== "undefined" && search)
         })
       </script>
+      
+        <script src="../../../assets/js/highlight.min.js"></script>
+      
+        <script src="../../../assets/js/init.js"></script>
       
     
   </body>

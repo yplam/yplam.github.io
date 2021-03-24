@@ -34,6 +34,8 @@
     
     
     
+      <link rel="stylesheet" href="../../../assets/css/highlight.css">
+    
       <link rel="stylesheet" href="../../../assets/css/custom.css">
     
     
@@ -1475,24 +1477,7 @@
 <p><strong>实现</strong></p>
 <p>下面用一个简单的例子来示范如何实现ResolveTargetEntityListener。 Customer 实体::</p>
 <p>{{&lt; highlight php &gt;}}</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
-<span class="normal"> 2</span>
-<span class="normal"> 3</span>
-<span class="normal"> 4</span>
-<span class="normal"> 5</span>
-<span class="normal"> 6</span>
-<span class="normal"> 7</span>
-<span class="normal"> 8</span>
-<span class="normal"> 9</span>
-<span class="normal">10</span>
-<span class="normal">11</span>
-<span class="normal">12</span>
-<span class="normal">13</span>
-<span class="normal">14</span>
-<span class="normal">15</span>
-<span class="normal">16</span>
-<span class="normal">17</span>
-<span class="normal">18</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>    // src/Acme/AppBundle/Entity/Customer.php
+<pre><code>    // src/Acme/AppBundle/Entity/Customer.php
 
     namespace Acme\AppBundle\Entity;
 
@@ -1502,7 +1487,7 @@
 
     /**
      * @ORM\Entity
-     * @ORM\Table(name=&quot;customer&quot;)
+     * @ORM\Table(name="customer")
      */
     class Customer extends BaseCustomer implements InvoiceSubjectInterface
     {
@@ -1510,31 +1495,12 @@
         // are already implemented in the BaseCustomer
         // 假设 BaseCustomer 已经实现了InvoiceSubjectInterface
     }
-</code></pre></div>
-</td></tr></table>
+</code></pre>
 <p>{{&lt; /highlight &gt;}}</p>
 <p>Invoice 实体::</p>
 <p>{{&lt; highlight php &gt;}}
         // src/Acme/InvoiceBundle/Entity/Invoice.php</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
-<span class="normal"> 2</span>
-<span class="normal"> 3</span>
-<span class="normal"> 4</span>
-<span class="normal"> 5</span>
-<span class="normal"> 6</span>
-<span class="normal"> 7</span>
-<span class="normal"> 8</span>
-<span class="normal"> 9</span>
-<span class="normal">10</span>
-<span class="normal">11</span>
-<span class="normal">12</span>
-<span class="normal">13</span>
-<span class="normal">14</span>
-<span class="normal">15</span>
-<span class="normal">16</span>
-<span class="normal">17</span>
-<span class="normal">18</span>
-<span class="normal">19</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>    namespace Acme\InvoiceBundle\Entity;
+<pre><code>    namespace Acme\InvoiceBundle\Entity;
 
     use Doctrine\ORM\Mapping AS ORM;
     use Acme\InvoiceBundle\Model\InvoiceSubjectInterface;
@@ -1543,40 +1509,22 @@
      * Represents an Invoice.
      *
      * @ORM\Entity
-     * @ORM\Table(name=&quot;invoice&quot;)
+     * @ORM\Table(name="invoice")
      */
     class Invoice
     {
         /**
-         * @ORM\ManyToOne(targetEntity=&quot;Acme\InvoiceBundle\Model\InvoiceSubjectInterface&quot;)
+         * @ORM\ManyToOne(targetEntity="Acme\InvoiceBundle\Model\InvoiceSubjectInterface")
          * @var InvoiceSubjectInterface
          */
         protected $subject;
     }
-</code></pre></div>
-</td></tr></table>
+</code></pre>
 <p>{{&lt; /highlight &gt;}}</p>
 <p>InvoiceSubjectInterface 接口::</p>
 <p>{{&lt; highlight php &gt;}}
         // src/Acme/InvoiceBundle/Model/InvoiceSubjectInterface.php</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
-<span class="normal"> 2</span>
-<span class="normal"> 3</span>
-<span class="normal"> 4</span>
-<span class="normal"> 5</span>
-<span class="normal"> 6</span>
-<span class="normal"> 7</span>
-<span class="normal"> 8</span>
-<span class="normal"> 9</span>
-<span class="normal">10</span>
-<span class="normal">11</span>
-<span class="normal">12</span>
-<span class="normal">13</span>
-<span class="normal">14</span>
-<span class="normal">15</span>
-<span class="normal">16</span>
-<span class="normal">17</span>
-<span class="normal">18</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>    namespace Acme\InvoiceBundle\Model;
+<pre><code>    namespace Acme\InvoiceBundle\Model;
 
     /**
      * An interface that the invoice Subject object should implement.
@@ -1594,8 +1542,7 @@
          */
         public function getName();
     }
-</code></pre></div>
-</td></tr></table>
+</code></pre>
 <p>{{&lt; /highlight &gt;}}</p>
 <p>然后，你需要配置监听器（Listener），配置好替换关系</p>
 <p>{{&lt; highlight yml &gt;}}
@@ -1648,6 +1595,10 @@
           }, typeof search !== "undefined" && search)
         })
       </script>
+      
+        <script src="../../../assets/js/highlight.min.js"></script>
+      
+        <script src="../../../assets/js/init.js"></script>
       
     
   </body>

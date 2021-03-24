@@ -34,6 +34,8 @@
     
     
     
+      <link rel="stylesheet" href="../../../assets/css/highlight.css">
+    
       <link rel="stylesheet" href="../../../assets/css/custom.css">
     
     
@@ -1573,34 +1575,23 @@ SIM 卡连 ESD 器件都省了；</p>
 <h2 id="_2">编译<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <p>编译环境基于 docker 与 docker-compose；</p>
 <p>下载代码</p>
-<p><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
-<span class="normal">2</span>
-<span class="normal">3</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>git clone https://github.com/yplam/openwrt-mt7688-4g.git
+<pre><code>git clone https://github.com/yplam/openwrt-mt7688-4g.git
 cd openwrt-mt7688-4g
 git submodule update --init
-</code></pre></div>
-</td></tr></table>
-或者手动下载 openwrt 源码到 /src/openwrt 目录（只在 openwrt 19.07 下测试过）</p>
+
+</code></pre>
+<p>或者手动下载 openwrt 源码到 /src/openwrt 目录（只在 openwrt 19.07 下测试过）</p>
 <p>本机安装好docker与docker-compose, 运行</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>docker-compose up --build
-</code></pre></div>
-</td></tr></table>
+<pre><code>docker-compose up --build
+</code></pre>
 <p>启动编译环境。</p>
 <p>然后运行：</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>docker-compose exec -u docker compiler /bin/bash
-</code></pre></div>
-</td></tr></table>
+<pre><code>docker-compose exec -u docker compiler /bin/bash
+</code></pre>
 <p>进入编译环境；</p>
 <p>因为OpenWRT并不支持我们的核心板，需要对设备树进行修改，为了方便直接基于 LINKIT7688 进行小改；</p>
 <p>修改 openwrt/target/linux/ramips/dts/LINKIT7688.dts，包括内存大小，Flash大小，console 串口</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
-<span class="normal">2</span>
-<span class="normal">3</span>
-<span class="normal">4</span>
-<span class="normal">5</span>
-<span class="normal">6</span>
-<span class="normal">7</span>
-<span class="normal">8</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>  chosen {
+<pre><code>  chosen {
         bootargs = &quot;console=ttyS0,57600&quot;;
     };
 
@@ -1608,30 +1599,21 @@ git submodule update --init
         device_type = &quot;memory&quot;;
         reg = &lt;0x0 0x4000000&gt;;
     };
-</code></pre></div>
-</td></tr></table>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
-<span class="normal">2</span>
-<span class="normal">3</span>
-<span class="normal">4</span>
-<span class="normal">5</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>      partition@50000 {
+
+</code></pre>
+<pre><code>      partition@50000 {
                 compatible = &quot;denx,uimage&quot;;
                 label = &quot;firmware&quot;;
                 reg = &lt;0x50000 0x7b0000&gt;;
             };
-</code></pre></div>
-</td></tr></table>
+</code></pre>
 <p>为了提升代码下载速度，需要本机的 8123 端口提供 http 代理，如果没有，请修改 docker-compose.yml，删除运行环境相关代码，并且重启 docker-compose;</p>
 <p>运行：</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
-<span class="normal">2</span>
-<span class="normal">3</span>
-<span class="normal">4</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>cd /src/openwrt
+<pre><code>cd /src/openwrt
 ./scripts/feeds update -a
 ./scripts/feeds install -a
 make menuconfig
-</code></pre></div>
-</td></tr></table>
+</code></pre>
 <p>选择 </p>
 <p>MediaTek Ralink MIPS</p>
 <p>MT76x8 based boards</p>
@@ -1639,13 +1621,11 @@ make menuconfig
 <p>Network -&gt; mt7688-4g</p>
 <p>可以用 make download 下载各包的代码（因为如果网络不通，可能会多次失败）</p>
 <p>运行编译：</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>make V=99
-</code></pre></div>
-</td></tr></table>
+<pre><code>make V=99
+</code></pre>
 <p>如无意外，编译成功后会生成 </p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>openwrt-mt7688-4g/src/openwrt/bin/targets/ramips/mt76x8/openwrt-ramips-mt76x8-LinkIt7688-squashfs-sysupgrade.bin
-</code></pre></div>
-</td></tr></table>
+<pre><code>openwrt-mt7688-4g/src/openwrt/bin/targets/ramips/mt76x8/openwrt-ramips-mt76x8-LinkIt7688-squashfs-sysupgrade.bin
+</code></pre>
 <p>文件；可以选择在原固件的管理界面直接上传升级，或者通过 uboot 使用 tftp 升级（需要配置tftp服务器，以及配置主机IP）</p>
 <p>完成！</p>
 <h2 id="_3">成果<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
@@ -1694,6 +1674,10 @@ make menuconfig
           }, typeof search !== "undefined" && search)
         })
       </script>
+      
+        <script src="../../../assets/js/highlight.min.js"></script>
+      
+        <script src="../../../assets/js/init.js"></script>
       
     
   </body>

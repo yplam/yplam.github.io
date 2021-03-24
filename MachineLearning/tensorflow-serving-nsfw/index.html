@@ -34,6 +34,8 @@
     
     
     
+      <link rel="stylesheet" href="../../assets/css/highlight.css">
+    
       <link rel="stylesheet" href="../../assets/css/custom.css">
     
     
@@ -1546,98 +1548,66 @@
 <h3 id="_1">安装<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h3>
 <p>使用 docker compose 安装，需要注意的是，由于 Tensorflow 的接口不断在变化，Tensorflow serving 的版本需要与模型训练、模型导出的版本一致，否则可能会出现某些操作符不存在的错误。</p>
 <p>docker-compose.yml</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
-<span class="normal"> 2</span>
-<span class="normal"> 3</span>
-<span class="normal"> 4</span>
-<span class="normal"> 5</span>
-<span class="normal"> 6</span>
-<span class="normal"> 7</span>
-<span class="normal"> 8</span>
-<span class="normal"> 9</span>
-<span class="normal">10</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="nt">version</span><span class="p">:</span> <span class="s">&#39;3.7&#39;</span>
-<span class="nt">services</span><span class="p">:</span>
-  <span class="nt">tensorflow_serving</span><span class="p">:</span>
-    <span class="nt">build</span><span class="p">:</span>
-      <span class="nt">context</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">./bin/TensorflowServing</span>
-    <span class="nt">ports</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="s">&quot;127.0.0.1:8501:8501&quot;</span><span class="p p-Indicator">]</span>
-    <span class="nt">volumes</span><span class="p">:</span>
-      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">./models:/models</span>
-    <span class="nt">environment</span><span class="p">:</span>
-      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">MODEL_NAME=nsfw</span>
-</code></pre></div>
-</td></tr></table>
+<pre><code class="language-yaml">version: '3.7'
+services:
+  tensorflow_serving:
+    build:
+      context: ./bin/TensorflowServing
+    ports: [&quot;127.0.0.1:8501:8501&quot;]
+    volumes:
+      - ./models:/models
+    environment:
+      - MODEL_NAME=nsfw
+</code></pre>
 <p>bin/TensorflowServing/Dockerfile，虽然是默认镜像，但习惯加个 Dockerfile</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="k">FROM</span> <span class="s">tensorflow/serving:1.12.0</span>
-</code></pre></div>
-</td></tr></table>
+<pre><code class="language-docker">FROM tensorflow/serving:1.12.0
+
+</code></pre>
 <h3 id="_2">测试<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <p>在此测试的是 <a href="https://github.com/mdietrichstein/tensorflow-open_nsfw">tensorflow-open_nsfw</a> 模型，此模型提供模型导出以及数据请求格式生成相关的脚本，适合用来快速测试。</p>
 <p>用 virtualenv 安装 tensorflow 1.12 版本，以及 numpy==1.16.1 ，然后运行下面命令导出模型：</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>python tools/export_savedmodel.py -i base64_jpeg -v <span class="m">1</span> -m data/open_nsfw-weights.npy nsfw
-</code></pre></div>
-</td></tr></table>
+<pre><code class="language-shell">python tools/export_savedmodel.py -i base64_jpeg -v 1 -m data/open_nsfw-weights.npy nsfw
+</code></pre>
 <p>使用以下命令查看模型输入输出格式：</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>saved_model_cli show --dir nsfw/1 --all
-</code></pre></div>
-</td></tr></table>
+<pre><code class="language-shell">saved_model_cli show --dir nsfw/1 --all
+</code></pre>
 <p>结果如下，输入是一个 base64 encode 的 jpeg 图片字符串：</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
-<span class="normal"> 2</span>
-<span class="normal"> 3</span>
-<span class="normal"> 4</span>
-<span class="normal"> 5</span>
-<span class="normal"> 6</span>
-<span class="normal"> 7</span>
-<span class="normal"> 8</span>
-<span class="normal"> 9</span>
-<span class="normal">10</span>
-<span class="normal">11</span>
-<span class="normal">12</span>
-<span class="normal">13</span>
-<span class="normal">14</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>MetaGraphDef with tag-set: &#39;serve&#39; contains the following SignatureDefs:
+<pre><code class="language-conf">
+MetaGraphDef with tag-set: 'serve' contains the following SignatureDefs:
 
-signature_def[&#39;serving_default&#39;]:
+signature_def['serving_default']:
   The given SavedModel SignatureDef contains the following input(s):
-    inputs[&#39;inputs&#39;] tensor_info:
+    inputs['inputs'] tensor_info:
         dtype: DT_STRING
         shape: (-1)
         name: input:0
   The given SavedModel SignatureDef contains the following output(s):
-    outputs[&#39;outputs&#39;] tensor_info:
+    outputs['outputs'] tensor_info:
         dtype: DT_FLOAT
         shape: (-1, 2)
         name: predictions:0
   Method name is: tensorflow/serving/predict
-</code></pre></div>
-</td></tr></table>
+
+</code></pre>
 <p>将导出的模型放到 docker compose 工作目录下的 models 下，然后启动 docker ：</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>docker-compose up --build
-</code></pre></div>
-</td></tr></table>
+<pre><code class="language-shell">docker-compose up --build
+</code></pre>
 <p>拿一张需要测试的jpeg图片，运行下面命令：</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>python tools/create_predict_request.py -i base64_jpeg -l tensorflow -t tf-serving test.jpg &gt; test.txt
-</code></pre></div>
-</td></tr></table>
+<pre><code class="language-shell">python tools/create_predict_request.py -i base64_jpeg -l tensorflow -t tf-serving test.jpg &gt; test.txt
+</code></pre>
 <p>test.txt 中会生成用于请求 Tensorflow serving 的格式，大概如下：</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="p">{</span><span class="nt">&quot;instances&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;_9j_4AAQSkZ......UUCP__Z&quot;</span><span class="p">]}</span>
-</code></pre></div>
-</td></tr></table>
+<pre><code class="language-json">{&quot;instances&quot;: [&quot;_9j_4AAQSkZ......UUCP__Z&quot;]}
+</code></pre>
 <p>需要注意的是这里的base64 encode图片需要为urlsafe格式，如果客户端为PHP的话需要对encode的字符串做替换处理。</p>
 <p>然后测试一下：</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>curl -d <span class="s1">&#39;@test.txt&#39;</span> -X POST http://localhost:8501/v1/models/nsfw:predict
-</code></pre></div>
-</td></tr></table>
+<pre><code class="language-shell">curl -d '@test.txt' -X POST http://localhost:8501/v1/models/nsfw:predict
+</code></pre>
 <p>会返回类似下面结果：</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
-<span class="normal">2</span>
-<span class="normal">3</span>
-<span class="normal">4</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="p">{</span>
-    <span class="nt">&quot;predictions&quot;</span><span class="p">:</span> <span class="p">[[</span><span class="mf">0.337196</span><span class="p">,</span> <span class="mf">0.662804</span><span class="p">]</span>
-    <span class="p">]</span>
-<span class="p">}</span>
-</code></pre></div>
-</td></tr></table>
+<pre><code class="language-json">{
+    &quot;predictions&quot;: [[0.337196, 0.662804]
+    ]
+}
+</code></pre>
 <p>结果中第一个代表 sfw，第二个代表 nsfw，因此模型判断此图片包含不良内容。</p>
                 
                   
@@ -1678,6 +1648,10 @@ signature_def[&#39;serving_default&#39;]:
           }, typeof search !== "undefined" && search)
         })
       </script>
+      
+        <script src="../../assets/js/highlight.min.js"></script>
+      
+        <script src="../../assets/js/init.js"></script>
       
     
   </body>

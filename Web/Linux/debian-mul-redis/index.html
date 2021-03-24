@@ -34,6 +34,8 @@
     
     
     
+      <link rel="stylesheet" href="../../../assets/css/highlight.css">
+    
       <link rel="stylesheet" href="../../../assets/css/custom.css">
     
     
@@ -1480,21 +1482,15 @@
 <p>配置文件位与 /etc/redis 目录，默认有 redis.conf</p>
 <p>我们可以将redis.conf重命名为common.conf，然后用include的方式来定制每一个redis实例的配置</p>
 <p>如 redis-session.conf</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
-<span class="normal">2</span>
-<span class="normal">3</span>
-<span class="normal">4</span>
-<span class="normal">5</span>
-<span class="normal">6</span>
-<span class="normal">7</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>include /etc/redis/common.conf
+<pre><code>include /etc/redis/common.conf
 pidfile /var/run/redis/redis-session.pid
 port 6380
 
 save 900 1
 save 60 10000
 dbfilename dump-session.rdb
-</code></pre></div>
-</td></tr></table>
+
+</code></pre>
 <p><strong>Service配置</strong></p>
 <p>如果你想将你自定义的redis实例变成系统的service，使用debian自带的service命令来启动重启，那么你需要配置service脚本</p>
 <p>复制 /lib/systemd/system/redis-server.service 到 /lib/systemd/system/redis-session.service </p>
@@ -1504,9 +1500,8 @@ dbfilename dump-session.rdb
 <p>如果你想你的redis实例可以开机自动运行，那么就需要配置init脚本</p>
 <p>复制 /etc/init.d/redis-server 到 /etc/init.d/redis-session</p>
 <p>根据需求修改里面的配置，主要也是命名、配置等信息，然后通过</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>update-rc.d redis-session defaults
-</code></pre></div>
-</td></tr></table>
+<pre><code>update-rc.d redis-session defaults
+</code></pre>
 <p>命令来设置开机自动运行</p>
                 
                   
@@ -1547,6 +1542,10 @@ dbfilename dump-session.rdb
           }, typeof search !== "undefined" && search)
         })
       </script>
+      
+        <script src="../../../assets/js/highlight.min.js"></script>
+      
+        <script src="../../../assets/js/init.js"></script>
       
     
   </body>

@@ -34,6 +34,8 @@
     
     
     
+      <link rel="stylesheet" href="../../../assets/css/highlight.css">
+    
       <link rel="stylesheet" href="../../../assets/css/custom.css">
     
     
@@ -1580,507 +1582,270 @@
 <p>此笔记概要地分析了 Zephyr 的启动流程。</p>
 <h2 id="resets">reset.S 汇编初始化<a class="headerlink" href="#resets" title="Permanent link">&para;</a></h2>
 <p>reset.S 汇编文件为芯片复位后执行入口，执行一些需要汇编介入的最底层的操作，然后跳转到 z_arm_prep_c</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
-<span class="normal"> 2</span>
-<span class="normal"> 3</span>
-<span class="normal"> 4</span>
-<span class="normal"> 5</span>
-<span class="normal"> 6</span>
-<span class="normal"> 7</span>
-<span class="normal"> 8</span>
-<span class="normal"> 9</span>
-<span class="normal">10</span>
-<span class="normal">11</span>
-<span class="normal">12</span>
-<span class="normal">13</span>
-<span class="normal">14</span>
-<span class="normal">15</span>
-<span class="normal">16</span>
-<span class="normal">17</span>
-<span class="normal">18</span>
-<span class="normal">19</span>
-<span class="normal">20</span>
-<span class="normal">21</span>
-<span class="normal">22</span>
-<span class="normal">23</span>
-<span class="normal">24</span>
-<span class="normal">25</span>
-<span class="normal">26</span>
-<span class="normal">27</span>
-<span class="normal">28</span>
-<span class="normal">29</span>
-<span class="normal">30</span>
-<span class="normal">31</span>
-<span class="normal">32</span>
-<span class="normal">33</span>
-<span class="normal">34</span>
-<span class="normal">35</span>
-<span class="normal">36</span>
-<span class="normal">37</span>
-<span class="normal">38</span>
-<span class="normal">39</span>
-<span class="normal">40</span>
-<span class="normal">41</span>
-<span class="normal">42</span>
-<span class="normal">43</span>
-<span class="normal">44</span>
-<span class="normal">45</span>
-<span class="normal">46</span>
-<span class="normal">47</span>
-<span class="normal">48</span>
-<span class="normal">49</span>
-<span class="normal">50</span>
-<span class="normal">51</span>
-<span class="normal">52</span>
-<span class="normal">53</span>
-<span class="normal">54</span>
-<span class="normal">55</span>
-<span class="normal">56</span>
-<span class="normal">57</span>
-<span class="normal">58</span>
-<span class="normal">59</span>
-<span class="normal">60</span>
-<span class="normal">61</span>
-<span class="normal">62</span>
-<span class="normal">63</span>
-<span class="normal">64</span>
-<span class="normal">65</span>
-<span class="normal">66</span>
-<span class="normal">67</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="cm">/*</span>
-<span class="cm"> * The entry point is located at the z_arm_reset symbol, which</span>
-<span class="cm"> * is fetched by a XIP image playing the role of a bootloader, which jumps to</span>
-<span class="cm"> * it, not through the reset vector mechanism. Such bootloaders might want to</span>
-<span class="cm"> * search for a __start symbol instead, so create that alias here.</span>
-<span class="cm"> */</span>
-<span class="nf">SECTION_SUBSEC_FUNC</span><span class="p">(</span><span class="no">TEXT</span><span class="p">,</span><span class="no">_reset_section</span><span class="p">,</span><span class="no">__start</span><span class="p">)</span>
+<pre><code class="language-ASM">/*
+ * The entry point is located at the z_arm_reset symbol, which
+ * is fetched by a XIP image playing the role of a bootloader, which jumps to
+ * it, not through the reset vector mechanism. Such bootloaders might want to
+ * search for a __start symbol instead, so create that alias here.
+ */
+SECTION_SUBSEC_FUNC(TEXT,_reset_section,__start)
 
-<span class="c1">#if defined(CONFIG_PLATFORM_SPECIFIC_INIT)</span>
-    <span class="nf">bl</span> <span class="no">z_platform_init</span>
-<span class="c1">#endif</span>
+#if defined(CONFIG_PLATFORM_SPECIFIC_INIT)
+    bl z_platform_init
+#endif
 
-    <span class="cm">/* lock interrupts: will get unlocked when switch to main task */</span>
-<span class="c1">#if defined(CONFIG_ARMV6_M_ARMV8_M_BASELINE)</span>
-    <span class="nf">cpsid</span> <span class="no">i</span>
-<span class="c1">#elif defined(CONFIG_ARMV7_M_ARMV8_M_MAINLINE)</span>
-    <span class="nf">movs.n</span> <span class="no">r0</span><span class="p">,</span> <span class="c1">#_EXC_IRQ_DEFAULT_PRIO</span>
-    <span class="nf">msr</span> <span class="no">BASEPRI</span><span class="p">,</span> <span class="no">r0</span>
-<span class="c1">#else</span>
-<span class="c1">#error Unknown ARM architecture</span>
-<span class="c1">#endif</span>
+    /* lock interrupts: will get unlocked when switch to main task */
+#if defined(CONFIG_ARMV6_M_ARMV8_M_BASELINE)
+    cpsid i
+#elif defined(CONFIG_ARMV7_M_ARMV8_M_MAINLINE)
+    movs.n r0, #_EXC_IRQ_DEFAULT_PRIO
+    msr BASEPRI, r0
+#else
+#error Unknown ARM architecture
+#endif
 
-<span class="c1">#ifdef CONFIG_WDOG_INIT</span>
-    <span class="cm">/* board-specific watchdog initialization is necessary */</span>
-    <span class="nf">bl</span> <span class="no">z_arm_watchdog_init</span>
-<span class="c1">#endif</span>
+#ifdef CONFIG_WDOG_INIT
+    /* board-specific watchdog initialization is necessary */
+    bl z_arm_watchdog_init
+#endif
 
-<span class="cm">/*</span>
-<span class="cm"> *</span>
-<span class="cm"> * Note: in all Cortex-M variants the interrupt stack area is at</span>
-<span class="cm"> * least equal to CONFIG_ISR_STACK_SIZE + MPU_GUARD_ALIGN_AND_SIZE</span>
-<span class="cm"> * (may be larger due to rounding up for stack pointer aligning</span>
-<span class="cm"> * purposes but this is sufficient during initialization).</span>
-<span class="cm"> */</span>
+/*
+ *
+ * Note: in all Cortex-M variants the interrupt stack area is at
+ * least equal to CONFIG_ISR_STACK_SIZE + MPU_GUARD_ALIGN_AND_SIZE
+ * (may be larger due to rounding up for stack pointer aligning
+ * purposes but this is sufficient during initialization).
+ */
 
-<span class="c1">#ifdef CONFIG_INIT_STACKS</span>
-    <span class="nf">ldr</span> <span class="no">r0</span><span class="p">,</span> <span class="err">=</span><span class="no">z_interrupt_stacks</span>
-    <span class="nf">ldr</span> <span class="no">r1</span><span class="p">,</span> <span class="err">=</span><span class="mi">0xaa</span>
-    <span class="nf">ldr</span> <span class="no">r2</span><span class="p">,</span> <span class="err">=</span><span class="no">CONFIG_ISR_STACK_SIZE</span> <span class="err">+</span> <span class="no">MPU_GUARD_ALIGN_AND_SIZE</span>
-    <span class="nf">bl</span> <span class="no">memset</span>
-<span class="c1">#endif</span>
+#ifdef CONFIG_INIT_STACKS
+    ldr r0, =z_interrupt_stacks
+    ldr r1, =0xaa
+    ldr r2, =CONFIG_ISR_STACK_SIZE + MPU_GUARD_ALIGN_AND_SIZE
+    bl memset
+#endif
 
-    <span class="cm">/*</span>
-<span class="cm">     * Set PSP and use it to boot without using MSP, so that it</span>
-<span class="cm">     * gets set to z_interrupt_stacks during initialization.</span>
-<span class="cm">     */</span>
-    <span class="nf">ldr</span> <span class="no">r0</span><span class="p">,</span> <span class="err">=</span><span class="no">z_interrupt_stacks</span>
-    <span class="nf">ldr</span> <span class="no">r1</span><span class="p">,</span> <span class="err">=</span><span class="no">CONFIG_ISR_STACK_SIZE</span> <span class="err">+</span> <span class="no">MPU_GUARD_ALIGN_AND_SIZE</span>
-    <span class="nf">adds</span> <span class="no">r0</span><span class="p">,</span> <span class="no">r0</span><span class="p">,</span> <span class="no">r1</span>
-    <span class="nf">msr</span> <span class="no">PSP</span><span class="p">,</span> <span class="no">r0</span>
-    <span class="nf">mrs</span> <span class="no">r0</span><span class="p">,</span> <span class="no">CONTROL</span>
-    <span class="nf">movs</span> <span class="no">r1</span><span class="p">,</span> <span class="mi">#2</span>
-    <span class="nf">orrs</span> <span class="no">r0</span><span class="p">,</span> <span class="no">r1</span> <span class="cm">/* CONTROL_SPSEL_Msk */</span>
-    <span class="nf">msr</span> <span class="no">CONTROL</span><span class="p">,</span> <span class="no">r0</span>
-    <span class="cm">/*</span>
-<span class="cm">     * When changing the stack pointer, software must use an ISB instruction</span>
-<span class="cm">     * immediately after the MSR instruction. This ensures that instructions</span>
-<span class="cm">     * after the ISB instruction execute using the new stack pointer.</span>
-<span class="cm">     */</span>
-    <span class="nf">isb</span>
+    /*
+     * Set PSP and use it to boot without using MSP, so that it
+     * gets set to z_interrupt_stacks during initialization.
+     */
+    ldr r0, =z_interrupt_stacks
+    ldr r1, =CONFIG_ISR_STACK_SIZE + MPU_GUARD_ALIGN_AND_SIZE
+    adds r0, r0, r1
+    msr PSP, r0
+    mrs r0, CONTROL
+    movs r1, #2
+    orrs r0, r1 /* CONTROL_SPSEL_Msk */
+    msr CONTROL, r0
+    /*
+     * When changing the stack pointer, software must use an ISB instruction
+     * immediately after the MSR instruction. This ensures that instructions
+     * after the ISB instruction execute using the new stack pointer.
+     */
+    isb
 
-    <span class="cm">/*</span>
-<span class="cm">     * &#39;bl&#39; jumps the furthest of the branch instructions that are</span>
-<span class="cm">     * supported on all platforms. So it is used when jumping to z_arm_prep_c</span>
-<span class="cm">     * (even though we do not intend to return).</span>
-<span class="cm">     */</span>
-    <span class="nf">bl</span> <span class="no">z_arm_prep_c</span>
-</code></pre></div>
-</td></tr></table>
+    /*
+     * 'bl' jumps the furthest of the branch instructions that are
+     * supported on all platforms. So it is used when jumping to z_arm_prep_c
+     * (even though we do not intend to return).
+     */
+    bl z_arm_prep_c
+
+</code></pre>
 <h2 id="z_arm_prep_c-c">z_arm_prep_c C环境初始化<a class="headerlink" href="#z_arm_prep_c-c" title="Permanent link">&para;</a></h2>
 <p>z_arm_prep_c() 函数同样也是执行一些底层初始化工作，初始化C的运行环境。</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
-<span class="normal"> 2</span>
-<span class="normal"> 3</span>
-<span class="normal"> 4</span>
-<span class="normal"> 5</span>
-<span class="normal"> 6</span>
-<span class="normal"> 7</span>
-<span class="normal"> 8</span>
-<span class="normal"> 9</span>
-<span class="normal">10</span>
-<span class="normal">11</span>
-<span class="normal">12</span>
-<span class="normal">13</span>
-<span class="normal">14</span>
-<span class="normal">15</span>
-<span class="normal">16</span>
-<span class="normal">17</span>
-<span class="normal">18</span>
-<span class="normal">19</span>
-<span class="normal">20</span>
-<span class="normal">21</span>
-<span class="normal">22</span>
-<span class="normal">23</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="cm">/**</span>
-<span class="cm"> *</span>
-<span class="cm"> * @brief Prepare to and run C code</span>
-<span class="cm"> *</span>
-<span class="cm"> * This routine prepares for the execution of and runs C code.</span>
-<span class="cm"> *</span>
-<span class="cm"> * @return N/A</span>
-<span class="cm"> */</span>
-<span class="kt">void</span> <span class="nf">z_arm_prep_c</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
-<span class="p">{</span>
-    <span class="n">relocate_vector_table</span><span class="p">();</span>
-<span class="cp">#if defined(CONFIG_CPU_HAS_FPU)</span>
-    <span class="n">z_arm_floating_point_init</span><span class="p">();</span>
-<span class="cp">#endif</span>
-    <span class="n">z_bss_zero</span><span class="p">();</span>
-    <span class="n">z_data_copy</span><span class="p">();</span>
-<span class="cp">#if defined(CONFIG_ARMV7_R) &amp;&amp; defined(CONFIG_INIT_STACKS)</span>
-    <span class="n">z_arm_init_stacks</span><span class="p">();</span>
-<span class="cp">#endif</span>
-    <span class="n">z_arm_interrupt_init</span><span class="p">();</span>
-    <span class="n">z_cstart</span><span class="p">();</span>
-    <span class="n">CODE_UNREACHABLE</span><span class="p">;</span>
-<span class="p">}</span>
-</code></pre></div>
-</td></tr></table>
+<pre><code class="language-C">/**
+ *
+ * @brief Prepare to and run C code
+ *
+ * This routine prepares for the execution of and runs C code.
+ *
+ * @return N/A
+ */
+void z_arm_prep_c(void)
+{
+    relocate_vector_table();
+#if defined(CONFIG_CPU_HAS_FPU)
+    z_arm_floating_point_init();
+#endif
+    z_bss_zero();
+    z_data_copy();
+#if defined(CONFIG_ARMV7_R) &amp;&amp; defined(CONFIG_INIT_STACKS)
+    z_arm_init_stacks();
+#endif
+    z_arm_interrupt_init();
+    z_cstart();
+    CODE_UNREACHABLE;
+}
+</code></pre>
 <h2 id="z_cstart">z_cstart 内核初始化<a class="headerlink" href="#z_cstart" title="Permanent link">&para;</a></h2>
 <p>z_cstart() 函数初始化内核相关功能，并且执行 _SYS_INIT_LEVEL_PRE_KERNEL_1 与 _SYS_INIT_LEVEL_PRE_KERNEL_2 级别的初始化工作。</p>
 <p>然后初始化调度器，启动main线程（多线程模式）或者跳转到 bg_thread_main（不启用多线程）。</p>
 <p>需要注意的是单线程模式现在处于弃用状态，并且如无意外将会在 2.6 版本移除。</p>
 <p>此时内核相关功能无法使用，因此主要是一些跟中断相关的较底层代码会在此阶段运行。</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
-<span class="normal"> 2</span>
-<span class="normal"> 3</span>
-<span class="normal"> 4</span>
-<span class="normal"> 5</span>
-<span class="normal"> 6</span>
-<span class="normal"> 7</span>
-<span class="normal"> 8</span>
-<span class="normal"> 9</span>
-<span class="normal">10</span>
-<span class="normal">11</span>
-<span class="normal">12</span>
-<span class="normal">13</span>
-<span class="normal">14</span>
-<span class="normal">15</span>
-<span class="normal">16</span>
-<span class="normal">17</span>
-<span class="normal">18</span>
-<span class="normal">19</span>
-<span class="normal">20</span>
-<span class="normal">21</span>
-<span class="normal">22</span>
-<span class="normal">23</span>
-<span class="normal">24</span>
-<span class="normal">25</span>
-<span class="normal">26</span>
-<span class="normal">27</span>
-<span class="normal">28</span>
-<span class="normal">29</span>
-<span class="normal">30</span>
-<span class="normal">31</span>
-<span class="normal">32</span>
-<span class="normal">33</span>
-<span class="normal">34</span>
-<span class="normal">35</span>
-<span class="normal">36</span>
-<span class="normal">37</span>
-<span class="normal">38</span>
-<span class="normal">39</span>
-<span class="normal">40</span>
-<span class="normal">41</span>
-<span class="normal">42</span>
-<span class="normal">43</span>
-<span class="normal">44</span>
-<span class="normal">45</span>
-<span class="normal">46</span>
-<span class="normal">47</span>
-<span class="normal">48</span>
-<span class="normal">49</span>
-<span class="normal">50</span>
-<span class="normal">51</span>
-<span class="normal">52</span>
-<span class="normal">53</span>
-<span class="normal">54</span>
-<span class="normal">55</span>
-<span class="normal">56</span>
-<span class="normal">57</span>
-<span class="normal">58</span>
-<span class="normal">59</span>
-<span class="normal">60</span>
-<span class="normal">61</span>
-<span class="normal">62</span>
-<span class="normal">63</span>
-<span class="normal">64</span>
-<span class="normal">65</span>
-<span class="normal">66</span>
-<span class="normal">67</span>
-<span class="normal">68</span>
-<span class="normal">69</span>
-<span class="normal">70</span>
-<span class="normal">71</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="cm">/**</span>
-<span class="cm"> *</span>
-<span class="cm"> * @brief Initialize kernel</span>
-<span class="cm"> *</span>
-<span class="cm"> * This routine is invoked when the system is ready to run C code. The</span>
-<span class="cm"> * processor must be running in 32-bit mode, and the BSS must have been</span>
-<span class="cm"> * cleared/zeroed.</span>
-<span class="cm"> *</span>
-<span class="cm"> * @return Does not return</span>
-<span class="cm"> */</span>
-<span class="n">FUNC_NORETURN</span> <span class="kt">void</span> <span class="n">z_cstart</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
-<span class="p">{</span>
-    <span class="cm">/* gcov hook needed to get the coverage report.*/</span>
-    <span class="n">gcov_static_init</span><span class="p">();</span>
+<pre><code class="language-C">
+/**
+ *
+ * @brief Initialize kernel
+ *
+ * This routine is invoked when the system is ready to run C code. The
+ * processor must be running in 32-bit mode, and the BSS must have been
+ * cleared/zeroed.
+ *
+ * @return Does not return
+ */
+FUNC_NORETURN void z_cstart(void)
+{
+    /* gcov hook needed to get the coverage report.*/
+    gcov_static_init();
 
-    <span class="n">LOG_CORE_INIT</span><span class="p">();</span>
+    LOG_CORE_INIT();
 
-    <span class="cm">/* perform any architecture-specific initialization */</span>
-    <span class="n">arch_kernel_init</span><span class="p">();</span>
+    /* perform any architecture-specific initialization */
+    arch_kernel_init();
 
-<span class="cp">#if defined(CONFIG_MULTITHREADING)</span>
-    <span class="cm">/* Note: The z_ready_thread() call in prepare_multithreading() requires</span>
-<span class="cm">     * a dummy thread even if CONFIG_ARCH_HAS_CUSTOM_SWAP_TO_MAIN=y</span>
-<span class="cm">     */</span>
-    <span class="k">struct</span> <span class="nc">k_thread</span> <span class="n">dummy_thread</span><span class="p">;</span>
+#if defined(CONFIG_MULTITHREADING)
+    /* Note: The z_ready_thread() call in prepare_multithreading() requires
+     * a dummy thread even if CONFIG_ARCH_HAS_CUSTOM_SWAP_TO_MAIN=y
+     */
+    struct k_thread dummy_thread;
 
-    <span class="n">z_dummy_thread_init</span><span class="p">(</span><span class="o">&amp;</span><span class="n">dummy_thread</span><span class="p">);</span>
-<span class="cp">#endif</span>
+    z_dummy_thread_init(&amp;dummy_thread);
+#endif
 
-    <span class="cm">/* perform basic hardware initialization */</span>
-    <span class="n">z_sys_init_run_level</span><span class="p">(</span><span class="n">_SYS_INIT_LEVEL_PRE_KERNEL_1</span><span class="p">);</span>
-    <span class="n">z_sys_init_run_level</span><span class="p">(</span><span class="n">_SYS_INIT_LEVEL_PRE_KERNEL_2</span><span class="p">);</span>
+    /* perform basic hardware initialization */
+    z_sys_init_run_level(_SYS_INIT_LEVEL_PRE_KERNEL_1);
+    z_sys_init_run_level(_SYS_INIT_LEVEL_PRE_KERNEL_2);
 
-<span class="cp">#ifdef CONFIG_STACK_CANARIES</span>
-    <span class="kt">uintptr_t</span> <span class="n">stack_guard</span><span class="p">;</span>
+#ifdef CONFIG_STACK_CANARIES
+    uintptr_t stack_guard;
 
-    <span class="n">z_early_boot_rand_get</span><span class="p">((</span><span class="kt">uint8_t</span> <span class="o">*</span><span class="p">)</span><span class="o">&amp;</span><span class="n">stack_guard</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">stack_guard</span><span class="p">));</span>
-    <span class="n">__stack_chk_guard</span> <span class="o">=</span> <span class="n">stack_guard</span><span class="p">;</span>
-    <span class="n">__stack_chk_guard</span> <span class="o">&lt;&lt;=</span> <span class="mi">8</span><span class="p">;</span>
-<span class="cp">#endif  </span><span class="cm">/* CONFIG_STACK_CANARIES */</span><span class="cp"></span>
+    z_early_boot_rand_get((uint8_t *)&amp;stack_guard, sizeof(stack_guard));
+    __stack_chk_guard = stack_guard;
+    __stack_chk_guard &lt;&lt;= 8;
+#endif  /* CONFIG_STACK_CANARIES */
 
-<span class="cp">#ifdef CONFIG_MULTITHREADING</span>
-    <span class="n">switch_to_main_thread</span><span class="p">(</span><span class="n">prepare_multithreading</span><span class="p">());</span>
-<span class="cp">#else</span>
-<span class="cp">#ifdef ARCH_SWITCH_TO_MAIN_NO_MULTITHREADING</span>
-    <span class="cm">/* Custom ARCH-specific routine to switch to main()</span>
-<span class="cm">     * in the case of no multi-threading.</span>
-<span class="cm">     */</span>
-    <span class="n">ARCH_SWITCH_TO_MAIN_NO_MULTITHREADING</span><span class="p">(</span><span class="n">bg_thread_main</span><span class="p">,</span>
-        <span class="nb">NULL</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">);</span>
-<span class="cp">#else</span>
-    <span class="n">bg_thread_main</span><span class="p">(</span><span class="nb">NULL</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">);</span>
+#ifdef CONFIG_MULTITHREADING
+    switch_to_main_thread(prepare_multithreading());
+#else
+#ifdef ARCH_SWITCH_TO_MAIN_NO_MULTITHREADING
+    /* Custom ARCH-specific routine to switch to main()
+     * in the case of no multi-threading.
+     */
+    ARCH_SWITCH_TO_MAIN_NO_MULTITHREADING(bg_thread_main,
+        NULL, NULL, NULL);
+#else
+    bg_thread_main(NULL, NULL, NULL);
 
-    <span class="cm">/* LCOV_EXCL_START</span>
-<span class="cm">     * We&#39;ve already dumped coverage data at this point.</span>
-<span class="cm">     */</span>
-    <span class="n">irq_lock</span><span class="p">();</span>
-    <span class="k">while</span> <span class="p">(</span><span class="nb">true</span><span class="p">)</span> <span class="p">{</span>
-    <span class="p">}</span>
-    <span class="cm">/* LCOV_EXCL_STOP */</span>
-<span class="cp">#endif</span>
-<span class="cp">#endif </span><span class="cm">/* CONFIG_MULTITHREADING */</span><span class="cp"></span>
+    /* LCOV_EXCL_START
+     * We've already dumped coverage data at this point.
+     */
+    irq_lock();
+    while (true) {
+    }
+    /* LCOV_EXCL_STOP */
+#endif
+#endif /* CONFIG_MULTITHREADING */
 
-    <span class="cm">/*</span>
-<span class="cm">     * Compiler can&#39;t tell that the above routines won&#39;t return and issues</span>
-<span class="cm">     * a warning unless we explicitly tell it that control never gets this</span>
-<span class="cm">     * far.</span>
-<span class="cm">     */</span>
+    /*
+     * Compiler can't tell that the above routines won't return and issues
+     * a warning unless we explicitly tell it that control never gets this
+     * far.
+     */
 
-    <span class="n">CODE_UNREACHABLE</span><span class="p">;</span> <span class="cm">/* LCOV_EXCL_LINE */</span>
-<span class="p">}</span>
-</code></pre></div>
-</td></tr></table>
+    CODE_UNREACHABLE; /* LCOV_EXCL_LINE */
+}
+
+</code></pre>
 <h2 id="bg_thread_main">bg_thread_main 启动应用层线程<a class="headerlink" href="#bg_thread_main" title="Permanent link">&para;</a></h2>
 <p>bg_thread_main 将执行 _SYS_INIT_LEVEL_POST_KERNEL 与 _SYS_INIT_LEVEL_APPLICATION 级别的初始化工作，然后跳转到 main()</p>
 <p>此时调度器已经运行，并且各种内核服务可用。</p>
 <p>大多数驱动会在 _SYS_INIT_LEVEL_POST_KERNEL 阶段初始化，同时也根据紧急程度设定优先级。</p>
 <p>如：</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
-<span class="normal">2</span>
-<span class="normal">3</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="cp">#define CONFIG_KERNEL_INIT_PRIORITY_OBJECTS 30</span>
-<span class="cp">#define CONFIG_KERNEL_INIT_PRIORITY_DEFAULT 40</span>
-<span class="cp">#define CONFIG_KERNEL_INIT_PRIORITY_DEVICE 50</span>
-</code></pre></div>
-</td></tr></table>
+<pre><code class="language-C">#define CONFIG_KERNEL_INIT_PRIORITY_OBJECTS 30
+#define CONFIG_KERNEL_INIT_PRIORITY_DEFAULT 40
+#define CONFIG_KERNEL_INIT_PRIORITY_DEVICE 50
+</code></pre>
 <p>大多数系统相关服务 _SYS_INIT_LEVEL_APPLICATION，如网络、BSD相关服务、依赖于其他驱动的驱动等。</p>
 <p>然后系统将创建与运行定义的线程（多线程模式下），并且进入 main() 循环。</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
-<span class="normal"> 2</span>
-<span class="normal"> 3</span>
-<span class="normal"> 4</span>
-<span class="normal"> 5</span>
-<span class="normal"> 6</span>
-<span class="normal"> 7</span>
-<span class="normal"> 8</span>
-<span class="normal"> 9</span>
-<span class="normal">10</span>
-<span class="normal">11</span>
-<span class="normal">12</span>
-<span class="normal">13</span>
-<span class="normal">14</span>
-<span class="normal">15</span>
-<span class="normal">16</span>
-<span class="normal">17</span>
-<span class="normal">18</span>
-<span class="normal">19</span>
-<span class="normal">20</span>
-<span class="normal">21</span>
-<span class="normal">22</span>
-<span class="normal">23</span>
-<span class="normal">24</span>
-<span class="normal">25</span>
-<span class="normal">26</span>
-<span class="normal">27</span>
-<span class="normal">28</span>
-<span class="normal">29</span>
-<span class="normal">30</span>
-<span class="normal">31</span>
-<span class="normal">32</span>
-<span class="normal">33</span>
-<span class="normal">34</span>
-<span class="normal">35</span>
-<span class="normal">36</span>
-<span class="normal">37</span>
-<span class="normal">38</span>
-<span class="normal">39</span>
-<span class="normal">40</span>
-<span class="normal">41</span>
-<span class="normal">42</span>
-<span class="normal">43</span>
-<span class="normal">44</span>
-<span class="normal">45</span>
-<span class="normal">46</span>
-<span class="normal">47</span>
-<span class="normal">48</span>
-<span class="normal">49</span>
-<span class="normal">50</span>
-<span class="normal">51</span>
-<span class="normal">52</span>
-<span class="normal">53</span>
-<span class="normal">54</span>
-<span class="normal">55</span>
-<span class="normal">56</span>
-<span class="normal">57</span>
-<span class="normal">58</span>
-<span class="normal">59</span>
-<span class="normal">60</span>
-<span class="normal">61</span>
-<span class="normal">62</span>
-<span class="normal">63</span>
-<span class="normal">64</span>
-<span class="normal">65</span>
-<span class="normal">66</span>
-<span class="normal">67</span>
-<span class="normal">68</span>
-<span class="normal">69</span>
-<span class="normal">70</span>
-<span class="normal">71</span>
-<span class="normal">72</span>
-<span class="normal">73</span>
-<span class="normal">74</span>
-<span class="normal">75</span>
-<span class="normal">76</span>
-<span class="normal">77</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="cm">/**</span>
-<span class="cm"> *</span>
-<span class="cm"> * @brief Mainline for kernel&#39;s background thread</span>
-<span class="cm"> *</span>
-<span class="cm"> * This routine completes kernel initialization by invoking the remaining</span>
-<span class="cm"> * init functions, then invokes application&#39;s main() routine.</span>
-<span class="cm"> *</span>
-<span class="cm"> * @return N/A</span>
-<span class="cm"> */</span>
-<span class="k">static</span> <span class="kt">void</span> <span class="n">bg_thread_main</span><span class="p">(</span><span class="kt">void</span> <span class="o">*</span><span class="n">unused1</span><span class="p">,</span> <span class="kt">void</span> <span class="o">*</span><span class="n">unused2</span><span class="p">,</span> <span class="kt">void</span> <span class="o">*</span><span class="n">unused3</span><span class="p">)</span>
-<span class="p">{</span>
-    <span class="n">ARG_UNUSED</span><span class="p">(</span><span class="n">unused1</span><span class="p">);</span>
-    <span class="n">ARG_UNUSED</span><span class="p">(</span><span class="n">unused2</span><span class="p">);</span>
-    <span class="n">ARG_UNUSED</span><span class="p">(</span><span class="n">unused3</span><span class="p">);</span>
+<pre><code class="language-C">/**
+ *
+ * @brief Mainline for kernel's background thread
+ *
+ * This routine completes kernel initialization by invoking the remaining
+ * init functions, then invokes application's main() routine.
+ *
+ * @return N/A
+ */
+static void bg_thread_main(void *unused1, void *unused2, void *unused3)
+{
+    ARG_UNUSED(unused1);
+    ARG_UNUSED(unused2);
+    ARG_UNUSED(unused3);
 
-<span class="cp">#if defined(CONFIG_BOOT_DELAY) &amp;&amp; CONFIG_BOOT_DELAY &gt; 0</span>
-    <span class="k">static</span> <span class="k">const</span> <span class="kt">unsigned</span> <span class="kt">int</span> <span class="n">boot_delay</span> <span class="o">=</span> <span class="n">CONFIG_BOOT_DELAY</span><span class="p">;</span>
-<span class="cp">#else</span>
-    <span class="k">static</span> <span class="k">const</span> <span class="kt">unsigned</span> <span class="kt">int</span> <span class="n">boot_delay</span><span class="p">;</span>
-<span class="cp">#endif</span>
+#if defined(CONFIG_BOOT_DELAY) &amp;&amp; CONFIG_BOOT_DELAY &gt; 0
+    static const unsigned int boot_delay = CONFIG_BOOT_DELAY;
+#else
+    static const unsigned int boot_delay;
+#endif
 
-    <span class="n">z_sys_post_kernel</span> <span class="o">=</span> <span class="nb">true</span><span class="p">;</span>
+    z_sys_post_kernel = true;
 
-    <span class="n">z_sys_init_run_level</span><span class="p">(</span><span class="n">_SYS_INIT_LEVEL_POST_KERNEL</span><span class="p">);</span>
-<span class="cp">#if CONFIG_STACK_POINTER_RANDOM</span>
-    <span class="n">z_stack_adjust_initialized</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
-<span class="cp">#endif</span>
-    <span class="k">if</span> <span class="p">(</span><span class="n">boot_delay</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="n">IS_ENABLED</span><span class="p">(</span><span class="n">CONFIG_MULTITHREADING</span><span class="p">))</span> <span class="p">{</span>
-        <span class="n">printk</span><span class="p">(</span><span class="s">&quot;***** delaying boot &quot;</span> <span class="n">STRINGIFY</span><span class="p">(</span><span class="n">CONFIG_BOOT_DELAY</span><span class="p">)</span>
-               <span class="s">&quot;ms (per build configuration) *****</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
-        <span class="n">k_busy_wait</span><span class="p">(</span><span class="n">CONFIG_BOOT_DELAY</span> <span class="o">*</span> <span class="n">USEC_PER_MSEC</span><span class="p">);</span>
-    <span class="p">}</span>
+    z_sys_init_run_level(_SYS_INIT_LEVEL_POST_KERNEL);
+#if CONFIG_STACK_POINTER_RANDOM
+    z_stack_adjust_initialized = 1;
+#endif
+    if (boot_delay &gt; 0 &amp;&amp; IS_ENABLED(CONFIG_MULTITHREADING)) {
+        printk(&quot;***** delaying boot &quot; STRINGIFY(CONFIG_BOOT_DELAY)
+               &quot;ms (per build configuration) *****\n&quot;);
+        k_busy_wait(CONFIG_BOOT_DELAY * USEC_PER_MSEC);
+    }
 
-<span class="cp">#if defined(CONFIG_BOOT_BANNER)</span>
-<span class="cp">#ifdef BUILD_VERSION</span>
-    <span class="n">printk</span><span class="p">(</span><span class="s">&quot;*** Booting Zephyr OS build %s %s ***</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span>
-            <span class="n">STRINGIFY</span><span class="p">(</span><span class="n">BUILD_VERSION</span><span class="p">),</span> <span class="n">BOOT_DELAY_BANNER</span><span class="p">);</span>
-<span class="cp">#else</span>
-    <span class="n">printk</span><span class="p">(</span><span class="s">&quot;*** Booting Zephyr OS version %s %s ***</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span>
-            <span class="n">KERNEL_VERSION_STRING</span><span class="p">,</span> <span class="n">BOOT_DELAY_BANNER</span><span class="p">);</span>
-<span class="cp">#endif</span>
-<span class="cp">#endif</span>
+#if defined(CONFIG_BOOT_BANNER)
+#ifdef BUILD_VERSION
+    printk(&quot;*** Booting Zephyr OS build %s %s ***\n&quot;,
+            STRINGIFY(BUILD_VERSION), BOOT_DELAY_BANNER);
+#else
+    printk(&quot;*** Booting Zephyr OS version %s %s ***\n&quot;,
+            KERNEL_VERSION_STRING, BOOT_DELAY_BANNER);
+#endif
+#endif
 
-<span class="cp">#ifdef CONFIG_CPLUSPLUS</span>
-    <span class="cm">/* Process the .ctors and .init_array sections */</span>
-    <span class="k">extern</span> <span class="kt">void</span> <span class="n">__do_global_ctors_aux</span><span class="p">(</span><span class="kt">void</span><span class="p">);</span>
-    <span class="k">extern</span> <span class="kt">void</span> <span class="n">__do_init_array_aux</span><span class="p">(</span><span class="kt">void</span><span class="p">);</span>
-    <span class="n">__do_global_ctors_aux</span><span class="p">();</span>
-    <span class="n">__do_init_array_aux</span><span class="p">();</span>
-<span class="cp">#endif</span>
+#ifdef CONFIG_CPLUSPLUS
+    /* Process the .ctors and .init_array sections */
+    extern void __do_global_ctors_aux(void);
+    extern void __do_init_array_aux(void);
+    __do_global_ctors_aux();
+    __do_init_array_aux();
+#endif
 
-    <span class="cm">/* Final init level before app starts */</span>
-    <span class="n">z_sys_init_run_level</span><span class="p">(</span><span class="n">_SYS_INIT_LEVEL_APPLICATION</span><span class="p">);</span>
+    /* Final init level before app starts */
+    z_sys_init_run_level(_SYS_INIT_LEVEL_APPLICATION);
 
-    <span class="n">z_init_static_threads</span><span class="p">();</span>
+    z_init_static_threads();
 
-<span class="cp">#ifdef CONFIG_SMP</span>
-    <span class="n">z_smp_init</span><span class="p">();</span>
-    <span class="n">z_sys_init_run_level</span><span class="p">(</span><span class="n">_SYS_INIT_LEVEL_SMP</span><span class="p">);</span>
-<span class="cp">#endif</span>
+#ifdef CONFIG_SMP
+    z_smp_init();
+    z_sys_init_run_level(_SYS_INIT_LEVEL_SMP);
+#endif
 
-<span class="cp">#ifdef CONFIG_BOOT_TIME_MEASUREMENT</span>
-    <span class="n">z_timestamp_main</span> <span class="o">=</span> <span class="n">k_cycle_get_32</span><span class="p">();</span>
-<span class="cp">#endif</span>
+#ifdef CONFIG_BOOT_TIME_MEASUREMENT
+    z_timestamp_main = k_cycle_get_32();
+#endif
 
-    <span class="k">extern</span> <span class="kt">void</span> <span class="n">main</span><span class="p">(</span><span class="kt">void</span><span class="p">);</span>
+    extern void main(void);
 
-    <span class="n">main</span><span class="p">();</span>
+    main();
 
-    <span class="cm">/* Mark nonessenrial since main() has no more work to do */</span>
-    <span class="n">z_main_thread</span><span class="p">.</span><span class="n">base</span><span class="p">.</span><span class="n">user_options</span> <span class="o">&amp;=</span> <span class="o">~</span><span class="n">K_ESSENTIAL</span><span class="p">;</span>
+    /* Mark nonessenrial since main() has no more work to do */
+    z_main_thread.base.user_options &amp;= ~K_ESSENTIAL;
 
-<span class="cp">#ifdef CONFIG_COVERAGE_DUMP</span>
-    <span class="cm">/* Dump coverage data once the main() has exited. */</span>
-    <span class="n">gcov_coverage_dump</span><span class="p">();</span>
-<span class="cp">#endif</span>
-<span class="p">}</span> <span class="cm">/* LCOV_EXCL_LINE ... because we just dumped final coverage data */</span>
-</code></pre></div>
-</td></tr></table>
+#ifdef CONFIG_COVERAGE_DUMP
+    /* Dump coverage data once the main() has exited. */
+    gcov_coverage_dump();
+#endif
+} /* LCOV_EXCL_LINE ... because we just dumped final coverage data */
+
+</code></pre>
                 
               
               
@@ -2118,6 +1883,10 @@
           }, typeof search !== "undefined" && search)
         })
       </script>
+      
+        <script src="../../../assets/js/highlight.min.js"></script>
+      
+        <script src="../../../assets/js/init.js"></script>
       
     
   </body>

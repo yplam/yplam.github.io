@@ -34,6 +34,8 @@
     
     
     
+      <link rel="stylesheet" href="../../../assets/css/highlight.css">
+    
       <link rel="stylesheet" href="../../../assets/css/custom.css">
     
     
@@ -1642,331 +1644,208 @@
 <p>基本上按照<a href="https://chromium.googlesource.com/chromium/src/+/master/docs/linux_build_instructions.md">官方文档</a>,只是开始前解决 proxy 跟 python 版本问题。</p>
 <p><strong>注意：</strong>下面过程可能会对您操作系统造成不可知的错误，请仅作为参考</p>
 <p>先查看系统 python 版本：</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>python --version
-</code></pre></div>
-</td></tr></table>
+<pre><code class="language-shell">python --version
+</code></pre>
 <p>如果不是 2.x 则可以通过建立软链的方式切换到 Python2（或者使用你系统自带的切换工具）</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="nb">cd</span> <span class="k">$(</span>dirname <span class="k">$(</span>which python<span class="k">))</span> <span class="o">&amp;&amp;</span> sudo rm python <span class="o">&amp;&amp;</span> sudo ln -s python2 python
-</code></pre></div>
-</td></tr></table>
+<pre><code class="language-shell">cd $(dirname $(which python)) &amp;&amp; sudo rm python &amp;&amp; sudo ln -s python2 python
+</code></pre>
 <p>假设 http proxy 端口为 8123，创建 boto.cfg 文件，记下保存路径：</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
-<span class="normal">2</span>
-<span class="normal">3</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>[Boto]
+<pre><code class="language-conf">[Boto]
 proxy=127.0.0.1
 proxy_port=8123
-</code></pre></div>
-</td></tr></table>
+</code></pre>
 <p>配置 proxy 相关内容：</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
-<span class="normal">2</span>
-<span class="normal">3</span>
-<span class="normal">4</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="nb">export</span> <span class="nv">http_proxy</span><span class="o">=</span><span class="s2">&quot;127.0.0.1:8123&quot;</span>
-<span class="nb">export</span> <span class="nv">https_proxy</span><span class="o">=</span><span class="s2">&quot;127.0.0.1:8123&quot;</span>
-<span class="nb">export</span> <span class="nv">NO_AUTH_BOTO_CONFIG</span><span class="o">={</span>your path<span class="o">}</span>/boto.cfg
-git config --global http.proxy <span class="m">127</span>.0.0.1:8123
-</code></pre></div>
-</td></tr></table>
+<pre><code class="language-shell">export http_proxy=&quot;127.0.0.1:8123&quot;
+export https_proxy=&quot;127.0.0.1:8123&quot;
+export NO_AUTH_BOTO_CONFIG={your path}/boto.cfg
+git config --global http.proxy 127.0.0.1:8123
+</code></pre>
 <p>至此，可以按照<a href="https://chromium.googlesource.com/chromium/src/+/master/docs/linux_build_instructions.md">官方文档</a>进行编译。</p>
 <p>下面为相关命令，运行前需要先保证有稳定的网络，以及接上外部电源，在我的 P52 上下载源码大概需要 2小时，编译大概需要 3 小时：</p>
 <p><strong>注意：</strong>下面为Manjaro下的编译方式，其他系统请按需修改或者参考官方文档。</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
-<span class="normal"> 2</span>
-<span class="normal"> 3</span>
-<span class="normal"> 4</span>
-<span class="normal"> 5</span>
-<span class="normal"> 6</span>
-<span class="normal"> 7</span>
-<span class="normal"> 8</span>
-<span class="normal"> 9</span>
-<span class="normal">10</span>
-<span class="normal">11</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>sudo pacman -S --needed python perl gcc gcc-libs bison flex gperf pkgconfig nss alsa-lib glib2 gtk3 nspr ttf-ms-fonts freetype2 cairo dbus libgnome-keyring
+<pre><code class="language-shell">sudo pacman -S --needed python perl gcc gcc-libs bison flex gperf pkgconfig nss alsa-lib glib2 gtk3 nspr ttf-ms-fonts freetype2 cairo dbus libgnome-keyring
 git clone https://chromium.googlesource.com/chromium/tools/depot_tools.git
-<span class="nb">export</span> <span class="nv">PATH</span><span class="o">=</span><span class="s2">&quot;</span><span class="nv">$PATH</span><span class="s2">:/path/to/depot_tools&quot;</span>
-mkdir chromium <span class="o">&amp;&amp;</span> <span class="nb">cd</span> chromium
+export PATH=&quot;$PATH:/path/to/depot_tools&quot;
+mkdir chromium &amp;&amp; cd chromium
 fetch --nohooks chromium
-<span class="nb">cd</span> src
+cd src
 gclient runhooks
-gn gen --enable_nacl<span class="o">=</span><span class="nb">false</span> --symbol_level<span class="o">=</span><span class="m">1</span> --remove_webcore_debug_symbols<span class="o">=</span><span class="nb">true</span> out/Default
+gn gen --enable_nacl=false --symbol_level=1 --remove_webcore_debug_symbols=true out/Default
 autoninja -C out/Default chrome
 git config --global --unset-all http.proxy
-<span class="nb">cd</span> <span class="k">$(</span>dirname <span class="k">$(</span>which python<span class="k">))</span> <span class="o">&amp;&amp;</span> sudo rm python <span class="o">&amp;&amp;</span> sudo ln -s python3 python
-</code></pre></div>
-</td></tr></table>
+cd $(dirname $(which python)) &amp;&amp; sudo rm python &amp;&amp; sudo ln -s python3 python
+
+</code></pre>
 <p>如无意外会生成 out/Default/chrome ,尝试一下是否可以正常运行 ./out/Default/chrome --no-sandbox</p>
 <h3 id="_1">更新代码<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h3>
 <p>更新代码的方式与上面类似，主要是解决 proxy 问题：</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
-<span class="normal">2</span>
-<span class="normal">3</span>
-<span class="normal">4</span>
-<span class="normal">5</span>
-<span class="normal">6</span>
-<span class="normal">7</span>
-<span class="normal">8</span>
-<span class="normal">9</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="nb">cd</span> <span class="k">$(</span>dirname <span class="k">$(</span>which python<span class="k">))</span> <span class="o">&amp;&amp;</span> sudo rm python <span class="o">&amp;&amp;</span> sudo ln -s python2 python
-<span class="nb">export</span> <span class="nv">http_proxy</span><span class="o">=</span><span class="s2">&quot;127.0.0.1:8123&quot;</span>
-<span class="nb">export</span> <span class="nv">https_proxy</span><span class="o">=</span><span class="s2">&quot;127.0.0.1:8123&quot;</span>
-<span class="nb">export</span> <span class="nv">NO_AUTH_BOTO_CONFIG</span><span class="o">=</span>/home/yplam/work/chromium/boto.cfg
-git config --global http.proxy <span class="m">127</span>.0.0.1:8123
+<pre><code class="language-shell">cd $(dirname $(which python)) &amp;&amp; sudo rm python &amp;&amp; sudo ln -s python2 python
+export http_proxy=&quot;127.0.0.1:8123&quot;
+export https_proxy=&quot;127.0.0.1:8123&quot;
+export NO_AUTH_BOTO_CONFIG=/home/yplam/work/chromium/boto.cfg
+git config --global http.proxy 127.0.0.1:8123
 git rebase-update
 gclient sync
 git config --global --unset-all http.proxy
-<span class="nb">cd</span> <span class="k">$(</span>dirname <span class="k">$(</span>which python<span class="k">))</span> <span class="o">&amp;&amp;</span> sudo rm python <span class="o">&amp;&amp;</span> sudo ln -s python3 python
-</code></pre></div>
-</td></tr></table>
+cd $(dirname $(which python)) &amp;&amp; sudo rm python &amp;&amp; sudo ln -s python3 python
+</code></pre>
 <h3 id="test">编译与运行TEST<a class="headerlink" href="#test" title="Permanent link">&para;</a></h3>
 <p>使用 gn ls 命令可以列出所有可编译的 target，譬如，我想跑跑 ui/gfx/color_utils_unittest.cc ，那么可以使用类似命令找出来:</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>gn ls out/Default <span class="p">|</span> grep <span class="nb">test</span> <span class="p">|</span> grep ui <span class="p">|</span> grep gfx
-</code></pre></div>
-</td></tr></table>
+<pre><code class="language-shell">gn ls out/Default | grep test | grep ui | grep gfx
+</code></pre>
 <p>可以看到 //ui/gfx:gfx_unittests 的存在， gfx_unittests 定义在 ui/gfx/BUILD.gn，包含 color_utils_unittest.cc。</p>
 <p>可以通过下面命令编译与运行：</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
-<span class="normal">2</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>ninja -C out/Default ui/gfx:gfx_unittests
-out/Default/gfx_unittests --gtest_filter<span class="o">=</span><span class="s2">&quot;ColorUtils.*&quot;</span>
-</code></pre></div>
-</td></tr></table>
+<pre><code class="language-shell">ninja -C out/Default ui/gfx:gfx_unittests
+out/Default/gfx_unittests --gtest_filter=&quot;ColorUtils.*&quot;
+</code></pre>
 <p>因为编译 TEST 比编译整个 Chromium 要快得多，可以通过此方式比较简单的了解与跟踪某些代码的运行。</p>
 <h3 id="gdb-chromium">GDB 调试 Chromium<a class="headerlink" href="#gdb-chromium" title="Permanent link">&para;</a></h3>
 <p>官方文档在此：<a href="https://chromium.googlesource.com/chromium/src/+/master/docs/linux_debugging.md">https://chromium.googlesource.com/chromium/src/+/master/docs/linux_debugging.md</a></p>
 <p>由于GDB启动较慢，如果只是想简单的跟踪一下程序运行信息，可以直接使用 base/logging.h 中定义的方法，如：</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="n">LOG</span><span class="p">(</span><span class="n">INFO</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;Found &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">num_cookies</span> <span class="o">&lt;&lt;</span> <span class="s">&quot; cookies&quot;</span><span class="p">;</span>
-</code></pre></div>
-</td></tr></table>
+<pre><code class="language-cpp">LOG(INFO) &lt;&lt; &quot;Found &quot; &lt;&lt; num_cookies &lt;&lt; &quot; cookies&quot;;
+</code></pre>
 <p>再结合上面提到的 TEST，用来跟踪一些小功能的代码比较有效率。当然，如果要对浏览器运行时的状态进行细致一点的跟踪，那么应该还是用 gdb 好点。</p>
 <p>譬如，chrome/browser/themes/theme_service.cc 提供 Theme 服务类，通过阅读代码，可以知道对 Theme 的更新是通过外部调用 ThemeObserver 的 OnExtensionLoaded 方法更新的，但对于是如何调用 OnExtensionLoaded 的
 却不是那么容易可以看出来，那么我们可以简单的使用 GDB 的 backtrace 来查看。</p>
 <p>在开始调试前请保证你的电脑有足够内存（应该需要 5GB+ 的内存，反正我 16GB 内存如果运行其他应用的话有时会内存耗尽），在 src 目录运行下面命令：</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>gdb -tui --args out/Default/chrome --disable-seccomp-sandbox http://google.com
-</code></pre></div>
-</td></tr></table>
+<pre><code class="language-shell">gdb -tui --args out/Default/chrome --disable-seccomp-sandbox http://google.com
+</code></pre>
 <p>加载需要点时间，加载后设置断点，在 theme_service.cc 的 264 行设置断点：</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>b theme_service.cc:264
-</code></pre></div>
-</td></tr></table>
+<pre><code class="language-shell">b theme_service.cc:264
+</code></pre>
 <p>然后运行</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>r
-</code></pre></div>
-</td></tr></table>
+<pre><code class="language-shell">r
+</code></pre>
 <p>启动过程中可能遇到其他断点，使用</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>c
-</code></pre></div>
-</td></tr></table>
+<pre><code class="language-shell">c
+</code></pre>
 <p>继续运行。</p>
 <p>然后进入 extension 页面，打开 developer 模式，拖一个 crx Theme 扩展进去，此时会进入我们的断点，然后</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>bt
-</code></pre></div>
-</td></tr></table>
+<pre><code class="language-shell">bt
+</code></pre>
 <p>或者如果只需要看最近8个 backtrace：</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>bt <span class="m">8</span>
-</code></pre></div>
-</td></tr></table>
+<pre><code class="language-shell">bt 8
+</code></pre>
 <p>得到下面关于 ThemeService::ThemeObserver::OnExtensionLoaded 的调用回溯：</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
-<span class="normal"> 2</span>
-<span class="normal"> 3</span>
-<span class="normal"> 4</span>
-<span class="normal"> 5</span>
-<span class="normal"> 6</span>
-<span class="normal"> 7</span>
-<span class="normal"> 8</span>
-<span class="normal"> 9</span>
-<span class="normal">10</span>
-<span class="normal">11</span>
-<span class="normal">12</span>
-<span class="normal">13</span>
-<span class="normal">14</span>
-<span class="normal">15</span>
-<span class="normal">16</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="c1">#0  0x000055555916362b in ThemeService::ThemeObserver::OnExtensionLoaded(content::BrowserContext*, extensions::Extension const*)</span>
-    <span class="o">(</span><span class="nv">this</span><span class="o">=</span>0x30e87097be90, <span class="nv">browser_context</span><span class="o">=</span>0x30e86f3abca0, <span class="nv">extension</span><span class="o">=</span>0x30e871bd6260<span class="o">)</span> at ../../chrome/browser/themes/theme_service.cc:264
-<span class="c1">#1  0x000055555794596c in extensions::ExtensionRegistry::TriggerOnLoaded(extensions::Extension const*) (this=0x30e86f412a20, extension=0x30e871bd6260) at ../../extensions/browser/extension_registry.cc:64</span>
-<span class="c1">#2  0x0000555557941c1e in extensions::ExtensionRegistrar::ActivateExtension(extensions::Extension const*, bool) (this=0x30e86f9dda60, extension=0x30e871bd6260, is_newly_added=true)</span>
-    at ../../extensions/browser/extension_registrar.cc:450<span class="o">)]</span> <span class="m">244</span>
-<span class="c1">#3  0x00005555579419df in extensions::ExtensionRegistrar::AddNewExtension(scoped_refptr&lt;extensions::Extension const&gt;) (this=0x30e86f9dda60, extension=...)</span>
+<pre><code class="language-shell">#0  0x000055555916362b in ThemeService::ThemeObserver::OnExtensionLoaded(content::BrowserContext*, extensions::Extension const*)
+    (this=0x30e87097be90, browser_context=0x30e86f3abca0, extension=0x30e871bd6260) at ../../chrome/browser/themes/theme_service.cc:264
+#1  0x000055555794596c in extensions::ExtensionRegistry::TriggerOnLoaded(extensions::Extension const*) (this=0x30e86f412a20, extension=0x30e871bd6260) at ../../extensions/browser/extension_registry.cc:64
+#2  0x0000555557941c1e in extensions::ExtensionRegistrar::ActivateExtension(extensions::Extension const*, bool) (this=0x30e86f9dda60, extension=0x30e871bd6260, is_newly_added=true)
+    at ../../extensions/browser/extension_registrar.cc:450)] 244
+#3  0x00005555579419df in extensions::ExtensionRegistrar::AddNewExtension(scoped_refptr&lt;extensions::Extension const&gt;) (this=0x30e86f9dda60, extension=...)
     at ../../extensions/browser/extension_registrar.cc:140
-<span class="c1">#4  0x0000555557940bf1 in extensions::ExtensionRegistrar::AddExtension(scoped_refptr&lt;extensions::Extension const&gt;) (this=0x30e86f9dda60, extension=...)</span>
+#4  0x0000555557940bf1 in extensions::ExtensionRegistrar::AddExtension(scoped_refptr&lt;extensions::Extension const&gt;) (this=0x30e86f9dda60, extension=...)
     at ../../extensions/browser/extension_registrar.cc:105
-<span class="c1">#5  0x000055555a1f88d3 in extensions::ExtensionService::AddExtension(extensions::Extension const*) (this=0x30e86f9dd820, extension=0x30e871bd6260)</span>
+#5  0x000055555a1f88d3 in extensions::ExtensionService::AddExtension(extensions::Extension const*) (this=0x30e86f9dd820, extension=0x30e871bd6260)
     at ../../chrome/browser/extensions/extension_service.cc:1188
-<span class="c1">#6  0x000055555a1fad83 in extensions::ExtensionService::FinishInstallation(extensions::Extension const*) (this=0x30e86f9dd820, extension=0x30e871bd6260)</span>
+#6  0x000055555a1fad83 in extensions::ExtensionService::FinishInstallation(extensions::Extension const*) (this=0x30e86f9dd820, extension=0x30e871bd6260)
     at ../../chrome/browser/extensions/extension_service.cc:1617
-<span class="c1">#7  0x000055555a1f90c5 in extensions::ExtensionService::AddNewOrUpdatedExtension(extensions::Extension const*, extensions::Extension::State, int, syncer::Ordinal&lt;syncer::StringOrdinalTraits&gt; const&amp;, std::_</span>
-_Cr::basic_string&lt;char, std::__Cr::char_traits&lt;char&gt;, std::__Cr::allocator&lt;char&gt; &gt; const<span class="p">&amp;</span>, base::Optional&lt;int&gt; const<span class="p">&amp;</span><span class="o">)</span>
-    <span class="o">(</span><span class="nv">this</span><span class="o">=</span>0x30e86f9dd820, <span class="nv">extension</span><span class="o">=</span>0x30e871bd6260, <span class="nv">initial_state</span><span class="o">=</span>extensions::Extension::ENABLED, <span class="nv">install_flags</span><span class="o">=</span><span class="m">0</span>, <span class="nv">page_ordinal</span><span class="o">=</span>..., <span class="nv">install_parameter</span><span class="o">=</span>..., <span class="nv">dnr_ruleset_checksum</span><span class="o">=</span>...<span class="o">)</span>
-</code></pre></div>
-</td></tr></table>
+#7  0x000055555a1f90c5 in extensions::ExtensionService::AddNewOrUpdatedExtension(extensions::Extension const*, extensions::Extension::State, int, syncer::Ordinal&lt;syncer::StringOrdinalTraits&gt; const&amp;, std::_
+_Cr::basic_string&lt;char, std::__Cr::char_traits&lt;char&gt;, std::__Cr::allocator&lt;char&gt; &gt; const&amp;, base::Optional&lt;int&gt; const&amp;)
+    (this=0x30e86f9dd820, extension=0x30e871bd6260, initial_state=extensions::Extension::ENABLED, install_flags=0, page_ordinal=..., install_parameter=..., dnr_ruleset_checksum=...)
+
+</code></pre>
 <p>我们继续执行：</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>c
-</code></pre></div>
-</td></tr></table>
+<pre><code class="language-shell">c
+</code></pre>
 <p>完成关闭浏览器退出，在 gdb 输入：</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>q
-</code></pre></div>
-</td></tr></table>
+<pre><code class="language-shell">q
+</code></pre>
 <p>退出。</p>
 <p>因为对 GDB 也不熟悉，上面只演示了一个基础操作。（ps: GDB的官方文档较枯燥，在网上找找别人的使用心得分享，譬如<a href="https://www.kancloud.cn/itfanr/i-100-gdb-tips/81849">100-gdb-tips</a>, <a href="http://www.brendangregg.com/blog/2016-08-09/gdb-example-ncurses.html">gdb Debugging Full Example</a>）</p>
 <h3 id="crx3">关于CRX3格式的调试结果记录<a class="headerlink" href="#crx3" title="Permanent link">&para;</a></h3>
 <p>CRX3格式相关代码位于：</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>components/crx_file/crx_creator.cc
-</code></pre></div>
-</td></tr></table>
+<pre><code class="language-shell">components/crx_file/crx_creator.cc
+</code></pre>
 <p>line 62：</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
-<span class="normal">2</span>
-<span class="normal">3</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>CreatorResult Create<span class="o">(</span>const base::FilePath<span class="p">&amp;</span> output_path,
-                     const base::FilePath<span class="p">&amp;</span> zip_path,
-                     crypto::RSAPrivateKey* signing_key<span class="o">)</span> 
-</code></pre></div>
-</td></tr></table>
+<pre><code class="language-shell">CreatorResult Create(const base::FilePath&amp; output_path,
+                     const base::FilePath&amp; zip_path,
+                     crypto::RSAPrivateKey* signing_key) 
+</code></pre>
 <p>跟 CRX2 最大的区别在于 CrxFileHeader 部分现在不再是简单的 length+data 的格式，而是使用 Protobuf 编码后的二进制数据，Protobuf格式为 crx3.proto 所示：</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
-<span class="normal"> 2</span>
-<span class="normal"> 3</span>
-<span class="normal"> 4</span>
-<span class="normal"> 5</span>
-<span class="normal"> 6</span>
-<span class="normal"> 7</span>
-<span class="normal"> 8</span>
-<span class="normal"> 9</span>
-<span class="normal">10</span>
-<span class="normal">11</span>
-<span class="normal">12</span>
-<span class="normal">13</span>
-<span class="normal">14</span>
-<span class="normal">15</span>
-<span class="normal">16</span>
-<span class="normal">17</span>
-<span class="normal">18</span>
-<span class="normal">19</span>
-<span class="normal">20</span>
-<span class="normal">21</span>
-<span class="normal">22</span>
-<span class="normal">23</span>
-<span class="normal">24</span>
-<span class="normal">25</span>
-<span class="normal">26</span>
-<span class="normal">27</span>
-<span class="normal">28</span>
-<span class="normal">29</span>
-<span class="normal">30</span>
-<span class="normal">31</span>
-<span class="normal">32</span>
-<span class="normal">33</span>
-<span class="normal">34</span>
-<span class="normal">35</span>
-<span class="normal">36</span>
-<span class="normal">37</span>
-<span class="normal">38</span>
-<span class="normal">39</span>
-<span class="normal">40</span>
-<span class="normal">41</span>
-<span class="normal">42</span>
-<span class="normal">43</span>
-<span class="normal">44</span>
-<span class="normal">45</span>
-<span class="normal">46</span>
-<span class="normal">47</span>
-<span class="normal">48</span>
-<span class="normal">49</span>
-<span class="normal">50</span>
-<span class="normal">51</span>
-<span class="normal">52</span>
-<span class="normal">53</span>
-<span class="normal">54</span>
-<span class="normal">55</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="c1">// Copyright 2017 The Chromium Authors. All rights reserved.</span>
-<span class="c1">// Use of this source code is governed by a BSD-style license that can be</span>
-<span class="c1">// found in the LICENSE file</span>
+<pre><code class="language-protobuf">// Copyright 2017 The Chromium Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file
 
-<span class="k">syntax</span> <span class="o">=</span> <span class="s">&quot;proto2&quot;</span><span class="p">;</span>
+syntax = &quot;proto2&quot;;
 
-<span class="k">option</span> <span class="na">optimize_for</span> <span class="o">=</span> <span class="n">LITE_RUNTIME</span><span class="p">;</span>
+option optimize_for = LITE_RUNTIME;
 
-<span class="kn">package</span> <span class="nn">crx_file</span><span class="p">;</span>
+package crx_file;
 
-<span class="c1">// A CRX₃ file is a binary file of the following format:</span>
-<span class="c1">// [4 octets]: &quot;Cr24&quot;, a magic number.</span>
-<span class="c1">// [4 octets]: The version of the *.crx file format used (currently 3).</span>
-<span class="c1">// [4 octets]: N, little-endian, the length of the header section.</span>
-<span class="c1">// [N octets]: The header (the binary encoding of a CrxFileHeader).</span>
-<span class="c1">// [M octets]: The ZIP archive.</span>
-<span class="c1">// Clients should reject CRX₃ files that contain an N that is too large for the</span>
-<span class="c1">// client to safely handle in memory.</span>
+// A CRX₃ file is a binary file of the following format:
+// [4 octets]: &quot;Cr24&quot;, a magic number.
+// [4 octets]: The version of the *.crx file format used (currently 3).
+// [4 octets]: N, little-endian, the length of the header section.
+// [N octets]: The header (the binary encoding of a CrxFileHeader).
+// [M octets]: The ZIP archive.
+// Clients should reject CRX₃ files that contain an N that is too large for the
+// client to safely handle in memory.
 
-<span class="kd">message</span> <span class="nc">CrxFileHeader</span> <span class="p">{</span>
-  <span class="c1">// PSS signature with RSA public key. The public key is formatted as a</span>
-  <span class="c1">// X.509 SubjectPublicKeyInfo block, as in CRX₂. In the common case of a</span>
-  <span class="c1">// developer key proof, the first 128 bits of the SHA-256 hash of the</span>
-  <span class="c1">// public key must equal the crx_id.</span>
-  <span class="k">repeated</span> <span class="n">AsymmetricKeyProof</span> <span class="na">sha256_with_rsa</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
+message CrxFileHeader {
+  // PSS signature with RSA public key. The public key is formatted as a
+  // X.509 SubjectPublicKeyInfo block, as in CRX₂. In the common case of a
+  // developer key proof, the first 128 bits of the SHA-256 hash of the
+  // public key must equal the crx_id.
+  repeated AsymmetricKeyProof sha256_with_rsa = 2;
 
-  <span class="c1">// ECDSA signature, using the NIST P-256 curve. Public key appears in</span>
-  <span class="c1">// named-curve format.</span>
-  <span class="c1">// The pinned algorithm will be this, at least on 2017-01-01.</span>
-  <span class="k">repeated</span> <span class="n">AsymmetricKeyProof</span> <span class="na">sha256_with_ecdsa</span> <span class="o">=</span> <span class="mi">3</span><span class="p">;</span>
+  // ECDSA signature, using the NIST P-256 curve. Public key appears in
+  // named-curve format.
+  // The pinned algorithm will be this, at least on 2017-01-01.
+  repeated AsymmetricKeyProof sha256_with_ecdsa = 3;
 
-  <span class="c1">// The binary form of a SignedData message. We do not use a nested</span>
-  <span class="c1">// SignedData message, as handlers of this message must verify the proofs</span>
-  <span class="c1">// on exactly these bytes, so it is convenient to parse in two steps.</span>
-  <span class="c1">//</span>
-  <span class="c1">// All proofs in this CrxFile message are on the value</span>
-  <span class="c1">// &quot;CRX3 SignedData\x00&quot; + signed_header_size + signed_header_data +</span>
-  <span class="c1">// archive, where &quot;\x00&quot; indicates an octet with value 0, &quot;CRX3 SignedData&quot;</span>
-  <span class="c1">// is encoded using UTF-8, signed_header_size is the size in octets of the</span>
-  <span class="c1">// contents of this field and is encoded using 4 octets in little-endian</span>
-  <span class="c1">// order, signed_header_data is exactly the content of this field, and</span>
-  <span class="c1">// archive is the remaining contents of the file following the header.</span>
-  <span class="k">optional</span> <span class="kt">bytes</span> <span class="na">signed_header_data</span> <span class="o">=</span> <span class="mi">10000</span><span class="p">;</span>
-<span class="p">}</span>
+  // The binary form of a SignedData message. We do not use a nested
+  // SignedData message, as handlers of this message must verify the proofs
+  // on exactly these bytes, so it is convenient to parse in two steps.
+  //
+  // All proofs in this CrxFile message are on the value
+  // &quot;CRX3 SignedData\x00&quot; + signed_header_size + signed_header_data +
+  // archive, where &quot;\x00&quot; indicates an octet with value 0, &quot;CRX3 SignedData&quot;
+  // is encoded using UTF-8, signed_header_size is the size in octets of the
+  // contents of this field and is encoded using 4 octets in little-endian
+  // order, signed_header_data is exactly the content of this field, and
+  // archive is the remaining contents of the file following the header.
+  optional bytes signed_header_data = 10000;
+}
 
-<span class="kd">message</span> <span class="nc">AsymmetricKeyProof</span> <span class="p">{</span>
-  <span class="k">optional</span> <span class="kt">bytes</span> <span class="na">public_key</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
-  <span class="k">optional</span> <span class="kt">bytes</span> <span class="na">signature</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
-<span class="p">}</span>
+message AsymmetricKeyProof {
+  optional bytes public_key = 1;
+  optional bytes signature = 2;
+}
 
-<span class="kd">message</span> <span class="nc">SignedData</span> <span class="p">{</span>
-  <span class="c1">// This is simple binary, not UTF-8 encoded mpdecimal; i.e. it is exactly</span>
-  <span class="c1">// 16 bytes long.</span>
-  <span class="k">optional</span> <span class="kt">bytes</span> <span class="na">crx_id</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
-<span class="p">}</span>
-</code></pre></div>
-</td></tr></table>
+message SignedData {
+  // This is simple binary, not UTF-8 encoded mpdecimal; i.e. it is exactly
+  // 16 bytes long.
+  optional bytes crx_id = 1;
+}
+
+
+</code></pre>
 <p>其中 crx_id 为 RSA public key 的 sha256 编码后的前 16 byte。signed_header_data 为 "CRX3 SignedData\x00" + signed_header_size + signed_header_data + zip archive 的 OPENSSL_ALGO_SHA256 编码（使用私钥）</p>
 <p>关于 Protobuf 可以使用 Google 官方库，然而由于在此只使用了 bytes 数据类型，操作起来比较简单，可以参考 <a href="https://developers.google.com/protocol-buffers/docs/encoding">https://developers.google.com/protocol-buffers/docs/encoding</a> 直接对二进制流进行读写操作。</p>
 <h3 id="windows-chromium">Windows 环境下编译 Chromium<a class="headerlink" href="#windows-chromium" title="Permanent link">&para;</a></h3>
 <p>下面附带分享一下 Windows 环境编译 Chromium 的附加内容。（2019年1月经测试可以正常下载代码与编译）</p>
 <p>首先第一步是能够解决科学上网，并且网速要够快。</p>
 <p>下载解压 depot_tools 后，先配置proxy，用管理员打开命令行</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>netsh winhttp <span class="nb">set</span> proxy <span class="m">127</span>.0.0.1:1080
-</code></pre></div>
-</td></tr></table>
+<pre><code class="language-shell">netsh winhttp set proxy 127.0.0.1:1080
+</code></pre>
 <p>修改depot_tools 目录中的 cipd.ps1 文件，配置 System.Net.WebClient 使用代理</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
-<span class="normal">2</span>
-<span class="normal">3</span>
-<span class="normal">4</span>
-<span class="normal">5</span>
-<span class="normal">6</span>
-<span class="normal">7</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>...
-<span class="nv">$proxyAddr</span> <span class="o">=</span> <span class="s2">&quot;http://127.0.0.1：1080&quot;</span>
-<span class="nv">$proxy</span> <span class="o">=</span> new-object System.Net.WebProxy
-<span class="nv">$proxy</span>.Address <span class="o">=</span> <span class="nv">$proxyAddr</span>
+<pre><code class="language-shell">...
+$proxyAddr = &quot;http://127.0.0.1：1080&quot;
+$proxy = new-object System.Net.WebProxy
+$proxy.Address = $proxyAddr
 ...
-<span class="nv">$wc</span>.proxy <span class="o">=</span> <span class="nv">$proxy</span>
+$wc.proxy = $proxy
 ...
-</code></pre></div>
-</td></tr></table>
+</code></pre>
 <p>可能还需要添加这两个命令行变量，不然初次运行gclient可能会报错：</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
-<span class="normal">2</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="nb">set</span> <span class="nv">HTTP_PROXY</span><span class="o">=</span>http://127.0.0.1:1080
-<span class="nb">set</span> <span class="nv">HTTPS_PROXY</span><span class="o">=</span>%HTTP_PROXY%
-</code></pre></div>
-</td></tr></table>
+<pre><code class="language-shell">set HTTP_PROXY=http://127.0.0.1:1080
+set HTTPS_PROXY=%HTTP_PROXY%
+</code></pre>
 <p>按官方文档继续配置 depot_tools</p>
 <p>结束后复位一下代理：</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>netsh winhttp reset proxy
-</code></pre></div>
-</td></tr></table>
+<pre><code class="language-shell">netsh winhttp reset proxy
+</code></pre>
 <h3 id="_2">后记<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <p>折腾了几天 Chromium，解决了 CRX3 文件格式编码问题，突然有点不想就此打住的念头。Chromium 算是自己能遇到的最复杂最优秀的开源项目以及代码库了吧，难得有机会，要不继续学习下去？ Why not？</p>
 <h3 id="_3">参考资料<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
@@ -2015,6 +1894,10 @@ _Cr::basic_string&lt;char, std::__Cr::char_traits&lt;char&gt;, std::__Cr::alloca
           }, typeof search !== "undefined" && search)
         })
       </script>
+      
+        <script src="../../../assets/js/highlight.min.js"></script>
+      
+        <script src="../../../assets/js/init.js"></script>
       
     
   </body>

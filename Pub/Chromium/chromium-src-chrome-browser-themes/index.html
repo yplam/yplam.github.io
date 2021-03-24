@@ -34,6 +34,8 @@
     
     
     
+      <link rel="stylesheet" href="../../../assets/css/highlight.css">
+    
       <link rel="stylesheet" href="../../../assets/css/custom.css">
     
     
@@ -1602,136 +1604,91 @@
 <p>chrome/browser/themes/ 目录包含跟 Theme 格式定义相关代码，Theme 加载相关代码，以及全局的 ThemeService，但并不包含关于 Theme 如何渲染浏览器外观的代码,不包含关于 CRX 打包解包相关代码。</p>
 <h3 id="_1">文件概览<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h3>
 <p>CustomThemeSupplier</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
-<span class="normal">2</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>custom_theme_supplier.cc
+<pre><code class="language-shell">custom_theme_supplier.cc
 custom_theme_supplier.h
-</code></pre></div>
-</td></tr></table>
+</code></pre>
 <p>CustomThemeSupplier 是 Theme 表示的基类，并没有提供有效的实现。</p>
 <p>BrowserThemePack</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
-<span class="normal">2</span>
-<span class="normal">3</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>browser_theme_pack.cc
+<pre><code class="language-shell">browser_theme_pack.cc
 browser_theme_pack.h
 browser_theme_pack_unittest.cc
-</code></pre></div>
-</td></tr></table>
+</code></pre>
 <p>继承自 CustomThemeSupplier 使用DataPack优化过的Theme表示方式，在Theme安装的时候对图片等进行预处理，然后保存成mmappable文件，用来提升性能。</p>
 <p>IncreasedContrastThemeSupplier</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
-<span class="normal">2</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>increased_contrast_theme_supplier.cc
+<pre><code class="language-shell">increased_contrast_theme_supplier.cc
 increased_contrast_theme_supplier.h
-</code></pre></div>
-</td></tr></table>
+</code></pre>
 <p>继承自 CustomThemeSupplier，提供高对比度的 Theme</p>
 <p>ThemeProperties</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
-<span class="normal">2</span>
-<span class="normal">3</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>theme_properties.cc
+<pre><code class="language-shell">theme_properties.cc
 theme_properties.h
 theme_properties_unittest.cc
-</code></pre></div>
-</td></tr></table>
+</code></pre>
 <p>ThemeProperties 提供 Theme 相关的属性定义，<strong>并提供默认值</strong>，Static only class for querying which properties / images are themeable and the defaults of these properties.</p>
 <p>ThemeService</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
-<span class="normal">2</span>
-<span class="normal">3</span>
-<span class="normal">4</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>theme_service.h
+<pre><code class="language-shell">theme_service.h
 theme_service.cc
 theme_service_unittest.cc
 theme_service_browsertest.cc
-</code></pre></div>
-</td></tr></table>
+</code></pre>
 <p>ThemeService 为 Theme 服务类，负责加载用户设置的 Theme，删除无用的 Theme（监听 extensions::NOTIFICATION_EXTENSIONS_READY_DEPRECATED， 并且延时后），启动 Theme 同步服务。
 并且响应 OnExtensionLoaded 事件，更新 Theme。同时为 UI 层提供 ThemeProvide。</p>
 <p>ThemeServiceWin</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
-<span class="normal">2</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>theme_service_win.cc
+<pre><code class="language-shell">theme_service_win.cc
 theme_service_win.h
-</code></pre></div>
-</td></tr></table>
+</code></pre>
 <p>ThemeServiceWin 继承自ThemeService，针对 Windows 10 的颜色做相关处理。</p>
 <p>ThemeServiceAuraX11</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
-<span class="normal">2</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>theme_service_aurax11.cc
+<pre><code class="language-shell">theme_service_aurax11.cc
 theme_service_aurax11.h
-</code></pre></div>
-</td></tr></table>
+</code></pre>
 <p>ThemeServiceAuraX11 继承自ThemeService，提供原生的 X11 theme 支持。</p>
 <p>ThemeServiceFactory</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
-<span class="normal">2</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>theme_service_factory.cc
+<pre><code class="language-shell">theme_service_factory.cc
 theme_service_factory.h
-</code></pre></div>
-</td></tr></table>
+</code></pre>
 <p>ThemeServiceFactory 为工厂模式单例，使用者通过 ThemeServiceFactory::GetForProfile 获取当前使用的 ThemeService。</p>
 <p>ThemeSyncableService</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
-<span class="normal">2</span>
-<span class="normal">3</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>theme_syncable_service.cc
+<pre><code class="language-shell">theme_syncable_service.cc
 theme_syncable_service.h
 theme_syncable_service_unittest.cc
-</code></pre></div>
-</td></tr></table>
+</code></pre>
 <p>ThemeSyncableService 为 Theme 同步服务，本地安装新 Theme 后同步到后端，并且响应后端同步信息的改变。</p>
 <h3 id="_2">一些流程<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <h4 id="ui">为 UI 层提供数据<a class="headerlink" href="#ui" title="Permanent link">&para;</a></h4>
 <p>浏览器 UI 层，如 chrome/browser/ui/views/bookmarks/bookmark_bar_view.cc 均继承自 views::View (ui/views/view.h) 所有 View 都可以通过 ui::ThemeProvider* GetThemeProvider() ，获取 ThemeProvider 句柄，然后通过 ThemeProvider 获取经过 Theme 后的 UI 颜色、图片等。GetThemeProvider 最终会调用 ThemeService::GetThemeProviderForProfile 或者 ThemeService::GetDefaultThemeProviderForProfile，返回的为 ThemeService 的内部类：</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>class BrowserThemeProvider : public ui::ThemeProvider
-</code></pre></div>
-</td></tr></table>
+<pre><code class="language-shell">class BrowserThemeProvider : public ui::ThemeProvider
+</code></pre>
 <p>在此完成 ThemeService 与 ui::ThemeProvider 的解耦与调用。</p>
 <h4 id="theme">Theme 安装流程<a class="headerlink" href="#theme" title="Permanent link">&para;</a></h4>
 <p>ThemeService 通过加载安装的 Theme，通过 BrowserThemeProvider 内部类提供 UI 层所需的数据，然后通过内部类：</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
-<span class="normal">2</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">ThemeService</span><span class="o">::</span><span class="nl">ThemeObserver</span>
-    <span class="p">:</span> <span class="k">public</span> <span class="n">extensions</span><span class="o">::</span><span class="n">ExtensionRegistryObserver</span>
-</code></pre></div>
-</td></tr></table>
+<pre><code class="language-cpp">class ThemeService::ThemeObserver
+    : public extensions::ExtensionRegistryObserver
+</code></pre>
 <p>与 Extension 子系统的的 ExtensionRegistry 关联，当安装新扩展时，ExtensionRegistry 服务就会回调所有 ExtensionRegistryObserver 的 OnExtensionLoaded 方法，如果此扩展为 Theme，则通过 theme service 更新。</p>
 <p>ThemeService::ThemeObserver::OnExtensionLoaded 调用回溯：</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
-<span class="normal"> 2</span>
-<span class="normal"> 3</span>
-<span class="normal"> 4</span>
-<span class="normal"> 5</span>
-<span class="normal"> 6</span>
-<span class="normal"> 7</span>
-<span class="normal"> 8</span>
-<span class="normal"> 9</span>
-<span class="normal">10</span>
-<span class="normal">11</span>
-<span class="normal">12</span>
-<span class="normal">13</span>
-<span class="normal">14</span>
-<span class="normal">15</span>
-<span class="normal">16</span>
-<span class="normal">17</span>
-<span class="normal">18</span>
-<span class="normal">19</span>
-<span class="normal">20</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="c1">#0  0x000055555916362b in ThemeService::ThemeObserver::OnExtensionLoaded(content::BrowserContext*, extensions::Extension const*)</span>
-    <span class="o">(</span><span class="nv">this</span><span class="o">=</span>0x3eac7df9acd0, <span class="nv">browser_context</span><span class="o">=</span>0x3eac7ca81ba0, <span class="nv">extension</span><span class="o">=</span>0x3eac7ebd1fe0<span class="o">)</span> at ../../chrome/browser/themes/theme_service.cc:264
-<span class="c1">#1  0x000055555794596c in extensions::ExtensionRegistry::TriggerOnLoaded(extensions::Extension const*) (this=0x3eac7cad7a20, extension=0x3eac7ebd1fe0) at ../../extensions/browser/extension_registry.cc:64</span>
-<span class="c1">#2  0x0000555557941c1e in extensions::ExtensionRegistrar::ActivateExtension(extensions::Extension const*, bool) (this=0x3eac7c3b2a60, extension=0x3eac7ebd1fe0, is_newly_added=true)</span>
+<pre><code class="language-shell">#0  0x000055555916362b in ThemeService::ThemeObserver::OnExtensionLoaded(content::BrowserContext*, extensions::Extension const*)
+    (this=0x3eac7df9acd0, browser_context=0x3eac7ca81ba0, extension=0x3eac7ebd1fe0) at ../../chrome/browser/themes/theme_service.cc:264
+#1  0x000055555794596c in extensions::ExtensionRegistry::TriggerOnLoaded(extensions::Extension const*) (this=0x3eac7cad7a20, extension=0x3eac7ebd1fe0) at ../../extensions/browser/extension_registry.cc:64
+#2  0x0000555557941c1e in extensions::ExtensionRegistrar::ActivateExtension(extensions::Extension const*, bool) (this=0x3eac7c3b2a60, extension=0x3eac7ebd1fe0, is_newly_added=true)
     at ../../extensions/browser/extension_registrar.cc:450
-<span class="c1">#3  0x00005555579419df in extensions::ExtensionRegistrar::AddNewExtension(scoped_refptr&lt;extensions::Extension const&gt;) (this=0x3eac7c3b2a60, extension=...)</span>
+#3  0x00005555579419df in extensions::ExtensionRegistrar::AddNewExtension(scoped_refptr&lt;extensions::Extension const&gt;) (this=0x3eac7c3b2a60, extension=...)
     at ../../extensions/browser/extension_registrar.cc:140
-<span class="c1">#4  0x0000555557940bf1 in extensions::ExtensionRegistrar::AddExtension(scoped_refptr&lt;extensions::Extension const&gt;) (this=0x3eac7c3b2a60, extension=...)</span>
+#4  0x0000555557940bf1 in extensions::ExtensionRegistrar::AddExtension(scoped_refptr&lt;extensions::Extension const&gt;) (this=0x3eac7c3b2a60, extension=...)
     at ../../extensions/browser/extension_registrar.cc:105
-<span class="c1">#5  0x000055555a1f88d3 in extensions::ExtensionService::AddExtension(extensions::Extension const*) (this=0x3eac7c3b2820, extension=0x3eac7ebd1fe0)</span>
+#5  0x000055555a1f88d3 in extensions::ExtensionService::AddExtension(extensions::Extension const*) (this=0x3eac7c3b2820, extension=0x3eac7ebd1fe0)
     at ../../chrome/browser/extensions/extension_service.cc:1188
-<span class="c1">#6  0x000055555a1fad83 in extensions::ExtensionService::FinishInstallation(extensions::Extension const*) (this=0x3eac7c3b2820, extension=0x3eac7ebd1fe0)</span>
+#6  0x000055555a1fad83 in extensions::ExtensionService::FinishInstallation(extensions::Extension const*) (this=0x3eac7c3b2820, extension=0x3eac7ebd1fe0)
     at ../../chrome/browser/extensions/extension_service.cc:1617
-<span class="c1">#7  0x000055555a1f90c5 in extensions::ExtensionService::AddNewOrUpdatedExtension(extensions::Extension const*, extensions::Extension::State, int, syncer::Ordinal&lt;syncer::StringOrdinalTraits&gt; const&amp;, std::__</span>
-Cr::basic_string&lt;char, std::__Cr::char_traits&lt;char&gt;, std::__Cr::allocator&lt;char&gt; &gt; const<span class="p">&amp;</span>, base::Optional&lt;int&gt; const<span class="p">&amp;</span><span class="o">)</span>
-    <span class="o">(</span><span class="nv">this</span><span class="o">=</span>0x3eac7c3b2820, <span class="nv">extension</span><span class="o">=</span>0x3eac7ebd1fe0, <span class="nv">initial_state</span><span class="o">=</span>extensions::Extension::ENABLED, <span class="nv">install_flags</span><span class="o">=</span><span class="m">8</span>, <span class="nv">page_ordinal</span><span class="o">=</span>..., <span class="nv">install_parameter</span><span class="o">=</span>..., <span class="nv">dnr_ruleset_checksum</span><span class="o">=</span>...<span class="o">)</span>
+#7  0x000055555a1f90c5 in extensions::ExtensionService::AddNewOrUpdatedExtension(extensions::Extension const*, extensions::Extension::State, int, syncer::Ordinal&lt;syncer::StringOrdinalTraits&gt; const&amp;, std::__
+Cr::basic_string&lt;char, std::__Cr::char_traits&lt;char&gt;, std::__Cr::allocator&lt;char&gt; &gt; const&amp;, base::Optional&lt;int&gt; const&amp;)
+    (this=0x3eac7c3b2820, extension=0x3eac7ebd1fe0, initial_state=extensions::Extension::ENABLED, install_flags=8, page_ordinal=..., install_parameter=..., dnr_ruleset_checksum=...)
     at ../../chrome/browser/extensions/extension_service.cc:1557
-<span class="c1">#8  0x000055555a1fa268 in extensions::ExtensionService::OnExtensionInstalled(extensions::Extension const*, syncer::Ordinal&lt;syncer::StringOrdinalTraits&gt; const&amp;, int, base::Optional&lt;int&gt; const&amp;)</span>
-    <span class="o">(</span><span class="nv">this</span><span class="o">=</span>0x3eac7c3b2820, <span class="nv">extension</span><span class="o">=</span>0x3eac7ebd1fe0, <span class="nv">page_ordinal</span><span class="o">=</span>..., <span class="nv">install_flags</span><span class="o">=</span><span class="m">8</span>, <span class="nv">dnr_ruleset_checksum</span><span class="o">=</span>...<span class="o">)</span> at ../../chrome/browser/extensions/extension_service.cc:1484
-<span class="c1">#9  0x000055555a1ba42a in extensions::CrxInstaller::ReportSuccessFromUIThread() (this=0x3eac7f4ed020) at ../../chrome/browser/extensions/crx_installer.cc:956</span>
-</code></pre></div>
-</td></tr></table>
+#8  0x000055555a1fa268 in extensions::ExtensionService::OnExtensionInstalled(extensions::Extension const*, syncer::Ordinal&lt;syncer::StringOrdinalTraits&gt; const&amp;, int, base::Optional&lt;int&gt; const&amp;)
+    (this=0x3eac7c3b2820, extension=0x3eac7ebd1fe0, page_ordinal=..., install_flags=8, dnr_ruleset_checksum=...) at ../../chrome/browser/extensions/extension_service.cc:1484
+#9  0x000055555a1ba42a in extensions::CrxInstaller::ReportSuccessFromUIThread() (this=0x3eac7f4ed020) at ../../chrome/browser/extensions/crx_installer.cc:956
+
+</code></pre>
                 
                   
                 
@@ -1771,6 +1728,10 @@ Cr::basic_string&lt;char, std::__Cr::char_traits&lt;char&gt;, std::__Cr::allocat
           }, typeof search !== "undefined" && search)
         })
       </script>
+      
+        <script src="../../../assets/js/highlight.min.js"></script>
+      
+        <script src="../../../assets/js/init.js"></script>
       
     
   </body>

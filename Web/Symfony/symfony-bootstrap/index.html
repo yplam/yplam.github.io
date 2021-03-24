@@ -34,6 +34,8 @@
     
     
     
+      <link rel="stylesheet" href="../../../assets/css/highlight.css">
+    
       <link rel="stylesheet" href="../../../assets/css/custom.css">
     
     
@@ -1472,46 +1474,23 @@
 <p><strong>入口文件app.php</strong></p>
 <p>{{&lt; highlight php &gt;}}
     &lt;?php</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
-<span class="normal"> 2</span>
-<span class="normal"> 3</span>
-<span class="normal"> 4</span>
-<span class="normal"> 5</span>
-<span class="normal"> 6</span>
-<span class="normal"> 7</span>
-<span class="normal"> 8</span>
-<span class="normal"> 9</span>
-<span class="normal">10</span>
-<span class="normal">11</span>
-<span class="normal">12</span>
-<span class="normal">13</span>
-<span class="normal">14</span>
-<span class="normal">15</span>
-<span class="normal">16</span>
-<span class="normal">17</span>
-<span class="normal">18</span>
-<span class="normal">19</span>
-<span class="normal">20</span>
-<span class="normal">21</span>
-<span class="normal">22</span>
-<span class="normal">23</span>
-<span class="normal">24</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>use Symfony\Component\ClassLoader\ApcClassLoader;
+<pre><code>use Symfony\Component\ClassLoader\ApcClassLoader;
 use Symfony\Component\HttpFoundation\Request;
 
-$loader = require_once __DIR__.&#39;/../app/bootstrap.php.cache&#39;;
+$loader = require_once __DIR__.'/../app/bootstrap.php.cache';
 
 // Use APC for autoloading to improve performance.
-// Change &#39;sf2&#39; to a unique prefix in order to prevent cache key conflicts
+// Change 'sf2' to a unique prefix in order to prevent cache key conflicts
 // with other applications also using APC.
 /*
-$loader = new ApcClassLoader(&#39;sf2&#39;, $loader);
+$loader = new ApcClassLoader('sf2', $loader);
 $loader-&gt;register(true);
 */
 
-require_once __DIR__.&#39;/../app/AppKernel.php&#39;;
-//require_once __DIR__.&#39;/../app/AppCache.php&#39;;
+require_once __DIR__.'/../app/AppKernel.php';
+//require_once __DIR__.'/../app/AppCache.php';
 
-$kernel = new AppKernel(&#39;prod&#39;, false);
+$kernel = new AppKernel('prod', false);
 $kernel-&gt;loadClassCache();
 //$kernel = new AppCache($kernel);
 Request::enableHttpMethodParameterOverride();
@@ -1519,71 +1498,41 @@ $request = Request::createFromGlobals();
 $response = $kernel-&gt;handle($request);
 $response-&gt;send();
 $kernel-&gt;terminate($request, $response);
-</code></pre></div>
-</td></tr></table>
+</code></pre>
 <p>{{&lt; /highlight &gt;}}
 入口文件app_dev.php</p>
 <p>{{&lt; highlight php &gt;}}
     &lt;?php</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
-<span class="normal"> 2</span>
-<span class="normal"> 3</span>
-<span class="normal"> 4</span>
-<span class="normal"> 5</span>
-<span class="normal"> 6</span>
-<span class="normal"> 7</span>
-<span class="normal"> 8</span>
-<span class="normal"> 9</span>
-<span class="normal">10</span>
-<span class="normal">11</span>
-<span class="normal">12</span>
-<span class="normal">13</span>
-<span class="normal">14</span>
-<span class="normal">15</span>
-<span class="normal">16</span>
-<span class="normal">17</span>
-<span class="normal">18</span>
-<span class="normal">19</span>
-<span class="normal">20</span>
-<span class="normal">21</span>
-<span class="normal">22</span>
-<span class="normal">23</span>
-<span class="normal">24</span>
-<span class="normal">25</span>
-<span class="normal">26</span>
-<span class="normal">27</span>
-<span class="normal">28</span>
-<span class="normal">29</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>use Symfony\Component\HttpFoundation\Request;
+<pre><code>use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Debug\Debug;
 
-// If you don&#39;t want to setup permissions the proper way, just uncomment the following PHP line
+// If you don't want to setup permissions the proper way, just uncomment the following PHP line
 // read http://symfony.com/doc/current/book/installation.html#configuration-and-setup for more information
 //umask(0000);
 
 // This check prevents access to debug front controllers that are deployed by accident to production servers.
 // Feel free to remove this, extend it, or make something more sophisticated.
-if (isset($_SERVER[&#39;HTTP_CLIENT_IP&#39;])
-    || isset($_SERVER[&#39;HTTP_X_FORWARDED_FOR&#39;])
-    || !in_array(@$_SERVER[&#39;REMOTE_ADDR&#39;], array(&#39;127.0.0.1&#39;, &#39;fe80::1&#39;, &#39;::1&#39;))
+if (isset($_SERVER['HTTP_CLIENT_IP'])
+    || isset($_SERVER['HTTP_X_FORWARDED_FOR'])
+    || !in_array(@$_SERVER['REMOTE_ADDR'], array('127.0.0.1', 'fe80::1', '::1'))
 ) {
-    header(&#39;HTTP/1.0 403 Forbidden&#39;);
-    exit(&#39;You are not allowed to access this file. Check &#39;.basename(__FILE__).&#39; for more information.&#39;);
+    header('HTTP/1.0 403 Forbidden');
+    exit('You are not allowed to access this file. Check '.basename(__FILE__).' for more information.');
 }
 
-$loader = require_once __DIR__.&#39;/../app/bootstrap.php.cache&#39;;
+$loader = require_once __DIR__.'/../app/bootstrap.php.cache';
 Debug::enable();
 
-require_once __DIR__.&#39;/../app/AppKernel.php&#39;;
+require_once __DIR__.'/../app/AppKernel.php';
 
-$kernel = new AppKernel(&#39;dev&#39;, true);
+$kernel = new AppKernel('dev', true);
 $kernel-&gt;loadClassCache();
 Request::enableHttpMethodParameterOverride();
 $request = Request::createFromGlobals();
 $response = $kernel-&gt;handle($request);
 $response-&gt;send();
 $kernel-&gt;terminate($request, $response);
-</code></pre></div>
-</td></tr></table>
+</code></pre>
 <p>{{&lt; /highlight &gt;}}
 app_dev.php相对于app.php的主要区别在于 environment 与 debug 参数。</p>
 <p><strong>app/bootstrap.php.cache：</strong> </p>
@@ -1592,39 +1541,7 @@ app_dev.php相对于app.php的主要区别在于 environment 与 debug 参数�
 <p>扩展自Kernel类，对系统进行配置。创建AppKernel的时候会传入environment 与 debug 参数，environment参数会影响配置文件路径，缓存文件路径，debug参数会影响到缓存文件路径以及系统对cache的处理。</p>
 <p>{{&lt; highlight php &gt;}}
     &lt;?php</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
-<span class="normal"> 2</span>
-<span class="normal"> 3</span>
-<span class="normal"> 4</span>
-<span class="normal"> 5</span>
-<span class="normal"> 6</span>
-<span class="normal"> 7</span>
-<span class="normal"> 8</span>
-<span class="normal"> 9</span>
-<span class="normal">10</span>
-<span class="normal">11</span>
-<span class="normal">12</span>
-<span class="normal">13</span>
-<span class="normal">14</span>
-<span class="normal">15</span>
-<span class="normal">16</span>
-<span class="normal">17</span>
-<span class="normal">18</span>
-<span class="normal">19</span>
-<span class="normal">20</span>
-<span class="normal">21</span>
-<span class="normal">22</span>
-<span class="normal">23</span>
-<span class="normal">24</span>
-<span class="normal">25</span>
-<span class="normal">26</span>
-<span class="normal">27</span>
-<span class="normal">28</span>
-<span class="normal">29</span>
-<span class="normal">30</span>
-<span class="normal">31</span>
-<span class="normal">32</span>
-<span class="normal">33</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>use Symfony\Component\HttpKernel\Kernel;
+<pre><code>use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\Config\Loader\LoaderInterface;
 
 class AppKernel extends Kernel
@@ -1642,7 +1559,7 @@ class AppKernel extends Kernel
             new Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle(),
         );
 
-        if (in_array($this-&gt;getEnvironment(), array(&#39;dev&#39;, &#39;test&#39;))) {
+        if (in_array($this-&gt;getEnvironment(), array('dev', 'test'))) {
             $bundles[] = new Acme\DemoBundle\AcmeDemoBundle();
             $bundles[] = new Symfony\Bundle\WebProfilerBundle\WebProfilerBundle();
             $bundles[] = new Sensio\Bundle\DistributionBundle\SensioDistributionBundle();
@@ -1654,11 +1571,10 @@ class AppKernel extends Kernel
 
     public function registerContainerConfiguration(LoaderInterface $loader)
     {
-        $loader-&gt;load(__DIR__.&#39;/config/config_&#39;.$this-&gt;getEnvironment().&#39;.yml&#39;);
+        $loader-&gt;load(__DIR__.'/config/config_'.$this-&gt;getEnvironment().'.yml');
     }
 }
-</code></pre></div>
-</td></tr></table>
+</code></pre>
 <p>{{&lt; /highlight &gt;}}
 <strong>$kernel-&gt;loadClassCache();</strong> </p>
 <p>做一个需要加载cache的标记，但不会进行加载工作。</p>
@@ -1674,11 +1590,9 @@ class AppKernel extends Kernel
             if (false === $this-&gt;booted) {
                 $this-&gt;boot();
             }</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
-<span class="normal">2</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>        return $this-&gt;getHttpKernel()-&gt;handle($request, $type, $catch);
+<pre><code>        return $this-&gt;getHttpKernel()-&gt;handle($request, $type, $catch);
     }
-</code></pre></div>
-</td></tr></table>
+</code></pre>
 <p>{{&lt; /highlight &gt;}}
 boot方法启动内核，进行初始化配置</p>
 <p>{{&lt; highlight php &gt;}}
@@ -1687,23 +1601,7 @@ boot方法启动内核，进行初始化配置</p>
             if (true === $this-&gt;booted) {
                 return;
             }</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
-<span class="normal"> 2</span>
-<span class="normal"> 3</span>
-<span class="normal"> 4</span>
-<span class="normal"> 5</span>
-<span class="normal"> 6</span>
-<span class="normal"> 7</span>
-<span class="normal"> 8</span>
-<span class="normal"> 9</span>
-<span class="normal">10</span>
-<span class="normal">11</span>
-<span class="normal">12</span>
-<span class="normal">13</span>
-<span class="normal">14</span>
-<span class="normal">15</span>
-<span class="normal">16</span>
-<span class="normal">17</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>        if ($this-&gt;loadClassCache) {
+<pre><code>        if ($this-&gt;loadClassCache) {
             $this-&gt;doLoadClassCache($this-&gt;loadClassCache[0], $this-&gt;loadClassCache[1]);
         }
 
@@ -1720,8 +1618,7 @@ boot方法启动内核，进行初始化配置</p>
 
         $this-&gt;booted = true;
     }
-</code></pre></div>
-</td></tr></table>
+</code></pre>
 <p>{{&lt; /highlight &gt;}}
 doLoadClassCache会根据前面loadClassCache的调用，将加载cache目录下的classes.php，如果缓存不存在，则根据classes.map文件来生成。如果debug=true则还会检测每个classes对应原文件的修改时间来判断是否需要重新生成。 初始化bundle，主要是处理bundle的继承关系</p>
 <p>{{&lt; highlight php &gt;}}
@@ -1742,62 +1639,19 @@ doLoadClassCache会根据前面loadClassCache的调用，将加载cache目录下
             $this-&gt;bundles = array();
             $topMostBundles = array();
             $directChildren = array();</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
-<span class="normal"> 2</span>
-<span class="normal"> 3</span>
-<span class="normal"> 4</span>
-<span class="normal"> 5</span>
-<span class="normal"> 6</span>
-<span class="normal"> 7</span>
-<span class="normal"> 8</span>
-<span class="normal"> 9</span>
-<span class="normal">10</span>
-<span class="normal">11</span>
-<span class="normal">12</span>
-<span class="normal">13</span>
-<span class="normal">14</span>
-<span class="normal">15</span>
-<span class="normal">16</span>
-<span class="normal">17</span>
-<span class="normal">18</span>
-<span class="normal">19</span>
-<span class="normal">20</span>
-<span class="normal">21</span>
-<span class="normal">22</span>
-<span class="normal">23</span>
-<span class="normal">24</span>
-<span class="normal">25</span>
-<span class="normal">26</span>
-<span class="normal">27</span>
-<span class="normal">28</span>
-<span class="normal">29</span>
-<span class="normal">30</span>
-<span class="normal">31</span>
-<span class="normal">32</span>
-<span class="normal">33</span>
-<span class="normal">34</span>
-<span class="normal">35</span>
-<span class="normal">36</span>
-<span class="normal">37</span>
-<span class="normal">38</span>
-<span class="normal">39</span>
-<span class="normal">40</span>
-<span class="normal">41</span>
-<span class="normal">42</span>
-<span class="normal">43</span>
-<span class="normal">44</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>        foreach ($this-&gt;registerBundles() as $bundle) {
+<pre><code>        foreach ($this-&gt;registerBundles() as $bundle) {
             $name = $bundle-&gt;getName();
             if (isset($this-&gt;bundles[$name])) {
-                throw new \LogicException(sprintf(&#39;Trying to register two bundles with the same name &quot;%s&quot;&#39;, $name));
+                throw new \LogicException(sprintf('Trying to register two bundles with the same name "%s"', $name));
             }
             $this-&gt;bundles[$name] = $bundle;
 
             if ($parentName = $bundle-&gt;getParent()) {
                 if (isset($directChildren[$parentName])) {
-                    throw new \LogicException(sprintf(&#39;Bundle &quot;%s&quot; is directly extended by two bundles &quot;%s&quot; and &quot;%s&quot;.&#39;, $parentName, $name, $directChildren[$parentName]));
+                    throw new \LogicException(sprintf('Bundle "%s" is directly extended by two bundles "%s" and "%s".', $parentName, $name, $directChildren[$parentName]));
                 }
                 if ($parentName == $name) {
-                    throw new \LogicException(sprintf(&#39;Bundle &quot;%s&quot; can not extend itself.&#39;, $name));
+                    throw new \LogicException(sprintf('Bundle "%s" can not extend itself.', $name));
                 }
                 $directChildren[$parentName] = $name;
             } else {
@@ -1807,7 +1661,7 @@ doLoadClassCache会根据前面loadClassCache的调用，将加载cache目录下
 
         // look for orphans
         if (count($diff = array_values(array_diff(array_keys($directChildren), array_keys($this-&gt;bundles))))) {
-            throw new \LogicException(sprintf(&#39;Bundle &quot;%s&quot; extends bundle &quot;%s&quot;, which is not registered.&#39;, $directChildren[$diff[0]], $diff[0]));
+            throw new \LogicException(sprintf('Bundle "%s" extends bundle "%s", which is not registered.', $directChildren[$diff[0]], $diff[0]));
         }
 
         // inheritance
@@ -1829,8 +1683,7 @@ doLoadClassCache会根据前面loadClassCache的调用，将加载cache目录下
         }
 
     }
-</code></pre></div>
-</td></tr></table>
+</code></pre>
 <p>{{&lt; /highlight &gt;}}
 初始化container，为symfony的核心，原理与实现方式请参考下面的文章。基本流程为：如果container缓存存在，则直接使用缓存，如果不存在则创建container，获取每个bundle与container相关的信息，加载配置文件，配置每个bundle，打包生成缓存。 <a href="http://fabien.potencier.org/article/13/introduction-to-the-symfony-service-container">Introduction to the Symfony Service Container</a> <a href="http://symfony.com/doc/current/components/dependency_injection/index.html">Dependency Injection</a>  </p>
 <p>{{&lt; highlight php &gt;}}
@@ -1849,31 +1702,19 @@ doLoadClassCache会根据前面loadClassCache的调用，将加载cache目录下
                 $container = $this-&gt;buildContainer();
                 $container-&gt;compile();
                 $this-&gt;dumpContainer($cache, $container, $class, $this-&gt;getContainerBaseClass());</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
-<span class="normal"> 2</span>
-<span class="normal"> 3</span>
-<span class="normal"> 4</span>
-<span class="normal"> 5</span>
-<span class="normal"> 6</span>
-<span class="normal"> 7</span>
-<span class="normal"> 8</span>
-<span class="normal"> 9</span>
-<span class="normal">10</span>
-<span class="normal">11</span>
-<span class="normal">12</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>            $fresh = false;
+<pre><code>            $fresh = false;
         }
 
         require_once $cache;
 
         $this-&gt;container = new $class();
-        $this-&gt;container-&gt;set(&#39;kernel&#39;, $this);
+        $this-&gt;container-&gt;set('kernel', $this);
 
-        if (!$fresh &amp;&amp; $this-&gt;container-&gt;has(&#39;cache_warmer&#39;)) {
-            $this-&gt;container-&gt;get(&#39;cache_warmer&#39;)-&gt;warmUp($this-&gt;container-&gt;getParameter(&#39;kernel.cache_dir&#39;));
+        if (!$fresh &amp;&amp; $this-&gt;container-&gt;has('cache_warmer')) {
+            $this-&gt;container-&gt;get('cache_warmer')-&gt;warmUp($this-&gt;container-&gt;getParameter('kernel.cache_dir'));
         }
     }
-</code></pre></div>
-</td></tr></table>
+</code></pre>
 <p>{{&lt; /highlight &gt;}}
 getHttpKernel()-&gt;handle()，此时可以通过contianer来获取http_kernel服务对请求进行处理。 $response-&gt;send(); 发送内容 $kernel-&gt;terminate($request, $response); 结束  </p>
                 
@@ -1915,6 +1756,10 @@ getHttpKernel()-&gt;handle()，此时可以通过contianer来获取http_kernel�
           }, typeof search !== "undefined" && search)
         })
       </script>
+      
+        <script src="../../../assets/js/highlight.min.js"></script>
+      
+        <script src="../../../assets/js/init.js"></script>
       
     
   </body>

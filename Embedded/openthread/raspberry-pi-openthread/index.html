@@ -34,6 +34,8 @@
     
     
     
+      <link rel="stylesheet" href="../../../assets/css/highlight.css">
+    
       <link rel="stylesheet" href="../../../assets/css/custom.css">
     
     
@@ -1660,27 +1662,16 @@
 <p>OpenThread 官方提供 Docker、 BeagleBone Black、Raspberry Pi 3B 的支持（代码中 OpenWRT 也是有支持的，只是可能还未正式稳定）。本文将尽量详细地记录 Raspberry Pi 3B 配置成边界路由器的过程。</p>
 <h2 id="_1">树莓派基础配置<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <p>第一步当然是下载镜像，并且写入到SD卡。官网地址：<a href="https://www.raspberrypi.org/downloads/raspberry-pi-os/">https://www.raspberrypi.org/downloads/raspberry-pi-os/</a> 。Linux系统下可以直接用以下命令写入镜像:</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
-<span class="normal">2</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="c1"># 注意：请根据真实情况选择磁盘，不然可能会导致你的数据丢失</span>
-sudo dd <span class="nv">bs</span><span class="o">=</span>4M <span class="k">if</span><span class="o">=</span><span class="m">2020</span>-08-20-raspios-buster-armhf-lite.img <span class="nv">of</span><span class="o">=</span>/dev/mmcblk0 <span class="nv">conv</span><span class="o">=</span>fsync
-</code></pre></div>
-</td></tr></table>
+<pre><code class="language-shell"># 注意：请根据真实情况选择磁盘，不然可能会导致你的数据丢失
+sudo dd bs=4M if=2020-08-20-raspios-buster-armhf-lite.img of=/dev/mmcblk0 conv=fsync
+</code></pre>
 <h3 id="wifissh">启用wifi与ssh<a class="headerlink" href="#wifissh" title="Permanent link">&para;</a></h3>
 <p>使用headless的配置方式，不需要显示器与外接键盘。在SD卡的 boot 分区中创建一个空的 ssh 文件：</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
-<span class="normal">2</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="nb">cd</span> /run/media/yplam/boot
+<pre><code class="language-shell">cd /run/media/yplam/boot
 touch ssh
-</code></pre></div>
-</td></tr></table>
+</code></pre>
 <p>在刚刚那个 boot 分区新建一个 wpa_supplicant.conf 文件，输入 WIFI 网络信息：</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
-<span class="normal">2</span>
-<span class="normal">3</span>
-<span class="normal">4</span>
-<span class="normal">5</span>
-<span class="normal">6</span>
-<span class="normal">7</span>
-<span class="normal">8</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>country=CN
+<pre><code class="language-conf">country=CN
 ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
 update_config=1
 
@@ -1688,206 +1679,125 @@ network={
     ssid=&quot;NETWORK-NAME&quot;
     psk=&quot;NETWORK-PASSWORD&quot;
 }
-</code></pre></div>
-</td></tr></table>
+</code></pre>
 <p>插入SD卡上电启动，如果有mdns的话直接 ：</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>ping raspberrypi.local
-</code></pre></div>
-</td></tr></table>
+<pre><code class="language-shell">ping raspberrypi.local
+</code></pre>
 <p>获取IP，如果没有则登录路由器把它找出来，然后ssh登录，用户名pi，密码 raspberry 。</p>
 <h3 id="_2">基础软件安装<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>sudo apt install git
-</code></pre></div>
-</td></tr></table>
+<pre><code class="language-shell">sudo apt install git
+</code></pre>
 <h2 id="otbr">OTBR编译安装<a class="headerlink" href="#otbr" title="Permanent link">&para;</a></h2>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
-<span class="normal">2</span>
-<span class="normal">3</span>
-<span class="normal">4</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>git clone https://github.com/openthread/ot-br-posix
-<span class="nb">cd</span> ot-br-posix
+<pre><code class="language-shell">git clone https://github.com/openthread/ot-br-posix
+cd ot-br-posix
 ./script/bootstrap
 ./script/setup
-</code></pre></div>
-</td></tr></table>
+</code></pre>
 <p>注意，可能需要改改 script/_dns64 中关于 dns 服务器的配置（国内无法访问）</p>
 <h2 id="rcp">RCP 配置<a class="headerlink" href="#rcp" title="Permanent link">&para;</a></h2>
 <p>编译 RCP 固件，如 NRF52840 可以使用以下编译选项：</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
-<span class="normal">2</span>
-<span class="normal">3</span>
-<span class="normal">4</span>
-<span class="normal">5</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="nb">cd</span> /src/openthread/
+<pre><code class="language-shell">cd /src/openthread/
 ./bootstrap
-make -f examples/Makefile-nrf52840 <span class="nv">BORDER_AGENT</span><span class="o">=</span><span class="m">1</span> <span class="nv">BORDER_ROUTER</span><span class="o">=</span><span class="m">1</span> <span class="nv">COMMISSIONER</span><span class="o">=</span><span class="m">1</span> <span class="nv">UDP_FORWARD</span><span class="o">=</span><span class="m">1</span> <span class="nv">USB</span><span class="o">=</span><span class="m">1</span> <span class="nv">LINK_RAW</span><span class="o">=</span><span class="m">1</span> <span class="nv">BOOTLOADER</span><span class="o">=</span>USB
-<span class="nb">cd</span> /src/openthread/output/nrf52840/bin
+make -f examples/Makefile-nrf52840 BORDER_AGENT=1 BORDER_ROUTER=1 COMMISSIONER=1 UDP_FORWARD=1 USB=1 LINK_RAW=1 BOOTLOADER=USB
+cd /src/openthread/output/nrf52840/bin
 arm-none-eabi-objcopy -O ihex ot-rcp ot-rcp.hex
-</code></pre></div>
-</td></tr></table>
+</code></pre>
 <p>插入 RCP 到树莓派 USB 口，查看：</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>ls /dev/tty*
-</code></pre></div>
-</td></tr></table>
+<pre><code class="language-shell">ls /dev/tty*
+</code></pre>
 <p>名称为 /dev/ttyACM* 的设备即为 RCP；修改配置文件 /etc/default/otbr-agent</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="nv">OTBR_AGENT_OPTS</span><span class="o">=</span><span class="s2">&quot;-I wpan0 spinel+hdlc+uart:///dev/ttyACM0&quot;</span>
-</code></pre></div>
-</td></tr></table>
+<pre><code class="language-shell">OTBR_AGENT_OPTS=&quot;-I wpan0 spinel+hdlc+uart:///dev/ttyACM0&quot;
+</code></pre>
 <p>修改配置后重启系统，运行以下命令：</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>sudo systemctl status
-</code></pre></div>
-</td></tr></table>
+<pre><code class="language-shell">sudo systemctl status
+</code></pre>
 <p>如果安装正常，则可以看到相关服务正常运行：</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
-<span class="normal">2</span>
-<span class="normal">3</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>avahi-daemon.service
+<pre><code class="language-shell">avahi-daemon.service
 otbr-agent.service
 otbr-web.service
-</code></pre></div>
-</td></tr></table>
+</code></pre>
 <p>而运行下面命令可以看到OpenThread网络为 disabled 状态</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>sudo ot-ctl state
-</code></pre></div>
-</td></tr></table>
+<pre><code class="language-shell">sudo ot-ctl state
+</code></pre>
 <h2 id="ap">AP模式配置<a class="headerlink" href="#ap" title="Permanent link">&para;</a></h2>
 <p>树莓派可以配置运行在 AP 模式，其他设备可以接入树莓派提供的网络来管理 OpenThread 网络。</p>
 <p>安装以下软件：</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>sudo apt-get install hostapd dnsmasq tayga
-</code></pre></div>
-</td></tr></table>
+<pre><code class="language-shell">sudo apt-get install hostapd dnsmasq tayga
+</code></pre>
 <ul>
 <li>hostapd — 允许使用树莓派的WIFI允许在AP模式</li>
 <li>dnsmasq — 提供 DHCP 与 DNS 服务</li>
 <li>tayga — NAT64服务，提供外网 IPV4 地址到 IPV6 地址的转换</li>
 </ul>
 <p>修改文件 /etc/dhcpcd.conf，末尾增加一行</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>denyinterfaces wlan0
-</code></pre></div>
-</td></tr></table>
+<pre><code class="language-shell">denyinterfaces wlan0
+
+</code></pre>
 <p>新建文件 /etc/network/interfaces.d/wlan0</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
-<span class="normal">2</span>
-<span class="normal">3</span>
-<span class="normal">4</span>
-<span class="normal">5</span>
-<span class="normal">6</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>allow-hotplug wlan0
+<pre><code class="language-shell">allow-hotplug wlan0
 iface wlan0 inet static
-    address <span class="m">192</span>.168.1.2
-    netmask <span class="m">255</span>.255.255.0
-    network <span class="m">192</span>.168.1.0
-    broadcast <span class="m">192</span>.168.1.255
-</code></pre></div>
-</td></tr></table>
+    address 192.168.1.2
+    netmask 255.255.255.0
+    network 192.168.1.0
+    broadcast 192.168.1.255
+
+</code></pre>
 <p>配置 /etc/hostapd/hostapd.conf，因为使用的是 PI3B+，支持5G网络，配置有所不同</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
-<span class="normal"> 2</span>
-<span class="normal"> 3</span>
-<span class="normal"> 4</span>
-<span class="normal"> 5</span>
-<span class="normal"> 6</span>
-<span class="normal"> 7</span>
-<span class="normal"> 8</span>
-<span class="normal"> 9</span>
-<span class="normal">10</span>
-<span class="normal">11</span>
-<span class="normal">12</span>
-<span class="normal">13</span>
-<span class="normal">14</span>
-<span class="normal">15</span>
-<span class="normal">16</span>
-<span class="normal">17</span>
-<span class="normal">18</span>
-<span class="normal">19</span>
-<span class="normal">20</span>
-<span class="normal">21</span>
-<span class="normal">22</span>
-<span class="normal">23</span>
-<span class="normal">24</span>
-<span class="normal">25</span>
-<span class="normal">26</span>
-<span class="normal">27</span>
-<span class="normal">28</span>
-<span class="normal">29</span>
-<span class="normal">30</span>
-<span class="normal">31</span>
-<span class="normal">32</span>
-<span class="normal">33</span>
-<span class="normal">34</span>
-<span class="normal">35</span>
-<span class="normal">36</span>
-<span class="normal">37</span>
-<span class="normal">38</span>
-<span class="normal">39</span>
-<span class="normal">40</span>
-<span class="normal">41</span>
-<span class="normal">42</span>
-<span class="normal">43</span>
-<span class="normal">44</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="c1"># The Wi-Fi interface configured for static IPv4 addresses</span>
-<span class="nv">interface</span><span class="o">=</span>wlan0
+<pre><code class="language-shell"># The Wi-Fi interface configured for static IPv4 addresses
+interface=wlan0
 
-<span class="c1"># Use the 802.11 Netlink interface driver</span>
-<span class="nv">driver</span><span class="o">=</span>nl80211
+# Use the 802.11 Netlink interface driver
+driver=nl80211
 
-<span class="c1"># The user-defined name of the network</span>
-<span class="nv">ssid</span><span class="o">=</span>BorderRouter-AP
+# The user-defined name of the network
+ssid=BorderRouter-AP
 
-<span class="c1"># Use the 5GHz band</span>
-<span class="nv">hw_mode</span><span class="o">=</span>a
+# Use the 5GHz band
+hw_mode=a
 
-<span class="c1"># Use channel 6</span>
-<span class="nv">channel</span><span class="o">=</span><span class="m">40</span>
+# Use channel 6
+channel=40
 
-<span class="c1"># Enable 802.11n</span>
-<span class="nv">ieee80211n</span><span class="o">=</span><span class="m">1</span>
+# Enable 802.11n
+ieee80211n=1
 
-<span class="c1"># Enable WMM</span>
-<span class="nv">wmm_enabled</span><span class="o">=</span><span class="m">1</span>
+# Enable WMM
+wmm_enabled=1
 
-<span class="nv">require_ht</span><span class="o">=</span><span class="m">1</span>
-<span class="nv">ht_capab</span><span class="o">=[</span>HT40-<span class="o">][</span>DSSS_CCK-40<span class="o">]</span>
+require_ht=1
+ht_capab=[HT40-][DSSS_CCK-40]
 
-<span class="c1"># Accept all MAC addresses</span>
-<span class="nv">macaddr_acl</span><span class="o">=</span><span class="m">0</span>
+# Accept all MAC addresses
+macaddr_acl=0
 
-<span class="c1"># Use WPA authentication</span>
-<span class="nv">auth_algs</span><span class="o">=</span><span class="m">1</span>
+# Use WPA authentication
+auth_algs=1
 
-<span class="c1"># Require clients to know the network name</span>
-<span class="nv">ignore_broadcast_ssid</span><span class="o">=</span><span class="m">0</span>
+# Require clients to know the network name
+ignore_broadcast_ssid=0
 
-<span class="c1"># Use WPA2</span>
-<span class="nv">wpa</span><span class="o">=</span><span class="m">2</span>
+# Use WPA2
+wpa=2
 
-<span class="c1"># Use a pre-shared key</span>
-<span class="nv">wpa_key_mgmt</span><span class="o">=</span>WPA-PSK
+# Use a pre-shared key
+wpa_key_mgmt=WPA-PSK
 
-<span class="c1"># The network passphrase</span>
-<span class="nv">wpa_passphrase</span><span class="o">=</span><span class="m">12345678</span>
+# The network passphrase
+wpa_passphrase=12345678
 
-<span class="c1"># Use AES, instead of TKIP</span>
-<span class="nv">rsn_pairwise</span><span class="o">=</span>CCMP
-</code></pre></div>
-</td></tr></table>
+# Use AES, instead of TKIP
+rsn_pairwise=CCMP
+
+</code></pre>
 <p>修改 /etc/default/hostapd</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>DAEMON_CONF=&quot;/etc/hostapd/hostapd.conf&quot;
-</code></pre></div>
-</td></tr></table>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
-<span class="normal">2</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>sudo systemctl unmask hostapd
+<pre><code class="language-conf">DAEMON_CONF=&quot;/etc/hostapd/hostapd.conf&quot;
+
+</code></pre>
+<pre><code class="language-shell">sudo systemctl unmask hostapd
 sudo systemctl start hostapd
-</code></pre></div>
-</td></tr></table>
+</code></pre>
 <p>修改 /etc/systemd/system/hostapd.service</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
-<span class="normal"> 2</span>
-<span class="normal"> 3</span>
-<span class="normal"> 4</span>
-<span class="normal"> 5</span>
-<span class="normal"> 6</span>
-<span class="normal"> 7</span>
-<span class="normal"> 8</span>
-<span class="normal"> 9</span>
-<span class="normal">10</span>
-<span class="normal">11</span>
-<span class="normal">12</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>[Unit]
+<pre><code class="language-conf">[Unit]
 Description=Hostapd IEEE 802.11 Access Point
 After=sys-subsystem-net-devices-wlan0.device
 BindsTo=sys-subsystem-net-devices-wlan0.device
@@ -1899,47 +1809,27 @@ ExecStart=/usr/sbin/hostapd -B /etc/hostapd/hostapd.conf -P /var/run/hostapd.pid
 
 [Install]
 WantedBy=multi-user.target
-</code></pre></div>
-</td></tr></table>
+
+</code></pre>
 <p>在 /etc/rc.local 的 exit 0 之前添加</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>sudo service hostapd start
-</code></pre></div>
-</td></tr></table>
+<pre><code class="language-shell">sudo service hostapd start
+</code></pre>
 <p>重启树莓派，可以看到多了一个名叫 BorderRouter-AP 的 wifi 网络可以加入。</p>
 <h2 id="dnsmasq">配置 dnsmasq<a class="headerlink" href="#dnsmasq" title="Permanent link">&para;</a></h2>
 <p>修改 /etc/dnsmasq.conf  </p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
-<span class="normal"> 2</span>
-<span class="normal"> 3</span>
-<span class="normal"> 4</span>
-<span class="normal"> 5</span>
-<span class="normal"> 6</span>
-<span class="normal"> 7</span>
-<span class="normal"> 8</span>
-<span class="normal"> 9</span>
-<span class="normal">10</span>
-<span class="normal">11</span>
-<span class="normal">12</span>
-<span class="normal">13</span>
-<span class="normal">14</span>
-<span class="normal">15</span>
-<span class="normal">16</span>
-<span class="normal">17</span>
-<span class="normal">18</span>
-<span class="normal">19</span>
-<span class="normal">20</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code># The Wi-Fi interface configured for static IPv4 addresses
+<pre><code class="language-conf"># The Wi-Fi interface configured for static IPv4 addresses
 interface=wlan0
 
 # Explicitly specify the address to listen on
 listen-address=192.168.1.2
 
-# Bind to the interface to make sure we aren&#39;t sending things elsewhere
+# Bind to the interface to make sure we aren't sending things elsewhere
 bind-interfaces
 
 # Forward DNS requests to the Google DNS
 server=119.29.29.29
 
-# Don&#39;t forward short names
+# Don't forward short names
 domain-needed
 
 # Never forward addresses in non-routed address spaces
@@ -1947,82 +1837,57 @@ bogus-priv
 
 # Assign IP addresses between 192.168.1.50 and 192.168.1.150 with a 12 hour lease time
 dhcp-range=192.168.1.50,192.168.1.150,12h
-</code></pre></div>
-</td></tr></table>
+
+</code></pre>
 <p>修正 /lib/systemd/system/bind9.service 与 dnsmasq 的冲突</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>After=network.target dnsmasq.service
-</code></pre></div>
-</td></tr></table>
+<pre><code class="language-conf">After=network.target dnsmasq.service
+</code></pre>
 <h2 id="tayga">配置 tayga<a class="headerlink" href="#tayga" title="Permanent link">&para;</a></h2>
 <p>修改 /etc/tayga.conf 关于以下配置项</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
-<span class="normal">2</span>
-<span class="normal">3</span>
-<span class="normal">4</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>prefix 64:ff9b::/96
+<pre><code class="language-conf">prefix 64:ff9b::/96
 dynamic-pool 192.168.255.0/24
 ipv6-addr 2001:db8:1::1
 ipv4-addr 192.168.255.1
-</code></pre></div>
-</td></tr></table>
+</code></pre>
 <p>启用 tayga</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>sudo systemctl <span class="nb">enable</span> tayga
-</code></pre></div>
-</td></tr></table>
+<pre><code class="language-shell">sudo systemctl enable tayga
+</code></pre>
 <p>使能网络转发</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
-<span class="normal">2</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>sudo sh -c <span class="s2">&quot;echo 1 &gt; /proc/sys/net/ipv4/ip_forward&quot;</span>
-sudo sh -c <span class="s2">&quot;echo 1 &gt; /proc/sys/net/ipv6/conf/all/forwarding&quot;</span>
-</code></pre></div>
-</td></tr></table>
+<pre><code class="language-shell">sudo sh -c &quot;echo 1 &gt; /proc/sys/net/ipv4/ip_forward&quot;
+sudo sh -c &quot;echo 1 &gt; /proc/sys/net/ipv6/conf/all/forwarding&quot;
+</code></pre>
 <p>为了重启后能生效，修改配置文件 /etc/sysctl.conf，更改对应项配置</p>
 <p>使能 NAT44</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>sudo iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
-</code></pre></div>
-</td></tr></table>
+<pre><code class="language-shell">sudo iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
+</code></pre>
 <p>使能 wlan0 与 eth0 之间的转发</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
-<span class="normal">2</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>sudo iptables -A FORWARD -i eth0 -o wlan0 -m state --state RELATED,ESTABLISHED -j ACCEPT
+<pre><code class="language-shell">sudo iptables -A FORWARD -i eth0 -o wlan0 -m state --state RELATED,ESTABLISHED -j ACCEPT
 sudo iptables -A FORWARD -i wlan0 -o eth0 -j ACCEPT
-</code></pre></div>
-</td></tr></table>
+</code></pre>
 <p>保存iptables配置</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>sudo sh -c <span class="s2">&quot;iptables-save &gt; /etc/iptables.ipv4.nat&quot;</span>
-</code></pre></div>
-</td></tr></table>
+<pre><code class="language-shell">sudo sh -c &quot;iptables-save &gt; /etc/iptables.ipv4.nat&quot;
+</code></pre>
 <p>在 /etc/rc.local 的 exit 前增加</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>iptables-restore &lt; /etc/iptables.ipv4.nat
-</code></pre></div>
-</td></tr></table>
+<pre><code class="language-shell">iptables-restore &lt; /etc/iptables.ipv4.nat
+
+</code></pre>
 <p>重启系统，查看各服务是否正常启动，譬如 ping -6 一个外网 IP</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>ping -6 <span class="m">64</span>:ff9b::***
-</code></pre></div>
-</td></tr></table>
+<pre><code class="language-shell">ping -6 64:ff9b::***
+</code></pre>
 <h2 id="openthread_1">创建 OpenThread 网络<a class="headerlink" href="#openthread_1" title="Permanent link">&para;</a></h2>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
-<span class="normal"> 2</span>
-<span class="normal"> 3</span>
-<span class="normal"> 4</span>
-<span class="normal"> 5</span>
-<span class="normal"> 6</span>
-<span class="normal"> 7</span>
-<span class="normal"> 8</span>
-<span class="normal"> 9</span>
-<span class="normal">10</span>
-<span class="normal">11</span>
-<span class="normal">12</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>sudo ot-ctl panid 0xc80b
+<pre><code class="language-shell">sudo ot-ctl panid 0xc80b
 sudo ot-ctl extpanid f37fcf5bc5cbe195
 sudo ot-ctl masterkey e35efdce91b5d2ad6ee96350c31e56d3
 sudo ot-ctl pskc 7beafb2ea25f3f8ce244b1e92a79a623
 sudo ot-ctl networkname MyOT
-sudo ot-ctl channel <span class="m">11</span>
+sudo ot-ctl channel 11
 sudo ot-ctl ifconfig up
 sudo ot-ctl thread start
 sudo ot-ctl state
 
 sudo ot-ctl prefix add fd11:22::/64 pasor
 sudo ot-ctl netdata register
-</code></pre></div>
-</td></tr></table>
+</code></pre>
 <p>需要注意的是后面两行如果不运行，OpenThread网络中的设备将无法访问外网。</p>
 <p>至此，OpenThread网络配置完成，可以通过 ping 外网 ip 进行测试（通过nat64）。</p>
                 
@@ -2062,6 +1927,10 @@ sudo ot-ctl netdata register
           }, typeof search !== "undefined" && search)
         })
       </script>
+      
+        <script src="../../../assets/js/highlight.min.js"></script>
+      
+        <script src="../../../assets/js/init.js"></script>
       
     
   </body>

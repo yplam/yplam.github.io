@@ -34,6 +34,8 @@
     
     
     
+      <link rel="stylesheet" href="../../assets/css/highlight.css">
+    
       <link rel="stylesheet" href="../../assets/css/custom.css">
     
     
@@ -1546,67 +1548,36 @@
 <h2 id="bootloader">Bootloader<a class="headerlink" href="#bootloader" title="Permanent link">&para;</a></h2>
 <p>关于Mbed Bootloader的内容请参考：https://os.mbed.com/docs/latest/tutorials/bootloader.html</p>
 <p>在此借用一下官方的图示：</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
-<span class="normal"> 2</span>
-<span class="normal"> 3</span>
-<span class="normal"> 4</span>
-<span class="normal"> 5</span>
-<span class="normal"> 6</span>
-<span class="normal"> 7</span>
-<span class="normal"> 8</span>
-<span class="normal"> 9</span>
-<span class="normal">10</span>
-<span class="normal">11</span>
-<span class="normal">12</span>
-<span class="normal">13</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="p">|</span>-------------------<span class="p">|</span>   APPLICATION_ADDR + <span class="nv">APPLICATION_SIZE</span> <span class="o">==</span> End of ROM
-<span class="p">|</span>                   <span class="p">|</span>
+<pre><code class="language-shell">|-------------------|   APPLICATION_ADDR + APPLICATION_SIZE == End of ROM
+|                   |
 ...
-<span class="p">|</span>                   <span class="p">|</span>
-<span class="p">|</span>    Application    <span class="p">|</span>
-<span class="p">|</span>  <span class="o">(</span>main program <span class="o">)</span>  <span class="p">|</span>
-<span class="p">|</span>                   <span class="p">|</span>
-+-------------------+   <span class="nv">APPLICATION_ADDR</span> <span class="o">==</span> BOOTLOADER_ADDR + BOOTLOADER_SIZE
-<span class="p">|</span>                   <span class="p">|</span>
-<span class="p">|</span>    Bootloader     <span class="p">|</span>
-<span class="p">|</span><span class="o">(</span>my_bootloader.bin<span class="o">)</span><span class="p">|</span>
-<span class="p">|</span>                   <span class="p">|</span>
-+-------------------+   <span class="nv">BOOTLOADER_ADDR</span> <span class="o">==</span> Start of ROM
-</code></pre></div>
-</td></tr></table>
+|                   |
+|    Application    |
+|  (main program )  |
+|                   |
++-------------------+   APPLICATION_ADDR == BOOTLOADER_ADDR + BOOTLOADER_SIZE
+|                   |
+|    Bootloader     |
+|(my_bootloader.bin)|
+|                   |
++-------------------+   BOOTLOADER_ADDR == Start of ROM
+</code></pre>
 <p>这次需要实现的 Bootloader 功能与官方范例（ https://github.com/ARMmbed/mbed-os-example-bootloader ）类似，区别在于从spi flash的littlefs上加载固件。由于系统初次上电时可能spi flash可能处于空的状态，因此需要加入文件系统格式化相关检测。由于需要使用 spi flash，在 targets.json 对应配置里需要加上：</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
-<span class="normal">2</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="s2">&quot;device_has_add&quot;</span>: <span class="o">[</span><span class="s2">&quot;FLASH&quot;</span><span class="o">]</span>
-<span class="s2">&quot;components&quot;</span>: <span class="o">[</span><span class="s2">&quot;SPIF&quot;</span><span class="o">]</span>
-</code></pre></div>
-</td></tr></table>
+<pre><code class="language-shell">&quot;device_has_add&quot;: [&quot;FLASH&quot;]
+&quot;components&quot;: [&quot;SPIF&quot;]
+</code></pre>
 <p>在 mbed_app.json 中加上:</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="nt">&quot;target.restrict_size&quot;</span><span class="p">:</span> <span class="s2">&quot;0x20000&quot;</span>
-</code></pre></div>
-</td></tr></table>
+<pre><code class="language-json">&quot;target.restrict_size&quot;: &quot;0x20000&quot;
+</code></pre>
 <p>其作用在于限制Bootloader的大小，当Bootloader太大时会链接失败，当Bootloader太小时会自动补全到固定大小。</p>
 <h2 id="application">Application<a class="headerlink" href="#application" title="Permanent link">&para;</a></h2>
 <p>应用程序mbed_config.json的配置：</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="nt">&quot;target.bootloader_img&quot;</span><span class="p">:</span> <span class="s2">&quot;bootloader/my_bootloader.bin&quot;</span>
-</code></pre></div>
-</td></tr></table>
+<pre><code class="language-json">&quot;target.bootloader_img&quot;: &quot;bootloader/my_bootloader.bin&quot;
+
+</code></pre>
 <p>Mbed 编译的时候会编译出两个bin文件，一个包含 Bootloader，用于出厂刷写，一个不包含 Bootloader，用于发布到后台下载升级。</p>
 <p>由于 Mbed 里并不是所有芯片都加入了 Bootloader 支持，如果你发现 Bootloader 无法跳转到应用程序，可以检查一下芯片的 ld 配置文件，譬如GCC：</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
-<span class="normal"> 2</span>
-<span class="normal"> 3</span>
-<span class="normal"> 4</span>
-<span class="normal"> 5</span>
-<span class="normal"> 6</span>
-<span class="normal"> 7</span>
-<span class="normal"> 8</span>
-<span class="normal"> 9</span>
-<span class="normal">10</span>
-<span class="normal">11</span>
-<span class="normal">12</span>
-<span class="normal">13</span>
-<span class="normal">14</span>
-<span class="normal">15</span>
-<span class="normal">16</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>/* Linker script for STM32F405 */
+<pre><code class="language-link">/* Linker script for STM32F405 */
 #if !defined(MBED_APP_START)
   #define MBED_APP_START 0x08000000
 #endif
@@ -1622,36 +1593,27 @@ MEMORY
   CCM (rwx) : ORIGIN = 0x10000000, LENGTH = 64K
   RAM (rwx) : ORIGIN = 0x20000188, LENGTH = 128K - 0x188
 }
-</code></pre></div>
-</td></tr></table>
+
+</code></pre>
 <p>Mbed cli 会根据项目中对bootloader_img等配置定义MBED_APP_START宏。</p>
 <p>将 system_clock.c 中 VTOR 的配置删除，因为 mbed_start_application 调用中已经进行适当的配置（参考 <a href="https://github.com/ARMmbed/mbed-os/commit/d2cf3413486f8c69a7fe81412c82e18bbf534a1e#diff-ea6486a2a085323e73374a757e011799">https://github.com/ARMmbed/mbed-os/commit/d2cf3413486f8c69a7fe81412c82e18bbf534a1e#diff-ea6486a2a085323e73374a757e011799</a>）</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
-<span class="normal">2</span>
-<span class="normal">3</span>
-<span class="normal">4</span>
-<span class="normal">5</span>
-<span class="normal">6</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="cm">/**</span>
-<span class="cm">/*!&lt; Uncomment the following line if you need to relocate your vector Table in</span>
-<span class="cm">     Internal SRAM. */</span>
-<span class="cm">/* #define VECT_TAB_SRAM */</span>
-<span class="cp">#define VECT_TAB_OFFSET  0x00 </span><span class="cm">/*!&lt; Vector Table base offset field.</span>
-<span class="cm">                                   This value must be a multiple of 0x200. */</span><span class="cp"></span>
-</code></pre></div>
-</td></tr></table>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
-<span class="normal">2</span>
-<span class="normal">3</span>
-<span class="normal">4</span>
-<span class="normal">5</span>
-<span class="normal">6</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>    <span class="cm">/* Configure the Vector Table location add offset address ------------------*/</span>
-<span class="cp">#ifdef VECT_TAB_SRAM</span>
-    <span class="n">SCB</span><span class="o">-&gt;</span><span class="n">VTOR</span> <span class="o">=</span> <span class="n">SRAM_BASE</span> <span class="o">|</span> <span class="n">VECT_TAB_OFFSET</span><span class="p">;</span> <span class="cm">/* Vector Table Relocation in Internal SRAM */</span>
-<span class="cp">#else</span>
-    <span class="n">SCB</span><span class="o">-&gt;</span><span class="n">VTOR</span> <span class="o">=</span> <span class="n">FLASH_BASE</span> <span class="o">|</span> <span class="n">VECT_TAB_OFFSET</span><span class="p">;</span> <span class="cm">/* Vector Table Relocation in Internal FLASH */</span>
-<span class="cp">#endif</span>
-</code></pre></div>
-</td></tr></table>
+<pre><code class="language-c">
+/**
+/*!&lt; Uncomment the following line if you need to relocate your vector Table in
+     Internal SRAM. */
+/* #define VECT_TAB_SRAM */
+#define VECT_TAB_OFFSET  0x00 /*!&lt; Vector Table base offset field.
+                                   This value must be a multiple of 0x200. */
+</code></pre>
+<pre><code class="language-c">
+    /* Configure the Vector Table location add offset address ------------------*/
+#ifdef VECT_TAB_SRAM
+    SCB-&gt;VTOR = SRAM_BASE | VECT_TAB_OFFSET; /* Vector Table Relocation in Internal SRAM */
+#else
+    SCB-&gt;VTOR = FLASH_BASE | VECT_TAB_OFFSET; /* Vector Table Relocation in Internal FLASH */
+#endif
+
+</code></pre>
                 
                   
                 
@@ -1691,6 +1653,10 @@ MEMORY
           }, typeof search !== "undefined" && search)
         })
       </script>
+      
+        <script src="../../assets/js/highlight.min.js"></script>
+      
+        <script src="../../assets/js/init.js"></script>
       
     
   </body>

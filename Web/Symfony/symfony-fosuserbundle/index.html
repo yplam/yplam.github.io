@@ -34,6 +34,8 @@
     
     
     
+      <link rel="stylesheet" href="../../../assets/css/highlight.css">
+    
       <link rel="stylesheet" href="../../../assets/css/custom.css">
     
     
@@ -1484,65 +1486,35 @@
 <p>{{&lt; highlight php &gt;}}
     &lt;?php
     // app/AppKernel.php</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
-<span class="normal">2</span>
-<span class="normal">3</span>
-<span class="normal">4</span>
-<span class="normal">5</span>
-<span class="normal">6</span>
-<span class="normal">7</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>public function registerBundles()
+<pre><code>public function registerBundles()
 {
     $bundles = array(
         // ...
         new FOS\UserBundle\FOSUserBundle(),
     );
 }
-</code></pre></div>
-</td></tr></table>
+</code></pre>
 <p>{{&lt; /highlight &gt;}}</p>
 <p><strong>创建用户类</strong></p>
 <p>创建一个自己的UserBundle，建立自己的User Entity。这样做有一个好处是以后可以用这个UserBundle来覆写FOSUserBundle。</p>
 <p>{{&lt; highlight php &gt;}}
     &lt;?php
     // src/Acme/UserBundle/Entity/User.php</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
-<span class="normal"> 2</span>
-<span class="normal"> 3</span>
-<span class="normal"> 4</span>
-<span class="normal"> 5</span>
-<span class="normal"> 6</span>
-<span class="normal"> 7</span>
-<span class="normal"> 8</span>
-<span class="normal"> 9</span>
-<span class="normal">10</span>
-<span class="normal">11</span>
-<span class="normal">12</span>
-<span class="normal">13</span>
-<span class="normal">14</span>
-<span class="normal">15</span>
-<span class="normal">16</span>
-<span class="normal">17</span>
-<span class="normal">18</span>
-<span class="normal">19</span>
-<span class="normal">20</span>
-<span class="normal">21</span>
-<span class="normal">22</span>
-<span class="normal">23</span>
-<span class="normal">24</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>namespace Acme\UserBundle\Entity;
+<pre><code>namespace Acme\UserBundle\Entity;
 
 use FOS\UserBundle\Model\User as BaseUser;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity
- * @ORM\Table(name=&quot;fos_user&quot;)
+ * @ORM\Table(name="fos_user")
  */
 class User extends BaseUser
 {
     /**
      * @ORM\Id
-     * @ORM\Column(type=&quot;integer&quot;)
-     * @ORM\GeneratedValue(strategy=&quot;AUTO&quot;)
+     * @ORM\Column(type="integer")
+     * @ORM\GeneratedValue(strategy="AUTO")
      */
     protected $id;
 
@@ -1552,8 +1524,7 @@ class User extends BaseUser
         // your own logic
     }
 }
-</code></pre></div>
-</td></tr></table>
+</code></pre>
 <p>{{&lt; /highlight &gt;}}
   
   
@@ -1563,28 +1534,7 @@ class User extends BaseUser
     security:
         encoders:
             FOS\UserBundle\Model\UserInterface: sha512</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
-<span class="normal"> 2</span>
-<span class="normal"> 3</span>
-<span class="normal"> 4</span>
-<span class="normal"> 5</span>
-<span class="normal"> 6</span>
-<span class="normal"> 7</span>
-<span class="normal"> 8</span>
-<span class="normal"> 9</span>
-<span class="normal">10</span>
-<span class="normal">11</span>
-<span class="normal">12</span>
-<span class="normal">13</span>
-<span class="normal">14</span>
-<span class="normal">15</span>
-<span class="normal">16</span>
-<span class="normal">17</span>
-<span class="normal">18</span>
-<span class="normal">19</span>
-<span class="normal">20</span>
-<span class="normal">21</span>
-<span class="normal">22</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>    role_hierarchy:
+<pre><code>    role_hierarchy:
         ROLE_ADMIN:       ROLE_USER
         ROLE_SUPER_ADMIN: ROLE_ADMIN
 
@@ -1606,8 +1556,7 @@ class User extends BaseUser
         - { path: ^/register, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/resetting, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/admin/, role: ROLE_ADMIN }
-</code></pre></div>
-</td></tr></table>
+</code></pre>
 <p>{{&lt; /highlight &gt;}}</p>
 <p><strong>配置FOSUserBundle</strong></p>
 <p>{{&lt; highlight yml &gt;}}
@@ -1623,37 +1572,22 @@ class User extends BaseUser
     # app/config/routing.yml
     fos_user_security:
         resource: "@FOSUserBundle/Resources/config/routing/security.xml"</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
-<span class="normal"> 2</span>
-<span class="normal"> 3</span>
-<span class="normal"> 4</span>
-<span class="normal"> 5</span>
-<span class="normal"> 6</span>
-<span class="normal"> 7</span>
-<span class="normal"> 8</span>
-<span class="normal"> 9</span>
-<span class="normal">10</span>
-<span class="normal">11</span>
-<span class="normal">12</span>
-<span class="normal">13</span>
-<span class="normal">14</span>
-<span class="normal">15</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>fos_user_profile:
-    resource: &quot;@FOSUserBundle/Resources/config/routing/profile.xml&quot;
+<pre><code>fos_user_profile:
+    resource: "@FOSUserBundle/Resources/config/routing/profile.xml"
     prefix: /profile
 
 fos_user_register:
-    resource: &quot;@FOSUserBundle/Resources/config/routing/registration.xml&quot;
+    resource: "@FOSUserBundle/Resources/config/routing/registration.xml"
     prefix: /register
 
 fos_user_resetting:
-    resource: &quot;@FOSUserBundle/Resources/config/routing/resetting.xml&quot;
+    resource: "@FOSUserBundle/Resources/config/routing/resetting.xml"
     prefix: /resetting
 
 fos_user_change_password:
-    resource: &quot;@FOSUserBundle/Resources/config/routing/change_password.xml&quot;
+    resource: "@FOSUserBundle/Resources/config/routing/change_password.xml"
     prefix: /profile
-</code></pre></div>
-</td></tr></table>
+</code></pre>
 <p>{{&lt; /highlight &gt;}}</p>
 <p>需要注意的是，需要配置好SwiftmailerBundle后，重置密码等功能才能正常工作。</p>
 <p><strong>更新数据库</strong></p>
@@ -1705,6 +1639,10 @@ fos_user_change_password:
           }, typeof search !== "undefined" && search)
         })
       </script>
+      
+        <script src="../../../assets/js/highlight.min.js"></script>
+      
+        <script src="../../../assets/js/init.js"></script>
       
     
   </body>

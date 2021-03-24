@@ -34,6 +34,8 @@
     
     
     
+      <link rel="stylesheet" href="../../../assets/css/highlight.css">
+    
       <link rel="stylesheet" href="../../../assets/css/custom.css">
     
     
@@ -1567,9 +1569,8 @@
 <h2 id="uboot">写入uboot<a class="headerlink" href="#uboot" title="Permanent link">&para;</a></h2>
 <p>uboot 固件使用 uboot-myimx6ek140-6y-256m-nand.imx，imx 文件格式在这里有个比较详细的介绍：<a href="https://www.cnblogs.com/Lioker/p/13219519.html">https://www.cnblogs.com/Lioker/p/13219519.html</a>。芯片启动时内部 ROM 程序会按 imx 文件格式从 SD 卡的 0x400 地址加载相关配置，并且启动。</p>
 <p>所以我们要以以下命令将 uboot 写入sd卡：</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>sudo dd <span class="k">if</span><span class="o">=</span>uboot-myimx6ek140-6y-256m-nand.imx <span class="nv">of</span><span class="o">=</span>/dev/sdx <span class="nv">bs</span><span class="o">=</span>1k <span class="nv">seek</span><span class="o">=</span><span class="m">1</span> <span class="nv">conv</span><span class="o">=</span>fsync
-</code></pre></div>
-</td></tr></table>
+<pre><code class="language-shell">sudo dd if=uboot-myimx6ek140-6y-256m-nand.imx of=/dev/sdx bs=1k seek=1 conv=fsync
+</code></pre>
 <p>上面的命令含义是以 1k 的块大小写入，并且跳过第一个块（第一个块一般为分区表）；详细解说可以参考 i.MX_Linux_User's_Guide.pdf 4.3 章节以及上面关于 imx 格式的文章。</p>
 <p>顺便吐槽一下国内某些卖开发板的，文档就只是一堆关于软件使用，脚本运行，却完全不涉及这么操作的原理</p>
 <h2 id="sd">SD卡分区，烧写文件<a class="headerlink" href="#sd" title="Permanent link">&para;</a></h2>
@@ -1580,96 +1581,60 @@
 <li>后面一个 ext3/ext4 用来做根文件</li>
 </ul>
 <p>通过 fdisk 与 mkfs 指令完成，参考官方文档（需要注意sdx需要与你sd卡对应）：</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
-<span class="normal"> 2</span>
-<span class="normal"> 3</span>
-<span class="normal"> 4</span>
-<span class="normal"> 5</span>
-<span class="normal"> 6</span>
-<span class="normal"> 7</span>
-<span class="normal"> 8</span>
-<span class="normal"> 9</span>
-<span class="normal">10</span>
-<span class="normal">11</span>
-<span class="normal">12</span>
-<span class="normal">13</span>
-<span class="normal">14</span>
-<span class="normal">15</span>
-<span class="normal">16</span>
-<span class="normal">17</span>
-<span class="normal">18</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>$ sudo fdisk /dev/sdx
-Type the following parameters <span class="o">(</span>each followed by &lt;ENTER&gt;<span class="o">)</span>:
-p <span class="o">[</span>lists the current partitions<span class="o">]</span>
-d <span class="o">[</span>to delete existing partitions. Repeat this <span class="k">until</span> no unnecessary partitions
-are reported by the <span class="s1">&#39;p&#39;</span> <span class="nb">command</span> to start fresh.<span class="o">]</span>
-n <span class="o">[</span>create a new partition<span class="o">]</span>
-p <span class="o">[</span>create a primary partition - use <span class="k">for</span> both partitions<span class="o">]</span>
-<span class="m">1</span> <span class="o">[</span>the first partition<span class="o">]</span>
-<span class="m">20480</span> <span class="o">[</span>starting at offset sector<span class="o">]</span>
-<span class="m">1024000</span> <span class="o">[</span>size <span class="k">for</span> the first partition to be used <span class="k">for</span> the boot images<span class="o">]</span>
-p <span class="o">[</span>to check the partitions<span class="o">]</span>
+<pre><code class="language-shell">$ sudo fdisk /dev/sdx
+Type the following parameters (each followed by &lt;ENTER&gt;):
+p [lists the current partitions]
+d [to delete existing partitions. Repeat this until no unnecessary partitions
+are reported by the 'p' command to start fresh.]
+n [create a new partition]
+p [create a primary partition - use for both partitions]
+1 [the first partition]
+20480 [starting at offset sector]
+1024000 [size for the first partition to be used for the boot images]
+p [to check the partitions]
 np2
-<span class="m">1228800</span> <span class="o">[</span>starting at offset sector, which leaves enough space <span class="k">for</span> the kernel,
-the bootloader and its configuration data<span class="o">]</span>
-&lt;enter&gt; <span class="o">[</span>using the default value will create a partition that extends to
-the last sector of the media<span class="o">]</span>
-p <span class="o">[</span>to check the partitions<span class="o">]</span>
-w <span class="o">[</span>this writes the partition table to the media and fdisk exits<span class="o">]</span>
-</code></pre></div>
-</td></tr></table>
+1228800 [starting at offset sector, which leaves enough space for the kernel,
+the bootloader and its configuration data]
+&lt;enter&gt; [using the default value will create a partition that extends to
+the last sector of the media]
+p [to check the partitions]
+w [this writes the partition table to the media and fdisk exits]
+</code></pre>
 <p>格式化：</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
-<span class="normal">2</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>sudo mkfs.fat -F32 -v -n <span class="s2">&quot;BOOT&quot;</span> /dev/sdx1
-sudo mkfs.ext4 -F -L <span class="s2">&quot;rootfs&quot;</span> /dev/sdx2
-</code></pre></div>
-</td></tr></table>
+<pre><code class="language-shell">sudo mkfs.fat -F32 -v -n &quot;BOOT&quot; /dev/sdx1
+sudo mkfs.ext4 -F -L &quot;rootfs&quot; /dev/sdx2
+</code></pre>
 <p>然后将内核文件、dtb、rootfs分别拷贝过去。</p>
 <h2 id="uboot_1">uboot 启动<a class="headerlink" href="#uboot_1" title="Permanent link">&para;</a></h2>
 <p>将 SD 卡换过去，加电，如无以外 uboot 应该是可以起来，内核起不来（如果内核也能起来的话可以uboot启动的时候按一下键盘暂停内核启动）</p>
 <p>在 uboot 终端运行 printenv 命令，查看厂家预定义的一些参数根据自己的需要进行修改。</p>
 <p>譬如在我的开发板上运行下面的指令就可以从 SD 卡启动：</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
-<span class="normal">2</span>
-<span class="normal">3</span>
-<span class="normal">4</span>
-<span class="normal">5</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>fatload mmc <span class="m">0</span>:1 <span class="si">${</span><span class="nv">kernel_addr_r</span><span class="si">}</span> zimage-myimx6a7
-fatload mmc <span class="m">0</span>:1 <span class="si">${</span><span class="nv">fdt_addr_r</span><span class="si">}</span> myimx6ek140-6y-256m-nand.dtb
+<pre><code class="language-shell">fatload mmc 0:1 ${kernel_addr_r} zimage-myimx6a7
+fatload mmc 0:1 ${fdt_addr_r} myimx6ek140-6y-256m-nand.dtb
 
-setenv bootargs <span class="nv">console</span><span class="o">=</span><span class="si">${</span><span class="nv">console</span><span class="si">}</span>,<span class="si">${</span><span class="nv">baudrate</span><span class="si">}</span> <span class="nv">root</span><span class="o">=</span>/dev/mmcblk0p2
-bootz <span class="si">${</span><span class="nv">kernel_addr_r</span><span class="si">}</span> - <span class="si">${</span><span class="nv">fdt_addr_r</span><span class="si">}</span>
-</code></pre></div>
-</td></tr></table>
+setenv bootargs console=${console},${baudrate} root=/dev/mmcblk0p2
+bootz ${kernel_addr_r} - ${fdt_addr_r}
+</code></pre>
 <p>上面指令依次从 SD 卡的第一个分区加载 zimage-myimx6a7 内核文件到内核启动的内存地址，myimx6ek140-6y-256m-nand.dtb 设备树文件到设备树内存地址，然后设置 bootargs （传递给内核的启动参数），然后启动。</p>
 <p>参数化一下：</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
-<span class="normal">2</span>
-<span class="normal">3</span>
-<span class="normal">4</span>
-<span class="normal">5</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>setenv my_load_ker fatload mmc <span class="m">0</span>:1 <span class="si">${</span><span class="nv">kernel_addr_r</span><span class="si">}</span> zimage-myimx6a7
-setenv my_load_dtb fatload mmc <span class="m">0</span>:1 <span class="si">${</span><span class="nv">fdt_addr_r</span><span class="si">}</span> myimx6ek140-6y-256m-nand.dtb
-setenv my_bootz bootz <span class="si">${</span><span class="nv">kernel_addr_r</span><span class="si">}</span> - <span class="si">${</span><span class="nv">fdt_addr_r</span><span class="si">}</span>
-setenv bootargs <span class="nv">console</span><span class="o">=</span><span class="si">${</span><span class="nv">console</span><span class="si">}</span>,<span class="si">${</span><span class="nv">baudrate</span><span class="si">}</span> <span class="nv">root</span><span class="o">=</span>/dev/mmcblk0p2
+<pre><code class="language-shell">setenv my_load_ker fatload mmc 0:1 ${kernel_addr_r} zimage-myimx6a7
+setenv my_load_dtb fatload mmc 0:1 ${fdt_addr_r} myimx6ek140-6y-256m-nand.dtb
+setenv my_bootz bootz ${kernel_addr_r} - ${fdt_addr_r}
+setenv bootargs console=${console},${baudrate} root=/dev/mmcblk0p2
 saveenv
-</code></pre></div>
-</td></tr></table>
+</code></pre>
 <p>然后就可以用此单行指令启动：</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>run my_load_ker<span class="p">;</span> run my_load_dtb<span class="p">;</span> run my_bootz
-</code></pre></div>
-</td></tr></table>
+<pre><code class="language-shell">run my_load_ker; run my_load_dtb; run my_bootz
+</code></pre>
 <p>更进一步：</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
-<span class="normal">2</span>
-<span class="normal">3</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>setenv bootcmd_my <span class="s2">&quot;run my_load_ker; run my_load_dtb; run my_bootz&quot;</span>
-setenv my_env_flag <span class="nb">set</span>
+<pre><code class="language-shell">setenv bootcmd_my &quot;run my_load_ker; run my_load_dtb; run my_bootz&quot;
+setenv my_env_flag set
 saveenv
-</code></pre></div>
-</td></tr></table>
+</code></pre>
 <p>或者直接改掉原开发板的 bootcmd</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
-<span class="normal">2</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>setenv bootcmd <span class="s2">&quot;run my_load_ker; run my_load_dtb; run my_bootz&quot;</span>
+<pre><code class="language-shell">setenv bootcmd &quot;run my_load_ker; run my_load_dtb; run my_bootz&quot;
 saveenv
-</code></pre></div>
-</td></tr></table>
+</code></pre>
 <p>重启，可以直接从SD卡启动</p>
 <p>参考：</p>
 <ul>
@@ -1713,6 +1678,10 @@ saveenv
           }, typeof search !== "undefined" && search)
         })
       </script>
+      
+        <script src="../../../assets/js/highlight.min.js"></script>
+      
+        <script src="../../../assets/js/init.js"></script>
       
     
   </body>

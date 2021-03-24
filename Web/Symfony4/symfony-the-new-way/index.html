@@ -34,6 +34,8 @@
     
     
     
+      <link rel="stylesheet" href="../../../assets/css/highlight.css">
+    
       <link rel="stylesheet" href="../../../assets/css/custom.css">
     
     
@@ -1562,135 +1564,82 @@
 <h2 id="docker">搭建 Docker 开发环境<a class="headerlink" href="#docker" title="Permanent link">&para;</a></h2>
 <p>Docker 在持续集成与环境部署方面提供不少便利性，因此此项目用 Docker 作为开发环境，发布环境还是使用之前比较熟悉的 deployer。</p>
 <p>习惯上 docker-compose.yml 放根目录，项目源码放 src 下，各个镜像基本上是按官方配置，然后适当修改一下</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
-<span class="normal"> 2</span>
-<span class="normal"> 3</span>
-<span class="normal"> 4</span>
-<span class="normal"> 5</span>
-<span class="normal"> 6</span>
-<span class="normal"> 7</span>
-<span class="normal"> 8</span>
-<span class="normal"> 9</span>
-<span class="normal">10</span>
-<span class="normal">11</span>
-<span class="normal">12</span>
-<span class="normal">13</span>
-<span class="normal">14</span>
-<span class="normal">15</span>
-<span class="normal">16</span>
-<span class="normal">17</span>
-<span class="normal">18</span>
-<span class="normal">19</span>
-<span class="normal">20</span>
-<span class="normal">21</span>
-<span class="normal">22</span>
-<span class="normal">23</span>
-<span class="normal">24</span>
-<span class="normal">25</span>
-<span class="normal">26</span>
-<span class="normal">27</span>
-<span class="normal">28</span>
-<span class="normal">29</span>
-<span class="normal">30</span>
-<span class="normal">31</span>
-<span class="normal">32</span>
-<span class="normal">33</span>
-<span class="normal">34</span>
-<span class="normal">35</span>
-<span class="normal">36</span>
-<span class="normal">37</span>
-<span class="normal">38</span>
-<span class="normal">39</span>
-<span class="normal">40</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="nt">version</span><span class="p">:</span> <span class="s">&#39;3.7&#39;</span>
-<span class="nt">services</span><span class="p">:</span>
-  <span class="nt">nginx</span><span class="p">:</span>
-    <span class="nt">build</span><span class="p">:</span>
-      <span class="nt">context</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">./docker/nginx</span>
-    <span class="nt">ports</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="s">&quot;80:80&quot;</span><span class="p p-Indicator">]</span>
-    <span class="nt">volumes</span><span class="p">:</span>
-      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">./.:/www</span>
-      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">./docker/nginx/nginx-sites.conf:/etc/nginx/conf.d/site.conf</span>
-      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">./docker/nginx/nginx.conf:/etc/nginx/nginx.conf</span>
-      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">./data/log/nginx:/var/log/nginx</span>
-    <span class="nt">links</span><span class="p">:</span>
-      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">php73fpm</span>
+<pre><code class="language-yaml">version: '3.7'
+services:
+  nginx:
+    build:
+      context: ./docker/nginx
+    ports: [&quot;80:80&quot;]
+    volumes:
+      - ./.:/www
+      - ./docker/nginx/nginx-sites.conf:/etc/nginx/conf.d/site.conf
+      - ./docker/nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./data/log/nginx:/var/log/nginx
+    links:
+      - php73fpm
 
-  <span class="nt">php73fpm</span><span class="p">:</span>
-    <span class="nt">build</span><span class="p">:</span>
-      <span class="nt">context</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">./docker/php73fpm</span>
-      <span class="nt">args</span><span class="p">:</span>
-        <span class="nt">TIMEZONE</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Asia/Shanghai</span>
-    <span class="nt">links</span><span class="p">:</span>
-      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">mysql</span>
-    <span class="nt">volumes</span><span class="p">:</span>
-      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">./.:/www</span>
-      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">./data/composer:/var/www/.composer</span>
-    <span class="nt">entrypoint</span><span class="p">:</span> 
-      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">/bin/sh</span>
-      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">-c</span> 
-      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">ip -4 route list match 0/0 | awk &#39;{print $$3&quot; host.docker.internal&quot;}&#39; &gt;&gt; /etc/hosts &amp;&amp; php-fpm</span>
+  php73fpm:
+    build:
+      context: ./docker/php73fpm
+      args:
+        TIMEZONE: Asia/Shanghai
+    links:
+      - mysql
+    volumes:
+      - ./.:/www
+      - ./data/composer:/var/www/.composer
+    entrypoint: 
+      - /bin/sh
+      - -c 
+      - ip -4 route list match 0/0 | awk '{print $$3&quot; host.docker.internal&quot;}' &gt;&gt; /etc/hosts &amp;&amp; php-fpm
 
-  <span class="nt">mysql</span><span class="p">:</span>
-    <span class="nt">image</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">percona:5.7</span>
-    <span class="nt">ports</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="s">&#39;3306:3306&#39;</span><span class="p p-Indicator">]</span>
-    <span class="nt">environment</span><span class="p">:</span>
-      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">MYSQL_ROOT_PASSWORD=root</span>
-      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">MYSQL_DATABASE=symfony</span>
-      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">MYSQL_USER=symfony</span>
-      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">MYSQL_PASSWORD=123456</span>
-    <span class="nt">volumes</span><span class="p">:</span>
-      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">./data/mysql_data:/var/lib/mysql</span>
-      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">./docker/mysql/mysql-docker.cnf:/etc/mysql/conf.d/docker.cnf</span>
-</code></pre></div>
-</td></tr></table>
+  mysql:
+    image: percona:5.7
+    ports: ['3306:3306']
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=symfony
+      - MYSQL_USER=symfony
+      - MYSQL_PASSWORD=123456
+    volumes:
+      - ./data/mysql_data:/var/lib/mysql
+      - ./docker/mysql/mysql-docker.cnf:/etc/mysql/conf.d/docker.cnf
+
+
+</code></pre>
 <h2 id="_1">创建应用<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <p>官方提供两种方式创建 Symfony 应用，个人更倾向于 composer</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>composer create-project symfony/website-skeleton:4.4.* .
-</code></pre></div>
-</td></tr></table>
+<pre><code class="language-shell">composer create-project symfony/website-skeleton:4.4.* .
+</code></pre>
 <p>开始之前也可以先配置一下 composer 国内镜像：</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>composer config -g repo.packagist composer https://mirrors.aliyun.com/composer/
-</code></pre></div>
-</td></tr></table>
+<pre><code class="language-shell">composer config -g repo.packagist composer https://mirrors.aliyun.com/composer/
+</code></pre>
 <h2 id="_2">用户登录<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <p>以前 fosuserbundle 可以说是第一个必装的 bundle，因为太方便了，配置两下就可以具备完整的用户注册、登录、召回密码等功能，然而因为用户管理可以说是一个网站的基石功能，用上了 fosuserbundle 反而会影响到系统的灵活性，并且 fosuserbundle 为了通用与兼容性，会带来一下不太想要的复杂性。</p>
 <p>可能官方已经注意到这个情况，所以提供了一个 maker 命令生成模板。</p>
 <p>先创建用户：</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>bin/console make:user
-</code></pre></div>
-</td></tr></table>
+<pre><code class="language-shell">bin/console make:user
+</code></pre>
 <p>按需求选择各选项。因为我们要兼容旧版的密码加密方式，所以需要手动加上 salt 等字段：</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>bin/console make:entity User
-</code></pre></div>
-</td></tr></table>
+<pre><code class="language-shell">bin/console make:entity User
+</code></pre>
 <p>系统会自动生成User Entity并且配置使用：</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
-<span class="normal">2</span>
-<span class="normal">3</span>
-<span class="normal">4</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>created: src/Entity/User.php
+<pre><code class="language-shell">created: src/Entity/User.php
 created: src/Repository/UserRepository.php
 updated: src/Entity/User.php
 updated: config/packages/security.yaml
-</code></pre></div>
-</td></tr></table>
+</code></pre>
 <p>新版本的 Symfony 的用户密码加密方式有所改变，为了兼容旧版，并且为了后续的灵活性，这里需要创建一个 App 的 UserProvider。关于密码加密方式兼容相关的信息可以参考： <a href="https://symfony.com/doc/4.4/security/password_migration.html">https://symfony.com/doc/4.4/security/password_migration.html</a></p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
-<span class="normal">2</span>
-<span class="normal">3</span>
-<span class="normal">4</span>
-<span class="normal">5</span>
-<span class="normal">6</span>
-<span class="normal">7</span>
-<span class="normal">8</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="x">use HWI\Bundle\OAuthBundle\Connect\AccountConnectorInterface;</span>
-<span class="x">use HWI\Bundle\OAuthBundle\Form\RegistrationFormHandlerInterface;</span>
-<span class="x">use HWI\Bundle\OAuthBundle\Security\Core\User\OAuthAwareUserProviderInterface;</span>
-<span class="x">use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;</span>
-<span class="x">use Symfony\Component\Security\Core\User\UserInterface;</span>
-<span class="x">use Symfony\Component\Security\Core\User\UserProviderInterface;</span>
+<pre><code class="language-php">use HWI\Bundle\OAuthBundle\Connect\AccountConnectorInterface;
+use HWI\Bundle\OAuthBundle\Form\RegistrationFormHandlerInterface;
+use HWI\Bundle\OAuthBundle\Security\Core\User\OAuthAwareUserProviderInterface;
+use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Security\Core\User\UserProviderInterface;
 
-<span class="x">class UserProvider implements UserProviderInterface, PasswordUpgraderInterface, OAuthAwareUserProviderInterface, AccountConnectorInterface, RegistrationFormHandlerInterface</span>
-</code></pre></div>
-</td></tr></table>
+class UserProvider implements UserProviderInterface, PasswordUpgraderInterface, OAuthAwareUserProviderInterface, AccountConnectorInterface, RegistrationFormHandlerInterface
+
+</code></pre>
 <p>这里的 UserProvider 除了实现基本功能外，还增加了对 HWIOAuthBundle 的支持。</p>
                 
                   
@@ -1731,6 +1680,10 @@ updated: config/packages/security.yaml
           }, typeof search !== "undefined" && search)
         })
       </script>
+      
+        <script src="../../../assets/js/highlight.min.js"></script>
+      
+        <script src="../../../assets/js/init.js"></script>
       
     
   </body>

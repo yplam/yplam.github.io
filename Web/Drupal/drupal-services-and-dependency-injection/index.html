@@ -34,6 +34,8 @@
     
     
     
+      <link rel="stylesheet" href="../../../assets/css/highlight.css">
+    
       <link rel="stylesheet" href="../../../assets/css/custom.css">
     
     
@@ -1502,29 +1504,20 @@
 <p>Drupal全局类提供静态方法来访问一些最常用的服务，如：Drupal::moduleHandler()返回模块处理程序服务，Drupal::translation()返回字符串翻译服务。如果你调用的服务没有专用方法，你也可以使用Drupal::service()来获取任何已定义的服务。</p>
 <p>例子：使用专用方法\Drupal::database()来访问数据库服务</p>
 <p>{{&lt; highlight php &gt;}}</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
-<span class="normal">2</span>
-<span class="normal">3</span>
-<span class="normal">4</span>
-<span class="normal">5</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>// Returns a Drupal\Core\Database\Connection object.
+<pre><code>// Returns a Drupal\Core\Database\Connection object.
 $connection = \Drupal::database();
-$result = $connection-&gt;select(&#39;node&#39;, &#39;n&#39;)
-  -&gt;fields(&#39;n&#39;, array(&#39;nid&#39;))
+$result = $connection-&gt;select('node', 'n')
+  -&gt;fields('n', array('nid'))
   -&gt;execute();
-</code></pre></div>
-</td></tr></table>
+</code></pre>
 <p>{{&lt; /highlight &gt;}}</p>
 <p>例子：使用通用的\Drupal::service()方法来访问date服务</p>
 <p>{{&lt; highlight php &gt;}}</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
-<span class="normal">2</span>
-<span class="normal">3</span>
-<span class="normal">4</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>&lt;?php
+<pre><code>&lt;?php
 // Returns a Drupal\Core\Datetime\Date object.
-$date = \Drupal::service(&#39;date&#39;);
+$date = \Drupal::service('date');
 ?&gt;
-</code></pre></div>
-</td></tr></table>
+</code></pre>
 <p>{{&lt; /highlight &gt;}}</p>
 <p>理想情况下，你应该尽量少的使用全局函数，并且重构控制器、事件监听、插件等。适当的方式应该是使用依赖注入；查看下面的文档。</p>
 <p>在<a href="http://symfony.com/doc/current/book/service_container.html">Symfony 2的文档</a>中均有代码范例。</p>
@@ -1577,6 +1570,10 @@ $date = \Drupal::service(&#39;date&#39;);
           }, typeof search !== "undefined" && search)
         })
       </script>
+      
+        <script src="../../../assets/js/highlight.min.js"></script>
+      
+        <script src="../../../assets/js/init.js"></script>
       
     
   </body>

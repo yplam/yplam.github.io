@@ -34,6 +34,8 @@
     
     
     
+      <link rel="stylesheet" href="../../../assets/css/highlight.css">
+    
       <link rel="stylesheet" href="../../../assets/css/custom.css">
     
     
@@ -1478,41 +1480,17 @@
 <p><strong>创建Block</strong></p>
 <p>假设我们需要创建一个Block来显示管理页面的链接，那么我们可以添加一个区块服务：</p>
 <p>services.yml</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
-<span class="normal">2</span>
-<span class="normal">3</span>
-<span class="normal">4</span>
-<span class="normal">5</span>
-<span class="normal">6</span>
-<span class="normal">7</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>    app.admin.block.manager_list:
+<pre><code>    app.admin.block.manager_list:
         class: AppBundle\Block\AdminManagerBlockService
         tags:
             - { name: sonata.block }
         arguments:
             - app.admin.block.manager_list
             - @templating
-</code></pre></div>
-</td></tr></table>
+
+</code></pre>
 <p><strong>在config.yml中配置这个区块：</strong></p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
-<span class="normal"> 2</span>
-<span class="normal"> 3</span>
-<span class="normal"> 4</span>
-<span class="normal"> 5</span>
-<span class="normal"> 6</span>
-<span class="normal"> 7</span>
-<span class="normal"> 8</span>
-<span class="normal"> 9</span>
-<span class="normal">10</span>
-<span class="normal">11</span>
-<span class="normal">12</span>
-<span class="normal">13</span>
-<span class="normal">14</span>
-<span class="normal">15</span>
-<span class="normal">16</span>
-<span class="normal">17</span>
-<span class="normal">18</span>
-<span class="normal">19</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>sonata_block:
+<pre><code>sonata_block:
     default_contexts: [cms]
     blocks:
         # Enable the SonataAdminBundle block
@@ -1531,93 +1509,10 @@ sonata_admin:
             -
                 position: top
                 type: app.admin.block.manager_list
-</code></pre></div>
-</td></tr></table>
+
+</code></pre>
 <p><strong>实现Block内容输出</strong></p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
-<span class="normal"> 2</span>
-<span class="normal"> 3</span>
-<span class="normal"> 4</span>
-<span class="normal"> 5</span>
-<span class="normal"> 6</span>
-<span class="normal"> 7</span>
-<span class="normal"> 8</span>
-<span class="normal"> 9</span>
-<span class="normal">10</span>
-<span class="normal">11</span>
-<span class="normal">12</span>
-<span class="normal">13</span>
-<span class="normal">14</span>
-<span class="normal">15</span>
-<span class="normal">16</span>
-<span class="normal">17</span>
-<span class="normal">18</span>
-<span class="normal">19</span>
-<span class="normal">20</span>
-<span class="normal">21</span>
-<span class="normal">22</span>
-<span class="normal">23</span>
-<span class="normal">24</span>
-<span class="normal">25</span>
-<span class="normal">26</span>
-<span class="normal">27</span>
-<span class="normal">28</span>
-<span class="normal">29</span>
-<span class="normal">30</span>
-<span class="normal">31</span>
-<span class="normal">32</span>
-<span class="normal">33</span>
-<span class="normal">34</span>
-<span class="normal">35</span>
-<span class="normal">36</span>
-<span class="normal">37</span>
-<span class="normal">38</span>
-<span class="normal">39</span>
-<span class="normal">40</span>
-<span class="normal">41</span>
-<span class="normal">42</span>
-<span class="normal">43</span>
-<span class="normal">44</span>
-<span class="normal">45</span>
-<span class="normal">46</span>
-<span class="normal">47</span>
-<span class="normal">48</span>
-<span class="normal">49</span>
-<span class="normal">50</span>
-<span class="normal">51</span>
-<span class="normal">52</span>
-<span class="normal">53</span>
-<span class="normal">54</span>
-<span class="normal">55</span>
-<span class="normal">56</span>
-<span class="normal">57</span>
-<span class="normal">58</span>
-<span class="normal">59</span>
-<span class="normal">60</span>
-<span class="normal">61</span>
-<span class="normal">62</span>
-<span class="normal">63</span>
-<span class="normal">64</span>
-<span class="normal">65</span>
-<span class="normal">66</span>
-<span class="normal">67</span>
-<span class="normal">68</span>
-<span class="normal">69</span>
-<span class="normal">70</span>
-<span class="normal">71</span>
-<span class="normal">72</span>
-<span class="normal">73</span>
-<span class="normal">74</span>
-<span class="normal">75</span>
-<span class="normal">76</span>
-<span class="normal">77</span>
-<span class="normal">78</span>
-<span class="normal">79</span>
-<span class="normal">80</span>
-<span class="normal">81</span>
-<span class="normal">82</span>
-<span class="normal">83</span>
-<span class="normal">84</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>namespace AppBundle\Block;
+<pre><code>namespace AppBundle\Block;
 
 use Sonata\BlockBundle\Block\BlockContextInterface;
 use Symfony\Component\HttpFoundation\Response;
@@ -1657,9 +1552,9 @@ class AdminManagerBlockService extends BaseBlockService
         $settings = $blockContext-&gt;getSettings();
 
 
-        return $this-&gt;renderPrivateResponse(&#39;AppBundle:Block:manager_list.html.twig&#39;, array(
-            &#39;block&#39;         =&gt; $blockContext-&gt;getBlock(),
-            &#39;settings&#39;      =&gt; $settings,
+        return $this-&gt;renderPrivateResponse('AppBundle:Block:manager_list.html.twig', array(
+            'block'         =&gt; $blockContext-&gt;getBlock(),
+            'settings'      =&gt; $settings,
         ), $response);
     }
 
@@ -1684,7 +1579,7 @@ class AdminManagerBlockService extends BaseBlockService
      */
     public function getName()
     {
-        return &#39;Admin Manager&#39;;
+        return 'Admin Manager';
     }
 
     /**
@@ -1693,47 +1588,18 @@ class AdminManagerBlockService extends BaseBlockService
     public function setDefaultSettings(OptionsResolverInterface $resolver)
     {
         $resolver-&gt;setDefaults(array(
-            &#39;groups&#39; =&gt; false
+            'groups' =&gt; false
         ));
 
         $resolver-&gt;setAllowedTypes(array(
-            &#39;groups&#39; =&gt; array(&#39;bool&#39;, &#39;array&#39;)
+            'groups' =&gt; array('bool', 'array')
         ));
     }
 }
-</code></pre></div>
-</td></tr></table>
+
+</code></pre>
 <p><strong>继承SonataAdminBundle的模板</strong></p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
-<span class="normal"> 2</span>
-<span class="normal"> 3</span>
-<span class="normal"> 4</span>
-<span class="normal"> 5</span>
-<span class="normal"> 6</span>
-<span class="normal"> 7</span>
-<span class="normal"> 8</span>
-<span class="normal"> 9</span>
-<span class="normal">10</span>
-<span class="normal">11</span>
-<span class="normal">12</span>
-<span class="normal">13</span>
-<span class="normal">14</span>
-<span class="normal">15</span>
-<span class="normal">16</span>
-<span class="normal">17</span>
-<span class="normal">18</span>
-<span class="normal">19</span>
-<span class="normal">20</span>
-<span class="normal">21</span>
-<span class="normal">22</span>
-<span class="normal">23</span>
-<span class="normal">24</span>
-<span class="normal">25</span>
-<span class="normal">26</span>
-<span class="normal">27</span>
-<span class="normal">28</span>
-<span class="normal">29</span>
-<span class="normal">30</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>{% raw %}
+<pre><code>{% raw %}
 {% extends sonata_block.templates.block_base %}
 
 {% block block %}
@@ -1763,8 +1629,7 @@ class AdminManagerBlockService extends BaseBlockService
     &lt;/div&gt;
 {% endblock %}
 {% endraw %}
-</code></pre></div>
-</td></tr></table>
+</code></pre>
 <p>这样，就可以在SonataAdminBundle的Dashboard页面头部添加自己的管理区块。</p>
                 
                   
@@ -1805,6 +1670,10 @@ class AdminManagerBlockService extends BaseBlockService
           }, typeof search !== "undefined" && search)
         })
       </script>
+      
+        <script src="../../../assets/js/highlight.min.js"></script>
+      
+        <script src="../../../assets/js/init.js"></script>
       
     
   </body>

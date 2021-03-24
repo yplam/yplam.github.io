@@ -34,6 +34,8 @@
     
     
     
+      <link rel="stylesheet" href="../../../assets/css/highlight.css">
+    
       <link rel="stylesheet" href="../../../assets/css/custom.css">
     
     
@@ -1575,46 +1577,26 @@
 <h2 id="slip-radio">Slip-radio<a class="headerlink" href="#slip-radio" title="Permanent link">&para;</a></h2>
 <p>Because I do not have a CC2531 Dongle around, I use a SensorTag CC2650 with DevPack as Slip-radio.</p>
 <p>First, change dir to contiki/examples/ipv6/slip-radio, run command:</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>make <span class="nv">TARGET</span><span class="o">=</span>srf06-cc26xx <span class="nv">BOARD</span><span class="o">=</span>sensortag/cc2650
-</code></pre></div>
-</td></tr></table>
+<pre><code class="language-shell">make TARGET=srf06-cc26xx BOARD=sensortag/cc2650
+</code></pre>
 <p>Then flash slip-radio.bin to SensorTag using uniflash.</p>
 <p>You need to validate that slip radio is running:</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>sudo minicom -s
-</code></pre></div>
-</td></tr></table>
+<pre><code class="language-shell">sudo minicom -s
+</code></pre>
 <p>Config minicom to use /dev/ttyACM0 with 115200 8N1. Your will see message like this after resetting SensorTag:</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
-<span class="normal">2</span>
-<span class="normal">3</span>
-<span class="normal">4</span>
-<span class="normal">5</span>
-<span class="normal">6</span>
-<span class="normal">7</span>
-<span class="normal">8</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>Starting Contiki-3.x-2102-g9f1376d
+<pre><code class="language-shell">Starting Contiki-3.x-2102-g9f1376d
 With DriverLib v0.44336                                                   
 TI CC2650 SensorTag                                                       
  Net: slipnet                                                                
  MAC: nullmac                                                                
- RDC: ContikiMAC, Channel Check Interval: <span class="m">16</span> ticks                           
- RF: Channel <span class="m">25</span>                                                              
+ RDC: ContikiMAC, Channel Check Interval: 16 ticks                           
+ RF: Channel 25                                                              
 Slip Radio started...
-</code></pre></div>
-</td></tr></table>
+</code></pre>
 <h2 id="edge-router">Edge Router<a class="headerlink" href="#edge-router" title="Permanent link">&para;</a></h2>
 <p>Follow the instructions on the following link to compile and install the 6lbr router: <a href="https://github.com/cetic/6lbr/wiki/Other-Linux-Software-Configuration">https://github.com/cetic/6lbr/wiki/Other-Linux-Software-Configuration</a></p>
 <p>Edit /etc/6lbr/6lbr.conf as follow:</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
-<span class="normal"> 2</span>
-<span class="normal"> 3</span>
-<span class="normal"> 4</span>
-<span class="normal"> 5</span>
-<span class="normal"> 6</span>
-<span class="normal"> 7</span>
-<span class="normal"> 8</span>
-<span class="normal"> 9</span>
-<span class="normal">10</span>
-<span class="normal">11</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>MODE=ROUTER
+<pre><code class="language-conf">MODE=ROUTER
 RAW_ETH=0
 DEV_TAP=tap0
 
@@ -1625,31 +1607,19 @@ ETH_JOIN_BRIDGE=0
 
 DEV_RADIO=/dev/ttyACM0
 BAUDRATE=115200
-</code></pre></div>
-</td></tr></table>
+
+</code></pre>
 <p>More about configure options: <a href="https://github.com/cetic/6lbr/wiki/6LBR-Configuration-file">https://github.com/cetic/6lbr/wiki/6LBR-Configuration-file</a> </p>
 <p>Start 6lbr:</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>sudo service 6lbr start
-</code></pre></div>
-</td></tr></table>
+<pre><code class="language-shell">sudo service 6lbr start
+</code></pre>
 <p>Config 6LBR to access WSN network:</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>sudo route -A inet6 add aaaa::/64 gw bbbb::100
-</code></pre></div>
-</td></tr></table>
+<pre><code class="language-shell">sudo route -A inet6 add aaaa::/64 gw bbbb::100
+</code></pre>
 <p>Now open <a href="http://[bbbb::100]/">http://[bbbb::100]</a> in your browser and you can access the embedded web server.</p>
 <h2 id="use-smart-bridge-to-access-localhost-mqtt-server">Use Smart Bridge to access localhost MQTT Server<a class="headerlink" href="#use-smart-bridge-to-access-localhost-mqtt-server" title="Permanent link">&para;</a></h2>
 <p>Edit /etc/6lbr/6lbr.conf as follow:</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
-<span class="normal"> 2</span>
-<span class="normal"> 3</span>
-<span class="normal"> 4</span>
-<span class="normal"> 5</span>
-<span class="normal"> 6</span>
-<span class="normal"> 7</span>
-<span class="normal"> 8</span>
-<span class="normal"> 9</span>
-<span class="normal">10</span>
-<span class="normal">11</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>MODE=ROUTER
+<pre><code class="language-conf">MODE=ROUTER
 RAW_ETH=0
 DEV_TAP=tap0
 
@@ -1660,75 +1630,39 @@ ETH_JOIN_BRIDGE=0
 
 DEV_RADIO=/dev/ttyACM0
 BAUDRATE=115200
-</code></pre></div>
-</td></tr></table>
-<p>Add /etc/6lbr/ifup.d/60dev</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
-<span class="normal"> 2</span>
-<span class="normal"> 3</span>
-<span class="normal"> 4</span>
-<span class="normal"> 5</span>
-<span class="normal"> 6</span>
-<span class="normal"> 7</span>
-<span class="normal"> 8</span>
-<span class="normal"> 9</span>
-<span class="normal">10</span>
-<span class="normal">11</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="ch">#!/bin/bash</span>
-. <span class="nv">$CETIC_6LBR_CONF</span>
-. <span class="nv">$1</span>/6lbr-functions
-config_default
-<span class="nv">MODE_6LBR</span><span class="o">=</span><span class="nv">$2</span>
-<span class="nv">DEV</span><span class="o">=</span><span class="nv">$3</span>
-<span class="nv">OS</span><span class="o">=</span><span class="sb">`</span>uname<span class="sb">`</span>
 
-ip -6 address add <span class="m">2001</span>:db8:2::2/64 dev tap0
-sysctl -w net.ipv4.conf.all.forwarding<span class="o">=</span><span class="m">1</span>
-sysctl -w net.ipv6.conf.all.forwarding<span class="o">=</span><span class="m">1</span>
-</code></pre></div>
-</td></tr></table>
-<p>Add /etc/6lbr/ifdown.d/60dev</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
-<span class="normal">2</span>
-<span class="normal">3</span>
-<span class="normal">4</span>
-<span class="normal">5</span>
-<span class="normal">6</span>
-<span class="normal">7</span>
-<span class="normal">8</span>
-<span class="normal">9</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="ch">#!/bin/bash</span>
-. <span class="nv">$CETIC_6LBR_CONF</span>
-. <span class="nv">$1</span>/6lbr-functions
+</code></pre>
+<p>Add /etc/6lbr/ifup.d/60dev</p>
+<pre><code class="language-shell">#!/bin/bash
+. $CETIC_6LBR_CONF
+. $1/6lbr-functions
 config_default
-<span class="nv">MODE_6LBR</span><span class="o">=</span><span class="nv">$2</span>
-<span class="nv">DEV</span><span class="o">=</span><span class="nv">$3</span>
-<span class="nv">OS</span><span class="o">=</span><span class="sb">`</span>uname<span class="sb">`</span>
-sysctl -w net.ipv4.conf.all.forwarding<span class="o">=</span><span class="m">0</span>
-sysctl -w net.ipv6.conf.all.forwarding<span class="o">=</span><span class="m">0</span>
-</code></pre></div>
-</td></tr></table>
+MODE_6LBR=$2
+DEV=$3
+OS=`uname`
+
+ip -6 address add 2001:db8:2::2/64 dev tap0
+sysctl -w net.ipv4.conf.all.forwarding=1
+sysctl -w net.ipv6.conf.all.forwarding=1
+
+</code></pre>
+<p>Add /etc/6lbr/ifdown.d/60dev</p>
+<pre><code class="language-shell">#!/bin/bash
+. $CETIC_6LBR_CONF
+. $1/6lbr-functions
+config_default
+MODE_6LBR=$2
+DEV=$3
+OS=`uname`
+sysctl -w net.ipv4.conf.all.forwarding=0
+sysctl -w net.ipv6.conf.all.forwarding=0
+</code></pre>
 <p>You alse need to run:</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
-<span class="normal">2</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>chmod +x /etc/6lbr/ifup.d/60dev
+<pre><code class="language-shell">chmod +x /etc/6lbr/ifup.d/60dev
 chmod +x /etc/6lbr/ifdown.d/60dev
-</code></pre></div>
-</td></tr></table>
+</code></pre>
 <p>Install and configure radvd:</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
-<span class="normal"> 2</span>
-<span class="normal"> 3</span>
-<span class="normal"> 4</span>
-<span class="normal"> 5</span>
-<span class="normal"> 6</span>
-<span class="normal"> 7</span>
-<span class="normal"> 8</span>
-<span class="normal"> 9</span>
-<span class="normal">10</span>
-<span class="normal">11</span>
-<span class="normal">12</span>
-<span class="normal">13</span>
-<span class="normal">14</span>
-<span class="normal">15</span>
-<span class="normal">16</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>interface tap0
+<pre><code class="language-conf">interface tap0
 {
    AdvSendAdvert on;
    AdvManagedFlag off;     #stateless autoconfiguration
@@ -1744,17 +1678,14 @@ chmod +x /etc/6lbr/ifdown.d/60dev
    {
    };
 };
-</code></pre></div>
-</td></tr></table>
+</code></pre>
 <p>Start 6lbr and radvd, you can access router machine var 2001:db8:2::2 from a WSN node. And your WSN node will get an ipv6 address like 2001:db8:2:<strong><em>*:</em></strong><em>:</em><strong><em>:</em></strong><em>:</em>*** from radvd.</p>
 <h2 id="mqtt-over-ipv4-wan">MQTT over IPV4 WAN<a class="headerlink" href="#mqtt-over-ipv4-wan" title="Permanent link">&para;</a></h2>
 <p>I only have IPV4 WAN access, and have a mosquitto server running on my Linode server. So I need a NAT64 tool to bridge ipv6 to ipv4 network.</p>
 <p>After trying jool with no luck, I decided to use 6tunnel to forward ipv6 traffic.</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
-<span class="normal">2</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>sudo apt-get install 6tunnel
-6tunnel -6 <span class="m">1883</span> your.mqtt.server.ip <span class="m">1883</span>
-</code></pre></div>
-</td></tr></table>
+<pre><code class="language-shell">sudo apt-get install 6tunnel
+6tunnel -6 1883 your.mqtt.server.ip 1883
+</code></pre>
 <p>That's all!</p>
 <p>See also:</p>
 <p><a href="http://processors.wiki.ti.com/index.php/Contiki-6LOWPAN-BBB">http://processors.wiki.ti.com/index.php/Contiki-6LOWPAN-BBB</a></p>
@@ -1797,6 +1728,10 @@ chmod +x /etc/6lbr/ifdown.d/60dev
           }, typeof search !== "undefined" && search)
         })
       </script>
+      
+        <script src="../../../assets/js/highlight.min.js"></script>
+      
+        <script src="../../../assets/js/init.js"></script>
       
     
   </body>

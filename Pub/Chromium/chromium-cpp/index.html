@@ -34,6 +34,8 @@
     
     
     
+      <link rel="stylesheet" href="../../../assets/css/highlight.css">
+    
       <link rel="stylesheet" href="../../../assets/css/custom.css">
     
     
@@ -1538,69 +1540,39 @@
 <p>rvalue：没有名称的临时物件，离开当前语句后即被摧毁，如 f(a+b) 中的 a+b</p>
 <p>C++ 11 提供针对 rvalue 引用的方法重载，因为拿到的是 rvalue，那么在方法内部就可以随便把 rvalue
 的内容拿来用，因为我们用完后 rvalue 也没有其他用途了，所以可以跳过复制的步骤，提高效率。</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
-<span class="normal"> 2</span>
-<span class="normal"> 3</span>
-<span class="normal"> 4</span>
-<span class="normal"> 5</span>
-<span class="normal"> 6</span>
-<span class="normal"> 7</span>
-<span class="normal"> 8</span>
-<span class="normal"> 9</span>
-<span class="normal">10</span>
-<span class="normal">11</span>
-<span class="normal">12</span>
-<span class="normal">13</span>
-<span class="normal">14</span>
-<span class="normal">15</span>
-<span class="normal">16</span>
-<span class="normal">17</span>
-<span class="normal">18</span>
-<span class="normal">19</span>
-<span class="normal">20</span>
-<span class="normal">21</span>
-<span class="normal">22</span>
-<span class="normal">23</span>
-<span class="normal">24</span>
-<span class="normal">25</span>
-<span class="normal">26</span>
-<span class="normal">27</span>
-<span class="normal">28</span>
-<span class="normal">29</span>
-<span class="normal">30</span>
-<span class="normal">31</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">string</span>
-<span class="p">{</span>
-    <span class="kt">char</span><span class="o">*</span> <span class="n">data</span><span class="p">;</span>
+<pre><code class="language-cpp">class string
+{
+    char* data;
 
-<span class="k">public</span><span class="o">:</span>
+public:
 
-    <span class="n">string</span><span class="p">(</span><span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">p</span><span class="p">)</span>
-    <span class="p">{</span>
-        <span class="kt">size_t</span> <span class="n">size</span> <span class="o">=</span> <span class="n">strlen</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span>
-        <span class="n">data</span> <span class="o">=</span> <span class="k">new</span> <span class="kt">char</span><span class="p">[</span><span class="n">size</span><span class="p">];</span>
-        <span class="n">memcpy</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">size</span><span class="p">);</span>
-    <span class="p">}</span>
+    string(const char* p)
+    {
+        size_t size = strlen(p) + 1;
+        data = new char[size];
+        memcpy(data, p, size);
+    }
 
-    <span class="o">~</span><span class="n">string</span><span class="p">()</span>
-    <span class="p">{</span>
-        <span class="k">delete</span><span class="p">[]</span> <span class="n">data</span><span class="p">;</span>
-    <span class="p">}</span>
+    ~string()
+    {
+        delete[] data;
+    }
 
-    <span class="n">string</span><span class="p">(</span><span class="k">const</span> <span class="n">string</span><span class="o">&amp;</span> <span class="n">that</span><span class="p">)</span>
-    <span class="p">{</span>
-        <span class="kt">size_t</span> <span class="n">size</span> <span class="o">=</span> <span class="n">strlen</span><span class="p">(</span><span class="n">that</span><span class="p">.</span><span class="n">data</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span>
-        <span class="n">data</span> <span class="o">=</span> <span class="k">new</span> <span class="kt">char</span><span class="p">[</span><span class="n">size</span><span class="p">];</span>
-        <span class="n">memcpy</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">that</span><span class="p">.</span><span class="n">data</span><span class="p">,</span> <span class="n">size</span><span class="p">);</span>
-    <span class="p">}</span>
+    string(const string&amp; that)
+    {
+        size_t size = strlen(that.data) + 1;
+        data = new char[size];
+        memcpy(data, that.data, size);
+    }
 
-    <span class="n">string</span><span class="p">(</span><span class="n">string</span><span class="o">&amp;&amp;</span> <span class="n">that</span><span class="p">)</span>   <span class="c1">// string&amp;&amp; is an rvalue reference to a string</span>
-    <span class="p">{</span>
-        <span class="n">data</span> <span class="o">=</span> <span class="n">that</span><span class="p">.</span><span class="n">data</span><span class="p">;</span>
-        <span class="n">that</span><span class="p">.</span><span class="n">data</span> <span class="o">=</span> <span class="k">nullptr</span><span class="p">;</span>
-    <span class="p">}</span>
-<span class="p">}</span>
-</code></pre></div>
-</td></tr></table>
+    string(string&amp;&amp; that)   // string&amp;&amp; is an rvalue reference to a string
+    {
+        data = that.data;
+        that.data = nullptr;
+    }
+}
+
+</code></pre>
 <p>参考：</p>
 <ul>
 <li><a href="https://shininglionking.blogspot.com/2013/06/c-rvalue-reference.html">[C++] rvalue reference 初入門</a></li>
@@ -1645,6 +1617,10 @@
           }, typeof search !== "undefined" && search)
         })
       </script>
+      
+        <script src="../../../assets/js/highlight.min.js"></script>
+      
+        <script src="../../../assets/js/init.js"></script>
       
     
   </body>

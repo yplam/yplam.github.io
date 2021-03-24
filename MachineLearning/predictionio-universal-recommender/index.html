@@ -34,6 +34,8 @@
     
     
     
+      <link rel="stylesheet" href="../../assets/css/highlight.css">
+    
       <link rel="stylesheet" href="../../assets/css/custom.css">
     
     
@@ -1546,9 +1548,8 @@
 <h2 id="predictionio-ur">PredictionIO 与 UR 安装<a class="headerlink" href="#predictionio-ur" title="Permanent link">&para;</a></h2>
 <p>参考 PredictionIO 与 UR 的官方文档安装，需要注意的是 UR 需要使用 Elasticsearch 来保存结果，现时（PredictionIO 0.12.1）默认支持的 Elasticsearch 版本为 5.<em>。最简单的方式就是下载tar包然后解压到 PredictionIO 的 vonders/elasticsearch-5.</em>.* 目录，然后在pio-env.sh文件进行配置。</p>
 <p>配置完成后可以在 ur 的目录下运行以下命令进行测试：</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>./examples/integration-test
-</code></pre></div>
-</td></tr></table>
+<pre><code class="language-shell">./examples/integration-test
+</code></pre>
 <p>此命令会使用 examples/handmade-engine.json 的配置，data/sample-handmade-data.txt 中的数据，导入数据，build模型，deploy模型，使用预设数据进行测试并且与预设结果进行对比。</p>
 <h2 id="dase">DASE实现<a class="headerlink" href="#dase" title="Permanent link">&para;</a></h2>
 <p>DataSource 只接受 user-item 类型，事件类型可以有多种，如测试数据中的 purchase、view、category-pref，其中第一个为主事件，其余为次要事件。可以使用 $set 请求定义 item 属性。DataSource 读取事件日志，按事件名聚合事件；读取 item 信息，并且将 Properties 信息附加到 item 上；然后返回事件、Item相关的RDD。</p>
@@ -1556,272 +1557,147 @@
 <p>Serving 与 RecommendationEngine 分别为用户请求的响应处理以及引擎的构造描述，较常规没有太多特殊内容。</p>
 <p>URAlgorithm 根据 URAlgorithmParams 配置训练模型，保存，然后做预测。train 过程计算主事件矩阵与自身以及个次要事件的 Log Likelihood Ratio（LLR） 矩阵，然后保存到 ElasticSearch。predict 过程将用户的输入转换为对 ElasticSearch 的搜索请求，此为模型核心。</p>
 <p>模型参数保存：历遍各 LLR 矩阵中的每一行，按降序排序每行的 releate_item，并且构造成 (itemID, Map(actionName -&gt; JArray(vector[releate_item]))) ，然后通过 groupAll 操作，将每个 item 的事件内容与属性内容集合到一起，每个条目均得到类似以下格式内容：</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="o">(</span><span class="nc">Ipad</span><span class="o">-</span><span class="n">retina</span><span class="o">,</span><span class="nc">Map</span><span class="o">(</span><span class="n">defaultRank</span> <span class="o">-&gt;</span> <span class="nc">JDouble</span><span class="o">(</span><span class="mf">3.0</span><span class="o">),</span> <span class="n">expires</span> <span class="o">-&gt;</span> <span class="nc">JString</span><span class="o">(</span><span class="mi">2018</span><span class="o">-</span><span class="mi">06</span><span class="o">-</span><span class="mi">15</span><span class="n">T17</span><span class="k">:</span><span class="err">09</span><span class="kt">:</span><span class="err">41</span><span class="kt">.</span><span class="err">677740</span><span class="kt">+</span><span class="err">00</span><span class="kt">:</span><span class="err">00</span><span class="o">),</span> <span class="n">countries</span> <span class="o">-&gt;</span> <span class="nc">JArray</span><span class="o">(</span><span class="nc">List</span><span class="o">(</span><span class="nc">JString</span><span class="o">(</span><span class="nc">United</span> <span class="nc">States</span><span class="o">),</span> <span class="nc">JString</span><span class="o">(</span><span class="nc">Estados</span> <span class="nc">Unidos</span> <span class="nc">Mexicanos</span><span class="o">))),</span> <span class="n">date</span> <span class="o">-&gt;</span> <span class="nc">JString</span><span class="o">(</span><span class="mi">2018</span><span class="o">-</span><span class="mi">06</span><span class="o">-</span><span class="mi">13</span><span class="n">T17</span><span class="k">:</span><span class="err">09</span><span class="kt">:</span><span class="err">41</span><span class="kt">.</span><span class="err">677740</span><span class="kt">+</span><span class="err">00</span><span class="kt">:</span><span class="err">00</span><span class="o">),</span> <span class="n">category</span><span class="o">-</span><span class="n">pref</span> <span class="o">-&gt;</span> <span class="nc">JArray</span><span class="o">(</span><span class="nc">List</span><span class="o">(</span><span class="nc">JString</span><span class="o">(</span><span class="n">tablets</span><span class="o">))),</span> <span class="n">categories</span> <span class="o">-&gt;</span> <span class="nc">JArray</span><span class="o">(</span><span class="nc">List</span><span class="o">(</span><span class="nc">JString</span><span class="o">(</span><span class="nc">Tablets</span><span class="o">),</span> <span class="nc">JString</span><span class="o">(</span><span class="nc">Electronics</span><span class="o">),</span> <span class="nc">JString</span><span class="o">(</span><span class="nc">Apple</span><span class="o">))),</span> <span class="n">available</span> <span class="o">-&gt;</span> <span class="nc">JString</span><span class="o">(</span><span class="mi">2018</span><span class="o">-</span><span class="mi">06</span><span class="o">-</span><span class="mi">11</span><span class="n">T17</span><span class="k">:</span><span class="err">09</span><span class="kt">:</span><span class="err">41</span><span class="kt">.</span><span class="err">677740</span><span class="kt">+</span><span class="err">00</span><span class="kt">:</span><span class="err">00</span><span class="o">),</span> <span class="n">purchase</span> <span class="o">-&gt;</span> <span class="nc">JArray</span><span class="o">(</span><span class="nc">List</span><span class="o">(</span><span class="nc">JString</span><span class="o">(</span><span class="nc">Iphone</span> <span class="mi">6</span><span class="o">),</span> <span class="nc">JString</span><span class="o">(</span><span class="nc">Iphone</span> <span class="mi">4</span><span class="o">))),</span> <span class="n">popRank</span> <span class="o">-&gt;</span> <span class="nc">JDouble</span><span class="o">(</span><span class="mf">2.0</span><span class="o">),</span> <span class="n">view</span> <span class="o">-&gt;</span> <span class="nc">JArray</span><span class="o">(</span><span class="nc">List</span><span class="o">(</span><span class="nc">JString</span><span class="o">(</span><span class="nc">Soap</span><span class="o">)))))</span>
-</code></pre></div>
-</td></tr></table>
+<pre><code class="language-scala">(Ipad-retina,Map(defaultRank -&gt; JDouble(3.0), expires -&gt; JString(2018-06-15T17:09:41.677740+00:00), countries -&gt; JArray(List(JString(United States), JString(Estados Unidos Mexicanos))), date -&gt; JString(2018-06-13T17:09:41.677740+00:00), category-pref -&gt; JArray(List(JString(tablets))), categories -&gt; JArray(List(JString(Tablets), JString(Electronics), JString(Apple))), available -&gt; JString(2018-06-11T17:09:41.677740+00:00), purchase -&gt; JArray(List(JString(Iphone 6), JString(Iphone 4))), popRank -&gt; JDouble(2.0), view -&gt; JArray(List(JString(Soap)))))
+
+</code></pre>
 <p>然后创建 Elasticsearch 表索引，最后将 RDD 保存到 Elasticsearch，我们可以先看看数据在 Elasticsearch 中的存在方式，这样会更加清晰：</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="err">GET /urindex_1529048147127/_search</span>
-</code></pre></div>
-</td></tr></table>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
-<span class="normal"> 2</span>
-<span class="normal"> 3</span>
-<span class="normal"> 4</span>
-<span class="normal"> 5</span>
-<span class="normal"> 6</span>
-<span class="normal"> 7</span>
-<span class="normal"> 8</span>
-<span class="normal"> 9</span>
-<span class="normal">10</span>
-<span class="normal">11</span>
-<span class="normal">12</span>
-<span class="normal">13</span>
-<span class="normal">14</span>
-<span class="normal">15</span>
-<span class="normal">16</span>
-<span class="normal">17</span>
-<span class="normal">18</span>
-<span class="normal">19</span>
-<span class="normal">20</span>
-<span class="normal">21</span>
-<span class="normal">22</span>
-<span class="normal">23</span>
-<span class="normal">24</span>
-<span class="normal">25</span>
-<span class="normal">26</span>
-<span class="normal">27</span>
-<span class="normal">28</span>
-<span class="normal">29</span>
-<span class="normal">30</span>
-<span class="normal">31</span>
-<span class="normal">32</span>
-<span class="normal">33</span>
-<span class="normal">34</span>
-<span class="normal">35</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>  <span class="p">{</span>
-    <span class="nt">&quot;_index&quot;</span><span class="p">:</span> <span class="s2">&quot;urindex_1529048147127&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;_type&quot;</span><span class="p">:</span> <span class="s2">&quot;items&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;_id&quot;</span><span class="p">:</span> <span class="s2">&quot;Iphone 4&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;_score&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-    <span class="nt">&quot;_source&quot;</span><span class="p">:</span> <span class="p">{</span>
-      <span class="nt">&quot;defaultRank&quot;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
-      <span class="nt">&quot;expires&quot;</span><span class="p">:</span> <span class="s2">&quot;2018-06-18T10:45:41.677+08:00&quot;</span><span class="p">,</span>
-      <span class="nt">&quot;countries&quot;</span><span class="p">:</span> <span class="p">[</span>
-        <span class="s2">&quot;United States&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;Canada&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;Estados Unidos Mexicanos&quot;</span>
-      <span class="p">],</span>
-      <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;Iphone 4&quot;</span><span class="p">,</span>
-      <span class="nt">&quot;date&quot;</span><span class="p">:</span> <span class="s2">&quot;2018-06-16T10:45:41.677+08:00&quot;</span><span class="p">,</span>
-      <span class="nt">&quot;category-pref&quot;</span><span class="p">:</span> <span class="p">[</span>
-        <span class="s2">&quot;tablets&quot;</span>
-      <span class="p">],</span>
-      <span class="nt">&quot;categories&quot;</span><span class="p">:</span> <span class="p">[</span>
-        <span class="s2">&quot;Phones&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;Electronics&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;Apple&quot;</span>
-      <span class="p">],</span>
-      <span class="nt">&quot;available&quot;</span><span class="p">:</span> <span class="s2">&quot;2018-06-14T10:45:41.677+08:00&quot;</span><span class="p">,</span>
-      <span class="nt">&quot;purchase&quot;</span><span class="p">:</span> <span class="p">[</span>
-        <span class="s2">&quot;Ipad-retina&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;Iphone 6&quot;</span>
-      <span class="p">],</span>
-      <span class="nt">&quot;popRank&quot;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span>
-      <span class="nt">&quot;view&quot;</span><span class="p">:</span> <span class="p">[</span>
-        <span class="s2">&quot;Soap&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;Tablets&quot;</span>
-      <span class="p">]</span>
-    <span class="p">}</span>
-  <span class="p">}</span>
-</code></pre></div>
-</td></tr></table>
+<pre><code class="language-http">GET /urindex_1529048147127/_search
+</code></pre>
+<pre><code class="language-json">  {
+    &quot;_index&quot;: &quot;urindex_1529048147127&quot;,
+    &quot;_type&quot;: &quot;items&quot;,
+    &quot;_id&quot;: &quot;Iphone 4&quot;,
+    &quot;_score&quot;: 1,
+    &quot;_source&quot;: {
+      &quot;defaultRank&quot;: 5,
+      &quot;expires&quot;: &quot;2018-06-18T10:45:41.677+08:00&quot;,
+      &quot;countries&quot;: [
+        &quot;United States&quot;,
+        &quot;Canada&quot;,
+        &quot;Estados Unidos Mexicanos&quot;
+      ],
+      &quot;id&quot;: &quot;Iphone 4&quot;,
+      &quot;date&quot;: &quot;2018-06-16T10:45:41.677+08:00&quot;,
+      &quot;category-pref&quot;: [
+        &quot;tablets&quot;
+      ],
+      &quot;categories&quot;: [
+        &quot;Phones&quot;,
+        &quot;Electronics&quot;,
+        &quot;Apple&quot;
+      ],
+      &quot;available&quot;: &quot;2018-06-14T10:45:41.677+08:00&quot;,
+      &quot;purchase&quot;: [
+        &quot;Ipad-retina&quot;,
+        &quot;Iphone 6&quot;
+      ],
+      &quot;popRank&quot;: 4,
+      &quot;view&quot;: [
+        &quot;Soap&quot;,
+        &quot;Tablets&quot;
+      ]
+    }
+  }
+</code></pre>
 <p>很明显这是一个基于产品的推荐系统，主事件为 purchase ，所以直观的解释就是 “购买了 Iphone 4 的用户还购买了 Ipad-retina，Iphone 6；购买了 Iphone 4 的用户浏览了 Soap，Tablets；Iphone 4 属于 Phones，Electronics，Apple 分类……”</p>
 <p>UR 模型的 predict 过程实际就是根据查询输入以及用户的历史事件（从Event Storage中查出），构造 ES 的 json query。</p>
 <p>模型定义查询结构如下：</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
-<span class="normal"> 2</span>
-<span class="normal"> 3</span>
-<span class="normal"> 4</span>
-<span class="normal"> 5</span>
-<span class="normal"> 6</span>
-<span class="normal"> 7</span>
-<span class="normal"> 8</span>
-<span class="normal"> 9</span>
-<span class="normal">10</span>
-<span class="normal">11</span>
-<span class="normal">12</span>
-<span class="normal">13</span>
-<span class="normal">14</span>
-<span class="normal">15</span>
-<span class="normal">16</span>
-<span class="normal">17</span>
-<span class="normal">18</span>
-<span class="normal">19</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="k">case</span> <span class="k">class</span> <span class="nc">Query</span><span class="o">(</span>
-  <span class="n">user</span><span class="k">:</span> <span class="kt">Option</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span> <span class="o">=</span> <span class="nc">None</span><span class="o">,</span> <span class="c1">// must be a user or item id</span>
-  <span class="n">userBias</span><span class="k">:</span> <span class="kt">Option</span><span class="o">[</span><span class="kt">Float</span><span class="o">]</span> <span class="o">=</span> <span class="nc">None</span><span class="o">,</span> <span class="c1">// default: whatever is in algorithm params or 1</span>
-  <span class="n">item</span><span class="k">:</span> <span class="kt">Option</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span> <span class="o">=</span> <span class="nc">None</span><span class="o">,</span> <span class="c1">// must be a user or item id</span>
-  <span class="n">itemBias</span><span class="k">:</span> <span class="kt">Option</span><span class="o">[</span><span class="kt">Float</span><span class="o">]</span> <span class="o">=</span> <span class="nc">None</span><span class="o">,</span> <span class="c1">// default: whatever is in algorithm params or 1</span>
-  <span class="n">itemSet</span><span class="k">:</span> <span class="kt">Option</span><span class="o">[</span><span class="kt">List</span><span class="o">[</span><span class="kt">String</span><span class="o">]]</span> <span class="o">=</span> <span class="nc">None</span><span class="o">,</span> <span class="c1">// item-set query, shpping cart for instance.</span>
-  <span class="n">itemSetBias</span><span class="k">:</span> <span class="kt">Option</span><span class="o">[</span><span class="kt">Float</span><span class="o">]</span> <span class="o">=</span> <span class="nc">None</span><span class="o">,</span> <span class="c1">// default: whatever is in algorithm params or 1</span>
-  <span class="n">fields</span><span class="k">:</span> <span class="kt">Option</span><span class="o">[</span><span class="kt">List</span><span class="o">[</span><span class="kt">Field</span><span class="o">]]</span> <span class="o">=</span> <span class="nc">None</span><span class="o">,</span> <span class="c1">// default: whatever is in algorithm params or None</span>
-  <span class="n">currentDate</span><span class="k">:</span> <span class="kt">Option</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span> <span class="o">=</span> <span class="nc">None</span><span class="o">,</span> <span class="c1">// if used will override dateRange filter, currentDate must lie between the item&#39;s</span>
-  <span class="c1">// expireDateName value and availableDateName value, all are ISO 8601 dates</span>
-  <span class="n">dateRange</span><span class="k">:</span> <span class="kt">Option</span><span class="o">[</span><span class="kt">DateRange</span><span class="o">]</span> <span class="o">=</span> <span class="nc">None</span><span class="o">,</span> <span class="c1">// optional before and after filter applied to a date field</span>
-  <span class="n">blacklistItems</span><span class="k">:</span> <span class="kt">Option</span><span class="o">[</span><span class="kt">List</span><span class="o">[</span><span class="kt">String</span><span class="o">]]</span> <span class="o">=</span> <span class="nc">None</span><span class="o">,</span> <span class="c1">// default: whatever is in algorithm params or None</span>
-  <span class="n">returnSelf</span><span class="k">:</span> <span class="kt">Option</span><span class="o">[</span><span class="kt">Boolean</span><span class="o">]</span> <span class="o">=</span> <span class="nc">None</span><span class="o">,</span> <span class="c1">// means for an item query should the item itself be returned, defaults</span>
-  <span class="c1">// to what is in the algorithm params or false</span>
-  <span class="n">num</span><span class="k">:</span> <span class="kt">Option</span><span class="o">[</span><span class="kt">Int</span><span class="o">]</span> <span class="o">=</span> <span class="nc">None</span><span class="o">,</span> <span class="c1">// default: whatever is in algorithm params, which itself has a default--probably 20</span>
-  <span class="n">from</span><span class="k">:</span> <span class="kt">Option</span><span class="o">[</span><span class="kt">Int</span><span class="o">]</span> <span class="o">=</span> <span class="nc">None</span><span class="o">,</span> <span class="c1">// paginate from this position return &quot;num&quot;</span>
-  <span class="n">eventNames</span><span class="k">:</span> <span class="kt">Option</span><span class="o">[</span><span class="kt">List</span><span class="o">[</span><span class="kt">String</span><span class="o">]],</span> <span class="c1">// names used to ID all user actions</span>
-  <span class="n">withRanks</span><span class="k">:</span> <span class="kt">Option</span><span class="o">[</span><span class="kt">Boolean</span><span class="o">]</span> <span class="o">=</span> <span class="nc">None</span><span class="o">)</span> <span class="c1">// Add to ItemScore rank fields values, default false</span>
-    <span class="k">extends</span> <span class="nc">Serializable</span>
-</code></pre></div>
-</td></tr></table>
+<pre><code class="language-scala">
+case class Query(
+  user: Option[String] = None, // must be a user or item id
+  userBias: Option[Float] = None, // default: whatever is in algorithm params or 1
+  item: Option[String] = None, // must be a user or item id
+  itemBias: Option[Float] = None, // default: whatever is in algorithm params or 1
+  itemSet: Option[List[String]] = None, // item-set query, shpping cart for instance.
+  itemSetBias: Option[Float] = None, // default: whatever is in algorithm params or 1
+  fields: Option[List[Field]] = None, // default: whatever is in algorithm params or None
+  currentDate: Option[String] = None, // if used will override dateRange filter, currentDate must lie between the item's
+  // expireDateName value and availableDateName value, all are ISO 8601 dates
+  dateRange: Option[DateRange] = None, // optional before and after filter applied to a date field
+  blacklistItems: Option[List[String]] = None, // default: whatever is in algorithm params or None
+  returnSelf: Option[Boolean] = None, // means for an item query should the item itself be returned, defaults
+  // to what is in the algorithm params or false
+  num: Option[Int] = None, // default: whatever is in algorithm params, which itself has a default--probably 20
+  from: Option[Int] = None, // paginate from this position return &quot;num&quot;
+  eventNames: Option[List[String]], // names used to ID all user actions
+  withRanks: Option[Boolean] = None) // Add to ItemScore rank fields values, default false
+    extends Serializable
+
+</code></pre>
 <p>然后转换为类似下面的请求：</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
-<span class="normal"> 2</span>
-<span class="normal"> 3</span>
-<span class="normal"> 4</span>
-<span class="normal"> 5</span>
-<span class="normal"> 6</span>
-<span class="normal"> 7</span>
-<span class="normal"> 8</span>
-<span class="normal"> 9</span>
-<span class="normal">10</span>
-<span class="normal">11</span>
-<span class="normal">12</span>
-<span class="normal">13</span>
-<span class="normal">14</span>
-<span class="normal">15</span>
-<span class="normal">16</span>
-<span class="normal">17</span>
-<span class="normal">18</span>
-<span class="normal">19</span>
-<span class="normal">20</span>
-<span class="normal">21</span>
-<span class="normal">22</span>
-<span class="normal">23</span>
-<span class="normal">24</span>
-<span class="normal">25</span>
-<span class="normal">26</span>
-<span class="normal">27</span>
-<span class="normal">28</span>
-<span class="normal">29</span>
-<span class="normal">30</span>
-<span class="normal">31</span>
-<span class="normal">32</span>
-<span class="normal">33</span>
-<span class="normal">34</span>
-<span class="normal">35</span>
-<span class="normal">36</span>
-<span class="normal">37</span>
-<span class="normal">38</span>
-<span class="normal">39</span>
-<span class="normal">40</span>
-<span class="normal">41</span>
-<span class="normal">42</span>
-<span class="normal">43</span>
-<span class="normal">44</span>
-<span class="normal">45</span>
-<span class="normal">46</span>
-<span class="normal">47</span>
-<span class="normal">48</span>
-<span class="normal">49</span>
-<span class="normal">50</span>
-<span class="normal">51</span>
-<span class="normal">52</span>
-<span class="normal">53</span>
-<span class="normal">54</span>
-<span class="normal">55</span>
-<span class="normal">56</span>
-<span class="normal">57</span>
-<span class="normal">58</span>
-<span class="normal">59</span>
-<span class="normal">60</span>
-<span class="normal">61</span>
-<span class="normal">62</span>
-<span class="normal">63</span>
-<span class="normal">64</span>
-<span class="normal">65</span>
-<span class="normal">66</span>
-<span class="normal">67</span>
-<span class="normal">68</span>
-<span class="normal">69</span>
-<span class="normal">70</span>
-<span class="normal">71</span>
-<span class="normal">72</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>  <span class="p">{</span>
-    <span class="nt">&quot;size&quot;</span><span class="p">:</span> <span class="mi">20</span>
-    <span class="nt">&quot;query&quot;</span><span class="p">:</span> <span class="p">{</span>
-      <span class="nt">&quot;bool&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="nt">&quot;should&quot;</span><span class="p">:</span> <span class="p">[</span>
-          <span class="p">{</span>
-            <span class="nt">&quot;terms&quot;</span><span class="p">:</span> <span class="p">{</span>
-              <span class="nt">&quot;rate&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;0&quot;</span><span class="p">,</span> <span class="s2">&quot;67&quot;</span><span class="p">,</span> <span class="s2">&quot;4&quot;</span><span class="p">]</span>
-            <span class="p">}</span>
-          <span class="p">},</span>
-          <span class="p">{</span>
-            <span class="nt">&quot;terms&quot;</span><span class="p">:</span> <span class="p">{</span>
-              <span class="nt">&quot;buy&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;0&quot;</span><span class="p">,</span> <span class="s2">&quot;32&quot;</span><span class="p">],</span>
-              <span class="nt">&quot;boost&quot;</span><span class="p">:</span> <span class="mi">2</span>
-            <span class="p">}</span>
-          <span class="p">},</span>
-          <span class="p">{</span> <span class="err">//</span> <span class="err">ca</span><span class="kc">te</span><span class="err">gorical</span> <span class="err">boos</span><span class="kc">ts</span>
-            <span class="nt">&quot;terms&quot;</span><span class="p">:</span> <span class="p">{</span>
-              <span class="nt">&quot;category&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;cat1&quot;</span><span class="p">],</span>
-              <span class="nt">&quot;boost&quot;</span><span class="p">:</span> <span class="mf">1.05</span>
-            <span class="p">}</span>
-          <span class="p">}</span>
-        <span class="p">],</span>
-        <span class="nt">&quot;must&quot;</span><span class="p">:</span> <span class="p">[</span> <span class="err">//</span> <span class="err">ca</span><span class="kc">te</span><span class="err">gorical</span> <span class="kc">f</span><span class="err">il</span><span class="kc">ters</span>
-          <span class="p">{</span>
-            <span class="nt">&quot;terms&quot;</span><span class="p">:</span> <span class="p">{</span>
-              <span class="nt">&quot;category&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;cat1&quot;</span><span class="p">],</span>
-              <span class="nt">&quot;boost&quot;</span><span class="p">:</span> <span class="mi">0</span>
-            <span class="p">}</span>
-          <span class="p">},</span>
-         <span class="p">{</span>
-        <span class="nt">&quot;must_not&quot;</span><span class="p">:</span> <span class="p">[</span><span class="err">//blacklis</span><span class="kc">te</span><span class="err">d</span> <span class="err">i</span><span class="kc">te</span><span class="err">ms</span>
-          <span class="p">{</span>
-            <span class="nt">&quot;ids&quot;</span><span class="p">:</span> <span class="p">{</span>
-              <span class="nt">&quot;values&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;items-id1&quot;</span><span class="p">,</span> <span class="s2">&quot;item-id2&quot;</span><span class="p">,</span> <span class="err">...</span><span class="p">]</span>
-            <span class="p">}</span>
-          <span class="p">},</span>
-         <span class="p">{</span>
-           <span class="nt">&quot;constant_score&quot;</span><span class="p">:</span> <span class="p">{</span><span class="err">//</span> <span class="err">da</span><span class="kc">te</span> <span class="err">i</span><span class="kc">n</span> <span class="err">query</span> <span class="err">mus</span><span class="kc">t</span> <span class="kc">fall</span> <span class="err">be</span><span class="kc">t</span><span class="err">wee</span><span class="kc">n</span> <span class="kc">t</span><span class="err">he</span> <span class="err">expire</span> <span class="err">a</span><span class="kc">n</span><span class="err">d</span> <span class="err">available</span> <span class="err">da</span><span class="kc">tes</span> <span class="err">o</span><span class="kc">f</span> <span class="err">a</span><span class="kc">n</span> <span class="err">i</span><span class="kc">te</span><span class="err">m</span>
-             <span class="nt">&quot;filter&quot;</span><span class="p">:</span> <span class="p">{</span>
-               <span class="nt">&quot;range&quot;</span><span class="p">:</span> <span class="p">{</span>
-                 <span class="nt">&quot;availabledate&quot;</span><span class="p">:</span> <span class="p">{</span>
-                   <span class="nt">&quot;lte&quot;</span><span class="p">:</span> <span class="s2">&quot;2015-08-30T12:24:41-07:00&quot;</span>
-                 <span class="p">}</span>
-               <span class="p">}</span>
-             <span class="p">},</span>
-             <span class="nt">&quot;boost&quot;</span><span class="p">:</span> <span class="mi">0</span>
-           <span class="p">}</span>
-         <span class="p">},</span>
-         <span class="p">{</span>
-           <span class="nt">&quot;constant_score&quot;</span><span class="p">:</span> <span class="p">{</span><span class="err">//</span> <span class="err">da</span><span class="kc">te</span> <span class="err">ra</span><span class="kc">n</span><span class="err">ge</span> <span class="kc">f</span><span class="err">il</span><span class="kc">ter</span> <span class="err">i</span><span class="kc">n</span> <span class="err">query</span> <span class="err">mus</span><span class="kc">t</span> <span class="err">be</span> <span class="err">be</span><span class="kc">t</span><span class="err">wee</span><span class="kc">n</span> <span class="kc">t</span><span class="err">hese</span> <span class="err">i</span><span class="kc">te</span><span class="err">m</span> <span class="err">proper</span><span class="kc">t</span><span class="err">y</span> <span class="err">values</span>
-             <span class="nt">&quot;filter&quot;</span><span class="p">:</span> <span class="p">{</span>
-               <span class="nt">&quot;range&quot;</span> <span class="p">:</span> <span class="p">{</span>
-                 <span class="nt">&quot;expiredate&quot;</span> <span class="p">:</span> <span class="p">{</span>
-                   <span class="nt">&quot;gte&quot;</span><span class="p">:</span> <span class="nt">&quot;2015-08-15T11:28:45.114-07:00&quot;</span>
-                   <span class="nt">&quot;lt&quot;</span><span class="p">:</span> <span class="s2">&quot;2015-08-20T11:28:45.114-07:00&quot;</span>
-                 <span class="p">}</span>
-               <span class="p">}</span>
-             <span class="p">},</span> <span class="nt">&quot;boost&quot;</span><span class="p">:</span> <span class="mi">0</span>
-           <span class="p">}</span>
-         <span class="p">},</span>
-         <span class="p">{</span>
-           <span class="nt">&quot;constant_score&quot;</span><span class="p">:</span> <span class="p">{</span> <span class="err">//</span> <span class="kc">t</span><span class="err">his</span> <span class="err">orders</span> <span class="err">popular</span> <span class="err">i</span><span class="kc">te</span><span class="err">ms</span> <span class="kc">f</span><span class="err">or</span> <span class="err">back</span><span class="kc">f</span><span class="err">ill</span>
-              <span class="nt">&quot;filter&quot;</span><span class="p">:</span> <span class="p">{</span>
-                 <span class="nt">&quot;match_all&quot;</span><span class="p">:</span> <span class="p">{}</span>
-              <span class="p">},</span>
-              <span class="nt">&quot;boost&quot;</span><span class="p">:</span> <span class="mf">0.000001</span> <span class="err">//</span> <span class="err">mus</span><span class="kc">t</span> <span class="err">have</span> <span class="err">as</span> <span class="err">leas</span><span class="kc">t</span> <span class="err">a</span> <span class="err">small</span> <span class="kc">nu</span><span class="err">mber</span> <span class="kc">t</span><span class="err">o</span> <span class="err">be</span> <span class="err">boos</span><span class="kc">ta</span><span class="err">ble</span>
-           <span class="p">}</span>
-        <span class="p">}</span>
-      <span class="p">}</span>
-    <span class="p">}</span>
-  <span class="p">}</span>
-</code></pre></div>
-</td></tr></table>
+<pre><code class="language-json">  {
+    &quot;size&quot;: 20
+    &quot;query&quot;: {
+      &quot;bool&quot;: {
+        &quot;should&quot;: [
+          {
+            &quot;terms&quot;: {
+              &quot;rate&quot;: [&quot;0&quot;, &quot;67&quot;, &quot;4&quot;]
+            }
+          },
+          {
+            &quot;terms&quot;: {
+              &quot;buy&quot;: [&quot;0&quot;, &quot;32&quot;],
+              &quot;boost&quot;: 2
+            }
+          },
+          { // categorical boosts
+            &quot;terms&quot;: {
+              &quot;category&quot;: [&quot;cat1&quot;],
+              &quot;boost&quot;: 1.05
+            }
+          }
+        ],
+        &quot;must&quot;: [ // categorical filters
+          {
+            &quot;terms&quot;: {
+              &quot;category&quot;: [&quot;cat1&quot;],
+              &quot;boost&quot;: 0
+            }
+          },
+         {
+        &quot;must_not&quot;: [//blacklisted items
+          {
+            &quot;ids&quot;: {
+              &quot;values&quot;: [&quot;items-id1&quot;, &quot;item-id2&quot;, ...]
+            }
+          },
+         {
+           &quot;constant_score&quot;: {// date in query must fall between the expire and available dates of an item
+             &quot;filter&quot;: {
+               &quot;range&quot;: {
+                 &quot;availabledate&quot;: {
+                   &quot;lte&quot;: &quot;2015-08-30T12:24:41-07:00&quot;
+                 }
+               }
+             },
+             &quot;boost&quot;: 0
+           }
+         },
+         {
+           &quot;constant_score&quot;: {// date range filter in query must be between these item property values
+             &quot;filter&quot;: {
+               &quot;range&quot; : {
+                 &quot;expiredate&quot; : {
+                   &quot;gte&quot;: &quot;2015-08-15T11:28:45.114-07:00&quot;
+                   &quot;lt&quot;: &quot;2015-08-20T11:28:45.114-07:00&quot;
+                 }
+               }
+             }, &quot;boost&quot;: 0
+           }
+         },
+         {
+           &quot;constant_score&quot;: { // this orders popular items for backfill
+              &quot;filter&quot;: {
+                 &quot;match_all&quot;: {}
+              },
+              &quot;boost&quot;: 0.000001 // must have as least a small number to be boostable
+           }
+        }
+      }
+    }
+  }
+</code></pre>
 <p>Universal Recommender 虽然原理比较简单，不过它巧妙地利用 Elasticsearch 将业务规则整合进来的方式确实可以给人带来启发。</p>
 <p>以上仅为个人总结笔记，能力所限可能有比较多错误，欢迎交流指正 yplam(at)yplam.com</p>
                 
@@ -1863,6 +1739,10 @@
           }, typeof search !== "undefined" && search)
         })
       </script>
+      
+        <script src="../../assets/js/highlight.min.js"></script>
+      
+        <script src="../../assets/js/init.js"></script>
       
     
   </body>

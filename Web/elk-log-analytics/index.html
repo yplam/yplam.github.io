@@ -34,6 +34,8 @@
     
     
     
+      <link rel="stylesheet" href="../../assets/css/highlight.css">
+    
       <link rel="stylesheet" href="../../assets/css/custom.css">
     
     
@@ -1660,32 +1662,7 @@
 <h2 id="logstash">Logstash<a class="headerlink" href="#logstash" title="Permanent link">&para;</a></h2>
 <p>Logstash 可以看作是一个ETL工具，负责对日志的抽取、转换、加载，在ELK栈中，Logstash 负责监听日志文件，从日志文件中抽取有用数据，拆分，转换，然后保存到 Elasticsearch。Logstash 除了可以监听日志文件以外，
 还可以跟filebeat等工具配合使用，将多个服务器的日志集合到一起，再中转存储。Logstash 会将日志按天来生成 Type，添加到索引中。</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
-<span class="normal"> 2</span>
-<span class="normal"> 3</span>
-<span class="normal"> 4</span>
-<span class="normal"> 5</span>
-<span class="normal"> 6</span>
-<span class="normal"> 7</span>
-<span class="normal"> 8</span>
-<span class="normal"> 9</span>
-<span class="normal">10</span>
-<span class="normal">11</span>
-<span class="normal">12</span>
-<span class="normal">13</span>
-<span class="normal">14</span>
-<span class="normal">15</span>
-<span class="normal">16</span>
-<span class="normal">17</span>
-<span class="normal">18</span>
-<span class="normal">19</span>
-<span class="normal">20</span>
-<span class="normal">21</span>
-<span class="normal">22</span>
-<span class="normal">23</span>
-<span class="normal">24</span>
-<span class="normal">25</span>
-<span class="normal">26</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>input {
+<pre><code>input {
     beats {
         host =&gt; &quot;1.2.3.4&quot;
         port =&gt; 5044
@@ -1711,65 +1688,11 @@ output {
         idle_flush_time =&gt; 5 
     } 
 }
-</code></pre></div>
-</td></tr></table>
+
+</code></pre>
 <h2 id="elasticsearch">Elasticsearch<a class="headerlink" href="#elasticsearch" title="Permanent link">&para;</a></h2>
 <p>在Logstash发送日志信息过来之前，Elasticsearch 需要先创建好索引mapping。</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
-<span class="normal"> 2</span>
-<span class="normal"> 3</span>
-<span class="normal"> 4</span>
-<span class="normal"> 5</span>
-<span class="normal"> 6</span>
-<span class="normal"> 7</span>
-<span class="normal"> 8</span>
-<span class="normal"> 9</span>
-<span class="normal">10</span>
-<span class="normal">11</span>
-<span class="normal">12</span>
-<span class="normal">13</span>
-<span class="normal">14</span>
-<span class="normal">15</span>
-<span class="normal">16</span>
-<span class="normal">17</span>
-<span class="normal">18</span>
-<span class="normal">19</span>
-<span class="normal">20</span>
-<span class="normal">21</span>
-<span class="normal">22</span>
-<span class="normal">23</span>
-<span class="normal">24</span>
-<span class="normal">25</span>
-<span class="normal">26</span>
-<span class="normal">27</span>
-<span class="normal">28</span>
-<span class="normal">29</span>
-<span class="normal">30</span>
-<span class="normal">31</span>
-<span class="normal">32</span>
-<span class="normal">33</span>
-<span class="normal">34</span>
-<span class="normal">35</span>
-<span class="normal">36</span>
-<span class="normal">37</span>
-<span class="normal">38</span>
-<span class="normal">39</span>
-<span class="normal">40</span>
-<span class="normal">41</span>
-<span class="normal">42</span>
-<span class="normal">43</span>
-<span class="normal">44</span>
-<span class="normal">45</span>
-<span class="normal">46</span>
-<span class="normal">47</span>
-<span class="normal">48</span>
-<span class="normal">49</span>
-<span class="normal">50</span>
-<span class="normal">51</span>
-<span class="normal">52</span>
-<span class="normal">53</span>
-<span class="normal">54</span>
-<span class="normal">55</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>{
+<pre><code>{
   &quot;mappings&quot;: {
     &quot;_default_&quot;: {
       &quot;dynamic_templates&quot;: [
@@ -1824,101 +1747,47 @@ output {
     }
   }
 }
-</code></pre></div>
-</td></tr></table>
+
+</code></pre>
 <h2 id="kibana">Kibana<a class="headerlink" href="#kibana" title="Permanent link">&para;</a></h2>
 <p>Kibana 不需要太多的配置，只需要访问到 Elasticsearch，并且发现相关的索引。</p>
 <p>Kibana 按照 搜索 -&gt; 可视化 -&gt; 面板 的流程，将你需要看到的信息逐步构建出来。</p>
 <h2 id="phantomjskibana">使用phantomjs定期发送Kibana报告<a class="headerlink" href="#phantomjskibana" title="Permanent link">&para;</a></h2>
 <p>下面是使用 phantomjs 发送Kibana报告的测试代码。其原理是使用 phantomjs 模拟浏览器访问 Kibana，然后对访问内容进行截图，然后将生成的截图通过 http post的方式调用 sendcloud 接口发送邮件。（发送邮件的调用有点繁琐，因为找不到很好的读取本地文件的方式，而 phantomjs webpage 模块的 renderBuffer 实际上又无法使用）</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
-<span class="normal"> 2</span>
-<span class="normal"> 3</span>
-<span class="normal"> 4</span>
-<span class="normal"> 5</span>
-<span class="normal"> 6</span>
-<span class="normal"> 7</span>
-<span class="normal"> 8</span>
-<span class="normal"> 9</span>
-<span class="normal">10</span>
-<span class="normal">11</span>
-<span class="normal">12</span>
-<span class="normal">13</span>
-<span class="normal">14</span>
-<span class="normal">15</span>
-<span class="normal">16</span>
-<span class="normal">17</span>
-<span class="normal">18</span>
-<span class="normal">19</span>
-<span class="normal">20</span>
-<span class="normal">21</span>
-<span class="normal">22</span>
-<span class="normal">23</span>
-<span class="normal">24</span>
-<span class="normal">25</span>
-<span class="normal">26</span>
-<span class="normal">27</span>
-<span class="normal">28</span>
-<span class="normal">29</span>
-<span class="normal">30</span>
-<span class="normal">31</span>
-<span class="normal">32</span>
-<span class="normal">33</span>
-<span class="normal">34</span>
-<span class="normal">35</span>
-<span class="normal">36</span>
-<span class="normal">37</span>
-<span class="normal">38</span>
-<span class="normal">39</span>
-<span class="normal">40</span>
-<span class="normal">41</span>
-<span class="normal">42</span>
-<span class="normal">43</span>
-<span class="normal">44</span>
-<span class="normal">45</span>
-<span class="normal">46</span>
-<span class="normal">47</span>
-<span class="normal">48</span>
-<span class="normal">49</span>
-<span class="normal">50</span>
-<span class="normal">51</span>
-<span class="normal">52</span>
-<span class="normal">53</span>
-<span class="normal">54</span>
-<span class="normal">55</span>
-<span class="normal">56</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>var page = require(&#39;webpage&#39;).create();
-var fs = require(&#39;fs&#39;);
+<pre><code>
+var page = require('webpage').create();
+var fs = require('fs');
 var url = &quot;***&quot;;
 page.settings.userName = &quot;***&quot;; // http auth
 page.settings.password = &quot;***&quot;;
 page.viewportSize = { width: 1280, height: 900 };
 page.open(url, function(status) {
-  if (status !== &#39;success&#39;) {
-    console.log(&#39;Unable to load the address!&#39;);
+  if (status !== 'success') {
+    console.log('Unable to load the address!');
     phantom.exit(1);
   } else {
     window.setTimeout(function () {
-        page.render(&#39;abc.png&#39;);
+        page.render('abc.png');
         var rawFile = new XMLHttpRequest();
-        rawFile.open(&quot;GET&quot;, &#39;file://****abc.png&#39;, false);
+        rawFile.open(&quot;GET&quot;, 'file://****abc.png', false);
         rawFile.responseType = &quot;blob&quot;;
         rawFile.onload = function () {
           var formPost = new FormData();
-          var apiUser = &#39;***&#39;; 
-          var apiKey = &#39;***&#39;;
+          var apiUser = '***'; 
+          var apiKey = '***';
           var currentDate = new Date();
-          formPost.append(&#39;apiUser&#39;, apiUser);
-          formPost.append(&#39;apiKey&#39;, apiKey);
-          formPost.append(&#39;from&#39;, &#39;***&#39;);
-          formPost.append(&#39;to&#39;, &#39;***&#39;);
-          formPost.append(&#39;subject&#39;, &#39;***数据日报 - &#39;+currentDate.toString());
-          formPost.append(&#39;html&#39;, &#39;&lt;h1&gt;***数据日报&lt;/h1&gt;&lt;p&gt;此数据由程序自动生成，如果需要调整相关指标，请反馈给产品经理。&lt;/p&gt;&lt;p&gt;&lt;img src=&quot;cid:abc.png&quot;/&gt;&lt;/p&gt;&#39;);
-          formPost.append(&#39;useAddressList&#39;, true);
-          formPost.append(&#39;attachments&#39;, rawFile.response, &#39;abc.png&#39;);
-          formPost.append(&#39;embeddedImage&#39;, rawFile.response, &#39;abc.png&#39;);
-          formPost.append(&#39;embeddedCid&#39;, &quot;abc.png&quot;);
+          formPost.append('apiUser', apiUser);
+          formPost.append('apiKey', apiKey);
+          formPost.append('from', '***');
+          formPost.append('to', '***');
+          formPost.append('subject', '***数据日报 - '+currentDate.toString());
+          formPost.append('html', '&lt;h1&gt;***数据日报&lt;/h1&gt;&lt;p&gt;此数据由程序自动生成，如果需要调整相关指标，请反馈给产品经理。&lt;/p&gt;&lt;p&gt;&lt;img src=&quot;cid:abc.png&quot;/&gt;&lt;/p&gt;');
+          formPost.append('useAddressList', true);
+          formPost.append('attachments', rawFile.response, 'abc.png');
+          formPost.append('embeddedImage', rawFile.response, 'abc.png');
+          formPost.append('embeddedCid', &quot;abc.png&quot;);
           var xhr = new XMLHttpRequest();
-          xhr.open(&#39;POST&#39;, &#39;http://api.sendcloud.net/apiv2/mail/send&#39;, true);
+          xhr.open('POST', 'http://api.sendcloud.net/apiv2/mail/send', true);
           xhr.send(formPost);
           xhr.onload = function (e) {
             if (xhr.readyState === 4) {
@@ -1942,12 +1811,14 @@ page.open(url, function(status) {
     }, 20000);
   }
 });
-</code></pre></div>
-</td></tr></table>
+
+
+</code></pre>
 <p>将上面内容保存为js文件，然后用下面命令调用</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>phantomjs --web-security=false --local-to-remote-url-access=true ***.js
-</code></pre></div>
-</td></tr></table>
+<pre><code>
+phantomjs --web-security=false --local-to-remote-url-access=true ***.js
+
+</code></pre>
 <h3 id="_1">参考资料<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h3>
 <ul>
 <li><a href="http://logz.io/learn/complete-guide-elk-stack/">The Complete Guide to the ELK Stack</a></li>
@@ -1992,6 +1863,10 @@ page.open(url, function(status) {
           }, typeof search !== "undefined" && search)
         })
       </script>
+      
+        <script src="../../assets/js/highlight.min.js"></script>
+      
+        <script src="../../assets/js/init.js"></script>
       
     
   </body>

@@ -34,6 +34,8 @@
     
     
     
+      <link rel="stylesheet" href="../../../assets/css/highlight.css">
+    
       <link rel="stylesheet" href="../../../assets/css/custom.css">
     
     
@@ -1562,16 +1564,8 @@
 
 <h2 id="var">@var 注解<a class="headerlink" href="#var" title="Permanent link">&para;</a></h2>
 <p>这种方式先将di中获取到的服务赋值给一个变量，然后通过 @var 注解注释变量类型，但这样对于大量使用而言有所繁琐。</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
-<span class="normal">2</span>
-<span class="normal">3</span>
-<span class="normal">4</span>
-<span class="normal">5</span>
-<span class="normal">6</span>
-<span class="normal">7</span>
-<span class="normal">8</span>
-<span class="normal">9</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>/** @var $db \Phalcon\Db\Adapter\AbstractAdapter */
-$db = $this-&gt;di-&gt;get(&#39;db&#39;);
+<pre><code>/** @var $db \Phalcon\Db\Adapter\AbstractAdapter */
+$db = $this-&gt;di-&gt;get('db');
 $db-&gt;....
 
 // 或者
@@ -1579,8 +1573,8 @@ $db-&gt;....
 /** @var $db \Phalcon\Db\Adapter\AbstractAdapter */
 $db = $this-&gt;db;
 $db-&gt;....
-</code></pre></div>
-</td></tr></table>
+
+</code></pre>
 <h2 id="phpstormmetaphp">.phpstorm.meta.php<a class="headerlink" href="#phpstormmetaphp" title="Permanent link">&para;</a></h2>
 <p>可能在PHP这种若类型语言上这种情况太常见了，PhpStorm 提供了 .phpstorm.meta.php 的方案，
 在项目的任何目录中添加 .phpstorm.meta.php 文件，然后可以使用 PHPSTORM_META 相关的方法对
@@ -1588,21 +1582,16 @@ $db-&gt;....
 <p>.phpstorm.meta.php 提供了对参数、返回值、数组keyvalue类型，函数调用参数key对应返回值value类型等，
 功能丰富，并且可以独立于源代码存在，对于修改库等非项目代码而言非常方便；然而却又有一个问题，对于 __get
 这种 magic 方法，并不能提示并自动补全该属性，而只能在你写出属性全名后才能匹配上。</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
-<span class="normal">2</span>
-<span class="normal">3</span>
-<span class="normal">4</span>
-<span class="normal">5</span>
-<span class="normal">6</span>
-<span class="normal">7</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>namespace PHPSTORM_META {
+<pre><code>namespace PHPSTORM_META {
     override(\Phalcon\Di\Injectable::__get(), map([
         &quot;cache&quot; =&gt; \Phalcon\Cache::class,
         &quot;logger&quot; =&gt; \Monolog\Logger::class,
        //...
     ]));
 }
-</code></pre></div>
-</td></tr></table>
+
+
+</code></pre>
 <h2 id="property">使用 @property 注解<a class="headerlink" href="#property" title="Permanent link">&para;</a></h2>
 <p>这种方法使用一个中间类继承自 \Phalcon\Di\Injectable，然后将 @property 注解写在类的 phpdoc 上，然后将所有原来继承自 Injectable 的类继承到新加的中间类上。然而这种方法导致的问题是引入了用处不大的中间类，并且对于 Controller 与 Service
 两种不同分支的功能要建两个中间类，并且将注解分别写到两边（可能可以通过 Interface 的方式解决，未测试）</p>
@@ -1647,6 +1636,10 @@ $db-&gt;....
           }, typeof search !== "undefined" && search)
         })
       </script>
+      
+        <script src="../../../assets/js/highlight.min.js"></script>
+      
+        <script src="../../../assets/js/init.js"></script>
       
     
   </body>

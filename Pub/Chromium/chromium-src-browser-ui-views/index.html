@@ -34,6 +34,8 @@
     
     
     
+      <link rel="stylesheet" href="../../../assets/css/highlight.css">
+    
       <link rel="stylesheet" href="../../../assets/css/custom.css">
     
     
@@ -1472,23 +1474,19 @@
 <p>Chromium 官方有提供一个关于 Views 层调试的文档: <a href="https://chromium.googlesource.com/chromium/src/+/master/docs/graphical_debugging_aid_chromium_views.md">https://chromium.googlesource.com/chromium/src/+/master/docs/graphical_debugging_aid_chromium_views.md</a> ,不过我用 gdb 的 viewg 始终没有合法的输出，所以最终使用直接代码输出 Log 的方式：</p>
 <p><strong>2019-03-16 更新：</strong> 可能是编写 viewg 脚本的开发者粗心或者脚本没及时更新，发现是错把 views 写成 view 了，于是我给官方提交了个 bug fix，然后成了 Chromium 代码贡献量最少的开发者（一个字母，哈哈）。</p>
 <p>GDB 加载完成后使用此命令加载 viewg:</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="nb">source</span> tools/gdb/viewg.gdb
-</code></pre></div>
-</td></tr></table>
+<pre><code class="language-shell">source tools/gdb/viewg.gdb
+</code></pre>
 <p>然后添加断点，只要是继承自 View 的类都可以，非静态方法:</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="nb">break</span> BrowserView::OnActiveTabChanged<span class="o">(</span>content::WebContents*, content::WebContents*, int, int<span class="o">)</span>
-</code></pre></div>
-</td></tr></table>
+<pre><code class="language-shell">break BrowserView::OnActiveTabChanged(content::WebContents*, content::WebContents*, int, int)
+</code></pre>
 <p>切换浏览器标签进入断点后，使用 viewg 命令，就会在个人目录生成 state.svg 文件，拖到浏览器就可以访问。</p>
 <p><strong>以下为旧版本</strong></p>
 <p>~~BrowserView(chrome/browser/ui/views/frame/browser_view.cc) 算是浏览器窗口 view 的根（继承自views::View），通过 BrowserView 可以打印出整个浏览器 views 树的结构。在 BrowserView 的非静态方法中加入：~~</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="n">LOG</span><span class="p">(</span><span class="n">WARNING</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span> <span class="o">&lt;&lt;</span><span class="n">views</span><span class="o">::</span><span class="n">PrintViewGraph</span><span class="p">(</span><span class="k">this</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
-</code></pre></div>
-</td></tr></table>
+<pre><code class="language-cpp">LOG(WARNING) &lt;&lt; &quot;&quot; &lt;&lt; std::endl &lt;&lt;views::PrintViewGraph(this) &lt;&lt; std::endl;
+</code></pre>
 <p>然后编译运行 chrome 就可以在终端日志中得到 views 树输出的 dot 文件内容，将其保存到 ”~/state.dot“，然后通过下面指令生成 svg 图片：</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>dot -Tsvg -o ~/state.svg ~/state.dot
-</code></pre></div>
-</td></tr></table>
+<pre><code class="language-shell">dot -Tsvg -o ~/state.svg ~/state.dot
+</code></pre>
 <p><strong>END旧版本</strong></p>
 <p>注：图片如下，宽度超标，请拖到新窗口查看原图。</p>
 <p>↓↓↓↓↓↓↓↓↓↓</p>
@@ -1534,6 +1532,10 @@
           }, typeof search !== "undefined" && search)
         })
       </script>
+      
+        <script src="../../../assets/js/highlight.min.js"></script>
+      
+        <script src="../../../assets/js/init.js"></script>
       
     
   </body>

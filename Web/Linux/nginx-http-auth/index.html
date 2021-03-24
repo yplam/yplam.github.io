@@ -34,6 +34,8 @@
     
     
     
+      <link rel="stylesheet" href="../../../assets/css/highlight.css">
+    
       <link rel="stylesheet" href="../../../assets/css/custom.css">
     
     
@@ -1472,39 +1474,22 @@
 <p>不妨打开你网站的404日志，其中肯定不乏一堆对后台路径的试探性探测，这其中有一些是用来确定你网站使用的是哪种系统，而更多的是直接对各种已知系统漏洞的扫描。</p>
 <p>一个比较有效阻止这种扫描的方法是在Web服务器的层面上添加HTTP认证。</p>
 <p>首先，安装htpasswd工具</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>sudo apt-get install apache2-utils
-</code></pre></div>
-</td></tr></table>
+<pre><code>sudo apt-get install apache2-utils
+</code></pre>
 <p>然后生成用户名密码：</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>sudo htpasswd -c /etc/nginx/.htpasswd myuser
-</code></pre></div>
-</td></tr></table>
+<pre><code>sudo htpasswd -c /etc/nginx/.htpasswd myuser
+</code></pre>
 <p>最后，为需要进行保护的路径添加认证</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
-<span class="normal">2</span>
-<span class="normal">3</span>
-<span class="normal">4</span>
-<span class="normal">5</span>
-<span class="normal">6</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>location location ~ /admin(/.*)  {
+<pre><code>location location ~ /admin(/.*)  {
       ...
       auth_basic &quot;Restricted&quot;;                                
       auth_basic_user_file /etc/nginx/.htpasswd; 
       ...
   }
-</code></pre></div>
-</td></tr></table>
+</code></pre>
 <p>这样，用户在访问admin路径下的内容时都会多一层HTTP认证。</p>
 <p>然而，我们可以对上面的配置做一点人性化的修改。譬如，针对公司用户而言，IP地址是固定的，我们可以将该地址设为可信，这样就免除了公司内部人员认证的麻烦：</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
-<span class="normal"> 2</span>
-<span class="normal"> 3</span>
-<span class="normal"> 4</span>
-<span class="normal"> 5</span>
-<span class="normal"> 6</span>
-<span class="normal"> 7</span>
-<span class="normal"> 8</span>
-<span class="normal"> 9</span>
-<span class="normal">10</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>location location ~ /admin(/.*)  {
+<pre><code>location location ~ /admin(/.*)  {
       ...
       satisfy any;
       include allow-ips.conf;
@@ -1514,12 +1499,10 @@
       auth_basic_user_file /etc/nginx/.htpasswd; 
       ...
   }
-</code></pre></div>
-</td></tr></table>
+</code></pre>
 <p>allow-ips.conf 配置免除HTTP认证的IP地址，内容如：</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>allow 119.147.176.159;
-</code></pre></div>
-</td></tr></table>
+<pre><code>allow 119.147.176.159;
+</code></pre>
                 
                   
                 
@@ -1559,6 +1542,10 @@
           }, typeof search !== "undefined" && search)
         })
       </script>
+      
+        <script src="../../../assets/js/highlight.min.js"></script>
+      
+        <script src="../../../assets/js/init.js"></script>
       
     
   </body>

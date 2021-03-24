@@ -34,6 +34,8 @@
     
     
     
+      <link rel="stylesheet" href="../../assets/css/highlight.css">
+    
       <link rel="stylesheet" href="../../assets/css/custom.css">
     
     
@@ -1588,113 +1590,76 @@
 <p>购买p2.xlarge实例（1 NVIDIA K80 GPU， 4核CPU，61G内存，$0.9/小时），空间需要10G以上，建议20G，因为nvidia与cuda包的安装都需要不少的空间（按下面的安装方法，使用的空间接近10G）。
 选择 aws 提供的 ubuntu 16.04，跟需求配置安装。</p>
 <p>安装后建议设置一下locale，不然下面的步骤中可能会报错。</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
-<span class="normal">2</span>
-<span class="normal">3</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="nb">export</span> <span class="nv">LC_ALL</span><span class="o">=</span><span class="s2">&quot;en_US.UTF-8&quot;</span>
-<span class="nb">export</span> <span class="nv">LC_CTYPE</span><span class="o">=</span><span class="s2">&quot;en_US.UTF-8&quot;</span>
+<pre><code class="language-shell">export LC_ALL=&quot;en_US.UTF-8&quot;
+export LC_CTYPE=&quot;en_US.UTF-8&quot;
 sudo dpkg-reconfigure locales
-</code></pre></div>
-</td></tr></table>
+</code></pre>
 <h3 id="nvidia">安装Nvidia显卡驱动<a class="headerlink" href="#nvidia" title="Permanent link">&para;</a></h3>
 <p>首先，检查一下服务器中是否真的存在Nvidia显卡：</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>lspci <span class="p">|</span> grep -i nvidia
-</code></pre></div>
-</td></tr></table>
+<pre><code class="language-shell">lspci | grep -i nvidia
+</code></pre>
 <p>直接使用ubuntu官方提供的Nvidia显卡驱动，目前版本是367：</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
-<span class="normal">2</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>apt-cache search nvidia
+<pre><code class="language-shell">apt-cache search nvidia
 sudo apt-get install nvidia-367 nvidia-modprobe
-</code></pre></div>
-</td></tr></table>
+
+</code></pre>
 <p>检测驱动是否正常安装：</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>nvidia-smi
-</code></pre></div>
-</td></tr></table>
+<pre><code class="language-shell">nvidia-smi
+</code></pre>
 <p>正常情况下会输出：</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
-<span class="normal"> 2</span>
-<span class="normal"> 3</span>
-<span class="normal"> 4</span>
-<span class="normal"> 5</span>
-<span class="normal"> 6</span>
-<span class="normal"> 7</span>
-<span class="normal"> 8</span>
-<span class="normal"> 9</span>
-<span class="normal">10</span>
-<span class="normal">11</span>
-<span class="normal">12</span>
-<span class="normal">13</span>
-<span class="normal">14</span>
-<span class="normal">15</span>
-<span class="normal">16</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>+-----------------------------------------------------------------------------+
-<span class="p">|</span> NVIDIA-SMI <span class="m">367</span>.57                 Driver Version: <span class="m">367</span>.57                    <span class="p">|</span>
-<span class="p">|</span>-------------------------------+----------------------+----------------------+
-<span class="p">|</span> GPU  Name        Persistence-M<span class="p">|</span> Bus-Id        Disp.A <span class="p">|</span> Volatile Uncorr. ECC <span class="p">|</span>
-<span class="p">|</span> Fan  Temp  Perf  Pwr:Usage/Cap<span class="p">|</span>         Memory-Usage <span class="p">|</span> GPU-Util  Compute M. <span class="p">|</span>
-<span class="p">|</span><span class="o">===============================</span>+<span class="o">======================</span>+<span class="o">======================</span><span class="p">|</span>
-<span class="p">|</span>   <span class="m">0</span>  Tesla K80           Off  <span class="p">|</span> <span class="m">0000</span>:00:1E.0     Off <span class="p">|</span>                    <span class="m">0</span> <span class="p">|</span>
-<span class="p">|</span> N/A   29C    P0    74W / 149W <span class="p">|</span>      0MiB / 11439MiB <span class="p">|</span>     <span class="m">99</span>%      Default <span class="p">|</span>
+<pre><code class="language-shell">
++-----------------------------------------------------------------------------+
+| NVIDIA-SMI 367.57                 Driver Version: 367.57                    |
+|-------------------------------+----------------------+----------------------+
+| GPU  Name        Persistence-M| Bus-Id        Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp  Perf  Pwr:Usage/Cap|         Memory-Usage | GPU-Util  Compute M. |
+|===============================+======================+======================|
+|   0  Tesla K80           Off  | 0000:00:1E.0     Off |                    0 |
+| N/A   29C    P0    74W / 149W |      0MiB / 11439MiB |     99%      Default |
 +-------------------------------+----------------------+----------------------+
 
 +-----------------------------------------------------------------------------+
-<span class="p">|</span> Processes:                                                       GPU Memory <span class="p">|</span>
-<span class="p">|</span>  GPU       PID  Type  Process name                               Usage      <span class="p">|</span>
-<span class="p">|</span><span class="o">=============================================================================</span><span class="p">|</span>
-<span class="p">|</span>  No running processes found                                                 <span class="p">|</span>
+| Processes:                                                       GPU Memory |
+|  GPU       PID  Type  Process name                               Usage      |
+|=============================================================================|
+|  No running processes found                                                 |
 +-----------------------------------------------------------------------------+
-</code></pre></div>
-</td></tr></table>
+
+
+</code></pre>
 <h3 id="cuda-cudnn">安装cuda cuDNN<a class="headerlink" href="#cuda-cudnn" title="Permanent link">&para;</a></h3>
 <p>到<a href="https://developer.nvidia.com/cuda-downloads">官网</a>下载最新版本的cuda，以及对应的cudnn，安装：</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
-<span class="normal">2</span>
-<span class="normal">3</span>
-<span class="normal">4</span>
-<span class="normal">5</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>wget http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64/cuda-repo-ubuntu1604_8.0.44-1_amd64.deb
+<pre><code class="language-shell">wget http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64/cuda-repo-ubuntu1604_8.0.44-1_amd64.deb
 
 sudo dpkg -i cuda-repo-ubuntu1604_8.0.44-1_amd64.deb
 sudo apt-get update
 sudo apt-get install cuda
-</code></pre></div>
-</td></tr></table>
+</code></pre>
 <p>下载与安装cuDNN（需要到官方注册登录后才能得到下载地址）</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
-<span class="normal">2</span>
-<span class="normal">3</span>
-<span class="normal">4</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>tar xvzf cudnn-8.0-linux-x64-v5.1.tgz
+<pre><code class="language-shell">tar xvzf cudnn-8.0-linux-x64-v5.1.tgz
 sudo cp -P cuda/include/cudnn.h /usr/local/cuda/include
 sudo cp -P cuda/lib64/libcudnn* /usr/local/cuda/lib64
 sudo chmod a+r /usr/local/cuda/include/cudnn.h /usr/local/cuda/lib64/libcudnn*
-</code></pre></div>
-</td></tr></table>
+
+</code></pre>
 <h3 id="tensorflow">安装TensorFlow<a class="headerlink" href="#tensorflow" title="Permanent link">&para;</a></h3>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
-<span class="normal">2</span>
-<span class="normal">3</span>
-<span class="normal">4</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>sudo apt-get install python-pip python-dev
+<pre><code class="language-shell">sudo apt-get install python-pip python-dev
 sudo pip install --upgrade pip
 
 sudo pip install tensorflow-gpu
-</code></pre></div>
-</td></tr></table>
+
+</code></pre>
 <h3 id="neural-style">测试Neural Style<a class="headerlink" href="#neural-style" title="Permanent link">&para;</a></h3>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
-<span class="normal">2</span>
-<span class="normal">3</span>
-<span class="normal">4</span>
-<span class="normal">5</span>
-<span class="normal">6</span>
-<span class="normal">7</span>
-<span class="normal">8</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>sudo apt-get install libatlas-base-dev
+<pre><code class="language-shell">sudo apt-get install libatlas-base-dev
 sudo pip install numpy scipy pillow
 
 git clone https://github.com/anishathalye/neural-style.git
-<span class="nb">cd</span> neural-style
+cd neural-style
 wget http://www.vlfeat.org/matconvnet/models/beta16/imagenet-vgg-verydeep-19.mat
 
-python neural_style.py --content examples/1-content.jpg --styles examples/1-style.jpg --output <span class="m">1</span>.jpg
-</code></pre></div>
-</td></tr></table>
+python neural_style.py --content examples/1-content.jpg --styles examples/1-style.jpg --output 1.jpg
+
+</code></pre>
 <p>完成。</p>
 <p>跑一次 Neural Style 大概需要7分钟。</p>
 <p>测试后记得讲实例停掉，然后制作image，留作下次测试用，讲运行中的实例删除，毕竟$0.9/小时也不便宜（image保存在EBS中，也会消耗小量的费用）。</p>
@@ -1706,28 +1671,11 @@ python neural_style.py --content examples/1-content.jpg --styles examples/1-styl
 <p>发现阿里云用起来也挺顺手，提供一个阿里云的ansible脚本，安装快，省钱：</p>
 <p><a href="https://github.com/yplam/AliyunTensorflowGPUAnsible">https://github.com/yplam/AliyunTensorflowGPUAnsible</a></p>
 <p>update: 2018-05-17,新版安装流程</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
-<span class="normal"> 2</span>
-<span class="normal"> 3</span>
-<span class="normal"> 4</span>
-<span class="normal"> 5</span>
-<span class="normal"> 6</span>
-<span class="normal"> 7</span>
-<span class="normal"> 8</span>
-<span class="normal"> 9</span>
-<span class="normal">10</span>
-<span class="normal">11</span>
-<span class="normal">12</span>
-<span class="normal">13</span>
-<span class="normal">14</span>
-<span class="normal">15</span>
-<span class="normal">16</span>
-<span class="normal">17</span>
-<span class="normal">18</span>
-<span class="normal">19</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="nb">export</span> <span class="nv">LC_ALL</span><span class="o">=</span><span class="s2">&quot;en_US.UTF-8&quot;</span>
-<span class="nb">export</span> <span class="nv">LC_CTYPE</span><span class="o">=</span><span class="s2">&quot;en_US.UTF-8&quot;</span>
+<pre><code class="language-shell">
+export LC_ALL=&quot;en_US.UTF-8&quot;
+export LC_CTYPE=&quot;en_US.UTF-8&quot;
 sudo dpkg-reconfigure locales
-lspci <span class="p">|</span> grep -i nvidia
+lspci | grep -i nvidia
 sudo apt-get update
 sudo apt-cache search nvidia
 wget http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64/cuda-repo-ubuntu1604_9.0.176-1_amd64.deb
@@ -1735,16 +1683,16 @@ sudo dpkg -i cuda-repo-ubuntu1604_9.0.176-1_amd64.deb
 sudo apt-key adv --fetch-keys http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64/7fa2af80.pub
 sudo apt-get update
 sudo apt-get install cuda-9-0
-wget <span class="s2">&quot;https://developer.download.nvidia.com/compute/machine-learning/cudnn/secure/v7.0.5/prod/9.0_20171129/Ubuntu16_04-x64/libcudnn7_7.0.5.15-1%2Bcuda9.0_amd64.deb?***</span>
-<span class="s2">dpkg -i libcudnn7_7.0.5.15-1+cuda9.0_amd64.deb </span>
-<span class="s2">sudo dpkg -i libcudnn7_7.0.5.15-1+cuda9.0_amd64.deb </span>
-<span class="s2">nvidia-smi</span>
-<span class="s2">sudo apt-get install python-pip python-dev</span>
-<span class="s2">sudo pip install --upgrade pip</span>
-<span class="s2">sudo pip install tensorflow-gpu</span>
-<span class="s2">sudo pip install scikit-image</span>
-</code></pre></div>
-</td></tr></table>
+wget &quot;https://developer.download.nvidia.com/compute/machine-learning/cudnn/secure/v7.0.5/prod/9.0_20171129/Ubuntu16_04-x64/libcudnn7_7.0.5.15-1%2Bcuda9.0_amd64.deb?***
+dpkg -i libcudnn7_7.0.5.15-1+cuda9.0_amd64.deb 
+sudo dpkg -i libcudnn7_7.0.5.15-1+cuda9.0_amd64.deb 
+nvidia-smi
+sudo apt-get install python-pip python-dev
+sudo pip install --upgrade pip
+sudo pip install tensorflow-gpu
+sudo pip install scikit-image
+
+</code></pre>
                 
                   
                 
@@ -1784,6 +1732,10 @@ wget <span class="s2">&quot;https://developer.download.nvidia.com/compute/machin
           }, typeof search !== "undefined" && search)
         })
       </script>
+      
+        <script src="../../assets/js/highlight.min.js"></script>
+      
+        <script src="../../assets/js/init.js"></script>
       
     
   </body>

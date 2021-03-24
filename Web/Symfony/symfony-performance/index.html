@@ -34,6 +34,8 @@
     
     
     
+      <link rel="stylesheet" href="../../../assets/css/highlight.css">
+    
       <link rel="stylesheet" href="../../../assets/css/custom.css">
     
     
@@ -1471,80 +1473,52 @@
 
 <p>首先，symfony new test 3.0 命令行创建3.0版本的symfony</p>
 <p><strong>初始性能测试</strong></p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
-<span class="normal">2</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>Requests per second:    <span class="m">263</span>.32 <span class="o">[</span><span class="c1">#/sec] (mean)</span>
-Time per request:       <span class="m">37</span>.977 <span class="o">[</span>ms<span class="o">]</span> <span class="o">(</span>mean<span class="o">)</span>
-</code></pre></div>
-</td></tr></table>
+<pre><code class="language-shell">Requests per second:    263.32 [#/sec] (mean)
+Time per request:       37.977 [ms] (mean)
+</code></pre>
 <p><strong>使用APC</strong></p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
-<span class="normal">2</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>Requests per second:    <span class="m">307</span>.96 <span class="o">[</span><span class="c1">#/sec] (mean)</span>
-Time per request:       <span class="m">32</span>.472 <span class="o">[</span>ms<span class="o">]</span> <span class="o">(</span>mean<span class="o">)</span>
-</code></pre></div>
-</td></tr></table>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
-<span class="normal">2</span>
-<span class="normal">3</span>
-<span class="normal">4</span>
-<span class="normal">5</span>
-<span class="normal">6</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="x">$loader = require __DIR__.&#39;/../app/autoload.php&#39;;</span>
-<span class="x">include_once __DIR__.&#39;/../var/bootstrap.php.cache&#39;;</span>
+<pre><code class="language-shell">Requests per second:    307.96 [#/sec] (mean)
+Time per request:       32.472 [ms] (mean)
+</code></pre>
+<pre><code class="language-php">$loader = require __DIR__.'/../app/autoload.php';
+include_once __DIR__.'/../var/bootstrap.php.cache';
 
-<span class="x">$apcLoader = new Symfony\Component\ClassLoader\ApcClassLoader(sha1(__FILE__), $loader);</span>
-<span class="x">$loader-&gt;unregister();</span>
-<span class="x">$apcLoader-&gt;register(true);</span>
-</code></pre></div>
-</td></tr></table>
-<p>在产线环境还可以对apc进行优化以提升性能，不过需要注意deploy后重启php-fpm
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>apc.stat=0
-</code></pre></div>
-</td></tr></table></p>
+$apcLoader = new Symfony\Component\ClassLoader\ApcClassLoader(sha1(__FILE__), $loader);
+$loader-&gt;unregister();
+$apcLoader-&gt;register(true);
+</code></pre>
+<p>在产线环境还可以对apc进行优化以提升性能，不过需要注意deploy后重启php-fpm</p>
+<pre><code class="language-conf">apc.stat=0
+</code></pre>
 <p><strong>不使用twig，直接输出json</strong></p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
-<span class="normal">2</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>Requests per second:    372.09 [#/sec] (mean)
+<pre><code class="language-conf">Requests per second:    372.09 [#/sec] (mean)
 Time per request:       26.875 [ms] (mean)
-</code></pre></div>
-</td></tr></table>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
-<span class="normal"> 2</span>
-<span class="normal"> 3</span>
-<span class="normal"> 4</span>
-<span class="normal"> 5</span>
-<span class="normal"> 6</span>
-<span class="normal"> 7</span>
-<span class="normal"> 8</span>
-<span class="normal"> 9</span>
-<span class="normal">10</span>
-<span class="normal">11</span>
-<span class="normal">12</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="x">use Symfony\Component\HttpFoundation\JsonResponse;</span>
+</code></pre>
+<pre><code class="language-php">use Symfony\Component\HttpFoundation\JsonResponse;
 
-<span class="x">class DefaultController extends Controller</span>
-<span class="x">{</span>
-<span class="x">    /**</span>
-<span class="x">     * @Route(&quot;/&quot;, name=&quot;homepage&quot;)</span>
-<span class="x">     */</span>
-<span class="x">    public function indexAction(Request $request)</span>
-<span class="x">    {</span>
-<span class="x">        return new JsonResponse(array(&#39;hello&#39;=&gt;&#39;world&#39;));</span>
-<span class="x">    }</span>
-<span class="x">}</span>
-</code></pre></div>
-</td></tr></table>
+class DefaultController extends Controller
+{
+    /**
+     * @Route(&quot;/&quot;, name=&quot;homepage&quot;)
+     */
+    public function indexAction(Request $request)
+    {
+        return new JsonResponse(array('hello'=&gt;'world'));
+    }
+}
+
+</code></pre>
 <p><strong>禁用monolog</strong></p>
 <p>如果你不需要在产线记录日志，或者你根本没有看过产线日志，那么禁用monolog也可以带来性能的提升。当然，使用redis log也是一个不错的选择。</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
-<span class="normal">2</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="x">Requests per second:    405.40 [#/sec] (mean)</span>
-<span class="x">Time per request:       24.667 [ms] (mean)</span>
-</code></pre></div>
-</td></tr></table>
+<pre><code class="language-php">Requests per second:    405.40 [#/sec] (mean)
+Time per request:       24.667 [ms] (mean)
+</code></pre>
 <p><strong>禁用SwiftMailer</strong></p>
 <p>对于需要经常发送邮件的应用而言，SwiftMailer是一个不错的选择，然而SwiftMailer会监听kernel.terminate事件来发送邮件，这样就是对于没有发送邮件需求的请求，使用SwiftMailer还会产生4-5ms的时间消耗，对于性能要求高的应用，这也是不可接受的。</p>
 <p>并且，就算是需要发送邮件，对于一个高性能的应用，将邮件放在队列中发送比在kernel.terminate中发送要更加合理一些。</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
-<span class="normal">2</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="x">Requests per second:    506.43 [#/sec] (mean)</span>
-<span class="x">Time per request:       19.746 [ms] (mean)</span>
-</code></pre></div>
-</td></tr></table>
+<pre><code class="language-php">Requests per second:    506.43 [#/sec] (mean)
+Time per request:       19.746 [ms] (mean)
+</code></pre>
 <p>以上就是暂时能够整理出来的Symfony性能最优化初始配置，当然，此配置只能做一些简单的restful应用。</p>
 <p>在实际项目中，我们在创建新的service，添加新bundle时必须要关注其带来的性能影响，下面是一些常用的避免性能恶化的实践：</p>
 <p><strong>避免在service构造函数中做过多操作</strong></p>
@@ -1589,6 +1563,10 @@ Time per request:       26.875 [ms] (mean)
           }, typeof search !== "undefined" && search)
         })
       </script>
+      
+        <script src="../../../assets/js/highlight.min.js"></script>
+      
+        <script src="../../../assets/js/init.js"></script>
       
     
   </body>

@@ -34,6 +34,8 @@
     
     
     
+      <link rel="stylesheet" href="../../assets/css/highlight.css">
+    
       <link rel="stylesheet" href="../../assets/css/custom.css">
     
     
@@ -1570,267 +1572,143 @@
 <li>通过最佳模型与测试集得出模型评估</li>
 </ol>
 <p>实现代码如下：</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">  1</span>
-<span class="normal">  2</span>
-<span class="normal">  3</span>
-<span class="normal">  4</span>
-<span class="normal">  5</span>
-<span class="normal">  6</span>
-<span class="normal">  7</span>
-<span class="normal">  8</span>
-<span class="normal">  9</span>
-<span class="normal"> 10</span>
-<span class="normal"> 11</span>
-<span class="normal"> 12</span>
-<span class="normal"> 13</span>
-<span class="normal"> 14</span>
-<span class="normal"> 15</span>
-<span class="normal"> 16</span>
-<span class="normal"> 17</span>
-<span class="normal"> 18</span>
-<span class="normal"> 19</span>
-<span class="normal"> 20</span>
-<span class="normal"> 21</span>
-<span class="normal"> 22</span>
-<span class="normal"> 23</span>
-<span class="normal"> 24</span>
-<span class="normal"> 25</span>
-<span class="normal"> 26</span>
-<span class="normal"> 27</span>
-<span class="normal"> 28</span>
-<span class="normal"> 29</span>
-<span class="normal"> 30</span>
-<span class="normal"> 31</span>
-<span class="normal"> 32</span>
-<span class="normal"> 33</span>
-<span class="normal"> 34</span>
-<span class="normal"> 35</span>
-<span class="normal"> 36</span>
-<span class="normal"> 37</span>
-<span class="normal"> 38</span>
-<span class="normal"> 39</span>
-<span class="normal"> 40</span>
-<span class="normal"> 41</span>
-<span class="normal"> 42</span>
-<span class="normal"> 43</span>
-<span class="normal"> 44</span>
-<span class="normal"> 45</span>
-<span class="normal"> 46</span>
-<span class="normal"> 47</span>
-<span class="normal"> 48</span>
-<span class="normal"> 49</span>
-<span class="normal"> 50</span>
-<span class="normal"> 51</span>
-<span class="normal"> 52</span>
-<span class="normal"> 53</span>
-<span class="normal"> 54</span>
-<span class="normal"> 55</span>
-<span class="normal"> 56</span>
-<span class="normal"> 57</span>
-<span class="normal"> 58</span>
-<span class="normal"> 59</span>
-<span class="normal"> 60</span>
-<span class="normal"> 61</span>
-<span class="normal"> 62</span>
-<span class="normal"> 63</span>
-<span class="normal"> 64</span>
-<span class="normal"> 65</span>
-<span class="normal"> 66</span>
-<span class="normal"> 67</span>
-<span class="normal"> 68</span>
-<span class="normal"> 69</span>
-<span class="normal"> 70</span>
-<span class="normal"> 71</span>
-<span class="normal"> 72</span>
-<span class="normal"> 73</span>
-<span class="normal"> 74</span>
-<span class="normal"> 75</span>
-<span class="normal"> 76</span>
-<span class="normal"> 77</span>
-<span class="normal"> 78</span>
-<span class="normal"> 79</span>
-<span class="normal"> 80</span>
-<span class="normal"> 81</span>
-<span class="normal"> 82</span>
-<span class="normal"> 83</span>
-<span class="normal"> 84</span>
-<span class="normal"> 85</span>
-<span class="normal"> 86</span>
-<span class="normal"> 87</span>
-<span class="normal"> 88</span>
-<span class="normal"> 89</span>
-<span class="normal"> 90</span>
-<span class="normal"> 91</span>
-<span class="normal"> 92</span>
-<span class="normal"> 93</span>
-<span class="normal"> 94</span>
-<span class="normal"> 95</span>
-<span class="normal"> 96</span>
-<span class="normal"> 97</span>
-<span class="normal"> 98</span>
-<span class="normal"> 99</span>
-<span class="normal">100</span>
-<span class="normal">101</span>
-<span class="normal">102</span>
-<span class="normal">103</span>
-<span class="normal">104</span>
-<span class="normal">105</span>
-<span class="normal">106</span>
-<span class="normal">107</span>
-<span class="normal">108</span>
-<span class="normal">109</span>
-<span class="normal">110</span>
-<span class="normal">111</span>
-<span class="normal">112</span>
-<span class="normal">113</span>
-<span class="normal">114</span>
-<span class="normal">115</span>
-<span class="normal">116</span>
-<span class="normal">117</span>
-<span class="normal">118</span>
-<span class="normal">119</span>
-<span class="normal">120</span>
-<span class="normal">121</span>
-<span class="normal">122</span>
-<span class="normal">123</span>
-<span class="normal">124</span>
-<span class="normal">125</span>
-<span class="normal">126</span>
-<span class="normal">127</span>
-<span class="normal">128</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="k">package</span> <span class="nn">com.yplam</span>
+<pre><code class="language-scala">
+package com.yplam
 
-<span class="k">import</span> <span class="nn">org.apache.log4j.</span><span class="o">{</span><span class="nc">Level</span><span class="o">,</span> <span class="nc">Logger</span><span class="o">}</span>
-<span class="k">import</span> <span class="nn">org.apache.spark.sql.</span><span class="o">{</span><span class="nc">Row</span><span class="o">,</span> <span class="nc">SparkSession</span><span class="o">}</span>
-<span class="k">import</span> <span class="nn">scopt.OptionParser</span>
-<span class="k">import</span> <span class="nn">org.ansj.recognition.impl.StopRecognition</span>
-<span class="k">import</span> <span class="nn">org.ansj.splitWord.analysis.ToAnalysis</span>
-<span class="k">import</span> <span class="nn">org.apache.spark.ml.</span><span class="o">{</span><span class="nc">Pipeline</span><span class="o">,</span> <span class="nc">PipelineModel</span><span class="o">}</span>
-<span class="k">import</span> <span class="nn">org.apache.spark.ml.classification.NaiveBayes</span>
-<span class="k">import</span> <span class="nn">org.apache.spark.ml.evaluation.MulticlassClassificationEvaluator</span>
-<span class="k">import</span> <span class="nn">org.apache.spark.ml.feature.</span><span class="o">{</span><span class="nc">HashingTF</span><span class="o">,</span> <span class="nc">IDF</span><span class="o">}</span>
-<span class="k">import</span> <span class="nn">org.apache.spark.ml.tuning.</span><span class="o">{</span><span class="nc">ParamGridBuilder</span><span class="o">,</span> <span class="nc">TrainValidationSplit</span><span class="o">}</span>
-<span class="k">import</span> <span class="nn">org.apache.spark.mllib.evaluation.MulticlassMetrics</span>
+import org.apache.log4j.{Level, Logger}
+import org.apache.spark.sql.{Row, SparkSession}
+import scopt.OptionParser
+import org.ansj.recognition.impl.StopRecognition
+import org.ansj.splitWord.analysis.ToAnalysis
+import org.apache.spark.ml.{Pipeline, PipelineModel}
+import org.apache.spark.ml.classification.NaiveBayes
+import org.apache.spark.ml.evaluation.MulticlassClassificationEvaluator
+import org.apache.spark.ml.feature.{HashingTF, IDF}
+import org.apache.spark.ml.tuning.{ParamGridBuilder, TrainValidationSplit}
+import org.apache.spark.mllib.evaluation.MulticlassMetrics
 
-<span class="k">object</span> <span class="nc">SpamFilterTrainer</span> <span class="o">{</span>
+object SpamFilterTrainer {
 
-  <span class="cm">/**</span>
-<span class="cm">    * 运行参数</span>
-<span class="cm">    * @param trainInput 训练数据集路径，格式为 label;content</span>
-<span class="cm">    */</span>
-  <span class="k">case</span> <span class="k">class</span> <span class="nc">SpamFilterParams</span><span class="o">(</span>
-               <span class="n">trainInput</span><span class="k">:</span> <span class="kt">String</span> <span class="o">=</span> <span class="kc">null</span><span class="o">,</span>
-               <span class="n">modelOutput</span><span class="k">:</span> <span class="kt">String</span> <span class="o">=</span> <span class="kc">null</span>
-             <span class="o">)</span>
+  /**
+    * 运行参数
+    * @param trainInput 训练数据集路径，格式为 label;content
+    */
+  case class SpamFilterParams(
+               trainInput: String = null,
+               modelOutput: String = null
+             )
 
-  <span class="k">def</span> <span class="n">main</span><span class="o">(</span><span class="n">args</span><span class="k">:</span> <span class="kt">Array</span><span class="o">[</span><span class="kt">String</span><span class="o">])</span><span class="k">:</span> <span class="kt">Unit</span> <span class="o">=</span> <span class="o">{</span>
-    <span class="nc">Logger</span><span class="o">.</span><span class="n">getLogger</span><span class="o">(</span><span class="s">&quot;org&quot;</span><span class="o">).</span><span class="n">setLevel</span><span class="o">(</span><span class="nc">Level</span><span class="o">.</span><span class="nc">WARN</span><span class="o">)</span>
-    <span class="k">val</span> <span class="n">spark</span> <span class="o">=</span> <span class="nc">SparkSession</span>
-      <span class="o">.</span><span class="n">builder</span><span class="o">()</span>
-      <span class="o">.</span><span class="n">appName</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="n">getClass</span><span class="o">.</span><span class="n">getSimpleName</span><span class="o">)</span>
-      <span class="o">.</span><span class="n">master</span><span class="o">(</span><span class="s">&quot;local[*]&quot;</span><span class="o">)</span>
-      <span class="o">.</span><span class="n">getOrCreate</span><span class="o">()</span>
+  def main(args: Array[String]): Unit = {
+    Logger.getLogger(&quot;org&quot;).setLevel(Level.WARN)
+    val spark = SparkSession
+      .builder()
+      .appName(this.getClass.getSimpleName)
+      .master(&quot;local[*]&quot;)
+      .getOrCreate()
 
-    <span class="k">val</span> <span class="n">defaultParam</span> <span class="o">=</span> <span class="nc">SpamFilterParams</span><span class="o">()</span>
-    <span class="k">val</span> <span class="n">parser</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">OptionParser</span><span class="o">[</span><span class="kt">SpamFilterParams</span><span class="o">](</span><span class="k">this</span><span class="o">.</span><span class="n">getClass</span><span class="o">.</span><span class="n">getSimpleName</span><span class="o">)</span> <span class="o">{</span>
-      <span class="n">head</span><span class="o">(</span><span class="s">s&quot;</span><span class="si">${</span><span class="k">this</span><span class="o">.</span><span class="n">getClass</span><span class="o">.</span><span class="n">getSimpleName</span><span class="si">}</span><span class="s">: BBS Spam filter.&quot;</span><span class="o">)</span>
-      <span class="n">opt</span><span class="o">[</span><span class="kt">String</span><span class="o">](</span><span class="s">&quot;train&quot;</span><span class="o">)</span>
-        <span class="o">.</span><span class="n">text</span><span class="o">(</span><span class="s">&quot;train input&quot;</span><span class="o">)</span>
-        <span class="o">.</span><span class="n">action</span><span class="o">((</span><span class="n">x</span><span class="o">,</span> <span class="n">c</span><span class="o">)</span> <span class="o">=&gt;</span> <span class="n">c</span><span class="o">.</span><span class="n">copy</span><span class="o">(</span><span class="n">trainInput</span> <span class="o">=</span> <span class="n">x</span><span class="o">))</span>
-        <span class="o">.</span><span class="n">required</span><span class="o">()</span>
-      <span class="n">opt</span><span class="o">[</span><span class="kt">String</span><span class="o">](</span><span class="s">&quot;output&quot;</span><span class="o">)</span>
-        <span class="o">.</span><span class="n">text</span><span class="o">(</span><span class="s">&quot;model output&quot;</span><span class="o">)</span>
-        <span class="o">.</span><span class="n">action</span><span class="o">((</span><span class="n">x</span><span class="o">,</span> <span class="n">c</span><span class="o">)</span> <span class="o">=&gt;</span> <span class="n">c</span><span class="o">.</span><span class="n">copy</span><span class="o">(</span><span class="n">modelOutput</span> <span class="o">=</span> <span class="n">x</span><span class="o">))</span>
-        <span class="o">.</span><span class="n">optional</span><span class="o">()</span>
-    <span class="o">}</span>
-    <span class="n">parser</span><span class="o">.</span><span class="n">parse</span><span class="o">(</span><span class="n">args</span><span class="o">,</span> <span class="n">defaultParam</span><span class="o">).</span><span class="n">map</span> <span class="o">{</span> <span class="n">params</span> <span class="o">=&gt;</span>
-      <span class="n">run</span><span class="o">(</span><span class="n">spark</span><span class="o">,</span> <span class="n">params</span><span class="o">.</span><span class="n">trainInput</span><span class="o">,</span> <span class="n">params</span><span class="o">.</span><span class="n">modelOutput</span><span class="o">)</span>
-      <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="o">(</span><span class="mi">0</span><span class="o">)</span>
-    <span class="o">}</span> <span class="n">getOrElse</span> <span class="o">{</span>
-      <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="o">(</span><span class="mi">1</span><span class="o">)</span>
-    <span class="o">}</span>
-  <span class="o">}</span>
+    val defaultParam = SpamFilterParams()
+    val parser = new OptionParser[SpamFilterParams](this.getClass.getSimpleName) {
+      head(s&quot;${this.getClass.getSimpleName}: BBS Spam filter.&quot;)
+      opt[String](&quot;train&quot;)
+        .text(&quot;train input&quot;)
+        .action((x, c) =&gt; c.copy(trainInput = x))
+        .required()
+      opt[String](&quot;output&quot;)
+        .text(&quot;model output&quot;)
+        .action((x, c) =&gt; c.copy(modelOutput = x))
+        .optional()
+    }
+    parser.parse(args, defaultParam).map { params =&gt;
+      run(spark, params.trainInput, params.modelOutput)
+      sys.exit(0)
+    } getOrElse {
+      sys.exit(1)
+    }
+  }
 
-  <span class="k">def</span> <span class="n">run</span><span class="o">(</span><span class="n">spark</span><span class="k">:</span> <span class="kt">SparkSession</span><span class="o">,</span> <span class="n">trainInput</span><span class="k">:</span> <span class="kt">String</span><span class="o">,</span> <span class="n">modelOutput</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span> <span class="k">:</span> <span class="kt">Unit</span> <span class="o">=</span> <span class="o">{</span>
-    <span class="k">import</span> <span class="nn">spark.implicits._</span>
-    <span class="k">import</span> <span class="nn">scala.collection.JavaConversions._</span>
+  def run(spark: SparkSession, trainInput: String, modelOutput: String) : Unit = {
+    import spark.implicits._
+    import scala.collection.JavaConversions._
 
-    <span class="k">val</span> <span class="n">logger</span> <span class="o">=</span> <span class="nc">Logger</span><span class="o">.</span><span class="n">getLogger</span><span class="o">(</span><span class="s">&quot;app&quot;</span><span class="o">)</span>
-    <span class="n">logger</span><span class="o">.</span><span class="n">warn</span><span class="o">(</span><span class="s">&quot;Start:&quot;</span> <span class="o">+</span> <span class="nc">System</span><span class="o">.</span><span class="n">currentTimeMillis</span><span class="o">().</span><span class="n">toString</span><span class="o">)</span>
+    val logger = Logger.getLogger(&quot;app&quot;)
+    logger.warn(&quot;Start:&quot; + System.currentTimeMillis().toString)
 
-    <span class="k">val</span> <span class="n">filter</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">StopRecognition</span><span class="o">()</span>
-    <span class="n">filter</span><span class="o">.</span><span class="n">insertStopWords</span><span class="o">(</span><span class="s">&quot; &quot;</span><span class="o">,</span> <span class="s">&quot;,&quot;</span><span class="o">)</span>
+    val filter = new StopRecognition()
+    filter.insertStopWords(&quot; &quot;, &quot;,&quot;)
 
-    <span class="c1">// 读取数据集，使用 ansj 分词，生成 (label, words) 结构的 dataframe</span>
-    <span class="k">val</span> <span class="n">inputData</span> <span class="o">=</span> <span class="n">spark</span><span class="o">.</span><span class="n">sparkContext</span><span class="o">.</span><span class="n">textFile</span><span class="o">(</span><span class="n">trainInput</span><span class="o">).</span><span class="n">map</span><span class="o">{</span> <span class="n">line</span> <span class="o">=&gt;</span>
-      <span class="k">val</span> <span class="n">splits</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="o">(</span><span class="s">&quot;;&quot;</span><span class="o">,</span> <span class="mi">2</span><span class="o">)</span>
-      <span class="k">val</span> <span class="n">content</span> <span class="o">=</span> <span class="k">if</span><span class="o">(</span><span class="n">splits</span><span class="o">(</span><span class="mi">1</span><span class="o">).</span><span class="n">length</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="o">){</span>
-        <span class="nc">ToAnalysis</span><span class="o">.</span><span class="n">parse</span><span class="o">(</span><span class="n">splits</span><span class="o">(</span><span class="mi">1</span><span class="o">)).</span><span class="n">recognition</span><span class="o">(</span><span class="n">filter</span><span class="o">).</span><span class="n">getTerms</span><span class="o">.</span><span class="n">map</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">getRealName</span><span class="o">)</span>
-      <span class="o">}</span>
-      <span class="k">else</span> <span class="nc">List</span><span class="o">(</span><span class="s">&quot;&quot;</span><span class="o">)</span>
-      <span class="o">(</span><span class="n">splits</span><span class="o">(</span><span class="mi">0</span><span class="o">).</span><span class="n">toInt</span><span class="o">,</span> <span class="n">content</span><span class="o">)</span>
-    <span class="o">}.</span><span class="n">toDF</span><span class="o">(</span><span class="s">&quot;label&quot;</span><span class="o">,</span> <span class="s">&quot;words&quot;</span><span class="o">)</span>
-    <span class="n">inputData</span><span class="o">.</span><span class="n">show</span><span class="o">()</span>
+    // 读取数据集，使用 ansj 分词，生成 (label, words) 结构的 dataframe
+    val inputData = spark.sparkContext.textFile(trainInput).map{ line =&gt;
+      val splits = line.split(&quot;;&quot;, 2)
+      val content = if(splits(1).length &gt; 0){
+        ToAnalysis.parse(splits(1)).recognition(filter).getTerms.map(_.getRealName)
+      }
+      else List(&quot;&quot;)
+      (splits(0).toInt, content)
+    }.toDF(&quot;label&quot;, &quot;words&quot;)
+    inputData.show()
 
-    <span class="c1">// 分割训练集与测试集</span>
-    <span class="k">val</span> <span class="nc">Array</span><span class="o">(</span><span class="n">train</span><span class="o">,</span> <span class="n">test</span><span class="o">)</span> <span class="o">=</span> <span class="n">inputData</span><span class="o">.</span><span class="n">randomSplit</span><span class="o">(</span><span class="nc">Array</span><span class="o">(</span><span class="mf">0.9</span><span class="o">,</span> <span class="mf">0.1</span><span class="o">),</span> <span class="n">seed</span> <span class="o">=</span> <span class="mi">12345</span><span class="o">).</span><span class="n">map</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">cache</span><span class="o">())</span>
+    // 分割训练集与测试集
+    val Array(train, test) = inputData.randomSplit(Array(0.9, 0.1), seed = 12345).map(_.cache())
 
-    <span class="c1">// 创建 HashingTF，IDF，NaiveBayes 的 Pipeline 模型</span>
-    <span class="k">val</span> <span class="n">hashingTF</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">HashingTF</span><span class="o">().</span><span class="n">setInputCol</span><span class="o">(</span><span class="s">&quot;words&quot;</span><span class="o">).</span><span class="n">setOutputCol</span><span class="o">(</span><span class="s">&quot;rawFeatures&quot;</span><span class="o">).</span><span class="n">setNumFeatures</span><span class="o">(</span><span class="mi">5000</span><span class="o">)</span>
-    <span class="k">val</span> <span class="n">idf</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">IDF</span><span class="o">().</span><span class="n">setInputCol</span><span class="o">(</span><span class="s">&quot;rawFeatures&quot;</span><span class="o">).</span><span class="n">setOutputCol</span><span class="o">(</span><span class="s">&quot;features&quot;</span><span class="o">)</span>
-    <span class="k">val</span> <span class="n">nb</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">NaiveBayes</span><span class="o">()</span>
-      <span class="o">.</span><span class="n">setModelType</span><span class="o">(</span><span class="s">&quot;multinomial&quot;</span><span class="o">)</span>
-      <span class="o">.</span><span class="n">setFeaturesCol</span><span class="o">(</span><span class="s">&quot;features&quot;</span><span class="o">)</span>
-      <span class="o">.</span><span class="n">setLabelCol</span><span class="o">(</span><span class="s">&quot;label&quot;</span><span class="o">)</span>
-    <span class="k">val</span> <span class="n">pipeline</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Pipeline</span><span class="o">()</span>
-      <span class="o">.</span><span class="n">setStages</span><span class="o">(</span><span class="nc">Array</span><span class="o">(</span><span class="n">hashingTF</span><span class="o">,</span> <span class="n">idf</span><span class="o">,</span> <span class="n">nb</span><span class="o">))</span>
+    // 创建 HashingTF，IDF，NaiveBayes 的 Pipeline 模型
+    val hashingTF = new HashingTF().setInputCol(&quot;words&quot;).setOutputCol(&quot;rawFeatures&quot;).setNumFeatures(5000)
+    val idf = new IDF().setInputCol(&quot;rawFeatures&quot;).setOutputCol(&quot;features&quot;)
+    val nb = new NaiveBayes()
+      .setModelType(&quot;multinomial&quot;)
+      .setFeaturesCol(&quot;features&quot;)
+      .setLabelCol(&quot;label&quot;)
+    val pipeline = new Pipeline()
+      .setStages(Array(hashingTF, idf, nb))
 
-    <span class="c1">// 设置参数矩阵，然后使用 TrainValidationSplit 进行模型训练与参数选择</span>
-    <span class="k">val</span> <span class="n">paramGrid</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">ParamGridBuilder</span><span class="o">()</span>
-      <span class="o">.</span><span class="n">addGrid</span><span class="o">(</span><span class="n">hashingTF</span><span class="o">.</span><span class="n">numFeatures</span><span class="o">,</span> <span class="nc">Array</span><span class="o">(</span><span class="mi">50000</span><span class="o">,</span> <span class="mi">100000</span><span class="o">))</span>
-      <span class="o">.</span><span class="n">addGrid</span><span class="o">(</span><span class="n">nb</span><span class="o">.</span><span class="n">smoothing</span><span class="o">,</span> <span class="nc">Array</span><span class="o">(</span><span class="mf">1.0</span><span class="o">))</span>
-      <span class="o">.</span><span class="n">build</span><span class="o">()</span>
+    // 设置参数矩阵，然后使用 TrainValidationSplit 进行模型训练与参数选择
+    val paramGrid = new ParamGridBuilder()
+      .addGrid(hashingTF.numFeatures, Array(50000, 100000))
+      .addGrid(nb.smoothing, Array(1.0))
+      .build()
 
-    <span class="k">val</span> <span class="n">trainValidationSplit</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">TrainValidationSplit</span><span class="o">()</span>
-      <span class="o">.</span><span class="n">setEstimator</span><span class="o">(</span><span class="n">pipeline</span><span class="o">)</span>
-      <span class="o">.</span><span class="n">setEvaluator</span><span class="o">(</span><span class="k">new</span> <span class="nc">MulticlassClassificationEvaluator</span><span class="o">)</span>
-      <span class="o">.</span><span class="n">setEstimatorParamMaps</span><span class="o">(</span><span class="n">paramGrid</span><span class="o">)</span>
-      <span class="o">.</span><span class="n">setTrainRatio</span><span class="o">(</span><span class="mf">0.8</span><span class="o">)</span>
+    val trainValidationSplit = new TrainValidationSplit()
+      .setEstimator(pipeline)
+      .setEvaluator(new MulticlassClassificationEvaluator)
+      .setEstimatorParamMaps(paramGrid)
+      .setTrainRatio(0.8)
 
 
-    <span class="k">val</span> <span class="n">model</span> <span class="o">=</span> <span class="n">trainValidationSplit</span><span class="o">.</span><span class="n">fit</span><span class="o">(</span><span class="n">train</span><span class="o">)</span>
+    val model = trainValidationSplit.fit(train)
 
-    <span class="n">logger</span><span class="o">.</span><span class="n">warn</span><span class="o">(</span><span class="s">&quot;Train end:&quot;</span> <span class="o">+</span> <span class="nc">System</span><span class="o">.</span><span class="n">currentTimeMillis</span><span class="o">().</span><span class="n">toString</span><span class="o">)</span>
+    logger.warn(&quot;Train end:&quot; + System.currentTimeMillis().toString)
 
-    <span class="c1">// 训练出 bestModal，保存到指定路径</span>
-    <span class="k">if</span><span class="o">(</span><span class="n">modelOutput</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span>
-      <span class="n">model</span><span class="o">.</span><span class="n">bestModel</span><span class="o">.</span><span class="n">asInstanceOf</span><span class="o">[</span><span class="kt">PipelineModel</span><span class="o">].</span><span class="n">write</span><span class="o">.</span><span class="n">overwrite</span><span class="o">().</span><span class="n">save</span><span class="o">(</span><span class="n">modelOutput</span><span class="o">)</span>
+    // 训练出 bestModal，保存到指定路径
+    if(modelOutput != null)
+      model.bestModel.asInstanceOf[PipelineModel].write.overwrite().save(modelOutput)
 
-    <span class="c1">// 将参数与评估结果打印出来</span>
-    <span class="n">model</span><span class="o">.</span><span class="n">getEstimatorParamMaps</span><span class="o">.</span><span class="n">zip</span><span class="o">(</span><span class="n">model</span><span class="o">.</span><span class="n">validationMetrics</span><span class="o">).</span><span class="n">foreach</span><span class="o">(</span><span class="n">println</span><span class="o">)</span>
+    // 将参数与评估结果打印出来
+    model.getEstimatorParamMaps.zip(model.validationMetrics).foreach(println)
 
-    <span class="k">val</span> <span class="n">testResult</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">transform</span><span class="o">(</span><span class="n">test</span><span class="o">)</span>
-      <span class="o">.</span><span class="n">select</span><span class="o">(</span><span class="s">&quot;features&quot;</span><span class="o">,</span> <span class="s">&quot;label&quot;</span><span class="o">,</span> <span class="s">&quot;prediction&quot;</span><span class="o">)</span>
-    <span class="n">testResult</span><span class="o">.</span><span class="n">show</span><span class="o">()</span>
-    <span class="k">val</span> <span class="n">testPredictionAndLabels</span> <span class="o">=</span> <span class="n">testResult</span><span class="o">.</span><span class="n">select</span><span class="o">(</span><span class="s">&quot;prediction&quot;</span><span class="o">,</span> <span class="s">&quot;label&quot;</span><span class="o">).</span><span class="n">rdd</span><span class="o">.</span><span class="n">map</span><span class="o">{</span>
-      <span class="k">case</span> <span class="nc">Row</span><span class="o">(</span><span class="n">prediction</span><span class="k">:</span> <span class="kt">Double</span><span class="o">,</span> <span class="n">label</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span> <span class="o">=&gt;</span> <span class="o">(</span><span class="n">prediction</span><span class="o">,</span> <span class="n">label</span><span class="o">.</span><span class="n">toDouble</span><span class="o">)</span>
-    <span class="o">}</span>
-    <span class="k">val</span> <span class="n">metrics</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">MulticlassMetrics</span><span class="o">(</span><span class="n">testPredictionAndLabels</span><span class="o">)</span>
-    <span class="n">println</span><span class="o">(</span><span class="n">metrics</span><span class="o">.</span><span class="n">confusionMatrix</span><span class="o">)</span>
-    <span class="n">println</span><span class="o">(</span><span class="s">&quot;accuracy:&quot;</span> <span class="o">+</span> <span class="n">metrics</span><span class="o">.</span><span class="n">accuracy</span><span class="o">)</span>
-    <span class="n">println</span><span class="o">(</span><span class="s">&quot;weightedPrecision:&quot;</span> <span class="o">+</span> <span class="n">metrics</span><span class="o">.</span><span class="n">weightedPrecision</span><span class="o">)</span>
-    <span class="n">println</span><span class="o">(</span><span class="s">&quot;weightedRecall:&quot;</span> <span class="o">+</span> <span class="n">metrics</span><span class="o">.</span><span class="n">weightedRecall</span><span class="o">)</span>
+    val testResult = model.transform(test)
+      .select(&quot;features&quot;, &quot;label&quot;, &quot;prediction&quot;)
+    testResult.show()
+    val testPredictionAndLabels = testResult.select(&quot;prediction&quot;, &quot;label&quot;).rdd.map{
+      case Row(prediction: Double, label: Int) =&gt; (prediction, label.toDouble)
+    }
+    val metrics = new MulticlassMetrics(testPredictionAndLabels)
+    println(metrics.confusionMatrix)
+    println(&quot;accuracy:&quot; + metrics.accuracy)
+    println(&quot;weightedPrecision:&quot; + metrics.weightedPrecision)
+    println(&quot;weightedRecall:&quot; + metrics.weightedRecall)
 
-    <span class="n">logger</span><span class="o">.</span><span class="n">warn</span><span class="o">(</span><span class="s">&quot;Finish:&quot;</span> <span class="o">+</span> <span class="nc">System</span><span class="o">.</span><span class="n">currentTimeMillis</span><span class="o">().</span><span class="n">toString</span><span class="o">)</span>
+    logger.warn(&quot;Finish:&quot; + System.currentTimeMillis().toString)
 
-    <span class="n">spark</span><span class="o">.</span><span class="n">stop</span><span class="o">()</span>
-  <span class="o">}</span>
-<span class="o">}</span>
-</code></pre></div>
-</td></tr></table>
+    spark.stop()
+  }
+}
+
+
+</code></pre>
 <p>打包，然后在 Spark 中训练：</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>spark-submit --class com.yplam.SpamFilterTrainer spark-scala-playground.jar --train /home/yplam/spark/work/data/bbs --output /home/yplam/spark/work/model/bbs
-</code></pre></div>
-</td></tr></table>
+<pre><code class="language-shell">
+spark-submit --class com.yplam.SpamFilterTrainer spark-scala-playground.jar --train /home/yplam/spark/work/data/bbs --output /home/yplam/spark/work/model/bbs
+
+</code></pre>
 <p>结果还算可以，约 93% 的准确率。由于我们之前已经保存好最佳模型，可以编写一个简单的json API接口对外提供服务，而另一个可能更加适合的方式就是将模型移到 PredictionIO 上。</p>
 <h3 id="predictionio">PredictionIO 简介<a class="headerlink" href="#predictionio" title="Permanent link">&para;</a></h3>
 <p><a href="https://predictionio.apache.org">PredictionIO</a> 是一个开源的机器学习平台，用于构建、评估与发布机器学习算法引擎。PredictionIO 提供事件服务器( Event Server ) 用于接收与保存数据，用于生成训练数据集；引擎模板( engine template )提供各种不同场景应用所需的机器学习算法模板。模型训练出来后 PredictionIO 提供保存与发布服务，发布后的模型可以通过接收 REST API 提供预测结果。对开发者而言，只需要按照 PredictionIO 提供的 DASE 模式实现数据源与预处理(D)、算法(A)、服务(S)、评估指标(E)。PredictionIO 使开发者专注于模型本身，其他的事情它都已经帮你实现。</p>
@@ -1882,6 +1760,10 @@
           }, typeof search !== "undefined" && search)
         })
       </script>
+      
+        <script src="../../assets/js/highlight.min.js"></script>
+      
+        <script src="../../assets/js/init.js"></script>
       
     
   </body>

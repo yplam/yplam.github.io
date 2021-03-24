@@ -34,6 +34,8 @@
     
     
     
+      <link rel="stylesheet" href="../../../assets/css/highlight.css">
+    
       <link rel="stylesheet" href="../../../assets/css/custom.css">
     
     
@@ -1476,36 +1478,18 @@
 <p>SSD搭建RAID1后性能有部分损失，但不大，162/199；</p>
 <p>SSD组RAID5后性能有明显损失，73/199；</p>
 <p>测试主要命令：</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
-<span class="normal">2</span>
-<span class="normal">3</span>
-<span class="normal">4</span>
-<span class="normal">5</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>sysbench --test=fileio --file-total-size=2G prepare
+<pre><code>
+sysbench --test=fileio --file-total-size=2G prepare
 
 sysbench --test=fileio --file-total-size=2G --file-test-mode=rndrw --init-rng=on --max-time=300 --max-requests=0 run
 
 sysbench --test=fileio --file-total-size=2G cleanup
-</code></pre></div>
-</td></tr></table>
+
+</code></pre>
 <p>下面为测试数据：</p>
 <p><strong>普通sata硬盘</strong></p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
-<span class="normal"> 2</span>
-<span class="normal"> 3</span>
-<span class="normal"> 4</span>
-<span class="normal"> 5</span>
-<span class="normal"> 6</span>
-<span class="normal"> 7</span>
-<span class="normal"> 8</span>
-<span class="normal"> 9</span>
-<span class="normal">10</span>
-<span class="normal">11</span>
-<span class="normal">12</span>
-<span class="normal">13</span>
-<span class="normal">14</span>
-<span class="normal">15</span>
-<span class="normal">16</span>
-<span class="normal">17</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>Operations performed: 148200 Read, 98800 Write, 316059 Other = 563059 Total
+<pre><code>
+Operations performed: 148200 Read, 98800 Write, 316059 Other = 563059 Total
 Read 2.2614Gb Written 1.5076Gb Total transferred 3.7689Gb (12.862Mb/sec)
 823.17 Requests/sec executed
 
@@ -1522,26 +1506,10 @@ approx. 95 percentile: 0.01ms
 Threads fairness:
 events (avg/stddev): 247000.0000/0.00
 execution time (avg/stddev): 2.2265/0.00
-</code></pre></div>
-</td></tr></table>
+
+</code></pre>
 <p><strong>SAS盘RAID5</strong></p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
-<span class="normal"> 2</span>
-<span class="normal"> 3</span>
-<span class="normal"> 4</span>
-<span class="normal"> 5</span>
-<span class="normal"> 6</span>
-<span class="normal"> 7</span>
-<span class="normal"> 8</span>
-<span class="normal"> 9</span>
-<span class="normal">10</span>
-<span class="normal">11</span>
-<span class="normal">12</span>
-<span class="normal">13</span>
-<span class="normal">14</span>
-<span class="normal">15</span>
-<span class="normal">16</span>
-<span class="normal">17</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>Operations performed: 213600 Read, 142400 Write, 455562 Other = 811562 Total
+<pre><code>Operations performed: 213600 Read, 142400 Write, 455562 Other = 811562 Total
 Read 3.2593Gb Written 2.1729Gb Total transferred 5.4321Gb (18.523Mb/sec)
 1185.46 Requests/sec executed
 
@@ -1558,26 +1526,9 @@ approx. 95 percentile: 0.01ms
 Threads fairness:
 events (avg/stddev): 356000.0000/0.00
 execution time (avg/stddev): 3.6042/0.00
-</code></pre></div>
-</td></tr></table>
+</code></pre>
 <p><strong>阿里云SSD，非IO优化</strong></p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
-<span class="normal"> 2</span>
-<span class="normal"> 3</span>
-<span class="normal"> 4</span>
-<span class="normal"> 5</span>
-<span class="normal"> 6</span>
-<span class="normal"> 7</span>
-<span class="normal"> 8</span>
-<span class="normal"> 9</span>
-<span class="normal">10</span>
-<span class="normal">11</span>
-<span class="normal">12</span>
-<span class="normal">13</span>
-<span class="normal">14</span>
-<span class="normal">15</span>
-<span class="normal">16</span>
-<span class="normal">17</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>Operations performed: 253860 Read, 169240 Write, 541558 Other = 964658 Total
+<pre><code>Operations performed: 253860 Read, 169240 Write, 541558 Other = 964658 Total
 Read 3.8736Gb Written 2.5824Gb Total transferred 6.456Gb (22.036Mb/sec)
 1410.33 Requests/sec executed
 
@@ -1594,26 +1545,10 @@ approx. 95 percentile: 0.01ms
 Threads fairness:
 events (avg/stddev): 423100.0000/0.00
 execution time (avg/stddev): 3.2958/0.00
-</code></pre></div>
-</td></tr></table>
+</code></pre>
 <p><strong>金士顿普通SSD，RAID0</strong></p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
-<span class="normal"> 2</span>
-<span class="normal"> 3</span>
-<span class="normal"> 4</span>
-<span class="normal"> 5</span>
-<span class="normal"> 6</span>
-<span class="normal"> 7</span>
-<span class="normal"> 8</span>
-<span class="normal"> 9</span>
-<span class="normal">10</span>
-<span class="normal">11</span>
-<span class="normal">12</span>
-<span class="normal">13</span>
-<span class="normal">14</span>
-<span class="normal">15</span>
-<span class="normal">16</span>
-<span class="normal">17</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>Operations performed: 3112380 Read, 2074920 Write, 6639620 Other = 11826920 Total
+<pre><code>
+Operations performed: 3112380 Read, 2074920 Write, 6639620 Other = 11826920 Total
 Read 47.491Gb Written 31.661Gb Total transferred 79.152Gb (270.17Mb/sec)
 17290.98 Requests/sec executed
 
@@ -1630,26 +1565,10 @@ approx. 95 percentile: 0.01ms
 Threads fairness:
 events (avg/stddev): 5187300.0000/0.00
 execution time (avg/stddev): 42.7006/0.00
-</code></pre></div>
-</td></tr></table>
+
+</code></pre>
 <p><strong>INTEL企业级SSD，RAID0</strong></p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
-<span class="normal"> 2</span>
-<span class="normal"> 3</span>
-<span class="normal"> 4</span>
-<span class="normal"> 5</span>
-<span class="normal"> 6</span>
-<span class="normal"> 7</span>
-<span class="normal"> 8</span>
-<span class="normal"> 9</span>
-<span class="normal">10</span>
-<span class="normal">11</span>
-<span class="normal">12</span>
-<span class="normal">13</span>
-<span class="normal">14</span>
-<span class="normal">15</span>
-<span class="normal">16</span>
-<span class="normal">17</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>Operations performed: 2292180 Read, 1528120 Write, 4889859 Other = 8710159 Total
+<pre><code>Operations performed: 2292180 Read, 1528120 Write, 4889859 Other = 8710159 Total
 Read 34.976Gb Written 23.317Gb Total transferred 58.293Gb (198.97Mb/sec)
 12734.30 Requests/sec executed
 
@@ -1666,26 +1585,10 @@ approx. 95 percentile: 0.01ms
 Threads fairness:
 events (avg/stddev): 3820300.0000/0.00
 execution time (avg/stddev): 16.8218/0.00
-</code></pre></div>
-</td></tr></table>
+
+</code></pre>
 <p><strong>INTEL企业级SSD RAID10, 4盘</strong></p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
-<span class="normal"> 2</span>
-<span class="normal"> 3</span>
-<span class="normal"> 4</span>
-<span class="normal"> 5</span>
-<span class="normal"> 6</span>
-<span class="normal"> 7</span>
-<span class="normal"> 8</span>
-<span class="normal"> 9</span>
-<span class="normal">10</span>
-<span class="normal">11</span>
-<span class="normal">12</span>
-<span class="normal">13</span>
-<span class="normal">14</span>
-<span class="normal">15</span>
-<span class="normal">16</span>
-<span class="normal">17</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>Operations performed: 2323620 Read, 1549080 Write, 4956949 Other = 8829649 Total
+<pre><code>Operations performed: 2323620 Read, 1549080 Write, 4956949 Other = 8829649 Total
 Read 35.456Gb Written 23.637Gb Total transferred 59.093Gb (201.7Mb/sec)
 12908.99 Requests/sec executed
 
@@ -1702,26 +1605,9 @@ approx. 95 percentile: 0.01ms
 Threads fairness:
 events (avg/stddev): 3872700.0000/0.00
 execution time (avg/stddev): 18.8378/0.00
-</code></pre></div>
-</td></tr></table>
+</code></pre>
 <p><strong>INTEL企业级SSD，RAID1</strong></p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
-<span class="normal"> 2</span>
-<span class="normal"> 3</span>
-<span class="normal"> 4</span>
-<span class="normal"> 5</span>
-<span class="normal"> 6</span>
-<span class="normal"> 7</span>
-<span class="normal"> 8</span>
-<span class="normal"> 9</span>
-<span class="normal">10</span>
-<span class="normal">11</span>
-<span class="normal">12</span>
-<span class="normal">13</span>
-<span class="normal">14</span>
-<span class="normal">15</span>
-<span class="normal">16</span>
-<span class="normal">17</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>Operations performed: 1868760 Read, 1245840 Write, 3986627 Other = 7101227 Total
+<pre><code>Operations performed: 1868760 Read, 1245840 Write, 3986627 Other = 7101227 Total
 Read 28.515Gb Written 19.01Gb Total transferred 47.525Gb (162.22Mb/sec)
 10381.99 Requests/sec executed
 
@@ -1738,26 +1624,10 @@ approx. 95 percentile: 0.01ms
 Threads fairness:
 events (avg/stddev): 3114600.0000/0.00
 execution time (avg/stddev): 14.2077/0.00
-</code></pre></div>
-</td></tr></table>
+
+</code></pre>
 <p><strong>INTEL企业级SSD，RAID5,3盘</strong></p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
-<span class="normal"> 2</span>
-<span class="normal"> 3</span>
-<span class="normal"> 4</span>
-<span class="normal"> 5</span>
-<span class="normal"> 6</span>
-<span class="normal"> 7</span>
-<span class="normal"> 8</span>
-<span class="normal"> 9</span>
-<span class="normal">10</span>
-<span class="normal">11</span>
-<span class="normal">12</span>
-<span class="normal">13</span>
-<span class="normal">14</span>
-<span class="normal">15</span>
-<span class="normal">16</span>
-<span class="normal">17</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>Operations performed: 844500 Read, 563000 Write, 1801541 Other = 3209041 Total
+<pre><code>Operations performed: 844500 Read, 563000 Write, 1801541 Other = 3209041 Total
 Read 12.886Gb Written 8.5907Gb Total transferred 21.477Gb (73.307Mb/sec)
 4691.66 Requests/sec executed
 
@@ -1774,8 +1644,8 @@ approx. 95 percentile: 0.01ms
 Threads fairness:
 events (avg/stddev): 1407500.0000/0.00
 execution time (avg/stddev): 7.8239/0.00
-</code></pre></div>
-</td></tr></table>
+
+</code></pre>
                 
                   
                 
@@ -1815,6 +1685,10 @@ execution time (avg/stddev): 7.8239/0.00
           }, typeof search !== "undefined" && search)
         })
       </script>
+      
+        <script src="../../../assets/js/highlight.min.js"></script>
+      
+        <script src="../../../assets/js/init.js"></script>
       
     
   </body>

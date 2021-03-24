@@ -34,6 +34,8 @@
     
     
     
+      <link rel="stylesheet" href="../../../assets/css/highlight.css">
+    
       <link rel="stylesheet" href="../../../assets/css/custom.css">
     
     
@@ -1551,51 +1553,35 @@
 <p>MT7688 官方提供 mt7688_pinmux 工具来查看与配置 GPIO 模式，然而对于网口1-4却不起作用，表现出来是电压为 1.6V 左右，
 无法通过 gpioset 与 gpioget 命令读写。</p>
 <p>解决方案参考数据手册 P59，通过配置 1000003C AGPIO_CFG 寄存器的 20:17 位设置为 1 来将该 4 个网口设置成数字引脚。</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
-<span class="normal">2</span>
-<span class="normal">3</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>devmem 0x1000003c <span class="m">32</span>
-<span class="c1"># 0x00E001FF</span>
-devmem 0x1000003c <span class="m">32</span> 0x00FE01FF
-</code></pre></div>
-</td></tr></table>
+<pre><code class="language-shell">devmem 0x1000003c 32
+# 0x00E001FF
+devmem 0x1000003c 32 0x00FE01FF
+</code></pre>
 <p>然后就可以用 gpioset/gpioget 进行配置：</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
-<span class="normal">2</span>
-<span class="normal">3</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>gpioget <span class="m">0</span> <span class="m">14</span>
-<span class="c1"># 1</span>
-gpioset <span class="m">0</span> <span class="nv">14</span><span class="o">=</span><span class="m">0</span>
-</code></pre></div>
-</td></tr></table>
+<pre><code class="language-shell">gpioget 0 14
+# 1
+gpioset 0 14=0
+</code></pre>
 <h2 id="watchdog">watchdog 功能怎么用<a class="headerlink" href="#watchdog" title="Permanent link">&para;</a></h2>
 <p>使用以下命令查看 watchdog 状态</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>ubus call system watchdog
-</code></pre></div>
-</td></tr></table>
+<pre><code class="language-shell">ubus call system watchdog
+</code></pre>
 <p>输出</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
-<span class="normal">2</span>
-<span class="normal">3</span>
-<span class="normal">4</span>
-<span class="normal">5</span>
-<span class="normal">6</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>{
+<pre><code>{
         &quot;status&quot;: &quot;running&quot;,
         &quot;timeout&quot;: 30,
         &quot;frequency&quot;: 5,
         &quot;magicclose&quot;: false
 }
-</code></pre></div>
-</td></tr></table>
+
+</code></pre>
 <p>使用以下命令关闭喂狗，强制看门狗超时：</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>ubus call system watchdog <span class="s1">&#39;{&quot;stop&quot;: true}&#39;</span>
-</code></pre></div>
-</td></tr></table>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
-<span class="normal">2</span>
-<span class="normal">3</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>***********************
+<pre><code class="language-shell">ubus call system watchdog '{&quot;stop&quot;: true}'
+</code></pre>
+<pre><code>***********************
 Watchdog Reset Occurred
 ***********************
-</code></pre></div>
-</td></tr></table>
+</code></pre>
                 
               
               
@@ -1633,6 +1619,10 @@ Watchdog Reset Occurred
           }, typeof search !== "undefined" && search)
         })
       </script>
+      
+        <script src="../../../assets/js/highlight.min.js"></script>
+      
+        <script src="../../../assets/js/init.js"></script>
       
     
   </body>

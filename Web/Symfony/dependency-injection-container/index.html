@@ -34,6 +34,8 @@
     
     
     
+      <link rel="stylesheet" href="../../../assets/css/highlight.css">
+    
       <link rel="stylesheet" href="../../../assets/css/custom.css">
     
     
@@ -1483,14 +1485,7 @@
           'port'     =&gt; 465,
         ));
       }</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
-<span class="normal">2</span>
-<span class="normal">3</span>
-<span class="normal">4</span>
-<span class="normal">5</span>
-<span class="normal">6</span>
-<span class="normal">7</span>
-<span class="normal">8</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>  public function getMailer()
+<pre><code>  public function getMailer()
   {
     $mailer = new Zend_Mail();
     $mailer-&gt;setDefaultTransport($this-&gt;getMailTransport());
@@ -1498,8 +1493,7 @@
     return $mailer;
   }
 }
-</code></pre></div>
-</td></tr></table>
+</code></pre>
 <p>{{&lt; /highlight &gt;}}</p>
 <p>使用起来也很简便：</p>
 <p>{{&lt; highlight php &gt;}}
@@ -1511,42 +1505,19 @@
     class Container
     {
       protected $parameters = array();</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
-<span class="normal"> 2</span>
-<span class="normal"> 3</span>
-<span class="normal"> 4</span>
-<span class="normal"> 5</span>
-<span class="normal"> 6</span>
-<span class="normal"> 7</span>
-<span class="normal"> 8</span>
-<span class="normal"> 9</span>
-<span class="normal">10</span>
-<span class="normal">11</span>
-<span class="normal">12</span>
-<span class="normal">13</span>
-<span class="normal">14</span>
-<span class="normal">15</span>
-<span class="normal">16</span>
-<span class="normal">17</span>
-<span class="normal">18</span>
-<span class="normal">19</span>
-<span class="normal">20</span>
-<span class="normal">21</span>
-<span class="normal">22</span>
-<span class="normal">23</span>
-<span class="normal">24</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>  public function __construct(array $parameters = array())
+<pre><code>  public function __construct(array $parameters = array())
   {
     $this-&gt;parameters = $parameters;
   }
 
   public function getMailTransport()
   {
-    return new Zend_Mail_Transport_Smtp(&#39;smtp.gmail.com&#39;, array(
-      &#39;auth&#39;     =&gt; &#39;login&#39;,
-      &#39;username&#39; =&gt; $this-&gt;parameters[&#39;mailer.username&#39;],
-      &#39;password&#39; =&gt; $this-&gt;parameters[&#39;mailer.password&#39;],
-      &#39;ssl&#39;      =&gt; &#39;ssl&#39;,
-      &#39;port&#39;     =&gt; 465,
+    return new Zend_Mail_Transport_Smtp('smtp.gmail.com', array(
+      'auth'     =&gt; 'login',
+      'username' =&gt; $this-&gt;parameters['mailer.username'],
+      'password' =&gt; $this-&gt;parameters['mailer.password'],
+      'ssl'      =&gt; 'ssl',
+      'port'     =&gt; 465,
     ));
   }
 
@@ -1558,8 +1529,7 @@
     return $mailer;
   }
 }
-</code></pre></div>
-</td></tr></table>
+</code></pre>
 <p>{{&lt; /highlight &gt;}}</p>
 <p>然后这样初始化：</p>
 <p>{{&lt; highlight php &gt;}}
@@ -1574,41 +1544,24 @@
     class Container
     {
       static protected $shared = array();</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
-<span class="normal"> 2</span>
-<span class="normal"> 3</span>
-<span class="normal"> 4</span>
-<span class="normal"> 5</span>
-<span class="normal"> 6</span>
-<span class="normal"> 7</span>
-<span class="normal"> 8</span>
-<span class="normal"> 9</span>
-<span class="normal">10</span>
-<span class="normal">11</span>
-<span class="normal">12</span>
-<span class="normal">13</span>
-<span class="normal">14</span>
-<span class="normal">15</span>
-<span class="normal">16</span>
-<span class="normal">17</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>  // ...
+<pre><code>  // ...
 
   public function getMailer()
   {
-    if (isset(self::$shared[&#39;mailer&#39;]))
+    if (isset(self::$shared['mailer']))
     {
-      return self::$shared[&#39;mailer&#39;];
+      return self::$shared['mailer'];
     }
 
-    $class = $this-&gt;parameters[&#39;mailer.class&#39;];
+    $class = $this-&gt;parameters['mailer.class'];
 
     $mailer = new $class();
     $mailer-&gt;setDefaultTransport($this-&gt;getMailTransport());
 
-    return self::$shared[&#39;mailer&#39;] = $mailer;
+    return self::$shared['mailer'] = $mailer;
   }
 }
-</code></pre></div>
-</td></tr></table>
+</code></pre>
 <p>{{&lt; /highlight &gt;}}
 使用依赖注入容器后，对系统功能的初始化与调用变得非常简单，但同时很明显的，当系统变得庞大后，创建与维护Contianer类将是一个噩梦，因此Symfony2提供了一个ContainerBuilder类，根据用户的配置自动生成Container类的代码。</p>
 <p><strong>参考资料：</strong> </p>
@@ -1652,6 +1605,10 @@
           }, typeof search !== "undefined" && search)
         })
       </script>
+      
+        <script src="../../../assets/js/highlight.min.js"></script>
+      
+        <script src="../../../assets/js/init.js"></script>
       
     
   </body>

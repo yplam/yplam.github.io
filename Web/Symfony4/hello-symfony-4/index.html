@@ -34,6 +34,8 @@
     
     
     
+      <link rel="stylesheet" href="../../../assets/css/highlight.css">
+    
       <link rel="stylesheet" href="../../../assets/css/custom.css">
     
     
@@ -1581,19 +1583,17 @@
 <li>MakerBundle、Webpack 等新特性</li>
 </ul>
 <h2 id="_1">安装<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>composer create-project symfony/skeleton my_project
-</code></pre></div>
-</td></tr></table>
+<pre><code class="language-shell">composer create-project symfony/skeleton my_project
+</code></pre>
 <p>安装后的第一感觉变化还是蛮大，web 变到 public，里面就只有一个 index.php 文件，通过 $_SERVER['APP_ENV'] 或者 .env 文件来加载环境参数。</p>
 <p>目录结构也有很大的变化，而且都变得很精简。</p>
 <p>但这个精简版的 Symfony 4 功能还有点弱，至少不支持常用的 annotations、twig 以及 profiler，不过得益于Flex的存在，安装配置也简单：</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
-<span class="normal">2</span>
-<span class="normal">3</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>composer require annotations
+<pre><code class="language-shell">
+composer require annotations
 composer require twig
 composer require --dev profiler
-</code></pre></div>
-</td></tr></table>
+
+</code></pre>
 <p>Flex 会根据需要将默认配置文件下到本地。</p>
 <h2 id="_2">模板<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <p>twig 变化不大，只是模板位置变到了项目根目录下的templates文件夹</p>
@@ -1640,6 +1640,10 @@ composer require --dev profiler
           }, typeof search !== "undefined" && search)
         })
       </script>
+      
+        <script src="../../../assets/js/highlight.min.js"></script>
+      
+        <script src="../../../assets/js/init.js"></script>
       
     
   </body>

@@ -34,6 +34,8 @@
     
     
     
+      <link rel="stylesheet" href="../../../assets/css/highlight.css">
+    
       <link rel="stylesheet" href="../../../assets/css/custom.css">
     
     
@@ -1575,41 +1577,19 @@
 <h3 id="jenkins">安装Jenkins<a class="headerlink" href="#jenkins" title="Permanent link">&para;</a></h3>
 <p>Jenkins 是一个开源项目，提供了一种易于使用的持续集成系统，使开发者从繁杂的集成中解脱出来，专注于更为重要的业务逻辑实现上。同时 Jenkins 能实施监控集成中存在的错误，提供详细的日志文件和提醒功能，还能用图表的形式形象地展示项目构建的趋势和稳定性。</p>
 <p>Debian 下 Jenkins 的安装非常简单</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
-<span class="normal">2</span>
-<span class="normal">3</span>
-<span class="normal">4</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>wget -q -O - https://jenkins-ci.org/debian/jenkins-ci.org.key | sudo apt-key add -
-sudo sh -c &#39;echo deb http://pkg.jenkins-ci.org/debian binary/ &gt; /etc/apt/sources.list.d/jenkins.list&#39;
+<pre><code>wget -q -O - https://jenkins-ci.org/debian/jenkins-ci.org.key | sudo apt-key add -
+sudo sh -c 'echo deb http://pkg.jenkins-ci.org/debian binary/ &gt; /etc/apt/sources.list.d/jenkins.list'
 sudo apt-get update
 sudo apt-get install jenkins
-</code></pre></div>
-</td></tr></table>
+</code></pre>
 <p>安装完成后，可以通过 /etc/default/jenkins 文件修改jenkins的启动参数；然后启动服务</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>service jenkins start
-</code></pre></div>
-</td></tr></table>
+<pre><code>service jenkins start
+</code></pre>
 <p>也可以将jenkins加入到自动启动服务中</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>update-rc.d jenkins defaults
-</code></pre></div>
-</td></tr></table>
+<pre><code>update-rc.d jenkins defaults
+</code></pre>
 <p>在默认配置下，访问服务器的8080端口，就可以看到Jenkins的界面；当然，你的服务器可能只开了nginx的80端口，那么需要配置nginx反向代理，以下是一个简单的配置：</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
-<span class="normal"> 2</span>
-<span class="normal"> 3</span>
-<span class="normal"> 4</span>
-<span class="normal"> 5</span>
-<span class="normal"> 6</span>
-<span class="normal"> 7</span>
-<span class="normal"> 8</span>
-<span class="normal"> 9</span>
-<span class="normal">10</span>
-<span class="normal">11</span>
-<span class="normal">12</span>
-<span class="normal">13</span>
-<span class="normal">14</span>
-<span class="normal">15</span>
-<span class="normal">16</span>
-<span class="normal">17</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>server {
+<pre><code>server {
 
     listen 80;
     server_name ****.com; # 你的服务器域名
@@ -1626,23 +1606,13 @@ sudo apt-get install jenkins
 
     }
 }
-</code></pre></div>
-</td></tr></table>
+
+</code></pre>
 <p>这样你就可以通过 80 端口访问jenkins。</p>
 <p>安装完Jenkins后你会发现，Jenkins默认没有开启任何安全认证，所以第一步就是在 Manage Jenkins &gt; Configure Global Security 中勾选 Enable security，使用 Jenkins’ own user database，Allow users to sign up，Logged-in users can do anything；然后注册、登录一个账号；再取消 Allow users to sign up选项；这里的操作有点繁琐，目的只是为了在你配置好Jenkins之前不会被别人捣乱。</p>
 <p><strong>配置插件与PHP库</strong></p>
 <p>在 Manage Jenkins &gt; Manage Plugin 的 Available 标签中搜索安装以下插件</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
-<span class="normal"> 2</span>
-<span class="normal"> 3</span>
-<span class="normal"> 4</span>
-<span class="normal"> 5</span>
-<span class="normal"> 6</span>
-<span class="normal"> 7</span>
-<span class="normal"> 8</span>
-<span class="normal"> 9</span>
-<span class="normal">10</span>
-<span class="normal">11</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>CheckStyle
+<pre><code>CheckStyle
 Clover PHP
 HTML Publisher
 DRY
@@ -1653,24 +1623,9 @@ xUnit
 Git
 Github
 Green Balls
-</code></pre></div>
-</td></tr></table>
+</code></pre>
 <p>然后安装对应的PHP库，可以手动下载或者用 PEAR :</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
-<span class="normal"> 2</span>
-<span class="normal"> 3</span>
-<span class="normal"> 4</span>
-<span class="normal"> 5</span>
-<span class="normal"> 6</span>
-<span class="normal"> 7</span>
-<span class="normal"> 8</span>
-<span class="normal"> 9</span>
-<span class="normal">10</span>
-<span class="normal">11</span>
-<span class="normal">12</span>
-<span class="normal">13</span>
-<span class="normal">14</span>
-<span class="normal">15</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>pear channel-discover pear.pdepend.org
+<pre><code>pear channel-discover pear.pdepend.org
 pear channel-discover pear.phpmd.org
 pear channel-discover pear.phpunit.de
 pear channel-discover pear.phpdoc.org
@@ -1685,128 +1640,12 @@ pear install --alldeps phpunit/PHP_CodeBrowser
 pear install --alldeps phpunit/PHPUnit
 pear install phpdoc/phpDocumentor-alpha
 pear install PHP_CodeSniffer
-</code></pre></div>
-</td></tr></table>
+
+</code></pre>
 <p>对于Symfony2 项目，我们还需要安装Symfony codeing standard，参考：<a href="https://github.com/escapestudios/Symfony2-coding-standard">https://github.com/escapestudios/Symfony2-coding-standard</a></p>
 <p><strong>配置ANT BUILD</strong></p>
 <p>在代码的根目录添加build.xml文件：</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">  1</span>
-<span class="normal">  2</span>
-<span class="normal">  3</span>
-<span class="normal">  4</span>
-<span class="normal">  5</span>
-<span class="normal">  6</span>
-<span class="normal">  7</span>
-<span class="normal">  8</span>
-<span class="normal">  9</span>
-<span class="normal"> 10</span>
-<span class="normal"> 11</span>
-<span class="normal"> 12</span>
-<span class="normal"> 13</span>
-<span class="normal"> 14</span>
-<span class="normal"> 15</span>
-<span class="normal"> 16</span>
-<span class="normal"> 17</span>
-<span class="normal"> 18</span>
-<span class="normal"> 19</span>
-<span class="normal"> 20</span>
-<span class="normal"> 21</span>
-<span class="normal"> 22</span>
-<span class="normal"> 23</span>
-<span class="normal"> 24</span>
-<span class="normal"> 25</span>
-<span class="normal"> 26</span>
-<span class="normal"> 27</span>
-<span class="normal"> 28</span>
-<span class="normal"> 29</span>
-<span class="normal"> 30</span>
-<span class="normal"> 31</span>
-<span class="normal"> 32</span>
-<span class="normal"> 33</span>
-<span class="normal"> 34</span>
-<span class="normal"> 35</span>
-<span class="normal"> 36</span>
-<span class="normal"> 37</span>
-<span class="normal"> 38</span>
-<span class="normal"> 39</span>
-<span class="normal"> 40</span>
-<span class="normal"> 41</span>
-<span class="normal"> 42</span>
-<span class="normal"> 43</span>
-<span class="normal"> 44</span>
-<span class="normal"> 45</span>
-<span class="normal"> 46</span>
-<span class="normal"> 47</span>
-<span class="normal"> 48</span>
-<span class="normal"> 49</span>
-<span class="normal"> 50</span>
-<span class="normal"> 51</span>
-<span class="normal"> 52</span>
-<span class="normal"> 53</span>
-<span class="normal"> 54</span>
-<span class="normal"> 55</span>
-<span class="normal"> 56</span>
-<span class="normal"> 57</span>
-<span class="normal"> 58</span>
-<span class="normal"> 59</span>
-<span class="normal"> 60</span>
-<span class="normal"> 61</span>
-<span class="normal"> 62</span>
-<span class="normal"> 63</span>
-<span class="normal"> 64</span>
-<span class="normal"> 65</span>
-<span class="normal"> 66</span>
-<span class="normal"> 67</span>
-<span class="normal"> 68</span>
-<span class="normal"> 69</span>
-<span class="normal"> 70</span>
-<span class="normal"> 71</span>
-<span class="normal"> 72</span>
-<span class="normal"> 73</span>
-<span class="normal"> 74</span>
-<span class="normal"> 75</span>
-<span class="normal"> 76</span>
-<span class="normal"> 77</span>
-<span class="normal"> 78</span>
-<span class="normal"> 79</span>
-<span class="normal"> 80</span>
-<span class="normal"> 81</span>
-<span class="normal"> 82</span>
-<span class="normal"> 83</span>
-<span class="normal"> 84</span>
-<span class="normal"> 85</span>
-<span class="normal"> 86</span>
-<span class="normal"> 87</span>
-<span class="normal"> 88</span>
-<span class="normal"> 89</span>
-<span class="normal"> 90</span>
-<span class="normal"> 91</span>
-<span class="normal"> 92</span>
-<span class="normal"> 93</span>
-<span class="normal"> 94</span>
-<span class="normal"> 95</span>
-<span class="normal"> 96</span>
-<span class="normal"> 97</span>
-<span class="normal"> 98</span>
-<span class="normal"> 99</span>
-<span class="normal">100</span>
-<span class="normal">101</span>
-<span class="normal">102</span>
-<span class="normal">103</span>
-<span class="normal">104</span>
-<span class="normal">105</span>
-<span class="normal">106</span>
-<span class="normal">107</span>
-<span class="normal">108</span>
-<span class="normal">109</span>
-<span class="normal">110</span>
-<span class="normal">111</span>
-<span class="normal">112</span>
-<span class="normal">113</span>
-<span class="normal">114</span>
-<span class="normal">115</span>
-<span class="normal">116</span>
-<span class="normal">117</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+<pre><code>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
 &lt;project name=&quot;name-of-project&quot; default=&quot;build-local&quot;&gt;
     &lt;property name=&quot;workspace&quot; value=&quot;${basedir}&quot; /&gt;
     &lt;property name=&quot;sourcedir&quot; value=&quot;${basedir}/src&quot; /&gt;
@@ -1923,22 +1762,10 @@ pear install PHP_CodeSniffer
     &lt;/target&gt;
 
 &lt;/project&gt;
-</code></pre></div>
-</td></tr></table>
+</code></pre>
 <p>添加 app/Resources/jenkins/phpmd.xml 文件：</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
-<span class="normal"> 2</span>
-<span class="normal"> 3</span>
-<span class="normal"> 4</span>
-<span class="normal"> 5</span>
-<span class="normal"> 6</span>
-<span class="normal"> 7</span>
-<span class="normal"> 8</span>
-<span class="normal"> 9</span>
-<span class="normal">10</span>
-<span class="normal">11</span>
-<span class="normal">12</span>
-<span class="normal">13</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>&lt;?xml version=&quot;1.0&quot;?&gt;
+<pre><code>
+&lt;?xml version=&quot;1.0&quot;?&gt;
 &lt;ruleset name=&quot;Symfony2 ruleset&quot; xmlns=&quot;http://pmd.sf.net/ruleset/1.0.0&quot; xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
          xsi:schemaLocation=&quot;http://pmd.sf.net/ruleset/1.0.0 http://pmd.sf.net/ruleset_xml_schema.xsd&quot; xsi:noNamespaceSchemaLocation=&quot;http://pmd.sf.net/ruleset_xml_schema.xsd&quot;&gt;
     &lt;description&gt;
@@ -1951,8 +1778,8 @@ pear install PHP_CodeSniffer
     &lt;rule ref=&quot;rulesets/naming.xml&quot; /&gt;
 
 &lt;/ruleset&gt;
-</code></pre></div>
-</td></tr></table>
+
+</code></pre>
 <p>以上的配置仅作为参考，您可以根据自己的项目有所增删；需要注意的是，上面配置中，要求 app/config/parameters.yml.dist 中的内容为测试机上面的环境配置，譬如：当你的phpunit中需要跟数据库有交互，这些配置选项必须正确。</p>
 <p><strong>配置Github</strong></p>
 <p>在开始创建Jenkins工程前，需要先确保你的服务器能正常访问Github。</p>
@@ -2025,6 +1852,10 @@ pear install PHP_CodeSniffer
           }, typeof search !== "undefined" && search)
         })
       </script>
+      
+        <script src="../../../assets/js/highlight.min.js"></script>
+      
+        <script src="../../../assets/js/init.js"></script>
       
     
   </body>

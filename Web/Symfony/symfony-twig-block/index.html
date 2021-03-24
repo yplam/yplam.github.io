@@ -34,6 +34,8 @@
     
     
     
+      <link rel="stylesheet" href="../../../assets/css/highlight.css">
+    
       <link rel="stylesheet" href="../../../assets/css/custom.css">
     
     
@@ -1475,112 +1477,39 @@
 <p>Symfony在处理这些区块时，提供两种种方式： </p>
 <p>(来源：http://symfony.com/doc/current/book/templating.html)</p>
 <p><strong>include，用来渲染页面相关内容</strong></p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
-<span class="normal"> 2</span>
-<span class="normal"> 3</span>
-<span class="normal"> 4</span>
-<span class="normal"> 5</span>
-<span class="normal"> 6</span>
-<span class="normal"> 7</span>
-<span class="normal"> 8</span>
-<span class="normal"> 9</span>
-<span class="normal">10</span>
-<span class="normal">11</span>
-<span class="normal">12</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>{% raw  %}
+<pre><code>{% raw  %}
 {# app/Resources/views/article/list.html.twig #}
-{% extends &#39;layout.html.twig&#39; %}
+{% extends 'layout.html.twig' %}
 
 {% block body %}
     &lt;h1&gt;Recent Articles&lt;h1&gt;
 
     {% for article in articles %}
-        {{ include(&#39;article/article_details.html.twig&#39;, { &#39;article&#39;: article }) }}
+        {{ include('article/article_details.html.twig', { 'article': article }) }}
     {% endfor %}
 {% endblock %}
 {% endraw %}
-</code></pre></div>
-</td></tr></table>
+</code></pre>
 <p><strong>render，用来渲染页面无关内容</strong></p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
-<span class="normal"> 2</span>
-<span class="normal"> 3</span>
-<span class="normal"> 4</span>
-<span class="normal"> 5</span>
-<span class="normal"> 6</span>
-<span class="normal"> 7</span>
-<span class="normal"> 8</span>
-<span class="normal"> 9</span>
-<span class="normal">10</span>
-<span class="normal">11</span>
-<span class="normal">12</span>
-<span class="normal">13</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>{% raw  %}
+<pre><code>{% raw  %}
 
 {# app/Resources/views/base.html.twig #}
 
 {# ... #}
 &lt;div id=&quot;sidebar&quot;&gt;
     {{ render(controller(
-        &#39;AcmeArticleBundle:Article:recentArticles&#39;,
-        { &#39;max&#39;: 3 }
+        'AcmeArticleBundle:Article:recentArticles',
+        { 'max': 3 }
     )) }}
 &lt;/div&gt;
 
 {% endraw %}
-</code></pre></div>
-</td></tr></table>
+</code></pre>
 <p>然而，由render的运行原理可以看出，它会发送一个子请求，调用子控制器。虽然官方说它很快，但是测试过后发现有很明显的时间消耗。</p>
 <p><strong>使用Twig扩展函数</strong></p>
 <p>Twig扩展函数是另一个很好的输出区块内容的方式（虽然Symfony官方的介绍不多）。</p>
 <p>譬如：</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
-<span class="normal"> 2</span>
-<span class="normal"> 3</span>
-<span class="normal"> 4</span>
-<span class="normal"> 5</span>
-<span class="normal"> 6</span>
-<span class="normal"> 7</span>
-<span class="normal"> 8</span>
-<span class="normal"> 9</span>
-<span class="normal">10</span>
-<span class="normal">11</span>
-<span class="normal">12</span>
-<span class="normal">13</span>
-<span class="normal">14</span>
-<span class="normal">15</span>
-<span class="normal">16</span>
-<span class="normal">17</span>
-<span class="normal">18</span>
-<span class="normal">19</span>
-<span class="normal">20</span>
-<span class="normal">21</span>
-<span class="normal">22</span>
-<span class="normal">23</span>
-<span class="normal">24</span>
-<span class="normal">25</span>
-<span class="normal">26</span>
-<span class="normal">27</span>
-<span class="normal">28</span>
-<span class="normal">29</span>
-<span class="normal">30</span>
-<span class="normal">31</span>
-<span class="normal">32</span>
-<span class="normal">33</span>
-<span class="normal">34</span>
-<span class="normal">35</span>
-<span class="normal">36</span>
-<span class="normal">37</span>
-<span class="normal">38</span>
-<span class="normal">39</span>
-<span class="normal">40</span>
-<span class="normal">41</span>
-<span class="normal">42</span>
-<span class="normal">43</span>
-<span class="normal">44</span>
-<span class="normal">45</span>
-<span class="normal">46</span>
-<span class="normal">47</span>
-<span class="normal">48</span>
-<span class="normal">49</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>&lt;?php
+<pre><code>&lt;?php
 
 namespace AppBundle\Twig\Extension;
 
@@ -1598,9 +1527,9 @@ class AppExtension extends \Twig_Extension {
      */
     public function getFunctions() {
         return array(
-            &#39;app_sidemenu&#39; =&gt; new \Twig_Function_Method($this, &#39;renderSideMenu&#39;, array(
-                &#39;is_safe&#39; =&gt; array(&#39;html&#39;),
-                &#39;needs_environment&#39; =&gt; true,
+            'app_sidemenu' =&gt; new \Twig_Function_Method($this, 'renderSideMenu', array(
+                'is_safe' =&gt; array('html'),
+                'needs_environment' =&gt; true,
             )),
         );
     }
@@ -1615,8 +1544,8 @@ class AppExtension extends \Twig_Extension {
 
         /* 在此处处理区块逻辑 */
 
-        $template = $twig-&gt;loadTemplate(&#39;AppBundle:Common:sideblock.html.twig&#39;);
-        $content = $template-&gt;render(array(&#39;categories&#39; =&gt; $categories));
+        $template = $twig-&gt;loadTemplate('AppBundle:Common:sideblock.html.twig');
+        $content = $template-&gt;render(array('categories' =&gt; $categories));
         return $content;
     }
 
@@ -1626,73 +1555,20 @@ class AppExtension extends \Twig_Extension {
      * {@inheritdoc}
      */
     public function getName() {
-        return &#39;app_bundle&#39;;
+        return 'app_bundle';
     }
 }
-</code></pre></div>
-</td></tr></table>
+
+
+</code></pre>
 <p>上面是一个简单的Twig扩展，其作用就是提供app_sidemenu函数，在页面中显示网站侧边栏分类菜单。
 renderSideMenu方法从数据库中获取分类信息，用twig模板渲染成菜单html，然后缓存到redis里。</p>
 <p>需要注意的是 getFunctions 方法中，返回数据的 needs_environment 参数，如果设为true，它会为你的回调函数
 传入 \Twig_Environment $twig，使你在回调函数中方便地进行模板渲染。</p>
 <p>使用 twigExtension 来渲染区块还有个好处就是可以很方便的管理缓存，因为我们可以将render出来的内容存在cache中，这样不同的区块可以有自己的缓存清理逻辑。</p>
 <p>下面我们尝试在扩展中使用Redis来缓存区块内容。</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
-<span class="normal"> 2</span>
-<span class="normal"> 3</span>
-<span class="normal"> 4</span>
-<span class="normal"> 5</span>
-<span class="normal"> 6</span>
-<span class="normal"> 7</span>
-<span class="normal"> 8</span>
-<span class="normal"> 9</span>
-<span class="normal">10</span>
-<span class="normal">11</span>
-<span class="normal">12</span>
-<span class="normal">13</span>
-<span class="normal">14</span>
-<span class="normal">15</span>
-<span class="normal">16</span>
-<span class="normal">17</span>
-<span class="normal">18</span>
-<span class="normal">19</span>
-<span class="normal">20</span>
-<span class="normal">21</span>
-<span class="normal">22</span>
-<span class="normal">23</span>
-<span class="normal">24</span>
-<span class="normal">25</span>
-<span class="normal">26</span>
-<span class="normal">27</span>
-<span class="normal">28</span>
-<span class="normal">29</span>
-<span class="normal">30</span>
-<span class="normal">31</span>
-<span class="normal">32</span>
-<span class="normal">33</span>
-<span class="normal">34</span>
-<span class="normal">35</span>
-<span class="normal">36</span>
-<span class="normal">37</span>
-<span class="normal">38</span>
-<span class="normal">39</span>
-<span class="normal">40</span>
-<span class="normal">41</span>
-<span class="normal">42</span>
-<span class="normal">43</span>
-<span class="normal">44</span>
-<span class="normal">45</span>
-<span class="normal">46</span>
-<span class="normal">47</span>
-<span class="normal">48</span>
-<span class="normal">49</span>
-<span class="normal">50</span>
-<span class="normal">51</span>
-<span class="normal">52</span>
-<span class="normal">53</span>
-<span class="normal">54</span>
-<span class="normal">55</span>
-<span class="normal">56</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>namespace AppBundle\Twig\Extension;
+<pre><code>
+namespace AppBundle\Twig\Extension;
 
 use Symfony\Component\HttpKernel\KernelInterface;
 use JMS\DiExtraBundle\Annotation as DI;
@@ -1719,9 +1595,9 @@ class AppSiteExtension extends \Twig_Extension {
      */
     public function getFunctions() {
         return array(
-            &#39;app_header&#39; =&gt; new \Twig_Function_Method($this, &#39;renderHeader&#39;, array(
-                &#39;is_safe&#39; =&gt; array(&#39;html&#39;),
-                &#39;needs_environment&#39; =&gt; true,
+            'app_header' =&gt; new \Twig_Function_Method($this, 'renderHeader', array(
+                'is_safe' =&gt; array('html'),
+                'needs_environment' =&gt; true,
             )),
         );
     }
@@ -1730,12 +1606,12 @@ class AppSiteExtension extends \Twig_Extension {
      * 缓存头部信息，缓存时间 36000s
      */
     public function renderHeader( \Twig_Environment $twig){
-        $key = &#39;app:cache:header&#39;;
+        $key = 'app:cache:header';
 
         if($content = $this-&gt;redis-&gt;get($key)){
             return $content;
         }
-        $template = $twig-&gt;loadTemplate(&#39;AppBundle:Common:header.html.twig&#39;);
+        $template = $twig-&gt;loadTemplate('AppBundle:Common:header.html.twig');
         $content = $template-&gt;render(array());
         $this-&gt;redis-&gt;setex($key, 36000, $content);
         return $content;
@@ -1745,11 +1621,11 @@ class AppSiteExtension extends \Twig_Extension {
      * {@inheritdoc}
      */
     public function getName() {
-        return &#39;app_bundle_site&#39;;
+        return 'app_bundle_site';
     }
 }
-</code></pre></div>
-</td></tr></table>
+
+</code></pre>
 <p>上面是一个使用redis缓存区块内容的简单应用，跟yii的widget缓存类似（对yii了解不多，错了请指正）。</p>
 <p>我们在扩展的构造函数中注入 $redis 实例，然后将渲染后的网站头部模板内容缓存到rendis中，在下一次访问中直接输出。</p>
 <p>ps:在此只是给缓存信息一个定期的过期时间，实际应用场景中对cache的处理可能会更复杂。</p>
@@ -1792,6 +1668,10 @@ class AppSiteExtension extends \Twig_Extension {
           }, typeof search !== "undefined" && search)
         })
       </script>
+      
+        <script src="../../../assets/js/highlight.min.js"></script>
+      
+        <script src="../../../assets/js/init.js"></script>
       
     
   </body>

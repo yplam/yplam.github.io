@@ -34,6 +34,8 @@
     
     
     
+      <link rel="stylesheet" href="../../../assets/css/highlight.css">
+    
       <link rel="stylesheet" href="../../../assets/css/custom.css">
     
     
@@ -1478,40 +1480,7 @@
         session_name($cookieName);
         session_start();
       }</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
-<span class="normal"> 2</span>
-<span class="normal"> 3</span>
-<span class="normal"> 4</span>
-<span class="normal"> 5</span>
-<span class="normal"> 6</span>
-<span class="normal"> 7</span>
-<span class="normal"> 8</span>
-<span class="normal"> 9</span>
-<span class="normal">10</span>
-<span class="normal">11</span>
-<span class="normal">12</span>
-<span class="normal">13</span>
-<span class="normal">14</span>
-<span class="normal">15</span>
-<span class="normal">16</span>
-<span class="normal">17</span>
-<span class="normal">18</span>
-<span class="normal">19</span>
-<span class="normal">20</span>
-<span class="normal">21</span>
-<span class="normal">22</span>
-<span class="normal">23</span>
-<span class="normal">24</span>
-<span class="normal">25</span>
-<span class="normal">26</span>
-<span class="normal">27</span>
-<span class="normal">28</span>
-<span class="normal">29</span>
-<span class="normal">30</span>
-<span class="normal">31</span>
-<span class="normal">32</span>
-<span class="normal">33</span>
-<span class="normal">34</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>  function set($key, $value)
+<pre><code>  function set($key, $value)
   {
     $_SESSION[$key] = $value;
   }
@@ -1535,18 +1504,17 @@ class User
 
   function setLanguage($language)
   {
-    $this-&gt;storage-&gt;set(&#39;language&#39;, $language);
+    $this-&gt;storage-&gt;set('language', $language);
   }
 
   function getLanguage()
   {
-    return $this-&gt;storage-&gt;get(&#39;language&#39;);
+    return $this-&gt;storage-&gt;get('language');
   }
 
   // ...
 }
-</code></pre></div>
-</td></tr></table>
+</code></pre>
 <p>{{&lt; /highlight &gt;}}</p>
 <p>我们可以这样调用上面的代码：</p>
 <p>{{&lt; highlight php &gt;}}
@@ -1562,11 +1530,9 @@ class User
       {
         $this-&gt;storage = $storage;
       }</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
-<span class="normal">2</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>  // ...
+<pre><code>  // ...
 }
-</code></pre></div>
-</td></tr></table>
+</code></pre>
 <p>{{&lt; /highlight &gt;}}</p>
 <p>不在User类中创建SessionStorage对象，而是将storage对象作为参数传递给User的构造函数，这就是依赖注入。 "Dependency Injection is where components are given their dependencies through their constructors, methods, or directly into fields." 上面就是依赖注入的定义，根据其定义，依赖注入可以通过下面三种方式进行：</p>
 <p><strong>构造器注入 Constructor Injection：</strong></p>
@@ -1577,11 +1543,9 @@ class User
       {
         $this-&gt;storage = $storage;
       }</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
-<span class="normal">2</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>  // ...
+<pre><code>  // ...
 }
-</code></pre></div>
-</td></tr></table>
+</code></pre>
 <p>{{&lt; /highlight &gt;}}</p>
 <p><strong>设值注入 Setter Injection：</strong></p>
 <p>{{&lt; highlight php &gt;}}
@@ -1591,11 +1555,9 @@ class User
       {
         $this-&gt;storage = $storage;
       }</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
-<span class="normal">2</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>  // ...
+<pre><code>  // ...
 }
-</code></pre></div>
-</td></tr></table>
+</code></pre>
 <p>{{&lt; /highlight &gt;}}</p>
 <p><strong>属性 Property Injection：</strong></p>
 <p>{{&lt; highlight php &gt;}}
@@ -1603,9 +1565,8 @@ class User
     {
       public $sessionStorage;
     }</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>$user-&gt;sessionStorage = $storage;
-</code></pre></div>
-</td></tr></table>
+<pre><code>$user-&gt;sessionStorage = $storage;
+</code></pre>
 <p>{{&lt; /highlight &gt;}}</p>
 <p><strong>相关资料：</strong> </p>
 <p><a href="http://fabien.potencier.org/article/11/what-is-dependency-injection">http://fabien.potencier.org/article/11/what-is-dependency-injection</a> </p>
@@ -1650,6 +1611,10 @@ class User
           }, typeof search !== "undefined" && search)
         })
       </script>
+      
+        <script src="../../../assets/js/highlight.min.js"></script>
+      
+        <script src="../../../assets/js/init.js"></script>
       
     
   </body>

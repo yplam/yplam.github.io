@@ -34,6 +34,8 @@
     
     
     
+      <link rel="stylesheet" href="../../../assets/css/highlight.css">
+    
       <link rel="stylesheet" href="../../../assets/css/custom.css">
     
     
@@ -1471,260 +1473,145 @@
 
 <p>Symfony 2.8 引入了微内核的功能，用来创建简单，甚至是单文件的Symfony 应用。</p>
 <p>下面是一个简单的例子：</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
-<span class="normal"> 2</span>
-<span class="normal"> 3</span>
-<span class="normal"> 4</span>
-<span class="normal"> 5</span>
-<span class="normal"> 6</span>
-<span class="normal"> 7</span>
-<span class="normal"> 8</span>
-<span class="normal"> 9</span>
-<span class="normal">10</span>
-<span class="normal">11</span>
-<span class="normal">12</span>
-<span class="normal">13</span>
-<span class="normal">14</span>
-<span class="normal">15</span>
-<span class="normal">16</span>
-<span class="normal">17</span>
-<span class="normal">18</span>
-<span class="normal">19</span>
-<span class="normal">20</span>
-<span class="normal">21</span>
-<span class="normal">22</span>
-<span class="normal">23</span>
-<span class="normal">24</span>
-<span class="normal">25</span>
-<span class="normal">26</span>
-<span class="normal">27</span>
-<span class="normal">28</span>
-<span class="normal">29</span>
-<span class="normal">30</span>
-<span class="normal">31</span>
-<span class="normal">32</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="x">// app/MicroKernel.php</span>
-<span class="x">use Symfony\Bundle\FrameworkBundle\Kernel\MicroKernelTrait;</span>
-<span class="x">use Symfony\Component\Config\Loader\LoaderInterface;</span>
-<span class="x">use Symfony\Component\DependencyInjection\ContainerBuilder;</span>
-<span class="x">use Symfony\Component\HttpFoundation\Response;</span>
-<span class="x">use Symfony\Component\HttpKernel\Kernel;</span>
-<span class="x">use Symfony\Component\Routing\RouteCollectionBuilder;</span>
+<pre><code class="language-php">
+// app/MicroKernel.php
+use Symfony\Bundle\FrameworkBundle\Kernel\MicroKernelTrait;
+use Symfony\Component\Config\Loader\LoaderInterface;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Kernel;
+use Symfony\Component\Routing\RouteCollectionBuilder;
 
-<span class="x">class MicroKernel extends Kernel</span>
-<span class="x">{</span>
-<span class="x">    use MicroKernelTrait;</span>
+class MicroKernel extends Kernel
+{
+    use MicroKernelTrait;
 
-<span class="x">    public function registerBundles()</span>
-<span class="x">    {</span>
-<span class="x">        return array(new Symfony\Bundle\FrameworkBundle\FrameworkBundle());</span>
-<span class="x">    }</span>
+    public function registerBundles()
+    {
+        return array(new Symfony\Bundle\FrameworkBundle\FrameworkBundle());
+    }
 
-<span class="x">    protected function configureRoutes(RouteCollectionBuilder $routes)</span>
-<span class="x">    {</span>
-<span class="x">        $routes-&gt;add(&#39;/&#39;, &#39;kernel:indexAction&#39;, &#39;index&#39;);</span>
-<span class="x">    }</span>
+    protected function configureRoutes(RouteCollectionBuilder $routes)
+    {
+        $routes-&gt;add('/', 'kernel:indexAction', 'index');
+    }
 
-<span class="x">    protected function configureContainer(ContainerBuilder $c, LoaderInterface $loader)</span>
-<span class="x">    {</span>
-<span class="x">        $c-&gt;loadFromExtension(&#39;framework&#39;, [&#39;secret&#39; =&gt; &#39;12345&#39;]);</span>
-<span class="x">    }</span>
+    protected function configureContainer(ContainerBuilder $c, LoaderInterface $loader)
+    {
+        $c-&gt;loadFromExtension('framework', ['secret' =&gt; '12345']);
+    }
 
-<span class="x">    public function indexAction()</span>
-<span class="x">    {</span>
-<span class="x">        return new Response(&#39;Hello World&#39;);</span>
-<span class="x">    }</span>
-<span class="x">}</span>
-</code></pre></div>
-</td></tr></table>
+    public function indexAction()
+    {
+        return new Response('Hello World');
+    }
+}
+
+</code></pre>
 <p>MicroKernel类主要实现配置 bundle、配置路由、路由响应的功能；只需要简单几行代码就完成一个Symfony应用。当然，MicroKernel实际上不会提升Symfony的运行性能，它只不过是改变了Symfony配置路由与bundle的方式，但是这样的改变使得你的应用只使用Symfony最基本的功能，禁用了大量的特性，因此可以带来性能的提升：</p>
 <p><img alt="全框架与微框架" src="/assets/2015/symfony_micro.jpg" title="全框架与微框架" /></p>
 <p>显然，这样做带来一个非常大的灵活性，你可以在Symfony的基础上开发你的应用，避免通常微框架所带来的限制，当你的应用越来越复杂的时候，你可以逐渐的将需要用到的Symfony特性加进去。</p>
 <p>譬如，下面的例子就是在上面的基础上添加了Twig模板、Web调试工具栏的支持，依然可以写在一个文件里。</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
-<span class="normal"> 2</span>
-<span class="normal"> 3</span>
-<span class="normal"> 4</span>
-<span class="normal"> 5</span>
-<span class="normal"> 6</span>
-<span class="normal"> 7</span>
-<span class="normal"> 8</span>
-<span class="normal"> 9</span>
-<span class="normal">10</span>
-<span class="normal">11</span>
-<span class="normal">12</span>
-<span class="normal">13</span>
-<span class="normal">14</span>
-<span class="normal">15</span>
-<span class="normal">16</span>
-<span class="normal">17</span>
-<span class="normal">18</span>
-<span class="normal">19</span>
-<span class="normal">20</span>
-<span class="normal">21</span>
-<span class="normal">22</span>
-<span class="normal">23</span>
-<span class="normal">24</span>
-<span class="normal">25</span>
-<span class="normal">26</span>
-<span class="normal">27</span>
-<span class="normal">28</span>
-<span class="normal">29</span>
-<span class="normal">30</span>
-<span class="normal">31</span>
-<span class="normal">32</span>
-<span class="normal">33</span>
-<span class="normal">34</span>
-<span class="normal">35</span>
-<span class="normal">36</span>
-<span class="normal">37</span>
-<span class="normal">38</span>
-<span class="normal">39</span>
-<span class="normal">40</span>
-<span class="normal">41</span>
-<span class="normal">42</span>
-<span class="normal">43</span>
-<span class="normal">44</span>
-<span class="normal">45</span>
-<span class="normal">46</span>
-<span class="normal">47</span>
-<span class="normal">48</span>
-<span class="normal">49</span>
-<span class="normal">50</span>
-<span class="normal">51</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="x">// app/MicroKernel.php</span>
+<pre><code class="language-php">
+// app/MicroKernel.php
 
-<span class="x">class MicroKernel extends Kernel</span>
-<span class="x">{</span>
-<span class="x">    use MicroKernelTrait;</span>
+class MicroKernel extends Kernel
+{
+    use MicroKernelTrait;
 
-<span class="x">    public function registerBundles()</span>
-<span class="x">    {</span>
-<span class="x">        $bundles = array(</span>
-<span class="x">            new Symfony\Bundle\FrameworkBundle\FrameworkBundle(),</span>
-<span class="x">            new Symfony\Bundle\TwigBundle\TwigBundle(),</span>
-<span class="x">        );</span>
+    public function registerBundles()
+    {
+        $bundles = array(
+            new Symfony\Bundle\FrameworkBundle\FrameworkBundle(),
+            new Symfony\Bundle\TwigBundle\TwigBundle(),
+        );
 
-<span class="x">        if (in_array($this-&gt;getEnvironment(), array(&#39;dev&#39;, &#39;test&#39;), true)) {</span>
-<span class="x">            $bundles[] = new Symfony\Bundle\WebProfilerBundle\WebProfilerBundle();</span>
-<span class="x">        }</span>
+        if (in_array($this-&gt;getEnvironment(), array('dev', 'test'), true)) {
+            $bundles[] = new Symfony\Bundle\WebProfilerBundle\WebProfilerBundle();
+        }
 
-<span class="x">        return $bundles;</span>
-<span class="x">    }</span>
+        return $bundles;
+    }
 
-<span class="x">    protected function configureRoutes(RouteCollectionBuilder $routes)</span>
-<span class="x">    {</span>
-<span class="x">        $routes-&gt;mount(&#39;/_wdt&#39;, $routes-&gt;import(&#39;@WebProfilerBundle/Resources/config/routing/wdt.xml&#39;));</span>
-<span class="x">        $routes-&gt;mount(&#39;/_profiler&#39;, $routes-&gt;import(&#39;@WebProfilerBundle/Resources/config/routing/profiler.xml&#39;));</span>
+    protected function configureRoutes(RouteCollectionBuilder $routes)
+    {
+        $routes-&gt;mount('/_wdt', $routes-&gt;import('@WebProfilerBundle/Resources/config/routing/wdt.xml'));
+        $routes-&gt;mount('/_profiler', $routes-&gt;import('@WebProfilerBundle/Resources/config/routing/profiler.xml'));
 
-<span class="x">        $routes-&gt;add(&#39;/&#39;, &#39;kernel:indexAction&#39;, &#39;index&#39;);</span>
-<span class="x">    }</span>
+        $routes-&gt;add('/', 'kernel:indexAction', 'index');
+    }
 
-<span class="x">    protected function configureContainer(ContainerBuilder $c, LoaderInterface $loader)</span>
-<span class="x">    {</span>
-<span class="x">        // load bundles&#39; configuration</span>
-<span class="x">        $c-&gt;loadFromExtension(&#39;framework&#39;, [</span>
-<span class="x">            &#39;secret&#39; =&gt; &#39;12345&#39;,</span>
-<span class="x">            &#39;profiler&#39; =&gt; null,</span>
-<span class="x">            &#39;templating&#39; =&gt; [&#39;engines&#39; =&gt; [&#39;twig&#39;]],</span>
-<span class="x">        ]);</span>
+    protected function configureContainer(ContainerBuilder $c, LoaderInterface $loader)
+    {
+        // load bundles' configuration
+        $c-&gt;loadFromExtension('framework', [
+            'secret' =&gt; '12345',
+            'profiler' =&gt; null,
+            'templating' =&gt; ['engines' =&gt; ['twig']],
+        ]);
 
-<span class="x">        $c-&gt;loadFromExtension(&#39;web_profiler&#39;, [&#39;toolbar&#39; =&gt; true]);</span>
+        $c-&gt;loadFromExtension('web_profiler', ['toolbar' =&gt; true]);
 
-<span class="x">        // add configuration parameters</span>
-<span class="x">        $c-&gt;setParameter(&#39;mail_sender&#39;, &#39;user@example.com&#39;);</span>
+        // add configuration parameters
+        $c-&gt;setParameter('mail_sender', 'user@example.com');
 
-<span class="x">        // register services</span>
-<span class="x">        $c-&gt;register(&#39;app.markdown&#39;, &#39;AppBundle\\Service\\Parser\\Markdown&#39;);</span>
-<span class="x">    }</span>
+        // register services
+        $c-&gt;register('app.markdown', 'AppBundle\\Service\\Parser\\Markdown');
+    }
 
-<span class="x">    public function indexAction()</span>
-<span class="x">    {</span>
-<span class="x">        return $this-&gt;container-&gt;get(&#39;templating&#39;)-&gt;renderResponse(&#39;index.html.twig&#39;);</span>
-<span class="x">    }</span>
-<span class="x">}</span>
-</code></pre></div>
-</td></tr></table>
+    public function indexAction()
+    {
+        return $this-&gt;container-&gt;get('templating')-&gt;renderResponse('index.html.twig');
+    }
+}
+
+</code></pre>
 <p>单文件应用可能会导致代码显得混乱，下面是一个可以在真实场景中使用的例子，包括单个service.yml、config.yml配置，路由使用 annotations 注释：</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
-<span class="normal"> 2</span>
-<span class="normal"> 3</span>
-<span class="normal"> 4</span>
-<span class="normal"> 5</span>
-<span class="normal"> 6</span>
-<span class="normal"> 7</span>
-<span class="normal"> 8</span>
-<span class="normal"> 9</span>
-<span class="normal">10</span>
-<span class="normal">11</span>
-<span class="normal">12</span>
-<span class="normal">13</span>
-<span class="normal">14</span>
-<span class="normal">15</span>
-<span class="normal">16</span>
-<span class="normal">17</span>
-<span class="normal">18</span>
-<span class="normal">19</span>
-<span class="normal">20</span>
-<span class="normal">21</span>
-<span class="normal">22</span>
-<span class="normal">23</span>
-<span class="normal">24</span>
-<span class="normal">25</span>
-<span class="normal">26</span>
-<span class="normal">27</span>
-<span class="normal">28</span>
-<span class="normal">29</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="x">// app/MicroKernel.php</span>
+<pre><code class="language-php">
+// app/MicroKernel.php
 
-<span class="x">// ...</span>
+// ...
 
-<span class="x">class MicroKernel extends Kernel</span>
-<span class="x">{</span>
-<span class="x">    use MicroKernelTrait;</span>
+class MicroKernel extends Kernel
+{
+    use MicroKernelTrait;
 
-<span class="x">    public function registerBundles()</span>
-<span class="x">    {</span>
-<span class="x">        return array(</span>
-<span class="x">            new Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle(),</span>
-<span class="x">            new Symfony\Bundle\FrameworkBundle\FrameworkBundle(),</span>
-<span class="x">            new Symfony\Bundle\TwigBundle\TwigBundle(),</span>
-<span class="x">            new AppBundle\AppBundle(),</span>
-<span class="x">        );</span>
-<span class="x">    }</span>
+    public function registerBundles()
+    {
+        return array(
+            new Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle(),
+            new Symfony\Bundle\FrameworkBundle\FrameworkBundle(),
+            new Symfony\Bundle\TwigBundle\TwigBundle(),
+            new AppBundle\AppBundle(),
+        );
+    }
 
-<span class="x">    protected function configureRoutes(RouteCollectionBuilder $routes)</span>
-<span class="x">    {</span>
-<span class="x">        $routes-&gt;mount(&#39;/&#39;, $routes-&gt;import(&#39;@AppBundle/Controller&#39;, &#39;annotation&#39;));</span>
-<span class="x">    }</span>
+    protected function configureRoutes(RouteCollectionBuilder $routes)
+    {
+        $routes-&gt;mount('/', $routes-&gt;import('@AppBundle/Controller', 'annotation'));
+    }
 
-<span class="x">    protected function configureContainer(ContainerBuilder $c, LoaderInterface $loader)</span>
-<span class="x">    {</span>
-<span class="x">        $loader-&gt;load(__DIR__.&#39;/config/config_&#39;.$this-&gt;getEnvironment().&#39;.yml&#39;);</span>
-<span class="x">        $loader-&gt;load(__DIR__.&#39;/config/services.yml&#39;);</span>
-<span class="x">    }</span>
-<span class="x">}</span>
-</code></pre></div>
-</td></tr></table>
+    protected function configureContainer(ContainerBuilder $c, LoaderInterface $loader)
+    {
+        $loader-&gt;load(__DIR__.'/config/config_'.$this-&gt;getEnvironment().'.yml');
+        $loader-&gt;load(__DIR__.'/config/services.yml');
+    }
+}
+
+</code></pre>
 <p>当然，不要忘记在入口文件中使用MicroKernel :)</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
-<span class="normal"> 2</span>
-<span class="normal"> 3</span>
-<span class="normal"> 4</span>
-<span class="normal"> 5</span>
-<span class="normal"> 6</span>
-<span class="normal"> 7</span>
-<span class="normal"> 8</span>
-<span class="normal"> 9</span>
-<span class="normal">10</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="x">// web/app.php</span>
-<span class="x">use Symfony\Component\HttpFoundation\Request;</span>
+<pre><code class="language-php">// web/app.php
+use Symfony\Component\HttpFoundation\Request;
 
-<span class="x">$loader = require __DIR__.&#39;/../app/autoload.php&#39;;</span>
-<span class="x">require_once __DIR__.&#39;/../app/MicroKernel.php&#39;;</span>
+$loader = require __DIR__.'/../app/autoload.php';
+require_once __DIR__.'/../app/MicroKernel.php';
 
-<span class="x">$app = new MicroKernel(&#39;prod&#39;, false);</span>
-<span class="x">$app-&gt;loadClassCache();</span>
+$app = new MicroKernel('prod', false);
+$app-&gt;loadClassCache();
 
-<span class="x">$app-&gt;handle(Request::createFromGlobals())-&gt;send();</span>
-</code></pre></div>
-</td></tr></table>
+$app-&gt;handle(Request::createFromGlobals())-&gt;send();
+
+</code></pre>
 <p>Symfony2引入微内核，还会带来另外一个便利，通常，对于后台、内容编辑、内容提交的页面，我们需要全功能的支持，然而对于一些只需要简单的JSON API接口，我们可以添加多一个使用微内核的入口文件，提高接口的响应速度，减少资源消耗。</p>
                 
                   
@@ -1765,6 +1652,10 @@
           }, typeof search !== "undefined" && search)
         })
       </script>
+      
+        <script src="../../../assets/js/highlight.min.js"></script>
+      
+        <script src="../../../assets/js/init.js"></script>
       
     
   </body>

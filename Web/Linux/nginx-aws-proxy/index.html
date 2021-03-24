@@ -34,6 +34,8 @@
     
     
     
+      <link rel="stylesheet" href="../../../assets/css/highlight.css">
+    
       <link rel="stylesheet" href="../../../assets/css/custom.css">
     
     
@@ -1470,51 +1472,17 @@
 <!--more-->
 
 <p>下面介绍的方式，文件存储在AWS S3服务器上，Nginx配置成S3的反向代理，Nginx将热门文件缓存在本地服务器，大大减少对S3的文件请求，从而降低流量费用。</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
-<span class="normal"> 2</span>
-<span class="normal"> 3</span>
-<span class="normal"> 4</span>
-<span class="normal"> 5</span>
-<span class="normal"> 6</span>
-<span class="normal"> 7</span>
-<span class="normal"> 8</span>
-<span class="normal"> 9</span>
-<span class="normal">10</span>
-<span class="normal">11</span>
-<span class="normal">12</span>
-<span class="normal">13</span>
-<span class="normal">14</span>
-<span class="normal">15</span>
-<span class="normal">16</span>
-<span class="normal">17</span>
-<span class="normal">18</span>
-<span class="normal">19</span>
-<span class="normal">20</span>
-<span class="normal">21</span>
-<span class="normal">22</span>
-<span class="normal">23</span>
-<span class="normal">24</span>
-<span class="normal">25</span>
-<span class="normal">26</span>
-<span class="normal">27</span>
-<span class="normal">28</span>
-<span class="normal">29</span>
-<span class="normal">30</span>
-<span class="normal">31</span>
-<span class="normal">32</span>
-<span class="normal">33</span>
-<span class="normal">34</span>
-<span class="normal">35</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>proxy_cache_path  /var/nginx/cache/aws  levels=2:2:2 use_temp_path=off keys_zone=aws:1000m inactive=30d max_size=100g;
+<pre><code>proxy_cache_path  /var/nginx/cache/aws  levels=2:2:2 use_temp_path=off keys_zone=aws:1000m inactive=30d max_size=100g;
 
 server{
         ...
         location @proxy {
-                set $s3_bucket        &#39;testaws.s3.amazonaws.com&#39;;
+                set $s3_bucket        'testaws.s3.amazonaws.com';
                 add_header x-by &quot;aws&quot;;
 
                 proxy_http_version     1.1;
                 proxy_set_header       Host $s3_bucket;
-                proxy_set_header       Authorization &#39;&#39;;
+                proxy_set_header       Authorization '';
                 proxy_hide_header      x-amz-id-2;
                 proxy_hide_header      x-amz-request-id;
                 proxy_hide_header      Set-Cookie;
@@ -1539,8 +1507,7 @@ server{
        }
        ...
 }
-</code></pre></div>
-</td></tr></table>
+</code></pre>
 <p>使用上面的方式对一台Linode 16G服务器进行配置，原来文件均存储在本地，本地磁盘空间使用接近90%，CPU与带宽余量还较大，如果对Linode进行升级，则成本会增加一倍，并且随着内容的增加，不久的未来又会因为磁盘问题需要升级到更高版本；使用上面方案，先将旧附件迁移到AWS S3，可以满足文件持续增长的需求，服务器方面的开销也会跟网站的发展比较同步，不会出现跳跃式的增加。</p>
                 
                   
@@ -1581,6 +1548,10 @@ server{
           }, typeof search !== "undefined" && search)
         })
       </script>
+      
+        <script src="../../../assets/js/highlight.min.js"></script>
+      
+        <script src="../../../assets/js/init.js"></script>
       
     
   </body>

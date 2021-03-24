@@ -34,6 +34,8 @@
     
     
     
+      <link rel="stylesheet" href="../../../assets/css/highlight.css">
+    
       <link rel="stylesheet" href="../../../assets/css/custom.css">
     
     
@@ -1500,28 +1502,14 @@
 <p>{{&lt; /highlight &gt;}}</p>
 <p>下载、编译、安装PHP-FPM </p>
 <p>{{&lt; highlight shell &gt;}}</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
-<span class="normal">2</span>
-<span class="normal">3</span>
-<span class="normal">4</span>
-<span class="normal">5</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>wget http://us.php.net/distributions/php-5.2.17.tar.gz
+<pre><code>wget http://us.php.net/distributions/php-5.2.17.tar.gz
 tar -xvzf php-5.2.17.tar.gz
 wget http://php-fpm.org/downloads/php-5.2.17-fpm-0.5.14.diff.gz
 gzip -cd php-5.2.17-fpm-0.5.14.diff.gz | patch -d php-5.2.17 -p1
 cd php-5.2.17
-</code></pre></div>
-</td></tr></table>
+</code></pre>
 <h1 id="64-with-libdirlib64">对于64位系统注意要指定--with-libdir=lib64<a class="headerlink" href="#64-with-libdirlib64" title="Permanent link">&para;</a></h1>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
-<span class="normal"> 2</span>
-<span class="normal"> 3</span>
-<span class="normal"> 4</span>
-<span class="normal"> 5</span>
-<span class="normal"> 6</span>
-<span class="normal"> 7</span>
-<span class="normal"> 8</span>
-<span class="normal"> 9</span>
-<span class="normal">10</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>./configure --enable-fastcgi --enable-fpm --with-mcrypt --with-zlib --enable-mbstring --enable-pdo --with-mysql --with-mysqli --with-curl --disable-debug --with-pic --disable-rpath --enable-inline-optimization --with-bz2 --enable-xml --with-zlib --enable-sockets --enable-sysvsem --enable-sysvshm --enable-pcntl --enable-mbregex --with-mhash --with-xsl --enable-zip --with-pcre-regex --without-pdo-sqlite --with-pdo-mysql --without-sqlite --with-jpeg-dir --with-png-dir --with-gd --with-openssl --with-libdir=lib64
+<pre><code>./configure --enable-fastcgi --enable-fpm --with-mcrypt --with-zlib --enable-mbstring --enable-pdo --with-mysql --with-mysqli --with-curl --disable-debug --with-pic --disable-rpath --enable-inline-optimization --with-bz2 --enable-xml --with-zlib --enable-sockets --enable-sysvsem --enable-sysvshm --enable-pcntl --enable-mbregex --with-mhash --with-xsl --enable-zip --with-pcre-regex --without-pdo-sqlite --with-pdo-mysql --without-sqlite --with-jpeg-dir --with-png-dir --with-gd --with-openssl --with-libdir=lib64
 
 make 
 make install 
@@ -1531,20 +1519,14 @@ chmod +x /etc/init.d/php-fpm
 
 
 wget --no-check-certificate https://github.com/downloads/indeyets/syck/syck-0.70.tar.gz
-</code></pre></div>
-</td></tr></table>
+</code></pre>
 <h1 id="syck-070">编译安装syck-0.70（略）<a class="headerlink" href="#syck-070" title="Permanent link">&para;</a></h1>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
-<span class="normal">2</span>
-<span class="normal">3</span>
-<span class="normal">4</span>
-<span class="normal">5</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>pecl install memcache
+<pre><code>pecl install memcache
 pecl install apc
 pecl install syck-beta
 
 cp php.ini-recommended /usr/local/lib/php.ini
-</code></pre></div>
-</td></tr></table>
+</code></pre>
 <p>{{&lt; /highlight &gt;}}</p>
 <p>更改php-fpm.conf配置，设置运行用户。位置大概在51、52、63、66行。 </p>
 <p>{{&lt; highlight xml &gt;}}
@@ -1600,6 +1582,10 @@ cp php.ini-recommended /usr/local/lib/php.ini
           }, typeof search !== "undefined" && search)
         })
       </script>
+      
+        <script src="../../../assets/js/highlight.min.js"></script>
+      
+        <script src="../../../assets/js/init.js"></script>
       
     
   </body>

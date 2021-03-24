@@ -34,6 +34,8 @@
     
     
     
+      <link rel="stylesheet" href="../../../assets/css/highlight.css">
+    
       <link rel="stylesheet" href="../../../assets/css/custom.css">
     
     
@@ -1562,24 +1564,23 @@
 <h2 id="compile-and-install-boost-153">compile and install boost 1.5.3<a class="headerlink" href="#compile-and-install-boost-153" title="Permanent link">&para;</a></h2>
 <p>Follow this instruction <a href="http://www.boost.org/doc/libs/1_53_0/more/getting_started/unix-variants.html">Getting Started on Unix Variants</a> to install boost 1.5.3 because the default boost 1.4.9 on wheezy does not works with ROS Indigo.</p>
 <p>Without installing boost 1.5.3, you may get the error message like this:</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>error: macro <span class="s2">&quot;BOOST_SCOPE_EXIT&quot;</span> passed <span class="m">2</span> arguments, but takes just <span class="m">1</span>
-</code></pre></div>
-</td></tr></table>
+<pre><code class="language-shell">error: macro &quot;BOOST_SCOPE_EXIT&quot; passed 2 arguments, but takes just 1
+
+</code></pre>
 <h2 id="12-console_bridge">1.2 console_bridge<a class="headerlink" href="#12-console_bridge" title="Permanent link">&para;</a></h2>
 <p>In :</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>sudo checkinstall make install
-</code></pre></div>
-</td></tr></table>
+<pre><code class="language-shell">sudo checkinstall make install
+
+</code></pre>
 <p>Enter 2 and rename the package to 'libconsole_bridge' .</p>
 <h2 id="322-resolving-dependencies-with-rosdep">3.2.2 Resolving Dependencies with rosdep<a class="headerlink" href="#322-resolving-dependencies-with-rosdep" title="Permanent link">&para;</a></h2>
 <p>Run rosdep install without the -y argument and skip apt-get install libboost-all-dev lib.</p>
 <p><strong>error while loading shared libraries: libconsole_bridge.so.0.3: cannot open shared object file: No such file or directory</strong></p>
 <p>After the whole install, if you got this error while starting roscore, you can fix it like this:</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
-<span class="normal">2</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="nb">cd</span> /opt/ros/indigo/lib
+<pre><code class="language-shell">cd /opt/ros/indigo/lib
 sudo ln -s /usr/local/lib/i386-linux-gnu/libconsole_bridge.so.0.3 libconsole_bridge.so.0.3
-</code></pre></div>
-</td></tr></table>
+
+</code></pre>
                 
                   
                 
@@ -1619,6 +1620,10 @@ sudo ln -s /usr/local/lib/i386-linux-gnu/libconsole_bridge.so.0.3 libconsole_bri
           }, typeof search !== "undefined" && search)
         })
       </script>
+      
+        <script src="../../../assets/js/highlight.min.js"></script>
+      
+        <script src="../../../assets/js/init.js"></script>
       
     
   </body>

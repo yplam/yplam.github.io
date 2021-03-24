@@ -34,6 +34,8 @@
     
     
     
+      <link rel="stylesheet" href="../../../assets/css/highlight.css">
+    
       <link rel="stylesheet" href="../../../assets/css/custom.css">
     
     
@@ -1486,16 +1488,7 @@
 <p>当然，在实际应用场景中，相对PHP跟Mysql而言，Apache的这点性能损失可能不算什么；但是，只需要简单的将rewrite规则从htaccess复制到apache.conf中就可以得到性能的提升，何乐而不为呢？ :)</p>
 <p><strong>测试数据</strong></p>
 <p>allowoverride=none，无rewrite</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
-<span class="normal"> 2</span>
-<span class="normal"> 3</span>
-<span class="normal"> 4</span>
-<span class="normal"> 5</span>
-<span class="normal"> 6</span>
-<span class="normal"> 7</span>
-<span class="normal"> 8</span>
-<span class="normal"> 9</span>
-<span class="normal">10</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>Concurrency Level:      10
+<pre><code>Concurrency Level:      10
 Time taken for tests:   0.500 seconds
 Complete requests:      10000
 Failed requests:        0
@@ -1505,19 +1498,9 @@ Requests per second:    20008.88 [#/sec] (mean)
 Time per request:       0.500 [ms] (mean)
 Time per request:       0.050 [ms] (mean, across all concurrent requests)
 Transfer rate:          3673.51 [Kbytes/sec] received
-</code></pre></div>
-</td></tr></table>
+</code></pre>
 <p>allowoverride=all，无.htaccess</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
-<span class="normal"> 2</span>
-<span class="normal"> 3</span>
-<span class="normal"> 4</span>
-<span class="normal"> 5</span>
-<span class="normal"> 6</span>
-<span class="normal"> 7</span>
-<span class="normal"> 8</span>
-<span class="normal"> 9</span>
-<span class="normal">10</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>Concurrency Level:      10
+<pre><code>Concurrency Level:      10
 Time taken for tests:   0.491 seconds
 Complete requests:      10000
 Failed requests:        0
@@ -1527,19 +1510,9 @@ Requests per second:    20371.66 [#/sec] (mean)
 Time per request:       0.491 [ms] (mean)
 Time per request:       0.049 [ms] (mean, across all concurrent requests)
 Transfer rate:          3740.11 [Kbytes/sec] received
-</code></pre></div>
-</td></tr></table>
+</code></pre>
 <p>简单的.htaccess(符合单入口文件类的网站)</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
-<span class="normal"> 2</span>
-<span class="normal"> 3</span>
-<span class="normal"> 4</span>
-<span class="normal"> 5</span>
-<span class="normal"> 6</span>
-<span class="normal"> 7</span>
-<span class="normal"> 8</span>
-<span class="normal"> 9</span>
-<span class="normal">10</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>Concurrency Level:      10
+<pre><code>Concurrency Level:      10
 Time taken for tests:   0.581 seconds
 Complete requests:      10000
 Failed requests:        0
@@ -1549,19 +1522,9 @@ Requests per second:    17201.99 [#/sec] (mean)
 Time per request:       0.581 [ms] (mean)
 Time per request:       0.058 [ms] (mean, across all concurrent requests)
 Transfer rate:          3158.18 [Kbytes/sec] received
-</code></pre></div>
-</td></tr></table>
+</code></pre>
 <p>简单.htaccess，访问 /a/b/c/d/e/f/g/ 路径</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
-<span class="normal"> 2</span>
-<span class="normal"> 3</span>
-<span class="normal"> 4</span>
-<span class="normal"> 5</span>
-<span class="normal"> 6</span>
-<span class="normal"> 7</span>
-<span class="normal"> 8</span>
-<span class="normal"> 9</span>
-<span class="normal">10</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>Concurrency Level:      10
+<pre><code>Concurrency Level:      10
 Time taken for tests:   0.640 seconds
 Complete requests:      10000
 Failed requests:        0
@@ -1571,19 +1534,10 @@ Requests per second:    15623.29 [#/sec] (mean)
 Time per request:       0.640 [ms] (mean)
 Time per request:       0.064 [ms] (mean, across all concurrent requests)
 Transfer rate:          2868.34 [Kbytes/sec] received
-</code></pre></div>
-</td></tr></table>
+
+</code></pre>
 <p>简单的rewrite规则，写入apache.conf</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
-<span class="normal"> 2</span>
-<span class="normal"> 3</span>
-<span class="normal"> 4</span>
-<span class="normal"> 5</span>
-<span class="normal"> 6</span>
-<span class="normal"> 7</span>
-<span class="normal"> 8</span>
-<span class="normal"> 9</span>
-<span class="normal">10</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>Concurrency Level:      10
+<pre><code>Concurrency Level:      10
 Time taken for tests:   0.513 seconds
 Complete requests:      10000
 Failed requests:        0
@@ -1593,19 +1547,9 @@ Requests per second:    19486.15 [#/sec] (mean)
 Time per request:       0.513 [ms] (mean)
 Time per request:       0.051 [ms] (mean, across all concurrent requests)
 Transfer rate:          3577.54 [Kbytes/sec] received
-</code></pre></div>
-</td></tr></table>
+</code></pre>
 <p>复杂的.htaccess(900行，使用正则表达式对栏目内容进行映射，还有对旧内容的重定向等)</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
-<span class="normal"> 2</span>
-<span class="normal"> 3</span>
-<span class="normal"> 4</span>
-<span class="normal"> 5</span>
-<span class="normal"> 6</span>
-<span class="normal"> 7</span>
-<span class="normal"> 8</span>
-<span class="normal"> 9</span>
-<span class="normal">10</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>Concurrency Level:      10
+<pre><code>Concurrency Level:      10
 Time taken for tests:   6.677 seconds
 Complete requests:      10000
 Failed requests:        0
@@ -1615,19 +1559,10 @@ Requests per second:    1497.75 [#/sec] (mean)
 Time per request:       6.677 [ms] (mean)
 Time per request:       0.668 [ms] (mean, across all concurrent requests)
 Transfer rate:          274.98 [Kbytes/sec] received
-</code></pre></div>
-</td></tr></table>
+
+</code></pre>
 <p>将规则写入apache.conf，并且禁用allowoverride后：</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
-<span class="normal"> 2</span>
-<span class="normal"> 3</span>
-<span class="normal"> 4</span>
-<span class="normal"> 5</span>
-<span class="normal"> 6</span>
-<span class="normal"> 7</span>
-<span class="normal"> 8</span>
-<span class="normal"> 9</span>
-<span class="normal">10</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>Concurrency Level:      10
+<pre><code>Concurrency Level:      10
 Time taken for tests:   1.407 seconds
 Complete requests:      10000
 Failed requests:        0
@@ -1637,8 +1572,8 @@ Requests per second:    7108.94 [#/sec] (mean)
 Time per request:       1.407 [ms] (mean)
 Time per request:       0.141 [ms] (mean, across all concurrent requests)
 Transfer rate:          1305.16 [Kbytes/sec] received
-</code></pre></div>
-</td></tr></table>
+
+</code></pre>
                 
                   
                 
@@ -1678,6 +1613,10 @@ Transfer rate:          1305.16 [Kbytes/sec] received
           }, typeof search !== "undefined" && search)
         })
       </script>
+      
+        <script src="../../../assets/js/highlight.min.js"></script>
+      
+        <script src="../../../assets/js/init.js"></script>
       
     
   </body>

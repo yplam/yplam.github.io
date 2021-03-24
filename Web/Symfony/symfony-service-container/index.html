@@ -34,6 +34,8 @@
     
     
     
+      <link rel="stylesheet" href="../../../assets/css/highlight.css">
+    
       <link rel="stylesheet" href="../../../assets/css/custom.css">
     
     
@@ -1476,79 +1478,46 @@
     class Container extends sfServiceContainer
     {
       static protected $shared = array();</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
-<span class="normal"> 2</span>
-<span class="normal"> 3</span>
-<span class="normal"> 4</span>
-<span class="normal"> 5</span>
-<span class="normal"> 6</span>
-<span class="normal"> 7</span>
-<span class="normal"> 8</span>
-<span class="normal"> 9</span>
-<span class="normal">10</span>
-<span class="normal">11</span>
-<span class="normal">12</span>
-<span class="normal">13</span>
-<span class="normal">14</span>
-<span class="normal">15</span>
-<span class="normal">16</span>
-<span class="normal">17</span>
-<span class="normal">18</span>
-<span class="normal">19</span>
-<span class="normal">20</span>
-<span class="normal">21</span>
-<span class="normal">22</span>
-<span class="normal">23</span>
-<span class="normal">24</span>
-<span class="normal">25</span>
-<span class="normal">26</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>  protected function getMailTransportService()
+<pre><code>  protected function getMailTransportService()
   {
-    return new Zend_Mail_Transport_Smtp(&#39;smtp.gmail.com&#39;, array(
-      &#39;auth&#39;     =&gt; &#39;login&#39;,
-      &#39;username&#39; =&gt; $this[&#39;mailer.username&#39;],
-      &#39;password&#39; =&gt; $this[&#39;mailer.password&#39;],
-      &#39;ssl&#39;      =&gt; &#39;ssl&#39;,
-      &#39;port&#39;     =&gt; 465,
+    return new Zend_Mail_Transport_Smtp('smtp.gmail.com', array(
+      'auth'     =&gt; 'login',
+      'username' =&gt; $this['mailer.username'],
+      'password' =&gt; $this['mailer.password'],
+      'ssl'      =&gt; 'ssl',
+      'port'     =&gt; 465,
     ));
   }
 
   protected function getMailerService()
   {
-    if (isset(self::$shared[&#39;mailer&#39;]))
+    if (isset(self::$shared['mailer']))
     {
-      return self::$shared[&#39;mailer&#39;];
+      return self::$shared['mailer'];
     }
 
-    $class = $this[&#39;mailer.class&#39;];
+    $class = $this['mailer.class'];
 
     $mailer = new $class();
     $mailer-&gt;setDefaultTransport($this-&gt;getMailTransportService());
 
-    return self::$shared[&#39;mailer&#39;] = $mailer;
+    return self::$shared['mailer'] = $mailer;
   }
 }
-</code></pre></div>
-</td></tr></table>
+</code></pre>
 <p>{{&lt; /highlight &gt;}}</p>
 <p>然后通过这种方式来调用：</p>
 <p>{{&lt; highlight php &gt;}}
     require_once 'PATH/TO/sf/lib/sfServiceContainerAutoloader.php';
     sfServiceContainerAutoloader::register();</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
-<span class="normal">2</span>
-<span class="normal">3</span>
-<span class="normal">4</span>
-<span class="normal">5</span>
-<span class="normal">6</span>
-<span class="normal">7</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>$sc = new Container(array(
-  &#39;mailer.username&#39; =&gt; &#39;foo&#39;,
-  &#39;mailer.password&#39; =&gt; &#39;bar&#39;,
-  &#39;mailer.class&#39;    =&gt; &#39;Zend_Mail&#39;,
+<pre><code>$sc = new Container(array(
+  'mailer.username' =&gt; 'foo',
+  'mailer.password' =&gt; 'bar',
+  'mailer.class'    =&gt; 'Zend_Mail',
 ));
 
 $mailer = $sc-&gt;mailer;
-</code></pre></div>
-</td></tr></table>
+</code></pre>
 <p>{{&lt; /highlight &gt;}}</p>
 <p>通过实现__get方法，我们可以通过container对象属性的方式来调用各种服务，可以通过setService对容器进行配置，而需要我们编写的Container类变得更加格式化，都是由一系列get...Service方法组成。</p>
 <p><strong>ServiceContainerBuilder</strong></p>
@@ -1556,43 +1525,25 @@ $mailer = $sc-&gt;mailer;
 <p>{{&lt; highlight php &gt;}}
     require_once 'PATH/TO/sf/lib/sfServiceContainerAutoloader.php';
     sfServiceContainerAutoloader::register();</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
-<span class="normal"> 2</span>
-<span class="normal"> 3</span>
-<span class="normal"> 4</span>
-<span class="normal"> 5</span>
-<span class="normal"> 6</span>
-<span class="normal"> 7</span>
-<span class="normal"> 8</span>
-<span class="normal"> 9</span>
-<span class="normal">10</span>
-<span class="normal">11</span>
-<span class="normal">12</span>
-<span class="normal">13</span>
-<span class="normal">14</span>
-<span class="normal">15</span>
-<span class="normal">16</span>
-<span class="normal">17</span>
-<span class="normal">18</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>$sc = new sfServiceContainerBuilder();
+<pre><code>$sc = new sfServiceContainerBuilder();
 
 $sc-&gt;
-  register(&#39;mail.transport&#39;, &#39;Zend_Mail_Transport_Smtp&#39;)-&gt;
-  addArgument(&#39;smtp.gmail.com&#39;)-&gt;
+  register('mail.transport', 'Zend_Mail_Transport_Smtp')-&gt;
+  addArgument('smtp.gmail.com')-&gt;
   addArgument(array(
-    &#39;auth&#39;     =&gt; &#39;login&#39;,
-    &#39;username&#39; =&gt; &#39;%mailer.username%&#39;,
-    &#39;password&#39; =&gt; &#39;%mailer.password%&#39;,
-    &#39;ssl&#39;      =&gt; &#39;ssl&#39;,
-    &#39;port&#39;     =&gt; 465,
+    'auth'     =&gt; 'login',
+    'username' =&gt; '%mailer.username%',
+    'password' =&gt; '%mailer.password%',
+    'ssl'      =&gt; 'ssl',
+    'port'     =&gt; 465,
   ))-&gt;
   setShared(false)
 ;
 
 $sc-&gt;
-  register(&#39;mailer&#39;, &#39;%mailer.class%&#39;)-&gt;
-  addMethodCall(&#39;setDefaultTransport&#39;, array(new sfServiceReference(&#39;mail.transport&#39;)))
-</code></pre></div>
-</td></tr></table>
+  register('mailer', '%mailer.class%')-&gt;
+  addMethodCall('setDefaultTransport', array(new sfServiceReference('mail.transport')))
+</code></pre>
 <p>{{&lt; /highlight &gt;}}
 sfServiceContainerBuilder通过register函数来创建一个service，传入service的id以及对应的类，再通过addArgument传入将类实例化时传给构造函数的参数，通过addMethodCall来设置对象创建后调用的初始化函数，通过setShared来指定service是否全局共享。 sfServiceContainerBuilder继承自sfServiceContainer，覆写了getService方法，使得既可以调用静态设置的service，也可以使用动态添加的service。</p>
 <p><strong>使用配置文件来描述Service</strong></p>
@@ -1652,6 +1603,10 @@ sfServiceContainerBuilder通过register函数来创建一个service，传入serv
           }, typeof search !== "undefined" && search)
         })
       </script>
+      
+        <script src="../../../assets/js/highlight.min.js"></script>
+      
+        <script src="../../../assets/js/init.js"></script>
       
     
   </body>

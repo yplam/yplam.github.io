@@ -34,6 +34,8 @@
     
     
     
+      <link rel="stylesheet" href="../../../assets/css/highlight.css">
+    
       <link rel="stylesheet" href="../../../assets/css/custom.css">
     
     
@@ -1474,57 +1476,49 @@
 <p><strong>配置过程</strong></p>
 <p>首先，需要购买个SSL证书，当然这不是免费的，甚至有可能很贵。在这里我们使用Godaddy最便宜的SSL证书，每年四百多，使用优惠码还可以便宜30%。</p>
 <p>购买证书时需要提供csr文件内容，这个可以在服务器提前生成：</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>openssl req -new -newkey rsa:2048 -nodes -keyout yplam.key -out yplam.csr
-</code></pre></div>
-</td></tr></table>
+<pre><code>openssl req -new -newkey rsa:2048 -nodes -keyout yplam.key -out yplam.csr
+
+</code></pre>
 <p>然后根据你的需求填入信息，其中比较重要的是 Common Name 需要填你证书的域名。</p>
 <p>生成后打开csr文件，将内容拷贝到Godaddy SSL证书申请的输入框中，提交。</p>
 <p>如无意外，付款后就可以进入配置页面（在这过程之间可能需要等待几分钟）</p>
 <p>因为域名也是在Godaddy上注册的，接着不需要做其他配置，只需要等待过程完成。</p>
 <p>完成后Godaddy会让你下载一个zip文件（web服务器类型选其他），将zip上传到服务器，用unzip命令解压出来两个 .crt 文件，其中以 gd_bundle 开头的文件为链式证书，另一个为服务器证书，使用nginx时需要将其合为一个：</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>cat e1bb80d***.crt gd_bundle-***.crt &gt; yplam.crt
-</code></pre></div>
-</td></tr></table>
+<pre><code>cat e1bb80d***.crt gd_bundle-***.crt &gt; yplam.crt
+
+</code></pre>
 <p>需要注意的是合并时的顺序是服务器证书在前，否则nginx会报错：</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
-<span class="normal">2</span>
-<span class="normal">3</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>SSL_CTX_use_PrivateKey_file(&quot; ... /www.example.com.key&quot;) failed
+<pre><code>SSL_CTX_use_PrivateKey_file(&quot; ... /www.example.com.key&quot;) failed
    (SSL: error:0B080074:x509 certificate routines:
     X509_check_private_key:key values mismatch)
-</code></pre></div>
-</td></tr></table>
+
+</code></pre>
 <p>然后可以配置服务器：</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
-<span class="normal">2</span>
-<span class="normal">3</span>
-<span class="normal">4</span>
-<span class="normal">5</span>
-<span class="normal">6</span>
-<span class="normal">7</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>server {
+<pre><code>
+server {
     listen              443 ssl;
     server_name         www.example.com;
     ssl_certificate     www.example.com.chained.crt;
     ssl_certificate_key www.example.com.key;
     ...
 }
-</code></pre></div>
-</td></tr></table>
+
+</code></pre>
 <p>配置完成，测试是否正常：</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code> openssl s_client -connect www.godaddy.com:443
-</code></pre></div>
-</td></tr></table>
+<pre><code>
+ openssl s_client -connect www.godaddy.com:443
+
+</code></pre>
 <p>最后，如果你设置整站HTTPS的话不要忘了在nginx中对旧内容做个跳转：</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
-<span class="normal">2</span>
-<span class="normal">3</span>
-<span class="normal">4</span>
-<span class="normal">5</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>server {
+<pre><code>
+server {
     listen       80;
     server_name  www.yplam.com yplam.com;
     return       301 https://yplam.com$request_uri;
 }
-</code></pre></div>
-</td></tr></table>
+
+
+</code></pre>
 <p>一切配置完成后，可以访问 https://www.ssllabs.com/ssltest/index.html 对服务器的配置情况进行校验，然后根据相关建议选择进行修复</p>
 <p>譬如，在debian 8 下会有 Diffie-Hellman (DH) key 警告，那么可以参考 https://weakdh.org/sysadmin.html 这里的提示进一步进行安全配置。</p>
 <p><strong>参考文档</strong></p>
@@ -1569,6 +1563,10 @@
           }, typeof search !== "undefined" && search)
         })
       </script>
+      
+        <script src="../../../assets/js/highlight.min.js"></script>
+      
+        <script src="../../../assets/js/init.js"></script>
       
     
   </body>
