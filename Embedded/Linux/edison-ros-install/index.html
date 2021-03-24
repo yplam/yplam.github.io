@@ -13,7 +13,7 @@
       
     
       
-        <title>基于 OpenWRT 与 MT7688 DIY 4G WIFI 路由器 - YP.Lam</title>
+        <title>Install ROS Indigo on Edison Ubilinux - YP.Lam</title>
       
     
     
@@ -24,7 +24,7 @@
         
           
           
-          <meta name="theme-color" content="#546d78">
+          <meta name="theme-color" content="#ffffff">
         
       
     
@@ -48,7 +48,7 @@
     
     
     
-    <body dir="ltr" data-md-color-scheme="slate" data-md-color-primary="blue-grey" data-md-color-accent="teal">
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="white" data-md-color-accent="orange">
       
   
     
@@ -58,7 +58,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#openwrt-mt7688-diy-4g-wifi" class="md-skip">
+        <a href="#compile-and-install-boost-153" class="md-skip">
           跳转至
         </a>
       
@@ -84,7 +84,7 @@
           <div class="md-header-nav__topic">
             <span class="md-ellipsis">
               
-                基于 OpenWRT 与 MT7688 DIY 4G WIFI 路由器
+                Install ROS Indigo on Edison Ubilinux
               
             </span>
           </div>
@@ -155,7 +155,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="../../zephyr/zephyr-boot-sequence/" class="md-tabs__link md-tabs__link--active">
+      <a href="../configuring-6lbr-ubuntu-sensortag-cc2650/" class="md-tabs__link md-tabs__link--active">
         嵌入式
       </a>
     </li>
@@ -883,19 +883,202 @@
           
 
 
+  
+
+
+  
+  <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    
+    
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-3-1" type="checkbox" id="nav-3-1" checked>
+    
+    <label class="md-nav__link" for="nav-3-1">
+      Linux
+      <span class="md-nav__icon md-icon"></span>
+    </label>
+    <nav class="md-nav" aria-label="Linux" data-md-level="2">
+      <label class="md-nav__title" for="nav-3-1">
+        <span class="md-nav__icon md-icon"></span>
+        Linux
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+
+  <li class="md-nav__item">
+    <a href="../configuring-6lbr-ubuntu-sensortag-cc2650/" class="md-nav__link">
+      Configuring 6lbr for Ubuntu and SensorTag CC2650
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+
+  <li class="md-nav__item">
+    <a href="../edison-ros-indigo-step-by-step/" class="md-nav__link">
+      一步步搭建 Edison ROS Indigo 环境
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  
+
+
+  <li class="md-nav__item md-nav__item--active">
+    
+    <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+    
+    
+      <label class="md-nav__link md-nav__link--active" for="__toc">
+        Install ROS Indigo on Edison Ubilinux
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+    
+    <a href="./" class="md-nav__link md-nav__link--active">
+      Install ROS Indigo on Edison Ubilinux
+    </a>
+    
+      
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#compile-and-install-boost-153" class="md-nav__link">
+    compile and install boost 1.5.3
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#12-console_bridge" class="md-nav__link">
+    1.2 console_bridge
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#322-resolving-dependencies-with-rosdep" class="md-nav__link">
+    3.2.2 Resolving Dependencies with rosdep
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+    
+  </li>
+
+        
+          
+          
+          
+
+
+
+  <li class="md-nav__item">
+    <a href="../imx6ull-boot-sd-card/" class="md-nav__link">
+      iMX6ULL SD卡系统制作与启动
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+
+  <li class="md-nav__item">
+    <a href="../imx6ull-kernel-compile/" class="md-nav__link">
+      iMX6ULL 内核编译
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+
+  <li class="md-nav__item">
+    <a href="../imx6ull-openwrt/" class="md-nav__link">
+      iMX6ULL 运行 OpenWRT
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+
+  <li class="md-nav__item">
+    <a href="../mt7688-4g/" class="md-nav__link">
+      基于 OpenWRT 与 MT7688 DIY 4G WIFI 路由器
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+
+  <li class="md-nav__item">
+    <a href="../mt7688-qa/" class="md-nav__link">
+      MT7688 问题与解决
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+        
+          
+          
+          
+
+
 
   
   <li class="md-nav__item md-nav__item--nested">
     
     
-      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-3-1" type="checkbox" id="nav-3-1" >
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-3-2" type="checkbox" id="nav-3-2" >
     
-    <label class="md-nav__link" for="nav-3-1">
+    <label class="md-nav__link" for="nav-3-2">
       Zephyr
       <span class="md-nav__icon md-icon"></span>
     </label>
     <nav class="md-nav" aria-label="Zephyr" data-md-level="2">
-      <label class="md-nav__title" for="nav-3-1">
+      <label class="md-nav__title" for="nav-3-2">
         <span class="md-nav__icon md-icon"></span>
         Zephyr
       </label>
@@ -956,14 +1139,14 @@
   <li class="md-nav__item md-nav__item--nested">
     
     
-      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-3-2" type="checkbox" id="nav-3-2" >
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-3-3" type="checkbox" id="nav-3-3" >
     
-    <label class="md-nav__link" for="nav-3-2">
+    <label class="md-nav__link" for="nav-3-3">
       Openthread
       <span class="md-nav__icon md-icon"></span>
     </label>
     <nav class="md-nav" aria-label="Openthread" data-md-level="2">
-      <label class="md-nav__title" for="nav-3-2">
+      <label class="md-nav__title" for="nav-3-3">
         <span class="md-nav__icon md-icon"></span>
         Openthread
       </label>
@@ -1006,115 +1189,6 @@
           
 
 
-  
-
-
-  
-  <li class="md-nav__item md-nav__item--active md-nav__item--nested">
-    
-    
-      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-3-3" type="checkbox" id="nav-3-3" checked>
-    
-    <label class="md-nav__link" for="nav-3-3">
-      Openwrt
-      <span class="md-nav__icon md-icon"></span>
-    </label>
-    <nav class="md-nav" aria-label="Openwrt" data-md-level="2">
-      <label class="md-nav__title" for="nav-3-3">
-        <span class="md-nav__icon md-icon"></span>
-        Openwrt
-      </label>
-      <ul class="md-nav__list" data-md-scrollfix>
-        
-        
-          
-          
-          
-
-
-  
-
-
-  <li class="md-nav__item md-nav__item--active">
-    
-    <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
-    
-      
-    
-    
-      <label class="md-nav__link md-nav__link--active" for="__toc">
-        基于 OpenWRT 与 MT7688 DIY 4G WIFI 路由器
-        <span class="md-nav__icon md-icon"></span>
-      </label>
-    
-    <a href="./" class="md-nav__link md-nav__link--active">
-      基于 OpenWRT 与 MT7688 DIY 4G WIFI 路由器
-    </a>
-    
-      
-<nav class="md-nav md-nav--secondary" aria-label="目录">
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      目录
-    </label>
-    <ul class="md-nav__list" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#_1" class="md-nav__link">
-    硬件
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
-    编译
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
-    成果
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-    
-  </li>
-
-        
-          
-          
-          
-
-
-
-  <li class="md-nav__item">
-    <a href="../mt7688-qa/" class="md-nav__link">
-      MT7688 问题与解决
-    </a>
-  </li>
-
-        
-      </ul>
-    </nav>
-  </li>
-
-        
-          
-          
-          
-
-
 
   <li class="md-nav__item">
     <a href="../../mbed-custom-bootloader/" class="md-nav__link">
@@ -1132,71 +1206,6 @@
   <li class="md-nav__item">
     <a href="../../lora-ranging-test/" class="md-nav__link">
       SX1280 LoraRanging 功能测试
-    </a>
-  </li>
-
-        
-          
-          
-          
-
-
-
-  <li class="md-nav__item">
-    <a href="../../configuring-6lbr-ubuntu-sensortag-cc2650/" class="md-nav__link">
-      Configuring 6lbr for Ubuntu and SensorTag CC2650
-    </a>
-  </li>
-
-        
-          
-          
-          
-
-
-
-  <li class="md-nav__item">
-    <a href="../../edison-ros-indigo-step-by-step/" class="md-nav__link">
-      一步步搭建 Edison ROS Indigo 环境
-    </a>
-  </li>
-
-        
-          
-          
-          
-
-
-
-  <li class="md-nav__item">
-    <a href="../../edison-ros-install/" class="md-nav__link">
-      Install ROS Indigo on Edison Ubilinux
-    </a>
-  </li>
-
-        
-          
-          
-          
-
-
-
-  <li class="md-nav__item">
-    <a href="../../imx6ull-boot-sd-card/" class="md-nav__link">
-      iMX6ULL SD卡系统制作与启动
-    </a>
-  </li>
-
-        
-          
-          
-          
-
-
-
-  <li class="md-nav__item">
-    <a href="../../imx6ull-kernel-compile/" class="md-nav__link">
-      iMX6ULL 内核编译
     </a>
   </li>
 
@@ -1503,8 +1512,6 @@
 <nav class="md-nav md-nav--secondary" aria-label="目录">
   
   
-    
-  
   
     <label class="md-nav__title" for="__toc">
       <span class="md-nav__icon md-icon"></span>
@@ -1513,22 +1520,22 @@
     <ul class="md-nav__list" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#_1" class="md-nav__link">
-    硬件
+  <a href="#compile-and-install-boost-153" class="md-nav__link">
+    compile and install boost 1.5.3
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
-    编译
+  <a href="#12-console_bridge" class="md-nav__link">
+    1.2 console_bridge
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
-    成果
+  <a href="#322-resolving-dependencies-with-rosdep" class="md-nav__link">
+    3.2.2 Resolving Dependencies with rosdep
   </a>
   
 </li>
@@ -1546,104 +1553,35 @@
               
                 
                 
-                <h1 id="openwrt-mt7688-diy-4g-wifi">基于 OpenWRT 与 MT7688 DIY 4G WIFI 路由器<a class="headerlink" href="#openwrt-mt7688-diy-4g-wifi" title="Permanent link">&para;</a></h1>
-<p>最近经常要到一些没有有线网络的地方，虽然手机可以共享WIFI出来，但总不能24小时开着，刚好手上空闲着一块 EC20 4G 模块，
-于是淘宝弄了块最便宜的 MT7688 4G 路由板回来，DIY 自己的 4G WIFI共享路由器。</p>
-<h2 id="_1">硬件<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>MT7688 路由板为 5V 供电，核心板 8MB Flash，64MB RAM（怪不得这么便宜，低配中的底配），MPS 两路 DCDC 供电，
-SIM 卡连 ESD 器件都省了；</p>
-<p>硬件不需要太多改动，只是加了个金升阳的12V转5V DCDC 模块，找个外壳装起来，热融胶固定，钻空加电源座、天线座；完工。</p>
-<p>国内网上资料多是基于 Openwrt 15 的版本，使用官方驱动，不过实在是有点旧了，并且查了一下开源的 MT76 WIFI 驱动感觉也足够稳定，于是决定使用最新的 19.07 版本。</p>
-<p>新版有个好处就是内核比较新，已经自带 EC20 驱动，并且提供 qmi 网卡支持。</p>
-<p>使用 mwan3 实现有线与4G网络的切换。</p>
-<p>项目相关代码脚本位于 <a href="https://github.com/yplam/openwrt-mt7688-4g">https://github.com/yplam/openwrt-mt7688-4g</a></p>
-<h2 id="_2">编译<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<p>编译环境基于 docker 与 docker-compose；</p>
-<p>下载代码</p>
-<p><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
-2
-3</pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>git clone https://github.com/yplam/openwrt-mt7688-4g.git
-cd openwrt-mt7688-4g
-git submodule update --init
-</code></pre></div>
-</td></tr></table>
-或者手动下载 openwrt 源码到 /src/openwrt 目录（只在 openwrt 19.07 下测试过）</p>
-<p>本机安装好docker与docker-compose, 运行</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1</pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>docker-compose up --build
-</code></pre></div>
-</td></tr></table>
-<p>启动编译环境。</p>
-<p>然后运行：</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1</pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>docker-compose exec -u docker compiler /bin/bash
-</code></pre></div>
-</td></tr></table>
-<p>进入编译环境；</p>
-<p>因为OpenWRT并不支持我们的核心板，需要对设备树进行修改，为了方便直接基于 LINKIT7688 进行小改；</p>
-<p>修改 openwrt/target/linux/ramips/dts/LINKIT7688.dts，包括内存大小，Flash大小，console 串口</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
-2
-3
-4
-5
-6
-7
-8</pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>  chosen {
-        bootargs = &quot;console=ttyS0,57600&quot;;
-    };
+                  <h1>Install ROS Indigo on Edison Ubilinux</h1>
+                
+                <p>This tutorial shows you how to install ROS Indigo on Edison Ubilinux from source.</p>
+<!--more-->
 
-    memory@0 {
-        device_type = &quot;memory&quot;;
-        reg = &lt;0x0 0x4000000&gt;;
-    };
+<p>You can mainly follow these instructions <a href="http://wiki.ros.org/wiki/edison">Installing ROS Indigo on Intel Edison</a>, <a href="http://wiki.ros.org/ROSberryPi/Installing%20ROS%20Indigo%20on%20Raspberry%20Pi">Installing ROS Indigo on Raspberry Pi</a> except the following differences:</p>
+<h2 id="compile-and-install-boost-153">compile and install boost 1.5.3<a class="headerlink" href="#compile-and-install-boost-153" title="Permanent link">&para;</a></h2>
+<p>Follow this instruction <a href="http://www.boost.org/doc/libs/1_53_0/more/getting_started/unix-variants.html">Getting Started on Unix Variants</a> to install boost 1.5.3 because the default boost 1.4.9 on wheezy does not works with ROS Indigo.</p>
+<p>Without installing boost 1.5.3, you may get the error message like this:</p>
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>error: macro <span class="s2">&quot;BOOST_SCOPE_EXIT&quot;</span> passed <span class="m">2</span> arguments, but takes just <span class="m">1</span>
 </code></pre></div>
 </td></tr></table>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
-2
-3
-4
-5</pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>      partition@50000 {
-                compatible = &quot;denx,uimage&quot;;
-                label = &quot;firmware&quot;;
-                reg = &lt;0x50000 0x7b0000&gt;;
-            };
+<h2 id="12-console_bridge">1.2 console_bridge<a class="headerlink" href="#12-console_bridge" title="Permanent link">&para;</a></h2>
+<p>In :</p>
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>sudo checkinstall make install
 </code></pre></div>
 </td></tr></table>
-<p>为了提升代码下载速度，需要本机的 8123 端口提供 http 代理，如果没有，请修改 docker-compose.yml，删除运行环境相关代码，并且重启 docker-compose;</p>
-<p>运行：</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
-2
-3
-4</pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>cd /src/openwrt
-./scripts/feeds update -a
-./scripts/feeds install -a
-make menuconfig
+<p>Enter 2 and rename the package to 'libconsole_bridge' .</p>
+<h2 id="322-resolving-dependencies-with-rosdep">3.2.2 Resolving Dependencies with rosdep<a class="headerlink" href="#322-resolving-dependencies-with-rosdep" title="Permanent link">&para;</a></h2>
+<p>Run rosdep install without the -y argument and skip apt-get install libboost-all-dev lib.</p>
+<p><strong>error while loading shared libraries: libconsole_bridge.so.0.3: cannot open shared object file: No such file or directory</strong></p>
+<p>After the whole install, if you got this error while starting roscore, you can fix it like this:</p>
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="nb">cd</span> /opt/ros/indigo/lib
+sudo ln -s /usr/local/lib/i386-linux-gnu/libconsole_bridge.so.0.3 libconsole_bridge.so.0.3
 </code></pre></div>
 </td></tr></table>
-<p>选择 </p>
-<p>MediaTek Ralink MIPS</p>
-<p>MT76x8 based boards</p>
-<p>MediaTek LinkIt Smart 7688</p>
-<p>Network -&gt; mt7688-4g</p>
-<p>可以用 make download 下载各包的代码（因为如果网络不通，可能会多次失败）</p>
-<p>运行编译：</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1</pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>make V=99
-</code></pre></div>
-</td></tr></table>
-<p>如无意外，编译成功后会生成 </p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1</pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>openwrt-mt7688-4g/src/openwrt/bin/targets/ramips/mt76x8/openwrt-ramips-mt76x8-LinkIt7688-squashfs-sysupgrade.bin
-</code></pre></div>
-</td></tr></table>
-<p>文件；可以选择在原固件的管理界面直接上传升级，或者通过 uboot 使用 tftp 升级（需要配置tftp服务器，以及配置主机IP）</p>
-<p>完成！</p>
-<h2 id="_3">成果<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
-<p>编译出来的路由器固件相关信息：</p>
-<ul>
-<li>路由器默认IP为 192.16.0.1</li>
-<li>WIFI SSID 为 ot4g 密码 12345678</li>
-<li>默认 root 用户密码为空，请登录后设置</li>
-<li>有线网卡默认为dhcp client的方式获取IP</li>
-<li>如果同时接入有线网与4G，将优先使用有线网，如果有线网断开，将切换到4G</li>
-</ul>
+                
+                  
                 
               
               

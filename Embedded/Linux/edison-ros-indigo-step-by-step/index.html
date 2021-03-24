@@ -13,7 +13,7 @@
       
     
       
-        <title>MT7688 问题与解决 - YP.Lam</title>
+        <title>一步步搭建 Edison ROS Indigo 环境 - YP.Lam</title>
       
     
     
@@ -24,7 +24,7 @@
         
           
           
-          <meta name="theme-color" content="#546d78">
+          <meta name="theme-color" content="#ffffff">
         
       
     
@@ -48,7 +48,7 @@
     
     
     
-    <body dir="ltr" data-md-color-scheme="slate" data-md-color-primary="blue-grey" data-md-color-accent="teal">
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="white" data-md-color-accent="orange">
       
   
     
@@ -58,7 +58,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#mt7688" class="md-skip">
+        <a href="#ubilinux" class="md-skip">
           跳转至
         </a>
       
@@ -84,7 +84,7 @@
           <div class="md-header-nav__topic">
             <span class="md-ellipsis">
               
-                MT7688 问题与解决
+                一步步搭建 Edison ROS Indigo 环境
               
             </span>
           </div>
@@ -155,7 +155,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="../../zephyr/zephyr-boot-sequence/" class="md-tabs__link md-tabs__link--active">
+      <a href="../configuring-6lbr-ubuntu-sensortag-cc2650/" class="md-tabs__link md-tabs__link--active">
         嵌入式
       </a>
     </li>
@@ -883,19 +883,237 @@
           
 
 
+  
+
+
+  
+  <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    
+    
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-3-1" type="checkbox" id="nav-3-1" checked>
+    
+    <label class="md-nav__link" for="nav-3-1">
+      Linux
+      <span class="md-nav__icon md-icon"></span>
+    </label>
+    <nav class="md-nav" aria-label="Linux" data-md-level="2">
+      <label class="md-nav__title" for="nav-3-1">
+        <span class="md-nav__icon md-icon"></span>
+        Linux
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+
+  <li class="md-nav__item">
+    <a href="../configuring-6lbr-ubuntu-sensortag-cc2650/" class="md-nav__link">
+      Configuring 6lbr for Ubuntu and SensorTag CC2650
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  
+
+
+  <li class="md-nav__item md-nav__item--active">
+    
+    <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+    
+    
+      <label class="md-nav__link md-nav__link--active" for="__toc">
+        一步步搭建 Edison ROS Indigo 环境
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+    
+    <a href="./" class="md-nav__link md-nav__link--active">
+      一步步搭建 Edison ROS Indigo 环境
+    </a>
+    
+      
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#ubilinux" class="md-nav__link">
+    安装 ubilinux
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ubilinux-sd" class="md-nav__link">
+    将 ubilinux 安装到 sd 卡启动
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    系统初始化
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#boost-153" class="md-nav__link">
+    安装 boost 1.5.3 库
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#opencv" class="md-nav__link">
+    安装 opencv 库
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ros" class="md-nav__link">
+    编辑安装 ROS
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#usb_cam" class="md-nav__link">
+    编译 usb_cam
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#usb_cam-edison" class="md-nav__link">
+    运行 usb_cam 将 Edison 图像传输到电脑
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+    
+  </li>
+
+        
+          
+          
+          
+
+
+
+  <li class="md-nav__item">
+    <a href="../edison-ros-install/" class="md-nav__link">
+      Install ROS Indigo on Edison Ubilinux
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+
+  <li class="md-nav__item">
+    <a href="../imx6ull-boot-sd-card/" class="md-nav__link">
+      iMX6ULL SD卡系统制作与启动
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+
+  <li class="md-nav__item">
+    <a href="../imx6ull-kernel-compile/" class="md-nav__link">
+      iMX6ULL 内核编译
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+
+  <li class="md-nav__item">
+    <a href="../imx6ull-openwrt/" class="md-nav__link">
+      iMX6ULL 运行 OpenWRT
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+
+  <li class="md-nav__item">
+    <a href="../mt7688-4g/" class="md-nav__link">
+      基于 OpenWRT 与 MT7688 DIY 4G WIFI 路由器
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+
+  <li class="md-nav__item">
+    <a href="../mt7688-qa/" class="md-nav__link">
+      MT7688 问题与解决
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+        
+          
+          
+          
+
+
 
   
   <li class="md-nav__item md-nav__item--nested">
     
     
-      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-3-1" type="checkbox" id="nav-3-1" >
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-3-2" type="checkbox" id="nav-3-2" >
     
-    <label class="md-nav__link" for="nav-3-1">
+    <label class="md-nav__link" for="nav-3-2">
       Zephyr
       <span class="md-nav__icon md-icon"></span>
     </label>
     <nav class="md-nav" aria-label="Zephyr" data-md-level="2">
-      <label class="md-nav__title" for="nav-3-1">
+      <label class="md-nav__title" for="nav-3-2">
         <span class="md-nav__icon md-icon"></span>
         Zephyr
       </label>
@@ -956,14 +1174,14 @@
   <li class="md-nav__item md-nav__item--nested">
     
     
-      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-3-2" type="checkbox" id="nav-3-2" >
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-3-3" type="checkbox" id="nav-3-3" >
     
-    <label class="md-nav__link" for="nav-3-2">
+    <label class="md-nav__link" for="nav-3-3">
       Openthread
       <span class="md-nav__icon md-icon"></span>
     </label>
     <nav class="md-nav" aria-label="Openthread" data-md-level="2">
-      <label class="md-nav__title" for="nav-3-2">
+      <label class="md-nav__title" for="nav-3-3">
         <span class="md-nav__icon md-icon"></span>
         Openthread
       </label>
@@ -1006,108 +1224,6 @@
           
 
 
-  
-
-
-  
-  <li class="md-nav__item md-nav__item--active md-nav__item--nested">
-    
-    
-      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-3-3" type="checkbox" id="nav-3-3" checked>
-    
-    <label class="md-nav__link" for="nav-3-3">
-      Openwrt
-      <span class="md-nav__icon md-icon"></span>
-    </label>
-    <nav class="md-nav" aria-label="Openwrt" data-md-level="2">
-      <label class="md-nav__title" for="nav-3-3">
-        <span class="md-nav__icon md-icon"></span>
-        Openwrt
-      </label>
-      <ul class="md-nav__list" data-md-scrollfix>
-        
-        
-          
-          
-          
-
-
-
-  <li class="md-nav__item">
-    <a href="../mt7688-4g/" class="md-nav__link">
-      基于 OpenWRT 与 MT7688 DIY 4G WIFI 路由器
-    </a>
-  </li>
-
-        
-          
-          
-          
-
-
-  
-
-
-  <li class="md-nav__item md-nav__item--active">
-    
-    <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
-    
-      
-    
-    
-      <label class="md-nav__link md-nav__link--active" for="__toc">
-        MT7688 问题与解决
-        <span class="md-nav__icon md-icon"></span>
-      </label>
-    
-    <a href="./" class="md-nav__link md-nav__link--active">
-      MT7688 问题与解决
-    </a>
-    
-      
-<nav class="md-nav md-nav--secondary" aria-label="目录">
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      目录
-    </label>
-    <ul class="md-nav__list" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#gpio" class="md-nav__link">
-    网口切换到GPIO模式
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#watchdog" class="md-nav__link">
-    watchdog 功能怎么用
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-    
-  </li>
-
-        
-      </ul>
-    </nav>
-  </li>
-
-        
-          
-          
-          
-
-
 
   <li class="md-nav__item">
     <a href="../../mbed-custom-bootloader/" class="md-nav__link">
@@ -1125,71 +1241,6 @@
   <li class="md-nav__item">
     <a href="../../lora-ranging-test/" class="md-nav__link">
       SX1280 LoraRanging 功能测试
-    </a>
-  </li>
-
-        
-          
-          
-          
-
-
-
-  <li class="md-nav__item">
-    <a href="../../configuring-6lbr-ubuntu-sensortag-cc2650/" class="md-nav__link">
-      Configuring 6lbr for Ubuntu and SensorTag CC2650
-    </a>
-  </li>
-
-        
-          
-          
-          
-
-
-
-  <li class="md-nav__item">
-    <a href="../../edison-ros-indigo-step-by-step/" class="md-nav__link">
-      一步步搭建 Edison ROS Indigo 环境
-    </a>
-  </li>
-
-        
-          
-          
-          
-
-
-
-  <li class="md-nav__item">
-    <a href="../../edison-ros-install/" class="md-nav__link">
-      Install ROS Indigo on Edison Ubilinux
-    </a>
-  </li>
-
-        
-          
-          
-          
-
-
-
-  <li class="md-nav__item">
-    <a href="../../imx6ull-boot-sd-card/" class="md-nav__link">
-      iMX6ULL SD卡系统制作与启动
-    </a>
-  </li>
-
-        
-          
-          
-          
-
-
-
-  <li class="md-nav__item">
-    <a href="../../imx6ull-kernel-compile/" class="md-nav__link">
-      iMX6ULL 内核编译
     </a>
   </li>
 
@@ -1496,8 +1547,6 @@
 <nav class="md-nav md-nav--secondary" aria-label="目录">
   
   
-    
-  
   
     <label class="md-nav__title" for="__toc">
       <span class="md-nav__icon md-icon"></span>
@@ -1506,15 +1555,57 @@
     <ul class="md-nav__list" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#gpio" class="md-nav__link">
-    网口切换到GPIO模式
+  <a href="#ubilinux" class="md-nav__link">
+    安装 ubilinux
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#watchdog" class="md-nav__link">
-    watchdog 功能怎么用
+  <a href="#ubilinux-sd" class="md-nav__link">
+    将 ubilinux 安装到 sd 卡启动
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    系统初始化
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#boost-153" class="md-nav__link">
+    安装 boost 1.5.3 库
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#opencv" class="md-nav__link">
+    安装 opencv 库
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ros" class="md-nav__link">
+    编辑安装 ROS
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#usb_cam" class="md-nav__link">
+    编译 usb_cam
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#usb_cam-edison" class="md-nav__link">
+    运行 usb_cam 将 Edison 图像传输到电脑
   </a>
   
 </li>
@@ -1532,57 +1623,181 @@
               
                 
                 
-                <h1 id="mt7688">MT7688 问题与解决<a class="headerlink" href="#mt7688" title="Permanent link">&para;</a></h1>
-<p>本文档记录使用 MT7688 过程中遇到的问题与解决方案</p>
-<h2 id="gpio">网口切换到GPIO模式<a class="headerlink" href="#gpio" title="Permanent link">&para;</a></h2>
-<p>MT7688 官方提供 mt7688_pinmux 工具来查看与配置 GPIO 模式，然而对于网口1-4却不起作用，表现出来是电压为 1.6V 左右，
-无法通过 gpioset 与 gpioget 命令读写。</p>
-<p>解决方案参考数据手册 P59，通过配置 1000003C AGPIO_CFG 寄存器的 20:17 位设置为 1 来将该 4 个网口设置成数字引脚。</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
-2
-3</pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>devmem 0x1000003c <span class="m">32</span>
-<span class="c1"># 0x00E001FF</span>
-devmem 0x1000003c <span class="m">32</span> 0x00FE01FF
+                  <h1>一步步搭建 Edison ROS Indigo 环境</h1>
+                
+                <p>最近在琢磨能不能用 CNN 来训练一个模型，用于控制一个模型小车，实现简单的循迹或者所谓的自动驾驶。于是拿出布灰已久的 Edison + 两轮平衡车 + 罗技摄像头，计划将这几样组装起来，上面运行 ROS 作为我的“机器人”平台，然后在笔记本上运行 master 做运算与控制。本笔记记录 ROS 在 Edison 上安装与运行 usb_cam 获取图像传输到主机的过程。</p>
+<!--more-->
+
+<p>主要还是按照 <a href="http://wiki.ros.org/wiki/edison">Installing ROS Indigo on Intel Edison</a>, <a href="http://wiki.ros.org/ROSberryPi/Installing%20ROS%20Indigo%20on%20Raspberry%20Pi">Installing ROS Indigo on Raspberry Pi</a> 这两个文档进行安装，但过程中会遇到不少问题，并且由于 Edison 用户可能比较少，大多都需要找相关资料来解决。</p>
+<p>本笔记假设读者已经拥有基础 Linux 操作技能，某些基础操作不会细说。</p>
+<h3 id="ubilinux">安装 ubilinux<a class="headerlink" href="#ubilinux" title="Permanent link">&para;</a></h3>
+<p>参考下面文档：</p>
+<p><a href="https://learn.sparkfun.com/tutorials/loading-debian-ubilinux-on-the-edison">https://learn.sparkfun.com/tutorials/loading-debian-ubilinux-on-the-edison</a></p>
+<h3 id="ubilinux-sd">将 ubilinux 安装到 sd 卡启动<a class="headerlink" href="#ubilinux-sd" title="Permanent link">&para;</a></h3>
+<p>因为 Edison 自带的 emmc 只有 4G，安装各种包之后空间只能勉强够用，因此建议使用 8G 以上的 sd 卡安装系统，安装在sd卡上还有一个好处就是可以简单的将系统备份下来。可参考下面文档：</p>
+<p><a href="https://github.com/sarweshkumar47/Boot-Intel-Edison-from-SDCard-with-Debian-Ubilinux">https://github.com/sarweshkumar47/Boot-Intel-Edison-from-SDCard-with-Debian-Ubilinux</a></p>
+<h3 id="_1">系统初始化<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h3>
+<p>配置 wifi：</p>
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>wpa_passphrase wifiid wifi_password
 </code></pre></div>
 </td></tr></table>
-<p>然后就可以用 gpioset/gpioget 进行配置：</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
-2
-3</pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>gpioget <span class="m">0</span> <span class="m">14</span>
-<span class="c1"># 1</span>
-gpioset <span class="m">0</span> <span class="nv">14</span><span class="o">=</span><span class="m">0</span>
+<p>然后修改 /etc/network/interfaces，禁用 usb 网卡，使用 wlan0，将 wpa-ssid 跟 wpa-psk 配置上。</p>
+<p>初始化的配置，顺便把 locale 配置一下</p>
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>apt-get update
+dpkg-reconfigure locale
 </code></pre></div>
 </td></tr></table>
-<h2 id="watchdog">watchdog 功能怎么用<a class="headerlink" href="#watchdog" title="Permanent link">&para;</a></h2>
-<p>使用以下命令查看 watchdog 状态</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1</pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>ubus call system watchdog
+<h3 id="boost-153">安装 boost 1.5.3 库<a class="headerlink" href="#boost-153" title="Permanent link">&para;</a></h3>
+<p>Debian Wheezy 自带的 boost 库版本为 1.4.9，如果按此版本编译安装 ROS Indigo 的话会报以下错误：</p>
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>error: macro <span class="s2">&quot;BOOST_SCOPE_EXIT&quot;</span> passed <span class="m">2</span> arguments, but takes just <span class="m">1</span>
 </code></pre></div>
 </td></tr></table>
-<p>输出</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
-2
-3
-4
-5
-6</pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>{
-        &quot;status&quot;: &quot;running&quot;,
-        &quot;timeout&quot;: 30,
-        &quot;frequency&quot;: 5,
-        &quot;magicclose&quot;: false
-}
+<p>查看相关文档得知，Indigo 对应的 boost 版本为 1.5.3，可以按 <a href="http://www.boost.org/doc/libs/1_53_0/more/getting_started/unix-variants.html">Getting Started on Unix Variants</a> 编译安装，也可以下载我编译好的 deb 包进行安装（编译一次需要 N 个小时）。当然，如果你有兴趣的话也可以尝试编译自己的deb包，参考 https://github.com/ulikoehler/deb-buildscripts/blob/master/deb-boost.sh</p>
+<p>下载 deb 包： <a href="/assets/2017/boost-all_1.53.0-1_i386.deb">boost-all_1.53.0-1_i386.deb</a> <a href="/assets/2017/boost-all-dev_1.53.0-1_i386.deb">boost-all-dev_1.53.0-1_i386.deb</a></p>
+<p>安装：</p>
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>apt-get install libicu48
+dpkg -i boost-all_1.53.0-1_i386.deb boost-all-dev_1.53.0-1_i386.deb
 </code></pre></div>
 </td></tr></table>
-<p>使用以下命令关闭喂狗，强制看门狗超时：</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1</pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>ubus call system watchdog <span class="s1">&#39;{&quot;stop&quot;: true}&#39;</span>
+<h3 id="opencv">安装 opencv 库<a class="headerlink" href="#opencv" title="Permanent link">&para;</a></h3>
+<p>编译安装：</p>
+<p>下载opencv 2.4.9 代码</p>
+<p>环境准备</p>
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>apt-get install build-essential
+apt-get install cmake git libgtk2.0-dev pkg-config libavcodec-dev libavformat-dev libswscale-dev ffmpeg
+apt-get install python-dev python-numpy
 </code></pre></div>
 </td></tr></table>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
-2
-3</pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>***********************
-Watchdog Reset Occurred
-***********************
+<p>根据这里对代码进行修改 <a href="https://github.com/NextThingCo/buildroot/blob/master/package/opencv/0002-superres-Fix-return-type-value-VideoFrameSource_GPU.patch">https://github.com/NextThingCo/buildroot/blob/master/package/opencv/0002-superres-Fix-return-type-value-VideoFrameSource_GPU.patch</a></p>
+<p>263 行</p>
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>-    return new VideoFrameSource(fileName);
++    return new VideoFrameSource_GPU(fileName);
 </code></pre></div>
 </td></tr></table>
+<p>在 CMakeLists.txt 中 set(OPENCV_VCSVERSION "2.4.9")</p>
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span>
+<span class="normal">5</span>
+<span class="normal">6</span>
+<span class="normal">7</span>
+<span class="normal">8</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>mkdir release
+<span class="nb">cd</span> release
+cmake -D <span class="nv">CMAKE_BUILD_TYPE</span><span class="o">=</span>RELEASE -D <span class="nv">CMAKE_INSTALL_PREFIX</span><span class="o">=</span>/usr/local ..
+
+编辑 CMakeCache.txt CPACK_BINARY_DEB:BOOL<span class="o">=</span>ON
+
+make
+make install
+</code></pre></div>
+</td></tr></table>
+<p>上面这步可能需要运行 N 个小时</p>
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>make package
+</code></pre></div>
+</td></tr></table>
+<p>可能会出错</p>
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>CPackDeb: dpkg-shlibdeps: dpkg-shlibdeps: need at least one executable
+</code></pre></div>
+</td></tr></table>
+<p>按照这里的 patch 对 cmake 进行修正：https://public.kitware.com/Bug/view.php?id=13488</p>
+<p>附预编译的 deb 包： <a href="/assets/2017/OpenCV-2.4.9-i686-libs.deb">OpenCV-2.4.9-i686-libs.deb</a> <a href="/assets/2017/OpenCV-2.4.9-i686-dev.deb">OpenCV-2.4.9-i686-dev.deb</a> <a href="/assets/2017/OpenCV-2.4.9-i686-python.deb">OpenCV-2.4.9-i686-python.deb</a></p>
+<h2 id="ros">编辑安装 ROS<a class="headerlink" href="#ros" title="Permanent link">&para;</a></h2>
+<p>可以参考 <a href="http://wiki.ros.org/wiki/edison">Installing ROS Indigo on Intel Edison</a>, <a href="http://wiki.ros.org/ROSberryPi/Installing%20ROS%20Indigo%20on%20Raspberry%20Pi">Installing ROS Indigo on Raspberry Pi</a> 进行安装，但有两点区别：</p>
+<p><strong>1.2 console_bridge:</strong></p>
+<p>在运行下面命令后</p>
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>sudo checkinstall make install
+</code></pre></div>
+</td></tr></table>
+<p>输入 2 并且将包名改为 'libconsole_bridge' .</p>
+<p><strong>3.2.2 Resolving Dependencies with rosdep</strong></p>
+<p>运行 rosdep install 的时候去掉 -y 参数，并且跳过 apt-get install libboost-all-dev.</p>
+<p><strong>error while loading shared libraries: libconsole_bridge.so.0.3: cannot open shared object file: No such file or directory</strong></p>
+<p>如果你遇到这个错误，可以通过下面方式处理</p>
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="nb">cd</span> /opt/ros/indigo/lib
+sudo ln -s /usr/local/lib/i386-linux-gnu/libconsole_bridge.so.0.3 libconsole_bridge.so.0.3
+</code></pre></div>
+</td></tr></table>
+<h2 id="usb_cam">编译 usb_cam<a class="headerlink" href="#usb_cam" title="Permanent link">&para;</a></h2>
+<p>usb_cam 的编译跟前面 ros_comm 类似：</p>
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span>
+<span class="normal">5</span>
+<span class="normal">6</span>
+<span class="normal">7</span>
+<span class="normal">8</span>
+<span class="normal">9</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>mkdir catkin_ws
+<span class="nb">cd</span> catkin_ws
+mkdir src
+rosinstall_generator usb_cam image_transport_plugins --rosdistro indigo --deps --wet-only --exclude roslisp --tar &gt; indigo-usb_cam.rosinstall
+wstool init src indigo-usb_cam.rosinstall
+rosdep install --from-paths src --ignore-src --rosdistro indigo -r --os<span class="o">=</span>debian:wheezy
+<span class="c1">#跳过opencv boost相关的包</span>
+<span class="nb">source</span> /opt/ros/indigo/setup.bash
+catkin_make
+</code></pre></div>
+</td></tr></table>
+<p>你也可以在之前的工作区上操作，因为新工作区会导致某些包又要重新编译，但好处就是以后 make 跑的时间会短一点。</p>
+<h2 id="usb_cam-edison">运行 usb_cam 将 Edison 图像传输到电脑<a class="headerlink" href="#usb_cam-edison" title="Permanent link">&para;</a></h2>
+<p>开始运行之前请确认主机跟从机都可以相互ping通，并且可以ping通自己。</p>
+<p>现在主机运行：</p>
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>roscore
+</code></pre></div>
+</td></tr></table>
+<p>主机上开多一个终端，运行：</p>
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>rosrun rviz rviz
+</code></pre></div>
+</td></tr></table>
+<p>Edison上编辑 launch 文件，运行</p>
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="nb">source</span> devel/setup.bash
+roscd usb_cam
+vim launch/usb_cam.launch
+roslaunch usb_cam.launch
+</code></pre></div>
+</td></tr></table>
+<p>usb_cam.launch 的内容，假设你主机的名字为 lam</p>
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
+<span class="normal"> 2</span>
+<span class="normal"> 3</span>
+<span class="normal"> 4</span>
+<span class="normal"> 5</span>
+<span class="normal"> 6</span>
+<span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span>
+<span class="normal">11</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>&lt;launch&gt;
+  &lt;env <span class="nv">name</span><span class="o">=</span><span class="s2">&quot;ROS_MASTER_URI&quot;</span> <span class="nv">value</span><span class="o">=</span><span class="s2">&quot;http://lam.local:11311&quot;</span>/&gt; 
+  &lt;node <span class="nv">name</span><span class="o">=</span><span class="s2">&quot;usb_cam&quot;</span> <span class="nv">pkg</span><span class="o">=</span><span class="s2">&quot;usb_cam&quot;</span> <span class="nv">type</span><span class="o">=</span><span class="s2">&quot;usb_cam_node&quot;</span> <span class="nv">output</span><span class="o">=</span><span class="s2">&quot;screen&quot;</span> &gt;
+    &lt;param <span class="nv">name</span><span class="o">=</span><span class="s2">&quot;video_device&quot;</span> <span class="nv">value</span><span class="o">=</span><span class="s2">&quot;/dev/video0&quot;</span> /&gt;
+    &lt;param <span class="nv">name</span><span class="o">=</span><span class="s2">&quot;image_width&quot;</span> <span class="nv">value</span><span class="o">=</span><span class="s2">&quot;640&quot;</span> /&gt;
+    &lt;param <span class="nv">name</span><span class="o">=</span><span class="s2">&quot;image_height&quot;</span> <span class="nv">value</span><span class="o">=</span><span class="s2">&quot;480&quot;</span> /&gt;
+    &lt;param <span class="nv">name</span><span class="o">=</span><span class="s2">&quot;pixel_format&quot;</span> <span class="nv">value</span><span class="o">=</span><span class="s2">&quot;yuyv&quot;</span> /&gt;
+    &lt;param <span class="nv">name</span><span class="o">=</span><span class="s2">&quot;camera_frame_id&quot;</span> <span class="nv">value</span><span class="o">=</span><span class="s2">&quot;usb_cam&quot;</span> /&gt;
+    &lt;param <span class="nv">name</span><span class="o">=</span><span class="s2">&quot;io_method&quot;</span> <span class="nv">value</span><span class="o">=</span><span class="s2">&quot;mmap&quot;</span>/&gt;
+  &lt;/node&gt;
+&lt;/launch&gt;
+</code></pre></div>
+</td></tr></table>
+<p>在 rviz 窗口上添加一个 Image，topic 为 /usb_cam/image_raw ，使用 compressed 传输。</p>
+<p>Done.</p>
+<p><strong>Update 2017-04-22:</strong></p>
+<p>最终成果，由于加上电池后二轮平衡车难以平衡起来，干脆在万能的淘宝加工了几张有机玻璃板做成三轮车。Edison用串口跟单片机通讯，控制前进后退转弯。</p>
+<p>发现 ROS 的确方便，除了跟底层通讯的模块用 C 写之外，其他用 python 写起来会感觉好享受。</p>
+<p><img alt="Edison ROS" src="/assets/2017/20170422ros.jpg" title="Edison ROS" /></p>
+                
+                  
                 
               
               
