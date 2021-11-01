@@ -1,0 +1,2111 @@
+
+<!doctype html>
+<html lang="zh" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+      <link rel="icon" href="../../..">
+      <meta name="generator" content="mkdocs-1.2.3, mkdocs-material-7.3.6">
+    
+    
+      
+        <title>树莓派 OpenThread 边界路由器配置 - YP.Lam</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.a57b2b03.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.3f5d1f46.min.css">
+        
+          
+          
+          <meta name="theme-color" content="#009485">
+        
+      
+    
+    
+    
+      
+    
+    
+    
+      <link rel="stylesheet" href="../../../assets/css/darcula.css">
+    
+      <link rel="stylesheet" href="../../../assets/css/custom.css">
+    
+    
+      
+
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="slate" data-md-color-primary="teal" data-md-color-accent="orange">
+  
+    
+    <script>function __prefix(e){return new URL("../../..",location).pathname+"."+e}function __get(e,t=localStorage){return JSON.parse(t.getItem(__prefix(e)))}</script>
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#openthread" class="md-skip">
+          跳转至
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis" style="margin-left: -10px;">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            YP.Lam
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              树莓派 OpenThread 边界路由器配置
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-tabs__inner md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+
+
+  <li class="md-tabs__item">
+    <a href="../../.." class="md-tabs__link">
+      首页
+    </a>
+  </li>
+
+      
+        
+  
+  
+    
+  
+
+
+  
+  
+  
+    
+
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../Linux/configuring-6lbr-ubuntu-sensortag-cc2650/" class="md-tabs__link md-tabs__link--active">
+        物联网
+      </a>
+    </li>
+  
+
+  
+
+      
+        
+  
+  
+
+
+  
+  
+  
+    
+
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../Web/Symfony4/hello-symfony-4/" class="md-tabs__link">
+        互联网
+      </a>
+    </li>
+  
+
+  
+
+      
+        
+  
+  
+
+
+  
+  
+  
+    
+
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../Pub/Chromium/chromium-build-debug/" class="md-tabs__link">
+        Pub
+      </a>
+    </li>
+  
+
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="YP.Lam" class="md-nav__button md-logo" aria-label="YP.Lam" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+
+    </a>
+    YP.Lam
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        首页
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2" type="checkbox" id="__nav_2" checked>
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2">
+          物联网
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="物联网" data-md-level="1">
+        <label class="md-nav__title" for="__nav_2">
+          <span class="md-nav__icon md-icon"></span>
+          物联网
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_1" type="checkbox" id="__nav_2_1" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2_1">
+          Linux
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Linux" data-md-level="2">
+        <label class="md-nav__title" for="__nav_2_1">
+          <span class="md-nav__icon md-icon"></span>
+          Linux
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Linux/configuring-6lbr-ubuntu-sensortag-cc2650/" class="md-nav__link">
+        Configuring 6lbr for Ubuntu and SensorTag CC2650
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Linux/edison-ros-indigo-step-by-step/" class="md-nav__link">
+        一步步搭建 Edison ROS Indigo 环境
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Linux/edison-ros-install/" class="md-nav__link">
+        Install ROS Indigo on Edison Ubilinux
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Linux/imx6ull-boot-sd-card/" class="md-nav__link">
+        iMX6ULL SD卡系统制作与启动
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Linux/imx6ull-kernel-compile/" class="md-nav__link">
+        iMX6ULL 内核编译
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Linux/imx6ull-openwrt/" class="md-nav__link">
+        iMX6ULL 运行 OpenWRT
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Linux/mt7688-4g/" class="md-nav__link">
+        基于 OpenWRT 与 MT7688 DIY 4G WIFI 路由器
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Linux/mt7688-qa/" class="md-nav__link">
+        MT7688 问题与解决
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_2" type="checkbox" id="__nav_2_2" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2_2">
+          Zephyr
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Zephyr" data-md-level="2">
+        <label class="md-nav__title" for="__nav_2_2">
+          <span class="md-nav__icon md-icon"></span>
+          Zephyr
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../zephyr/zephyr-boot-sequence/" class="md-nav__link">
+        Zephyr 启动流程
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../zephyr/zephyr-clion/" class="md-nav__link">
+        Zephyr Clion 开发环境配置
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../zephyr/zephyr/" class="md-nav__link">
+        Zephyr 简介
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_3" type="checkbox" id="__nav_2_3" checked>
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2_3">
+          Openthread
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Openthread" data-md-level="2">
+        <label class="md-nav__title" for="__nav_2_3">
+          <span class="md-nav__icon md-icon"></span>
+          Openthread
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../openthread-connect-lan/" class="md-nav__link">
+        OpenThread 节点访问局域网服务器的配置方法
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          树莓派 OpenThread 边界路由器配置
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        树莓派 OpenThread 边界路由器配置
+      </a>
+      
+        
+
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    树莓派基础配置
+  </a>
+  
+    <nav class="md-nav" aria-label="树莓派基础配置">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#wifissh" class="md-nav__link">
+    启用wifi与ssh
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    基础软件安装
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#otbr" class="md-nav__link">
+    OTBR编译安装
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#rcp" class="md-nav__link">
+    RCP 配置
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ap" class="md-nav__link">
+    AP模式配置
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#dnsmasq" class="md-nav__link">
+    配置 dnsmasq
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tayga" class="md-nav__link">
+    配置 tayga
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#openthread_1" class="md-nav__link">
+    创建 OpenThread 网络
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../mbed-custom-bootloader/" class="md-nav__link">
+        Mbed Bootloader配置笔记
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../lora-ranging-test/" class="md-nav__link">
+        SX1280 LoraRanging 功能测试
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3" type="checkbox" id="__nav_3" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3">
+          互联网
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="互联网" data-md-level="1">
+        <label class="md-nav__title" for="__nav_3">
+          <span class="md-nav__icon md-icon"></span>
+          互联网
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_1" type="checkbox" id="__nav_3_1" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_1">
+          Symfony4
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Symfony4" data-md-level="2">
+        <label class="md-nav__title" for="__nav_3_1">
+          <span class="md-nav__icon md-icon"></span>
+          Symfony4
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Web/Symfony4/hello-symfony-4/" class="md-nav__link">
+        Symfony 4 尝鲜
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Web/Symfony4/symfony-the-new-way/" class="md-nav__link">
+        Symfony 4 the new way
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_2" type="checkbox" id="__nav_3_2" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_2">
+          Symfony
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Symfony" data-md-level="2">
+        <label class="md-nav__title" for="__nav_3_2">
+          <span class="md-nav__icon md-icon"></span>
+          Symfony
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Web/Symfony/symfony-performance/" class="md-nav__link">
+        Symfony 性能优化
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Web/Symfony/symfony-micro-framework/" class="md-nav__link">
+        Symfony2 太“重”了？试试 Symfony2 微框架
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Web/Symfony/dependency-injection-container/" class="md-nav__link">
+        依赖注入容器（Dependency Injection Container）
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Web/Symfony/dependency-Injection/" class="md-nav__link">
+        依赖注入 ( Dependency Injection )
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Web/Symfony/doctrine-resolve-target-entity/" class="md-nav__link">
+        如何通过抽象类与接口来定义关联
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Web/Symfony/drupal-2-symfony/" class="md-nav__link">
+        如何将一个Drupal网站转到Symfony
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Web/Symfony/sonata-admin-custom-page/" class="md-nav__link">
+        SonataAdminBundle创建自定义后台页面
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Web/Symfony/symfony-bootstrap/" class="md-nav__link">
+        Symfony2 启动流程分析
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Web/Symfony/symfony-capifony/" class="md-nav__link">
+        使用Capifony对Symfony网站进行发布
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Web/Symfony/symfony-fosuserbundle/" class="md-nav__link">
+        FOSUserBundle 入门
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Web/Symfony/symfony-github-jenkins/" class="md-nav__link">
+        使用 Jenkins 与 Github 对 Symfony 2 应用进行持续集成
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Web/Symfony/symfony-hot-bundles/" class="md-nav__link">
+        30个最常用的Symfony组件
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Web/Symfony/symfony-service-container/" class="md-nav__link">
+        Symfony服务容器 ( Symfony Service Container )
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Web/Symfony/symfony-twig-block/" class="md-nav__link">
+        使用twigExtension实现页面区块功能
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_3" type="checkbox" id="__nav_3_3" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_3">
+          PHP
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="PHP" data-md-level="2">
+        <label class="md-nav__title" for="__nav_3_3">
+          <span class="md-nav__icon md-icon"></span>
+          PHP
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Web/PHP/discuz-api/" class="md-nav__link">
+        Discuz移动接口原理简介
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Web/PHP/phalcon-container-phpdoc/" class="md-nav__link">
+        Phalcon 容器代码提示解决方案（PhpStorm）
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Web/PHP/php-gc/" class="md-nav__link">
+        PHP GC 相关资料
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Web/PHP/php-isset-empty/" class="md-nav__link">
+        PHP中的empty()与isset()
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Web/PHP/web-api-doc/" class="md-nav__link">
+        PHP Web/Api 项目文档方案：swagger-php + mkdocs + C4
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_4" type="checkbox" id="__nav_3_4" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_4">
+          Drupal
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Drupal" data-md-level="2">
+        <label class="md-nav__title" for="__nav_3_4">
+          <span class="md-nav__icon md-icon"></span>
+          Drupal
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Web/Drupal/drupal-services-and-dependency-injection/" class="md-nav__link">
+        Drupal 8服务与依赖注入
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Web/Drupal/drupal-special-topic/" class="md-nav__link">
+        Drupal 专题页面模块
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Web/Drupal/drupal-wechat/" class="md-nav__link">
+        Drupal微信公众平台模块
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_5" type="checkbox" id="__nav_3_5" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_5">
+          Linux
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Linux" data-md-level="2">
+        <label class="md-nav__title" for="__nav_3_5">
+          <span class="md-nav__icon md-icon"></span>
+          Linux
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Web/Linux/apache-htaccess-performance/" class="md-nav__link">
+        不能忽略 .htaccess 对性能的影响
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Web/Linux/centos-php-fpm-52/" class="md-nav__link">
+        Centos Nginx PHP-FPM Mysql 服务器环境配置
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Web/Linux/debian-mul-redis/" class="md-nav__link">
+        Debian 8 服务器运行多Redis实例
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Web/Linux/linux-command-collection/" class="md-nav__link">
+        Linux 小笔记
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Web/Linux/nginx-aws-proxy/" class="md-nav__link">
+        使用Nginx做AWS S3的反向代理
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Web/Linux/nginx-http-auth/" class="md-nav__link">
+        配置 Nginx Http 认证以及 IP 访问策略
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Web/Linux/nginx-https/" class="md-nav__link">
+        为个人博客配置 HTTPS 访问
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Web/Linux/ssd-raid-performance/" class="md-nav__link">
+        服务器SSD以及SSD RAID性能测试
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Web/elk-log-analytics/" class="md-nav__link">
+        ELK日志分析入门
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Web/localstorage-cross-page-comm/" class="md-nav__link">
+        使用localStorage进行跨标签页通讯
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_8" type="checkbox" id="__nav_3_8" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_8">
+          Go
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Go" data-md-level="2">
+        <label class="md-nav__title" for="__nav_3_8">
+          <span class="md-nav__icon md-icon"></span>
+          Go
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Web/Go/golang-clean-architecture/" class="md-nav__link">
+        Clean Architecture 简介
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4" type="checkbox" id="__nav_4" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_4">
+          Pub
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Pub" data-md-level="1">
+        <label class="md-nav__title" for="__nav_4">
+          <span class="md-nav__icon md-icon"></span>
+          Pub
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4_1" type="checkbox" id="__nav_4_1" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_4_1">
+          Chromium
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Chromium" data-md-level="2">
+        <label class="md-nav__title" for="__nav_4_1">
+          <span class="md-nav__icon md-icon"></span>
+          Chromium
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Pub/Chromium/chromium-build-debug/" class="md-nav__link">
+        Chromium 编译与调试笔记
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Pub/Chromium/chromium-cpp/" class="md-nav__link">
+        Chromium 源码阅读：std:move
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Pub/Chromium/chromium-image-decode-error/" class="md-nav__link">
+        Chromium 源码阅读：Could not decode image bug 跟踪
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Pub/Chromium/chromium-src-browser-ui-views/" class="md-nav__link">
+        Chromium 源码阅读：chrome/browser/ui/views 入门概览
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Pub/Chromium/chromium-src-chrome-browser-themes/" class="md-nav__link">
+        Chromium 源码阅读：chrome/browser/themes
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4_2" type="checkbox" id="__nav_4_2" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_4_2">
+          MachineLearning
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="MachineLearning" data-md-level="2">
+        <label class="md-nav__title" for="__nav_4_2">
+          <span class="md-nav__icon md-icon"></span>
+          MachineLearning
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Pub/MachineLearning/aws-cuda-tensorflow/" class="md-nav__link">
+        AWS TensorFlow 安装与测试
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Pub/MachineLearning/hands-on-machine-learning-scikit-learn-%20tensorflow/" class="md-nav__link">
+        《 Hands-On Machine Learning with Scikit-Learn and TensorFlow 》笔记
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Pub/MachineLearning/machine-learning-notes/" class="md-nav__link">
+        机器学习笔记
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Pub/MachineLearning/machine-learning-predicting-customer-behavior/" class="md-nav__link">
+        [翻译]用户行为预测：使用机器学习技术预测付费用户
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Pub/MachineLearning/netflix-prize/" class="md-nav__link">
+        Netflix Prize 相关资料
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Pub/MachineLearning/predictionio-universal-recommender/" class="md-nav__link">
+        PredictionIO Universal Recommender 笔记
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Pub/MachineLearning/predictionio/" class="md-nav__link">
+        PredictionIO实现论坛广告贴过滤
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Pub/MachineLearning/tensorflow-object-detection-note/" class="md-nav__link">
+        Tensorflow Object Detection API 入门笔记 - 基于 Google Cloud 与 阿里云
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Pub/MachineLearning/tensorflow-serving-nsfw/" class="md-nav__link">
+        Tensorflow Serving Nsfw
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Pub/MachineLearning/user-profile-learning-notes/" class="md-nav__link">
+        用户画像笔记
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    树莓派基础配置
+  </a>
+  
+    <nav class="md-nav" aria-label="树莓派基础配置">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#wifissh" class="md-nav__link">
+    启用wifi与ssh
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    基础软件安装
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#otbr" class="md-nav__link">
+    OTBR编译安装
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#rcp" class="md-nav__link">
+    RCP 配置
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ap" class="md-nav__link">
+    AP模式配置
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#dnsmasq" class="md-nav__link">
+    配置 dnsmasq
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tayga" class="md-nav__link">
+    配置 tayga
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#openthread_1" class="md-nav__link">
+    创建 OpenThread 网络
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content" data-md-component="content">
+            <article class="md-content__inner md-typeset">
+              
+                
+                
+                <h1 id="openthread">树莓派 OpenThread 边界路由器配置<a class="headerlink" href="#openthread" title="Permanent link">&para;</a></h1>
+<p>OpenThread 边界路由器的作用是作为 Thread 网络与其他基于IP的网络（如WIFI、以太网）的桥梁。有了边界路由器的存在才让 Thread 网络中的设备成了跟手机、电脑等对等的一员（是的，基于IP就是那么自信）。</p>
+<p>OpenThread 官方提供 Docker、 BeagleBone Black、Raspberry Pi 3B 的支持（代码中 OpenWRT 也是有支持的，只是可能还未正式稳定）。本文将尽量详细地记录 Raspberry Pi 3B 配置成边界路由器的过程。</p>
+<h2 id="_1">树莓派基础配置<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
+<p>第一步当然是下载镜像，并且写入到SD卡。官网地址：<a href="https://www.raspberrypi.org/downloads/raspberry-pi-os/">https://www.raspberrypi.org/downloads/raspberry-pi-os/</a> 。Linux系统下可以直接用以下命令写入镜像:</p>
+<pre><code class="language-shell"># 注意：请根据真实情况选择磁盘，不然可能会导致你的数据丢失
+sudo dd bs=4M if=2020-08-20-raspios-buster-armhf-lite.img of=/dev/mmcblk0 conv=fsync
+</code></pre>
+<h3 id="wifissh">启用wifi与ssh<a class="headerlink" href="#wifissh" title="Permanent link">&para;</a></h3>
+<p>使用headless的配置方式，不需要显示器与外接键盘。在SD卡的 boot 分区中创建一个空的 ssh 文件：</p>
+<pre><code class="language-shell">cd /run/media/yplam/boot
+touch ssh
+</code></pre>
+<p>在刚刚那个 boot 分区新建一个 wpa_supplicant.conf 文件，输入 WIFI 网络信息：</p>
+<pre><code class="language-conf">country=CN
+ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
+update_config=1
+
+network={
+    ssid=&quot;NETWORK-NAME&quot;
+    psk=&quot;NETWORK-PASSWORD&quot;
+}
+</code></pre>
+<p>插入SD卡上电启动，如果有mdns的话直接 ：</p>
+<pre><code class="language-shell">ping raspberrypi.local
+</code></pre>
+<p>获取IP，如果没有则登录路由器把它找出来，然后ssh登录，用户名pi，密码 raspberry 。</p>
+<h3 id="_2">基础软件安装<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
+<pre><code class="language-shell">sudo apt install git
+</code></pre>
+<h2 id="otbr">OTBR编译安装<a class="headerlink" href="#otbr" title="Permanent link">&para;</a></h2>
+<pre><code class="language-shell">git clone https://github.com/openthread/ot-br-posix
+cd ot-br-posix
+./script/bootstrap
+./script/setup
+</code></pre>
+<p>注意，可能需要改改 script/_dns64 中关于 dns 服务器的配置（国内无法访问）</p>
+<h2 id="rcp">RCP 配置<a class="headerlink" href="#rcp" title="Permanent link">&para;</a></h2>
+<p>编译 RCP 固件，如 NRF52840 可以使用以下编译选项：</p>
+<pre><code class="language-shell">cd /src/openthread/
+./bootstrap
+make -f examples/Makefile-nrf52840 BORDER_AGENT=1 BORDER_ROUTER=1 COMMISSIONER=1 UDP_FORWARD=1 USB=1 LINK_RAW=1 BOOTLOADER=USB
+cd /src/openthread/output/nrf52840/bin
+arm-none-eabi-objcopy -O ihex ot-rcp ot-rcp.hex
+</code></pre>
+<p>插入 RCP 到树莓派 USB 口，查看：</p>
+<pre><code class="language-shell">ls /dev/tty*
+</code></pre>
+<p>名称为 /dev/ttyACM* 的设备即为 RCP；修改配置文件 /etc/default/otbr-agent</p>
+<pre><code class="language-shell">OTBR_AGENT_OPTS=&quot;-I wpan0 spinel+hdlc+uart:///dev/ttyACM0&quot;
+</code></pre>
+<p>修改配置后重启系统，运行以下命令：</p>
+<pre><code class="language-shell">sudo systemctl status
+</code></pre>
+<p>如果安装正常，则可以看到相关服务正常运行：</p>
+<pre><code class="language-shell">avahi-daemon.service
+otbr-agent.service
+otbr-web.service
+</code></pre>
+<p>而运行下面命令可以看到OpenThread网络为 disabled 状态</p>
+<pre><code class="language-shell">sudo ot-ctl state
+</code></pre>
+<h2 id="ap">AP模式配置<a class="headerlink" href="#ap" title="Permanent link">&para;</a></h2>
+<p>树莓派可以配置运行在 AP 模式，其他设备可以接入树莓派提供的网络来管理 OpenThread 网络。</p>
+<p>安装以下软件：</p>
+<pre><code class="language-shell">sudo apt-get install hostapd dnsmasq tayga
+</code></pre>
+<ul>
+<li>hostapd — 允许使用树莓派的WIFI允许在AP模式</li>
+<li>dnsmasq — 提供 DHCP 与 DNS 服务</li>
+<li>tayga — NAT64服务，提供外网 IPV4 地址到 IPV6 地址的转换</li>
+</ul>
+<p>修改文件 /etc/dhcpcd.conf，末尾增加一行</p>
+<pre><code class="language-shell">denyinterfaces wlan0
+
+</code></pre>
+<p>新建文件 /etc/network/interfaces.d/wlan0</p>
+<pre><code class="language-shell">allow-hotplug wlan0
+iface wlan0 inet static
+    address 192.168.1.2
+    netmask 255.255.255.0
+    network 192.168.1.0
+    broadcast 192.168.1.255
+
+</code></pre>
+<p>配置 /etc/hostapd/hostapd.conf，因为使用的是 PI3B+，支持5G网络，配置有所不同</p>
+<pre><code class="language-shell"># The Wi-Fi interface configured for static IPv4 addresses
+interface=wlan0
+
+# Use the 802.11 Netlink interface driver
+driver=nl80211
+
+# The user-defined name of the network
+ssid=BorderRouter-AP
+
+# Use the 5GHz band
+hw_mode=a
+
+# Use channel 6
+channel=40
+
+# Enable 802.11n
+ieee80211n=1
+
+# Enable WMM
+wmm_enabled=1
+
+require_ht=1
+ht_capab=[HT40-][DSSS_CCK-40]
+
+# Accept all MAC addresses
+macaddr_acl=0
+
+# Use WPA authentication
+auth_algs=1
+
+# Require clients to know the network name
+ignore_broadcast_ssid=0
+
+# Use WPA2
+wpa=2
+
+# Use a pre-shared key
+wpa_key_mgmt=WPA-PSK
+
+# The network passphrase
+wpa_passphrase=12345678
+
+# Use AES, instead of TKIP
+rsn_pairwise=CCMP
+
+</code></pre>
+<p>修改 /etc/default/hostapd</p>
+<pre><code class="language-conf">DAEMON_CONF=&quot;/etc/hostapd/hostapd.conf&quot;
+
+</code></pre>
+<pre><code class="language-shell">sudo systemctl unmask hostapd
+sudo systemctl start hostapd
+</code></pre>
+<p>修改 /etc/systemd/system/hostapd.service</p>
+<pre><code class="language-conf">[Unit]
+Description=Hostapd IEEE 802.11 Access Point
+After=sys-subsystem-net-devices-wlan0.device
+BindsTo=sys-subsystem-net-devices-wlan0.device
+
+[Service]
+Type=forking
+PIDFile=/var/run/hostapd.pid
+ExecStart=/usr/sbin/hostapd -B /etc/hostapd/hostapd.conf -P /var/run/hostapd.pid
+
+[Install]
+WantedBy=multi-user.target
+
+</code></pre>
+<p>在 /etc/rc.local 的 exit 0 之前添加</p>
+<pre><code class="language-shell">sudo service hostapd start
+</code></pre>
+<p>重启树莓派，可以看到多了一个名叫 BorderRouter-AP 的 wifi 网络可以加入。</p>
+<h2 id="dnsmasq">配置 dnsmasq<a class="headerlink" href="#dnsmasq" title="Permanent link">&para;</a></h2>
+<p>修改 /etc/dnsmasq.conf  </p>
+<pre><code class="language-conf"># The Wi-Fi interface configured for static IPv4 addresses
+interface=wlan0
+
+# Explicitly specify the address to listen on
+listen-address=192.168.1.2
+
+# Bind to the interface to make sure we aren't sending things elsewhere
+bind-interfaces
+
+# Forward DNS requests to the Google DNS
+server=119.29.29.29
+
+# Don't forward short names
+domain-needed
+
+# Never forward addresses in non-routed address spaces
+bogus-priv
+
+# Assign IP addresses between 192.168.1.50 and 192.168.1.150 with a 12 hour lease time
+dhcp-range=192.168.1.50,192.168.1.150,12h
+
+</code></pre>
+<p>修正 /lib/systemd/system/bind9.service 与 dnsmasq 的冲突</p>
+<pre><code class="language-conf">After=network.target dnsmasq.service
+</code></pre>
+<h2 id="tayga">配置 tayga<a class="headerlink" href="#tayga" title="Permanent link">&para;</a></h2>
+<p>修改 /etc/tayga.conf 关于以下配置项</p>
+<pre><code class="language-conf">prefix 64:ff9b::/96
+dynamic-pool 192.168.255.0/24
+ipv6-addr 2001:db8:1::1
+ipv4-addr 192.168.255.1
+</code></pre>
+<p>启用 tayga</p>
+<pre><code class="language-shell">sudo systemctl enable tayga
+</code></pre>
+<p>使能网络转发</p>
+<pre><code class="language-shell">sudo sh -c &quot;echo 1 &gt; /proc/sys/net/ipv4/ip_forward&quot;
+sudo sh -c &quot;echo 1 &gt; /proc/sys/net/ipv6/conf/all/forwarding&quot;
+</code></pre>
+<p>为了重启后能生效，修改配置文件 /etc/sysctl.conf，更改对应项配置</p>
+<p>使能 NAT44</p>
+<pre><code class="language-shell">sudo iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
+</code></pre>
+<p>使能 wlan0 与 eth0 之间的转发</p>
+<pre><code class="language-shell">sudo iptables -A FORWARD -i eth0 -o wlan0 -m state --state RELATED,ESTABLISHED -j ACCEPT
+sudo iptables -A FORWARD -i wlan0 -o eth0 -j ACCEPT
+</code></pre>
+<p>保存iptables配置</p>
+<pre><code class="language-shell">sudo sh -c &quot;iptables-save &gt; /etc/iptables.ipv4.nat&quot;
+</code></pre>
+<p>在 /etc/rc.local 的 exit 前增加</p>
+<pre><code class="language-shell">iptables-restore &lt; /etc/iptables.ipv4.nat
+
+</code></pre>
+<p>重启系统，查看各服务是否正常启动，譬如 ping -6 一个外网 IP</p>
+<pre><code class="language-shell">ping -6 64:ff9b::***
+</code></pre>
+<h2 id="openthread_1">创建 OpenThread 网络<a class="headerlink" href="#openthread_1" title="Permanent link">&para;</a></h2>
+<pre><code class="language-shell">sudo ot-ctl panid 0xc80b
+sudo ot-ctl extpanid f37fcf5bc5cbe195
+sudo ot-ctl masterkey e35efdce91b5d2ad6ee96350c31e56d3
+sudo ot-ctl pskc 7beafb2ea25f3f8ce244b1e92a79a623
+sudo ot-ctl networkname MyOT
+sudo ot-ctl channel 11
+sudo ot-ctl ifconfig up
+sudo ot-ctl thread start
+sudo ot-ctl state
+
+sudo ot-ctl prefix add fd11:22::/64 pasor
+sudo ot-ctl netdata register
+</code></pre>
+<p>需要注意的是后面两行如果不运行，OpenThread网络中的设备将无法访问外网。</p>
+<p>至此，OpenThread网络配置完成，可以通过 ping 外网 ip 进行测试（通过nat64）。</p>
+                
+              
+              
+                
+
+
+              
+            </article>
+          </div>
+        </div>
+        
+      </main>
+      
+        
+<footer class="md-footer">
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-footer-copyright">
+        <p>Copyright © 2021 YPLAM.COM</p>
+      </div>
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    <script id="__config" type="application/json">{"base": "../../..", "features": ["navigation.tabs"], "translations": {"clipboard.copy": "\u590d\u5236", "clipboard.copied": "\u5df2\u590d\u5236", "search.config.lang": "ja", "search.config.pipeline": "trimmer, stemmer", "search.config.separator": "[\\uff0c\\u3002]+", "search.placeholder": "\u641c\u7d22", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../../../assets/javascripts/workers/search.fcfe8b6d.min.js", "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.b1047164.min.js"></script>
+      
+        <script src="../../../assets/js/highlight.min.js"></script>
+      
+        <script src="../../../assets/js/init.js"></script>
+      
+    
+  </body>
+</html>

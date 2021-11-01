@@ -1,26 +1,27 @@
 
-      
 <!doctype html>
 <html lang="zh" class="no-js">
   <head>
     
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width,initial-scale=1">
-        
-        
-        
-        
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
       
+      
+      
+      
+      <link rel="icon" href="../../..">
+      <meta name="generator" content="mkdocs-1.2.3, mkdocs-material-7.3.6">
+    
     
       
         <title>Chromium 源码阅读：chrome/browser/ui/views 入门概览 - YP.Lam</title>
       
     
     
-      <link rel="stylesheet" href="../../../assets/stylesheets/main.15aa0b43.min.css">
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.a57b2b03.min.css">
       
         
-        <link rel="stylesheet" href="../../../assets/stylesheets/palette.75751829.min.css">
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.3f5d1f46.min.css">
         
           
           
@@ -40,6 +41,8 @@
     
     
       
+
+
     
     
   </head>
@@ -51,8 +54,9 @@
     
     
     <body dir="ltr" data-md-color-scheme="slate" data-md-color-primary="teal" data-md-color-accent="orange">
-      
   
+    
+    <script>function __prefix(e){return new URL("../../..",location).pathname+"."+e}function __get(e,t=localStorage){return JSON.parse(t.getItem(__prefix(e)))}</script>
     
     <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
     <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
@@ -65,38 +69,42 @@
     </div>
     
       
-  
-  <header class="md-header" data-md-component="header">
-    <nav class="md-header-nav md-grid" aria-label="Header">
-      <label class="md-header-nav__button md-icon" for="__drawer">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2z"/></svg>
-      </label>
-      <div class="md-header-nav__title" data-md-component="header-title" style="padding: 0 .4em;">
-        <div class="md-header-nav__ellipsis">
-          <div class="md-header-nav__topic">
-            <span class="md-ellipsis">
-              YP.Lam
-            </span>
-          </div>
-          <div class="md-header-nav__topic">
-            <span class="md-ellipsis">
-              
-                Chromium 源码阅读：chrome/browser/ui/views 入门概览
-              
-            </span>
-          </div>
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis" style="margin-left: -10px;">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            YP.Lam
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Chromium 源码阅读：chrome/browser/ui/views 入门概览
+            
+          </span>
         </div>
       </div>
-      
-      
-    </nav>
-  </header>
+    </div>
+    
+    
+    
+    
+  </nav>
+  
+</header>
     
     <div class="md-container" data-md-component="container">
       
       
         
           
+            
 <nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
   <div class="md-tabs__inner md-grid">
     <ul class="md-tabs__list">
@@ -127,8 +135,8 @@
   
   
     <li class="md-tabs__item">
-      <a href="../../../Web/Symfony4/hello-symfony-4/" class="md-tabs__link">
-        互联网
+      <a href="../../../IOT/Linux/configuring-6lbr-ubuntu-sensortag-cc2650/" class="md-tabs__link">
+        物联网
       </a>
     </li>
   
@@ -150,28 +158,12 @@
   
   
     <li class="md-tabs__item">
-      <a href="../../../Embedded/Linux/configuring-6lbr-ubuntu-sensortag-cc2650/" class="md-tabs__link">
-        嵌入式
+      <a href="../../../Web/Symfony4/hello-symfony-4/" class="md-tabs__link">
+        互联网
       </a>
     </li>
   
 
-  
-
-      
-        
-  
-  
-
-
-  
-  
-  
-    <li class="md-tabs__item">
-      <a href="../../../MachineLearning/aws-cuda-tensorflow/" class="md-tabs__link">
-        机器学习
-      </a>
-    </li>
   
 
       
@@ -203,6 +195,7 @@
     </ul>
   </div>
 </nav>
+          
         
       
       <main class="md-main" data-md-component="main">
@@ -210,22 +203,20 @@
           
             
               
-              <div class="md-sidebar md-sidebar--primary" data-md-component="navigation" >
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
                 <div class="md-sidebar__scrollwrap">
                   <div class="md-sidebar__inner">
                     
-
-
 
   
 
 
 <nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../.." title="YP.Lam" class="md-nav__button md-logo" aria-label="YP.Lam">
+    <a href="../../.." title="YP.Lam" class="md-nav__button md-logo" aria-label="YP.Lam" data-md-component="logo">
       
   
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 003-3 3 3 0 00-3-3 3 3 0 00-3 3 3 3 0 003 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
 
     </a>
     YP.Lam
@@ -237,1288 +228,1402 @@
       
       
 
-
-
-  <li class="md-nav__item">
-    <a href="../../.." class="md-nav__link">
-      首页
-    </a>
-  </li>
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        首页
+      </a>
+    </li>
+  
 
     
       
       
       
 
-
-
   
-  <li class="md-nav__item md-nav__item--nested">
-    
-    
-      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-2" type="checkbox" id="nav-2" >
-    
-    <label class="md-nav__link" for="nav-2">
-      互联网
-      <span class="md-nav__icon md-icon"></span>
-    </label>
-    <nav class="md-nav" aria-label="互联网" data-md-level="1">
-      <label class="md-nav__title" for="nav-2">
-        <span class="md-nav__icon md-icon"></span>
-        互联网
-      </label>
-      <ul class="md-nav__list" data-md-scrollfix>
-        
-        
-          
-          
-          
-
-
-
   
-  <li class="md-nav__item md-nav__item--nested">
-    
-    
-      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-2-1" type="checkbox" id="nav-2-1" >
-    
-    <label class="md-nav__link" for="nav-2-1">
-      Symfony4
-      <span class="md-nav__icon md-icon"></span>
-    </label>
-    <nav class="md-nav" aria-label="Symfony4" data-md-level="2">
-      <label class="md-nav__title" for="nav-2-1">
-        <span class="md-nav__icon md-icon"></span>
-        Symfony4
-      </label>
-      <ul class="md-nav__list" data-md-scrollfix>
-        
-        
-          
-          
-          
-
-
-
-  <li class="md-nav__item">
-    <a href="../../../Web/Symfony4/hello-symfony-4/" class="md-nav__link">
-      Symfony 4 尝鲜
-    </a>
-  </li>
-
-        
-          
-          
-          
-
-
-
-  <li class="md-nav__item">
-    <a href="../../../Web/Symfony4/symfony-the-new-way/" class="md-nav__link">
-      Symfony 4 the new way
-    </a>
-  </li>
-
-        
-      </ul>
-    </nav>
-  </li>
-
-        
-          
-          
-          
-
-
-
   
-  <li class="md-nav__item md-nav__item--nested">
     
-    
-      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-2-2" type="checkbox" id="nav-2-2" >
-    
-    <label class="md-nav__link" for="nav-2-2">
-      Symfony
-      <span class="md-nav__icon md-icon"></span>
-    </label>
-    <nav class="md-nav" aria-label="Symfony" data-md-level="2">
-      <label class="md-nav__title" for="nav-2-2">
-        <span class="md-nav__icon md-icon"></span>
-        Symfony
-      </label>
-      <ul class="md-nav__list" data-md-scrollfix>
-        
-        
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2" type="checkbox" id="__nav_2" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2">
+          物联网
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="物联网" data-md-level="1">
+        <label class="md-nav__title" for="__nav_2">
+          <span class="md-nav__icon md-icon"></span>
+          物联网
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
           
-          
-          
-
-
-
-  <li class="md-nav__item">
-    <a href="../../../Web/Symfony/symfony-performance/" class="md-nav__link">
-      Symfony 性能优化
-    </a>
-  </li>
-
-        
-          
-          
-          
-
-
-
-  <li class="md-nav__item">
-    <a href="../../../Web/Symfony/symfony-micro-framework/" class="md-nav__link">
-      Symfony2 太“重”了？试试 Symfony2 微框架
-    </a>
-  </li>
-
-        
-          
-          
-          
-
-
-
-  <li class="md-nav__item">
-    <a href="../../../Web/Symfony/dependency-injection-container/" class="md-nav__link">
-      依赖注入容器（Dependency Injection Container）
-    </a>
-  </li>
-
-        
-          
-          
-          
-
-
-
-  <li class="md-nav__item">
-    <a href="../../../Web/Symfony/dependency-Injection/" class="md-nav__link">
-      依赖注入 ( Dependency Injection )
-    </a>
-  </li>
-
-        
-          
-          
-          
-
-
-
-  <li class="md-nav__item">
-    <a href="../../../Web/Symfony/doctrine-resolve-target-entity/" class="md-nav__link">
-      如何通过抽象类与接口来定义关联
-    </a>
-  </li>
-
-        
-          
-          
-          
-
-
-
-  <li class="md-nav__item">
-    <a href="../../../Web/Symfony/drupal-2-symfony/" class="md-nav__link">
-      如何将一个Drupal网站转到Symfony
-    </a>
-  </li>
-
-        
-          
-          
-          
-
-
-
-  <li class="md-nav__item">
-    <a href="../../../Web/Symfony/sonata-admin-custom-page/" class="md-nav__link">
-      SonataAdminBundle创建自定义后台页面
-    </a>
-  </li>
-
-        
-          
-          
-          
-
-
-
-  <li class="md-nav__item">
-    <a href="../../../Web/Symfony/symfony-bootstrap/" class="md-nav__link">
-      Symfony2 启动流程分析
-    </a>
-  </li>
-
-        
-          
-          
-          
-
-
-
-  <li class="md-nav__item">
-    <a href="../../../Web/Symfony/symfony-capifony/" class="md-nav__link">
-      使用Capifony对Symfony网站进行发布
-    </a>
-  </li>
-
-        
-          
-          
-          
-
-
-
-  <li class="md-nav__item">
-    <a href="../../../Web/Symfony/symfony-fosuserbundle/" class="md-nav__link">
-      FOSUserBundle 入门
-    </a>
-  </li>
-
-        
-          
-          
-          
-
-
-
-  <li class="md-nav__item">
-    <a href="../../../Web/Symfony/symfony-github-jenkins/" class="md-nav__link">
-      使用 Jenkins 与 Github 对 Symfony 2 应用进行持续集成
-    </a>
-  </li>
-
-        
-          
-          
-          
-
-
-
-  <li class="md-nav__item">
-    <a href="../../../Web/Symfony/symfony-hot-bundles/" class="md-nav__link">
-      30个最常用的Symfony组件
-    </a>
-  </li>
-
-        
-          
-          
-          
-
-
-
-  <li class="md-nav__item">
-    <a href="../../../Web/Symfony/symfony-service-container/" class="md-nav__link">
-      Symfony服务容器 ( Symfony Service Container )
-    </a>
-  </li>
-
-        
-          
-          
-          
-
-
-
-  <li class="md-nav__item">
-    <a href="../../../Web/Symfony/symfony-twig-block/" class="md-nav__link">
-      使用twigExtension实现页面区块功能
-    </a>
-  </li>
-
-        
-      </ul>
-    </nav>
-  </li>
-
-        
-          
-          
-          
-
-
-
+            
+              
   
-  <li class="md-nav__item md-nav__item--nested">
-    
-    
-      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-2-3" type="checkbox" id="nav-2-3" >
-    
-    <label class="md-nav__link" for="nav-2-3">
-      PHP
-      <span class="md-nav__icon md-icon"></span>
-    </label>
-    <nav class="md-nav" aria-label="PHP" data-md-level="2">
-      <label class="md-nav__title" for="nav-2-3">
-        <span class="md-nav__icon md-icon"></span>
-        PHP
-      </label>
-      <ul class="md-nav__list" data-md-scrollfix>
-        
-        
-          
-          
-          
-
-
-
-  <li class="md-nav__item">
-    <a href="../../../Web/PHP/discuz-api/" class="md-nav__link">
-      Discuz移动接口原理简介
-    </a>
-  </li>
-
-        
-          
-          
-          
-
-
-
-  <li class="md-nav__item">
-    <a href="../../../Web/PHP/phalcon-container-phpdoc/" class="md-nav__link">
-      Phalcon 容器代码提示解决方案（PhpStorm）
-    </a>
-  </li>
-
-        
-          
-          
-          
-
-
-
-  <li class="md-nav__item">
-    <a href="../../../Web/PHP/php-gc/" class="md-nav__link">
-      PHP GC 相关资料
-    </a>
-  </li>
-
-        
-          
-          
-          
-
-
-
-  <li class="md-nav__item">
-    <a href="../../../Web/PHP/php-isset-empty/" class="md-nav__link">
-      PHP中的empty()与isset()
-    </a>
-  </li>
-
-        
-          
-          
-          
-
-
-
-  <li class="md-nav__item">
-    <a href="../../../Web/PHP/web-api-doc/" class="md-nav__link">
-      PHP Web/Api 项目文档方案：swagger-php + mkdocs + C4
-    </a>
-  </li>
-
-        
-      </ul>
-    </nav>
-  </li>
-
-        
-          
-          
-          
-
-
-
   
-  <li class="md-nav__item md-nav__item--nested">
-    
-    
-      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-2-4" type="checkbox" id="nav-2-4" >
-    
-    <label class="md-nav__link" for="nav-2-4">
-      Drupal
-      <span class="md-nav__icon md-icon"></span>
-    </label>
-    <nav class="md-nav" aria-label="Drupal" data-md-level="2">
-      <label class="md-nav__title" for="nav-2-4">
-        <span class="md-nav__icon md-icon"></span>
-        Drupal
-      </label>
-      <ul class="md-nav__list" data-md-scrollfix>
-        
-        
-          
-          
-          
-
-
-
-  <li class="md-nav__item">
-    <a href="../../../Web/Drupal/drupal-services-and-dependency-injection/" class="md-nav__link">
-      Drupal 8服务与依赖注入
-    </a>
-  </li>
-
-        
-          
-          
-          
-
-
-
-  <li class="md-nav__item">
-    <a href="../../../Web/Drupal/drupal-special-topic/" class="md-nav__link">
-      Drupal 专题页面模块
-    </a>
-  </li>
-
-        
-          
-          
-          
-
-
-
-  <li class="md-nav__item">
-    <a href="../../../Web/Drupal/drupal-wechat/" class="md-nav__link">
-      Drupal微信公众平台模块
-    </a>
-  </li>
-
-        
-      </ul>
-    </nav>
-  </li>
-
-        
-          
-          
-          
-
-
-
   
-  <li class="md-nav__item md-nav__item--nested">
     
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_1" type="checkbox" id="__nav_2_1" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2_1">
+          Linux
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Linux" data-md-level="2">
+        <label class="md-nav__title" for="__nav_2_1">
+          <span class="md-nav__icon md-icon"></span>
+          Linux
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../IOT/Linux/configuring-6lbr-ubuntu-sensortag-cc2650/" class="md-nav__link">
+        Configuring 6lbr for Ubuntu and SensorTag CC2650
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../IOT/Linux/edison-ros-indigo-step-by-step/" class="md-nav__link">
+        一步步搭建 Edison ROS Indigo 环境
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../IOT/Linux/edison-ros-install/" class="md-nav__link">
+        Install ROS Indigo on Edison Ubilinux
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../IOT/Linux/imx6ull-boot-sd-card/" class="md-nav__link">
+        iMX6ULL SD卡系统制作与启动
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../IOT/Linux/imx6ull-kernel-compile/" class="md-nav__link">
+        iMX6ULL 内核编译
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../IOT/Linux/imx6ull-openwrt/" class="md-nav__link">
+        iMX6ULL 运行 OpenWRT
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../IOT/Linux/mt7688-4g/" class="md-nav__link">
+        基于 OpenWRT 与 MT7688 DIY 4G WIFI 路由器
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../IOT/Linux/mt7688-qa/" class="md-nav__link">
+        MT7688 问题与解决
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
     
-      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-2-5" type="checkbox" id="nav-2-5" >
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_2" type="checkbox" id="__nav_2_2" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2_2">
+          Zephyr
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Zephyr" data-md-level="2">
+        <label class="md-nav__title" for="__nav_2_2">
+          <span class="md-nav__icon md-icon"></span>
+          Zephyr
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../IOT/zephyr/zephyr-boot-sequence/" class="md-nav__link">
+        Zephyr 启动流程
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../IOT/zephyr/zephyr-clion/" class="md-nav__link">
+        Zephyr Clion 开发环境配置
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../IOT/zephyr/zephyr/" class="md-nav__link">
+        Zephyr 简介
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
     
-    <label class="md-nav__link" for="nav-2-5">
-      Linux
-      <span class="md-nav__icon md-icon"></span>
-    </label>
-    <nav class="md-nav" aria-label="Linux" data-md-level="2">
-      <label class="md-nav__title" for="nav-2-5">
-        <span class="md-nav__icon md-icon"></span>
-        Linux
-      </label>
-      <ul class="md-nav__list" data-md-scrollfix>
-        
-        
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_3" type="checkbox" id="__nav_2_3" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2_3">
+          Openthread
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Openthread" data-md-level="2">
+        <label class="md-nav__title" for="__nav_2_3">
+          <span class="md-nav__icon md-icon"></span>
+          Openthread
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
           
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../IOT/openthread/openthread-connect-lan/" class="md-nav__link">
+        OpenThread 节点访问局域网服务器的配置方法
+      </a>
+    </li>
+  
+
+            
           
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../IOT/openthread/raspberry-pi-openthread/" class="md-nav__link">
+        树莓派 OpenThread 边界路由器配置
+      </a>
+    </li>
+  
+
+            
           
+        </ul>
+      </nav>
+    </li>
+  
 
-
-
-  <li class="md-nav__item">
-    <a href="../../../Web/Linux/apache-htaccess-performance/" class="md-nav__link">
-      不能忽略 .htaccess 对性能的影响
-    </a>
-  </li>
-
-        
+            
           
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../IOT/mbed-custom-bootloader/" class="md-nav__link">
+        Mbed Bootloader配置笔记
+      </a>
+    </li>
+  
+
+            
           
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../IOT/lora-ranging-test/" class="md-nav__link">
+        SX1280 LoraRanging 功能测试
+      </a>
+    </li>
+  
+
+            
           
-
-
-
-  <li class="md-nav__item">
-    <a href="../../../Web/Linux/centos-php-fpm-52/" class="md-nav__link">
-      Centos Nginx PHP-FPM Mysql 服务器环境配置
-    </a>
-  </li>
-
-        
-          
-          
-          
-
-
-
-  <li class="md-nav__item">
-    <a href="../../../Web/Linux/debian-mul-redis/" class="md-nav__link">
-      Debian 8 服务器运行多Redis实例
-    </a>
-  </li>
-
-        
-          
-          
-          
-
-
-
-  <li class="md-nav__item">
-    <a href="../../../Web/Linux/linux-command-collection/" class="md-nav__link">
-      Linux 小笔记
-    </a>
-  </li>
-
-        
-          
-          
-          
-
-
-
-  <li class="md-nav__item">
-    <a href="../../../Web/Linux/nginx-aws-proxy/" class="md-nav__link">
-      使用Nginx做AWS S3的反向代理
-    </a>
-  </li>
-
-        
-          
-          
-          
-
-
-
-  <li class="md-nav__item">
-    <a href="../../../Web/Linux/nginx-http-auth/" class="md-nav__link">
-      配置 Nginx Http 认证以及 IP 访问策略
-    </a>
-  </li>
-
-        
-          
-          
-          
-
-
-
-  <li class="md-nav__item">
-    <a href="../../../Web/Linux/nginx-https/" class="md-nav__link">
-      为个人博客配置 HTTPS 访问
-    </a>
-  </li>
-
-        
-          
-          
-          
-
-
-
-  <li class="md-nav__item">
-    <a href="../../../Web/Linux/ssd-raid-performance/" class="md-nav__link">
-      服务器SSD以及SSD RAID性能测试
-    </a>
-  </li>
-
-        
-      </ul>
-    </nav>
-  </li>
-
-        
-          
-          
-          
-
-
-
-  <li class="md-nav__item">
-    <a href="../../../Web/elk-log-analytics/" class="md-nav__link">
-      ELK日志分析入门
-    </a>
-  </li>
-
-        
-          
-          
-          
-
-
-
-  <li class="md-nav__item">
-    <a href="../../../Web/localstorage-cross-page-comm/" class="md-nav__link">
-      使用localStorage进行跨标签页通讯
-    </a>
-  </li>
-
-        
-      </ul>
-    </nav>
-  </li>
+        </ul>
+      </nav>
+    </li>
+  
 
     
       
       
       
 
-
-
   
-  <li class="md-nav__item md-nav__item--nested">
-    
-    
-      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-3" type="checkbox" id="nav-3" >
-    
-    <label class="md-nav__link" for="nav-3">
-      嵌入式
-      <span class="md-nav__icon md-icon"></span>
-    </label>
-    <nav class="md-nav" aria-label="嵌入式" data-md-level="1">
-      <label class="md-nav__title" for="nav-3">
-        <span class="md-nav__icon md-icon"></span>
-        嵌入式
-      </label>
-      <ul class="md-nav__list" data-md-scrollfix>
-        
-        
-          
-          
-          
-
-
-
   
-  <li class="md-nav__item md-nav__item--nested">
-    
-    
-      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-3-1" type="checkbox" id="nav-3-1" >
-    
-    <label class="md-nav__link" for="nav-3-1">
-      Linux
-      <span class="md-nav__icon md-icon"></span>
-    </label>
-    <nav class="md-nav" aria-label="Linux" data-md-level="2">
-      <label class="md-nav__title" for="nav-3-1">
-        <span class="md-nav__icon md-icon"></span>
-        Linux
-      </label>
-      <ul class="md-nav__list" data-md-scrollfix>
-        
-        
-          
-          
-          
-
-
-
-  <li class="md-nav__item">
-    <a href="../../../Embedded/Linux/configuring-6lbr-ubuntu-sensortag-cc2650/" class="md-nav__link">
-      Configuring 6lbr for Ubuntu and SensorTag CC2650
-    </a>
-  </li>
-
-        
-          
-          
-          
-
-
-
-  <li class="md-nav__item">
-    <a href="../../../Embedded/Linux/edison-ros-indigo-step-by-step/" class="md-nav__link">
-      一步步搭建 Edison ROS Indigo 环境
-    </a>
-  </li>
-
-        
-          
-          
-          
-
-
-
-  <li class="md-nav__item">
-    <a href="../../../Embedded/Linux/edison-ros-install/" class="md-nav__link">
-      Install ROS Indigo on Edison Ubilinux
-    </a>
-  </li>
-
-        
-          
-          
-          
-
-
-
-  <li class="md-nav__item">
-    <a href="../../../Embedded/Linux/imx6ull-boot-sd-card/" class="md-nav__link">
-      iMX6ULL SD卡系统制作与启动
-    </a>
-  </li>
-
-        
-          
-          
-          
-
-
-
-  <li class="md-nav__item">
-    <a href="../../../Embedded/Linux/imx6ull-kernel-compile/" class="md-nav__link">
-      iMX6ULL 内核编译
-    </a>
-  </li>
-
-        
-          
-          
-          
-
-
-
-  <li class="md-nav__item">
-    <a href="../../../Embedded/Linux/imx6ull-openwrt/" class="md-nav__link">
-      iMX6ULL 运行 OpenWRT
-    </a>
-  </li>
-
-        
-          
-          
-          
-
-
-
-  <li class="md-nav__item">
-    <a href="../../../Embedded/Linux/mt7688-4g/" class="md-nav__link">
-      基于 OpenWRT 与 MT7688 DIY 4G WIFI 路由器
-    </a>
-  </li>
-
-        
-          
-          
-          
-
-
-
-  <li class="md-nav__item">
-    <a href="../../../Embedded/Linux/mt7688-qa/" class="md-nav__link">
-      MT7688 问题与解决
-    </a>
-  </li>
-
-        
-      </ul>
-    </nav>
-  </li>
-
-        
-          
-          
-          
-
-
-
   
-  <li class="md-nav__item md-nav__item--nested">
     
-    
-      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-3-2" type="checkbox" id="nav-3-2" >
-    
-    <label class="md-nav__link" for="nav-3-2">
-      Zephyr
-      <span class="md-nav__icon md-icon"></span>
-    </label>
-    <nav class="md-nav" aria-label="Zephyr" data-md-level="2">
-      <label class="md-nav__title" for="nav-3-2">
-        <span class="md-nav__icon md-icon"></span>
-        Zephyr
-      </label>
-      <ul class="md-nav__list" data-md-scrollfix>
-        
-        
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3" type="checkbox" id="__nav_3" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3">
+          互联网
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="互联网" data-md-level="1">
+        <label class="md-nav__title" for="__nav_3">
+          <span class="md-nav__icon md-icon"></span>
+          互联网
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
           
-          
-          
-
-
-
-  <li class="md-nav__item">
-    <a href="../../../Embedded/zephyr/zephyr-boot-sequence/" class="md-nav__link">
-      Zephyr 启动流程
-    </a>
-  </li>
-
-        
-          
-          
-          
-
-
-
-  <li class="md-nav__item">
-    <a href="../../../Embedded/zephyr/zephyr-clion/" class="md-nav__link">
-      Zephyr Clion 开发环境配置
-    </a>
-  </li>
-
-        
-          
-          
-          
-
-
-
-  <li class="md-nav__item">
-    <a href="../../../Embedded/zephyr/zephyr/" class="md-nav__link">
-      Zephyr 简介
-    </a>
-  </li>
-
-        
-      </ul>
-    </nav>
-  </li>
-
-        
-          
-          
-          
-
-
-
+            
+              
   
-  <li class="md-nav__item md-nav__item--nested">
+  
+  
     
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_1" type="checkbox" id="__nav_3_1" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_1">
+          Symfony4
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Symfony4" data-md-level="2">
+        <label class="md-nav__title" for="__nav_3_1">
+          <span class="md-nav__icon md-icon"></span>
+          Symfony4
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Web/Symfony4/hello-symfony-4/" class="md-nav__link">
+        Symfony 4 尝鲜
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Web/Symfony4/symfony-the-new-way/" class="md-nav__link">
+        Symfony 4 the new way
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
     
-      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-3-3" type="checkbox" id="nav-3-3" >
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_2" type="checkbox" id="__nav_3_2" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_2">
+          Symfony
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Symfony" data-md-level="2">
+        <label class="md-nav__title" for="__nav_3_2">
+          <span class="md-nav__icon md-icon"></span>
+          Symfony
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Web/Symfony/symfony-performance/" class="md-nav__link">
+        Symfony 性能优化
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Web/Symfony/symfony-micro-framework/" class="md-nav__link">
+        Symfony2 太“重”了？试试 Symfony2 微框架
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Web/Symfony/dependency-injection-container/" class="md-nav__link">
+        依赖注入容器（Dependency Injection Container）
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Web/Symfony/dependency-Injection/" class="md-nav__link">
+        依赖注入 ( Dependency Injection )
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Web/Symfony/doctrine-resolve-target-entity/" class="md-nav__link">
+        如何通过抽象类与接口来定义关联
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Web/Symfony/drupal-2-symfony/" class="md-nav__link">
+        如何将一个Drupal网站转到Symfony
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Web/Symfony/sonata-admin-custom-page/" class="md-nav__link">
+        SonataAdminBundle创建自定义后台页面
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Web/Symfony/symfony-bootstrap/" class="md-nav__link">
+        Symfony2 启动流程分析
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Web/Symfony/symfony-capifony/" class="md-nav__link">
+        使用Capifony对Symfony网站进行发布
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Web/Symfony/symfony-fosuserbundle/" class="md-nav__link">
+        FOSUserBundle 入门
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Web/Symfony/symfony-github-jenkins/" class="md-nav__link">
+        使用 Jenkins 与 Github 对 Symfony 2 应用进行持续集成
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Web/Symfony/symfony-hot-bundles/" class="md-nav__link">
+        30个最常用的Symfony组件
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Web/Symfony/symfony-service-container/" class="md-nav__link">
+        Symfony服务容器 ( Symfony Service Container )
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Web/Symfony/symfony-twig-block/" class="md-nav__link">
+        使用twigExtension实现页面区块功能
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
     
-    <label class="md-nav__link" for="nav-3-3">
-      Openthread
-      <span class="md-nav__icon md-icon"></span>
-    </label>
-    <nav class="md-nav" aria-label="Openthread" data-md-level="2">
-      <label class="md-nav__title" for="nav-3-3">
-        <span class="md-nav__icon md-icon"></span>
-        Openthread
-      </label>
-      <ul class="md-nav__list" data-md-scrollfix>
-        
-        
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_3" type="checkbox" id="__nav_3_3" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_3">
+          PHP
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="PHP" data-md-level="2">
+        <label class="md-nav__title" for="__nav_3_3">
+          <span class="md-nav__icon md-icon"></span>
+          PHP
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
           
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Web/PHP/discuz-api/" class="md-nav__link">
+        Discuz移动接口原理简介
+      </a>
+    </li>
+  
+
+            
           
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Web/PHP/phalcon-container-phpdoc/" class="md-nav__link">
+        Phalcon 容器代码提示解决方案（PhpStorm）
+      </a>
+    </li>
+  
+
+            
           
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Web/PHP/php-gc/" class="md-nav__link">
+        PHP GC 相关资料
+      </a>
+    </li>
+  
 
-
-
-  <li class="md-nav__item">
-    <a href="../../../Embedded/openthread/openthread-connect-lan/" class="md-nav__link">
-      OpenThread 节点访问局域网服务器的配置方法
-    </a>
-  </li>
-
-        
+            
           
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Web/PHP/php-isset-empty/" class="md-nav__link">
+        PHP中的empty()与isset()
+      </a>
+    </li>
+  
+
+            
           
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Web/PHP/web-api-doc/" class="md-nav__link">
+        PHP Web/Api 项目文档方案：swagger-php + mkdocs + C4
+      </a>
+    </li>
+  
+
+            
           
+        </ul>
+      </nav>
+    </li>
+  
 
-
-
-  <li class="md-nav__item">
-    <a href="../../../Embedded/openthread/raspberry-pi-openthread/" class="md-nav__link">
-      树莓派 OpenThread 边界路由器配置
-    </a>
-  </li>
-
-        
-      </ul>
-    </nav>
-  </li>
-
-        
+            
           
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_4" type="checkbox" id="__nav_3_4" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_4">
+          Drupal
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Drupal" data-md-level="2">
+        <label class="md-nav__title" for="__nav_3_4">
+          <span class="md-nav__icon md-icon"></span>
+          Drupal
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
           
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Web/Drupal/drupal-services-and-dependency-injection/" class="md-nav__link">
+        Drupal 8服务与依赖注入
+      </a>
+    </li>
+  
+
+            
           
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Web/Drupal/drupal-special-topic/" class="md-nav__link">
+        Drupal 专题页面模块
+      </a>
+    </li>
+  
 
-
-
-  <li class="md-nav__item">
-    <a href="../../../Embedded/mbed-custom-bootloader/" class="md-nav__link">
-      Mbed Bootloader配置笔记
-    </a>
-  </li>
-
-        
+            
           
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Web/Drupal/drupal-wechat/" class="md-nav__link">
+        Drupal微信公众平台模块
+      </a>
+    </li>
+  
+
+            
           
+        </ul>
+      </nav>
+    </li>
+  
+
+            
           
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_5" type="checkbox" id="__nav_3_5" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_5">
+          Linux
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Linux" data-md-level="2">
+        <label class="md-nav__title" for="__nav_3_5">
+          <span class="md-nav__icon md-icon"></span>
+          Linux
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Web/Linux/apache-htaccess-performance/" class="md-nav__link">
+        不能忽略 .htaccess 对性能的影响
+      </a>
+    </li>
+  
 
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Web/Linux/centos-php-fpm-52/" class="md-nav__link">
+        Centos Nginx PHP-FPM Mysql 服务器环境配置
+      </a>
+    </li>
+  
 
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Web/Linux/debian-mul-redis/" class="md-nav__link">
+        Debian 8 服务器运行多Redis实例
+      </a>
+    </li>
+  
 
-  <li class="md-nav__item">
-    <a href="../../../Embedded/lora-ranging-test/" class="md-nav__link">
-      SX1280 LoraRanging 功能测试
-    </a>
-  </li>
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Web/Linux/linux-command-collection/" class="md-nav__link">
+        Linux 小笔记
+      </a>
+    </li>
+  
 
-        
-      </ul>
-    </nav>
-  </li>
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Web/Linux/nginx-aws-proxy/" class="md-nav__link">
+        使用Nginx做AWS S3的反向代理
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Web/Linux/nginx-http-auth/" class="md-nav__link">
+        配置 Nginx Http 认证以及 IP 访问策略
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Web/Linux/nginx-https/" class="md-nav__link">
+        为个人博客配置 HTTPS 访问
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Web/Linux/ssd-raid-performance/" class="md-nav__link">
+        服务器SSD以及SSD RAID性能测试
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Web/elk-log-analytics/" class="md-nav__link">
+        ELK日志分析入门
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Web/localstorage-cross-page-comm/" class="md-nav__link">
+        使用localStorage进行跨标签页通讯
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_8" type="checkbox" id="__nav_3_8" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_8">
+          Go
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Go" data-md-level="2">
+        <label class="md-nav__title" for="__nav_3_8">
+          <span class="md-nav__icon md-icon"></span>
+          Go
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Web/Go/golang-clean-architecture/" class="md-nav__link">
+        Clean Architecture 简介
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
 
     
       
       
       
 
-
-
   
-  <li class="md-nav__item md-nav__item--nested">
+  
     
+  
+  
     
-      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-4" type="checkbox" id="nav-4" >
-    
-    <label class="md-nav__link" for="nav-4">
-      机器学习
-      <span class="md-nav__icon md-icon"></span>
-    </label>
-    <nav class="md-nav" aria-label="机器学习" data-md-level="1">
-      <label class="md-nav__title" for="nav-4">
-        <span class="md-nav__icon md-icon"></span>
-        机器学习
-      </label>
-      <ul class="md-nav__list" data-md-scrollfix>
-        
-        
-          
-          
-          
-
-
-
-  <li class="md-nav__item">
-    <a href="../../../MachineLearning/aws-cuda-tensorflow/" class="md-nav__link">
-      AWS TensorFlow 安装与测试
-    </a>
-  </li>
-
-        
-          
-          
-          
-
-
-
-  <li class="md-nav__item">
-    <a href="../../../MachineLearning/hands-on-machine-learning-scikit-learn-%20tensorflow/" class="md-nav__link">
-      《 Hands-On Machine Learning with Scikit-Learn and TensorFlow 》笔记
-    </a>
-  </li>
-
-        
-          
-          
-          
-
-
-
-  <li class="md-nav__item">
-    <a href="../../../MachineLearning/machine-learning-notes/" class="md-nav__link">
-      机器学习笔记
-    </a>
-  </li>
-
-        
-          
-          
-          
-
-
-
-  <li class="md-nav__item">
-    <a href="../../../MachineLearning/machine-learning-predicting-customer-behavior/" class="md-nav__link">
-      [翻译]用户行为预测：使用机器学习技术预测付费用户
-    </a>
-  </li>
-
-        
-          
-          
-          
-
-
-
-  <li class="md-nav__item">
-    <a href="../../../MachineLearning/netflix-prize/" class="md-nav__link">
-      Netflix Prize 相关资料
-    </a>
-  </li>
-
-        
-          
-          
-          
-
-
-
-  <li class="md-nav__item">
-    <a href="../../../MachineLearning/predictionio-universal-recommender/" class="md-nav__link">
-      PredictionIO Universal Recommender 笔记
-    </a>
-  </li>
-
-        
-          
-          
-          
-
-
-
-  <li class="md-nav__item">
-    <a href="../../../MachineLearning/predictionio/" class="md-nav__link">
-      PredictionIO实现论坛广告贴过滤
-    </a>
-  </li>
-
-        
-          
-          
-          
-
-
-
-  <li class="md-nav__item">
-    <a href="../../../MachineLearning/tensorflow-object-detection-note/" class="md-nav__link">
-      Tensorflow Object Detection API 入门笔记 - 基于 Google Cloud 与 阿里云
-    </a>
-  </li>
-
-        
-          
-          
-          
-
-
-
-  <li class="md-nav__item">
-    <a href="../../../MachineLearning/tensorflow-serving-nsfw/" class="md-nav__link">
-      Tensorflow Serving Nsfw
-    </a>
-  </li>
-
-        
-          
-          
-          
-
-
-
-  <li class="md-nav__item">
-    <a href="../../../MachineLearning/user-profile-learning-notes/" class="md-nav__link">
-      用户画像笔记
-    </a>
-  </li>
-
-        
-      </ul>
-    </nav>
-  </li>
-
-    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4" type="checkbox" id="__nav_4" checked>
       
       
       
-
-
+      
+        <label class="md-nav__link" for="__nav_4">
+          Pub
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Pub" data-md-level="1">
+        <label class="md-nav__title" for="__nav_4">
+          <span class="md-nav__icon md-icon"></span>
+          Pub
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4_1" type="checkbox" id="__nav_4_1" checked>
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_4_1">
+          Chromium
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Chromium" data-md-level="2">
+        <label class="md-nav__title" for="__nav_4_1">
+          <span class="md-nav__icon md-icon"></span>
+          Chromium
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chromium-build-debug/" class="md-nav__link">
+        Chromium 编译与调试笔记
+      </a>
+    </li>
   
 
-
+            
+          
+            
+              
   
-  <li class="md-nav__item md-nav__item--active md-nav__item--nested">
-    
-    
-      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-5" type="checkbox" id="nav-5" checked>
-    
-    <label class="md-nav__link" for="nav-5">
-      Pub
-      <span class="md-nav__icon md-icon"></span>
-    </label>
-    <nav class="md-nav" aria-label="Pub" data-md-level="1">
-      <label class="md-nav__title" for="nav-5">
-        <span class="md-nav__icon md-icon"></span>
-        Pub
-      </label>
-      <ul class="md-nav__list" data-md-scrollfix>
-        
-        
-          
-          
-          
-
-
+  
+  
+    <li class="md-nav__item">
+      <a href="../chromium-cpp/" class="md-nav__link">
+        Chromium 源码阅读：std:move
+      </a>
+    </li>
   
 
-
+            
+          
+            
+              
   
-  <li class="md-nav__item md-nav__item--active md-nav__item--nested">
-    
-    
-      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-5-1" type="checkbox" id="nav-5-1" checked>
-    
-    <label class="md-nav__link" for="nav-5-1">
-      Chromium
-      <span class="md-nav__icon md-icon"></span>
-    </label>
-    <nav class="md-nav" aria-label="Chromium" data-md-level="2">
-      <label class="md-nav__title" for="nav-5-1">
-        <span class="md-nav__icon md-icon"></span>
-        Chromium
-      </label>
-      <ul class="md-nav__list" data-md-scrollfix>
-        
-        
-          
-          
-          
-
-
-
-  <li class="md-nav__item">
-    <a href="../chromium-build-debug/" class="md-nav__link">
-      Chromium 编译与调试笔记
-    </a>
-  </li>
-
-        
-          
-          
-          
-
-
-
-  <li class="md-nav__item">
-    <a href="../chromium-cpp/" class="md-nav__link">
-      Chromium 源码阅读：std:move
-    </a>
-  </li>
-
-        
-          
-          
-          
-
-
-
-  <li class="md-nav__item">
-    <a href="../chromium-image-decode-error/" class="md-nav__link">
-      Chromium 源码阅读：Could not decode image bug 跟踪
-    </a>
-  </li>
-
-        
-          
-          
-          
-
-
+  
+  
+    <li class="md-nav__item">
+      <a href="../chromium-image-decode-error/" class="md-nav__link">
+        Chromium 源码阅读：Could not decode image bug 跟踪
+      </a>
+    </li>
   
 
-
-  <li class="md-nav__item md-nav__item--active">
-    
-    <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
-    
-    
-    <a href="./" class="md-nav__link md-nav__link--active">
-      Chromium 源码阅读：chrome/browser/ui/views 入门概览
-    </a>
-    
-  </li>
-
-        
+            
           
-          
-          
-
-
-
-  <li class="md-nav__item">
-    <a href="../chromium-src-chrome-browser-themes/" class="md-nav__link">
-      Chromium 源码阅读：chrome/browser/themes
-    </a>
-  </li>
-
-        
-      </ul>
-    </nav>
-  </li>
-
-        
-          
-          
-          
-
-
-
+            
+              
   
-  <li class="md-nav__item md-nav__item--nested">
+  
     
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+      
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        Chromium 源码阅读：chrome/browser/ui/views 入门概览
+      </a>
+      
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chromium-src-chrome-browser-themes/" class="md-nav__link">
+        Chromium 源码阅读：chrome/browser/themes
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
     
-      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-5-2" type="checkbox" id="nav-5-2" >
-    
-    <label class="md-nav__link" for="nav-5-2">
-      PMP
-      <span class="md-nav__icon md-icon"></span>
-    </label>
-    <nav class="md-nav" aria-label="PMP" data-md-level="2">
-      <label class="md-nav__title" for="nav-5-2">
-        <span class="md-nav__icon md-icon"></span>
-        PMP
-      </label>
-      <ul class="md-nav__list" data-md-scrollfix>
-        
-        
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4_2" type="checkbox" id="__nav_4_2" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_4_2">
+          MachineLearning
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="MachineLearning" data-md-level="2">
+        <label class="md-nav__title" for="__nav_4_2">
+          <span class="md-nav__icon md-icon"></span>
+          MachineLearning
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
           
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../MachineLearning/aws-cuda-tensorflow/" class="md-nav__link">
+        AWS TensorFlow 安装与测试
+      </a>
+    </li>
+  
+
+            
           
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../MachineLearning/hands-on-machine-learning-scikit-learn-%20tensorflow/" class="md-nav__link">
+        《 Hands-On Machine Learning with Scikit-Learn and TensorFlow 》笔记
+      </a>
+    </li>
+  
+
+            
           
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../MachineLearning/machine-learning-notes/" class="md-nav__link">
+        机器学习笔记
+      </a>
+    </li>
+  
 
-
-
-  <li class="md-nav__item">
-    <a href="../../PMP/pmp-resource/" class="md-nav__link">
-      PMP 学习资源
-    </a>
-  </li>
-
-        
+            
           
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../MachineLearning/machine-learning-predicting-customer-behavior/" class="md-nav__link">
+        [翻译]用户行为预测：使用机器学习技术预测付费用户
+      </a>
+    </li>
+  
+
+            
           
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../MachineLearning/netflix-prize/" class="md-nav__link">
+        Netflix Prize 相关资料
+      </a>
+    </li>
+  
+
+            
           
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../MachineLearning/predictionio-universal-recommender/" class="md-nav__link">
+        PredictionIO Universal Recommender 笔记
+      </a>
+    </li>
+  
 
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../MachineLearning/predictionio/" class="md-nav__link">
+        PredictionIO实现论坛广告贴过滤
+      </a>
+    </li>
+  
 
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../MachineLearning/tensorflow-object-detection-note/" class="md-nav__link">
+        Tensorflow Object Detection API 入门笔记 - 基于 Google Cloud 与 阿里云
+      </a>
+    </li>
+  
 
-  <li class="md-nav__item">
-    <a href="../../PMP/pmp-terms/" class="md-nav__link">
-      PMP 术语表
-    </a>
-  </li>
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../MachineLearning/tensorflow-serving-nsfw/" class="md-nav__link">
+        Tensorflow Serving Nsfw
+      </a>
+    </li>
+  
 
-        
-      </ul>
-    </nav>
-  </li>
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../MachineLearning/user-profile-learning-notes/" class="md-nav__link">
+        用户画像笔记
+      </a>
+    </li>
+  
 
-        
-      </ul>
-    </nav>
-  </li>
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
 
     
   </ul>
@@ -1529,7 +1634,7 @@
             
             
           
-          <div class="md-content">
+          <div class="md-content" data-md-component="content">
             <article class="md-content__inner md-typeset">
               
                 
@@ -1573,6 +1678,7 @@
             </article>
           </div>
         </div>
+        
       </main>
       
         
@@ -1587,19 +1693,13 @@
 </footer>
       
     </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    <script id="__config" type="application/json">{"base": "../../..", "features": ["navigation.tabs"], "translations": {"clipboard.copy": "\u590d\u5236", "clipboard.copied": "\u5df2\u590d\u5236", "search.config.lang": "ja", "search.config.pipeline": "trimmer, stemmer", "search.config.separator": "[\\uff0c\\u3002]+", "search.placeholder": "\u641c\u7d22", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../../../assets/javascripts/workers/search.fcfe8b6d.min.js", "version": null}</script>
     
-      <script src="../../../assets/javascripts/vendor.93c04032.min.js"></script>
-      <script src="../../../assets/javascripts/bundle.83e5331e.min.js"></script><script id="__lang" type="application/json">{"clipboard.copy": "\u590d\u5236", "clipboard.copied": "\u5df2\u590d\u5236", "search.config.lang": "ja", "search.config.pipeline": "trimmer, stemmer", "search.config.separator": "[\\uff0c\\u3002]+", "search.placeholder": "\u641c\u7d22", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing"}</script>
-      
-      <script>
-        app = initialize({
-          base: "../../..",
-          features: ['navigation.tabs'],
-          search: Object.assign({
-            worker: "../../../assets/javascripts/worker/search.8c7e0a7e.min.js"
-          }, typeof search !== "undefined" && search)
-        })
-      </script>
+    
+      <script src="../../../assets/javascripts/bundle.b1047164.min.js"></script>
       
         <script src="../../../assets/js/highlight.min.js"></script>
       
