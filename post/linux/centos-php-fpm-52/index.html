@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+<section class="g-bg-gray-light-v5"><head>
+	
+	<title>YP.Lam  | Centos Nginx PHP-FPM Mysql 服务器环境配置</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<meta http-equiv="x-ua-compatible" content="ie=edge">
+
+	<link rel="stylesheet" href="//stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css">
+	
+	<link rel="stylesheet" href="https://yplam.com/scss/unify.min.css">
+
+	
+	
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-83586141-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+	
+</head>
+
+<body>    <div class="container">
+        <div class="d-sm-flex text-center">
+            <div class="align-self-center ml-auto">
+                <ul class="u-list-inline float-right g-py-20">
+                    <li class="list-inline-item g-mr-5">
+                        <a class="u-link-v5 g-color-gray-dark-v5 g-color-primary--hover" href="/">HOME</a>
+                        <i class="g-color-gray-light-v2 g-ml-5">/</i>
+                    </li>
+                    <li class="list-inline-item g-mr-5">
+                        <a class="u-link-v5 g-color-gray-dark-v5 g-color-primary--hover" href="/about/">ABOUT</a>
+                        <i class="g-color-gray-light-v2 g-ml-5">/</i>
+                    </li>
+                    <li class="list-inline-item">
+                        <a class="u-link-v5 g-color-gray-dark-v5 g-color-primary--hover" href="https://github.com/yplam">GITHUB</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+<div class="container" aria-label="Content">
+            <div class="g-bg-white">
+                <div class="g-px-35 g-py-30 g-mb-30">
+<article>
+    <ul class="list-inline g-color-gray-dark-v4">
+        <li class="list-inline-item mr-0">
+            In
+             
+            
+            
+            
+            <a href="https://yplam.com/tags/linux/">Linux</a>
+            
+            
+        </li>
+        <li class="list-inline-item mx-2">/</li>
+        <li class="list-inline-item">Posted 2011-02-15</li>
+    </ul>
+    <h1 class="g-mb-30">Centos Nginx PHP-FPM Mysql 服务器环境配置</h1>
+    <div class="justify-content-center article-content">
+        <p>此笔记基于Linode Centos 5.x 64 bit 系统，安装与配置LNMP服务器环境，此配置主要用于运行Drupal。</p>
+<p>安装Mysql：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>yum install mysql-server mysql-devel</span></span></code></pre></div>
+<p>安装编译库：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>make gcc patch flex bison autoconf libjpeg libjpeg-devel libpng libpng-devel gd gd-devel libxml2 libxml2-devel zlib zlib-devel glib2 glib2-devel bzip2 bzip2-devel libevent libevent-devel ncurses ncurses-devel curl curl-devel openssl openssl-devel libmcrypt libmcrypt-devel mhash-devel libxslt-devel pcre-devel</span></span></code></pre></div>
+<p>下载、编译、安装PHP-FPM</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>    wget http://us.php.net/distributions/php-5.2.17.tar.gz
+</span></span><span style="display:flex;"><span>    tar -xvzf php-5.2.17.tar.gz
+</span></span><span style="display:flex;"><span>    wget http://php-fpm.org/downloads/php-5.2.17-fpm-0.5.14.diff.gz
+</span></span><span style="display:flex;"><span>    gzip -cd php-5.2.17-fpm-0.5.14.diff.gz | patch -d php-5.2.17 -p1
+</span></span><span style="display:flex;"><span>    cd php-5.2.17
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#对于64位系统注意要指定--with-libdir=lib64</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    ./configure --enable-fastcgi --enable-fpm --with-mcrypt --with-zlib --enable-mbstring --enable-pdo --with-mysql --with-mysqli --with-curl --disable-debug --with-pic --disable-rpath --enable-inline-optimization --with-bz2 --enable-xml --with-zlib --enable-sockets --enable-sysvsem --enable-sysvshm --enable-pcntl --enable-mbregex --with-mhash --with-xsl --enable-zip --with-pcre-regex --without-pdo-sqlite --with-pdo-mysql --without-sqlite --with-jpeg-dir --with-png-dir --with-gd --with-openssl --with-libdir<span style="color:#f92672">=</span>lib64
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    make 
+</span></span><span style="display:flex;"><span>    make install 
+</span></span><span style="display:flex;"><span>    strip /usr/local/bin/php-cgi 
+</span></span><span style="display:flex;"><span>    cp sapi/cgi/fpm/php-fpm /etc/init.d/
+</span></span><span style="display:flex;"><span>    chmod +x /etc/init.d/php-fpm
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    wget --no-check-certificate https://github.com/downloads/indeyets/syck/syck-0.70.tar.gz
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#编译安装syck-0.70（略）</span>
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    pecl install memcache
+</span></span><span style="display:flex;"><span>    pecl install apc
+</span></span><span style="display:flex;"><span>    pecl install syck-beta
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    cp php.ini-recommended /usr/local/lib/php.ini</span></span></code></pre></div>
+<p>更改php-fpm.conf配置，设置运行用户。位置大概在51、52、63、66行。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-xml" data-lang="xml"><span style="display:flex;"><span>    <span style="color:#f92672">&lt;value</span> <span style="color:#a6e22e">name=</span><span style="color:#e6db74">&#34;owner&#34;</span><span style="color:#f92672">&gt;</span>www<span style="color:#f92672">&lt;/value&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&lt;value</span> <span style="color:#a6e22e">name=</span><span style="color:#e6db74">&#34;group&#34;</span><span style="color:#f92672">&gt;</span>www<span style="color:#f92672">&lt;/value&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&lt;value</span> <span style="color:#a6e22e">name=</span><span style="color:#e6db74">&#34;user&#34;</span><span style="color:#f92672">&gt;</span>www<span style="color:#f92672">&lt;/value&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&lt;value</span> <span style="color:#a6e22e">name=</span><span style="color:#e6db74">&#34;group&#34;</span><span style="color:#f92672">&gt;</span>www<span style="color:#f92672">&lt;/value&gt;</span></span></span></code></pre></div>
+<p>安装nginx</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>    wget ...nginx
+</span></span><span style="display:flex;"><span>    ./configure --sbin-path<span style="color:#f92672">=</span>/usr/local/sbin --with-http_ssl_module --user<span style="color:#f92672">=</span>www --group<span style="color:#f92672">=</span>www --with-http_gzip_static_module
+</span></span><span style="display:flex;"><span>    make
+</span></span><span style="display:flex;"><span>    make install</span></span></code></pre></div>
+<p>nginx 与 drupal 的配置可以参考 github项目 <a href="https://github.com/yhager/nginx_drupal">https://github.com/yhager/nginx_drupal</a></p>
+    </div>
+
+
+</article>
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/styles/base16/darcula.min.css" integrity="sha512-GfRggx2Wc+POEPR0asMTNTyNug3rWJ9Jp4wxnHZ5VApMOUJRK4cEaRriXsx5tV1DakKHQWQ2noCbuzFiPJaYqA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/highlight.min.js" integrity="sha512-yUUc0qWm2rhM7X0EFe82LNnv2moqArj5nro/w1bi05A09hRVeIZbN6jlMoyu0+4I/Bu4Ck/85JQIU82T82M28w==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlightjs-line-numbers.js/2.8.0/highlightjs-line-numbers.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+
+                </div>
+
+            </div>
+        </div><div id="footer-default" class="g-bg-gray-dark-v1 g-color-white-opacity-0_8 text-center g-py-20">
+    <div class="container">
+        <div class="g-font-size-default g-mr-10 g-mb-10 g-mb-0--md">
+            <p>本站内容如非特别说明，均基于<a rel="license" target="_blank" href="http://creativecommons.org/licenses/by-sa/3.0/">Creative Commons Attribution-Share Alike 3.0 Unported License</a>发布。</p>
+        </div>
+    </div>
+</div></body>
+</section>
+</html>

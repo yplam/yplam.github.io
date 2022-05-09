@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<section class="g-bg-gray-light-v5"><head>
+	
+	<title>YP.Lam  | Chromium 源码阅读：chrome/browser/ui/views 入门概览</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<meta http-equiv="x-ua-compatible" content="ie=edge">
+
+	<link rel="stylesheet" href="//stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css">
+	
+	<link rel="stylesheet" href="https://yplam.com/scss/unify.min.css">
+
+	
+	
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-83586141-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+	
+</head>
+
+<body>    <div class="container">
+        <div class="d-sm-flex text-center">
+            <div class="align-self-center ml-auto">
+                <ul class="u-list-inline float-right g-py-20">
+                    <li class="list-inline-item g-mr-5">
+                        <a class="u-link-v5 g-color-gray-dark-v5 g-color-primary--hover" href="/">HOME</a>
+                        <i class="g-color-gray-light-v2 g-ml-5">/</i>
+                    </li>
+                    <li class="list-inline-item g-mr-5">
+                        <a class="u-link-v5 g-color-gray-dark-v5 g-color-primary--hover" href="/about/">ABOUT</a>
+                        <i class="g-color-gray-light-v2 g-ml-5">/</i>
+                    </li>
+                    <li class="list-inline-item">
+                        <a class="u-link-v5 g-color-gray-dark-v5 g-color-primary--hover" href="https://github.com/yplam">GITHUB</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+<div class="container" aria-label="Content">
+            <div class="g-bg-white">
+                <div class="g-px-35 g-py-30 g-mb-30">
+<article>
+    <ul class="list-inline g-color-gray-dark-v4">
+        <li class="list-inline-item mr-0">
+            In
+             
+            
+            
+            
+            <a href="https://yplam.com/tags/chromium/">Chromium</a>
+            
+            
+        </li>
+        <li class="list-inline-item mx-2">/</li>
+        <li class="list-inline-item">Posted 2019-03-09</li>
+    </ul>
+    <h1 class="g-mb-30">Chromium 源码阅读：chrome/browser/ui/views 入门概览</h1>
+    <div class="justify-content-center article-content">
+        <p>从上一篇知道 chrome/browser/themes/ 的数据流为从 Extension Service 得到 Theme 安装信息，并且通过 BrowserThemeProvider 为 UI 层提供 Theme UI 信息。本篇分析 UI 的 views 层，不过由于 views 层代码量实在庞大，以及对 Chromium 内部实现机制欠缺了解，所以本文只能作为一个入门概览。</p>
+<p>Chromium 官方有提供一个关于 Views 层调试的文档: <a href="https://chromium.googlesource.com/chromium/src/+/master/docs/graphical_debugging_aid_chromium_views.md">https://chromium.googlesource.com/chromium/src/+/master/docs/graphical_debugging_aid_chromium_views.md</a> ,不过我用 gdb 的 viewg 始终没有合法的输出，所以最终使用直接代码输出 Log 的方式：</p>
+<p><strong>2019-03-16 更新：</strong> 可能是编写 viewg 脚本的开发者粗心或者脚本没及时更新，发现是错把 views 写成 view 了，于是我给官方提交了个 bug fix，然后成了 Chromium 代码贡献量最少的开发者（一个字母，哈哈）。</p>
+<p>GDB 加载完成后使用此命令加载 viewg:</p>
+<pre tabindex="0"><code>source tools/gdb/viewg.gdb
+</code></pre><p>然后添加断点，只要是继承自 View 的类都可以，非静态方法:</p>
+<pre tabindex="0"><code>break BrowserView::OnActiveTabChanged(content::WebContents*, content::WebContents*, int, int)
+</code></pre><p>切换浏览器标签进入断点后，使用 viewg 命令，就会在个人目录生成 state.svg 文件，拖到浏览器就可以访问。</p>
+<p><strong>以下为旧版本</strong></p>
+<p><del>BrowserView(chrome/browser/ui/views/frame/browser_view.cc) 算是浏览器窗口 view 的根（继承自views::View），通过 BrowserView 可以打印出整个浏览器 views 树的结构。在 BrowserView 的非静态方法中加入：</del></p>
+<pre tabindex="0"><code>LOG(WARNING) &lt;&lt; &#34;&#34; &lt;&lt; std::endl &lt;&lt;views::PrintViewGraph(this) &lt;&lt; std::endl;
+</code></pre><p><del>然后编译运行 chrome 就可以在终端日志中得到 views 树输出的 dot 文件内容，将其保存到 ”~/state.dot“，然后通过下面指令生成 svg 图片：</del></p>
+<pre tabindex="0"><code>dot -Tsvg -o ~/state.svg ~/state.dot
+</code></pre><p><strong>END旧版本</strong></p>
+<p>注：图片如下，宽度超标，请拖到新窗口查看原图。</p>
+<p>↓↓↓↓↓↓↓↓↓↓</p>
+<p><img src="/assets/2019/state.svg" alt="state.svg" title="state.svg"></p>
+<p>↑↑↑↑↑↑↑↑↑↑</p>
+<p>其中 bounds: (4, 5), (913x1021) 的含义是 x=4，y=5，width=912，height=1021，而那些处于隐藏状态的 view 这几个值中的一个或多个为 0。</p>
+    </div>
+
+
+</article>
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/styles/base16/darcula.min.css" integrity="sha512-GfRggx2Wc+POEPR0asMTNTyNug3rWJ9Jp4wxnHZ5VApMOUJRK4cEaRriXsx5tV1DakKHQWQ2noCbuzFiPJaYqA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/highlight.min.js" integrity="sha512-yUUc0qWm2rhM7X0EFe82LNnv2moqArj5nro/w1bi05A09hRVeIZbN6jlMoyu0+4I/Bu4Ck/85JQIU82T82M28w==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlightjs-line-numbers.js/2.8.0/highlightjs-line-numbers.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+
+                </div>
+
+            </div>
+        </div><div id="footer-default" class="g-bg-gray-dark-v1 g-color-white-opacity-0_8 text-center g-py-20">
+    <div class="container">
+        <div class="g-font-size-default g-mr-10 g-mb-10 g-mb-0--md">
+            <p>本站内容如非特别说明，均基于<a rel="license" target="_blank" href="http://creativecommons.org/licenses/by-sa/3.0/">Creative Commons Attribution-Share Alike 3.0 Unported License</a>发布。</p>
+        </div>
+    </div>
+</div></body>
+</section>
+</html>

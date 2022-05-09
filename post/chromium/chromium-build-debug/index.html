@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html>
+<section class="g-bg-gray-light-v5"><head>
+	
+	<title>YP.Lam  | Chromium 编译与调试笔记</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<meta http-equiv="x-ua-compatible" content="ie=edge">
+
+	<link rel="stylesheet" href="//stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css">
+	
+	<link rel="stylesheet" href="https://yplam.com/scss/unify.min.css">
+
+	
+	
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-83586141-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+	
+</head>
+
+<body>    <div class="container">
+        <div class="d-sm-flex text-center">
+            <div class="align-self-center ml-auto">
+                <ul class="u-list-inline float-right g-py-20">
+                    <li class="list-inline-item g-mr-5">
+                        <a class="u-link-v5 g-color-gray-dark-v5 g-color-primary--hover" href="/">HOME</a>
+                        <i class="g-color-gray-light-v2 g-ml-5">/</i>
+                    </li>
+                    <li class="list-inline-item g-mr-5">
+                        <a class="u-link-v5 g-color-gray-dark-v5 g-color-primary--hover" href="/about/">ABOUT</a>
+                        <i class="g-color-gray-light-v2 g-ml-5">/</i>
+                    </li>
+                    <li class="list-inline-item">
+                        <a class="u-link-v5 g-color-gray-dark-v5 g-color-primary--hover" href="https://github.com/yplam">GITHUB</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+<div class="container" aria-label="Content">
+            <div class="g-bg-white">
+                <div class="g-px-35 g-py-30 g-mb-30">
+<article>
+    <ul class="list-inline g-color-gray-dark-v4">
+        <li class="list-inline-item mr-0">
+            In
+             
+            
+            
+            
+            <a href="https://yplam.com/tags/chromium/">Chromium</a>
+            
+            
+        </li>
+        <li class="list-inline-item mx-2">/</li>
+        <li class="list-inline-item">Posted 2019-02-23</li>
+    </ul>
+    <h1 class="g-mb-30">Chromium 编译与调试笔记</h1>
+    <div class="justify-content-center article-content">
+        <p>最近手上有个小项目需要兼容 Chrome CRX3 版本的扩展格式，Google 了一下竟然完全没有相关介绍文档，于是决定啃一下相关代码。</p>
+<p>本文会持续更新，最后更新时间： 2019-03-06，如有问题欢迎联系 yplam(at)yplam.com。</p>
+<p>上次编译 Chromium 已经是 N 年前的事情，那时伟大的墙还没现在那么大存在感，按官方步骤编译就可以，然而现时（2019年2月）按官方文档竟然连代码都下不下来。本文作为此过程的记录（主要是解决墙的问题）。</p>
+<p>环境：P52(CPU i7-8850H + 16GB内存 + 250GB SSD) + Manjaro 18 Linux（如果你使用的是 Windows 环境，可以参考本文末尾关于 Windows 下的编译方法）。</p>
+<p>环境要求：</p>
+<ul>
+<li>64位系统，需要 8GB 内存（建议16G以上）跟 100GB 硬盘，经测试编译后大概用掉60GB空间，但按默认选项用掉的空间应该会多点。</li>
+<li>需要保证有一个高速的科学上网环境，并且需要提供 http proxy，源码大概有 30GB。</li>
+<li>git</li>
+<li>python2，经测试 virtualenv 下的 python2 无法使用，可能是因为某些脚步会调用 bash，跳出 virtualenv 的环境。（如果您解决了这个问题，欢迎反馈，谢谢）</li>
+</ul>
+<h3 id="编译-chromium">编译 Chromium</h3>
+<p>基本上按照<a href="https://chromium.googlesource.com/chromium/src/+/master/docs/linux_build_instructions.md">官方文档</a>,只是开始前解决 proxy 跟 python 版本问题。</p>
+<p><strong>注意：下面过程可能会对您操作系统造成不可知的错误，请仅作为参考</strong></p>
+<p>先查看系统 python 版本：</p>
+<pre tabindex="0"><code>python --version
+</code></pre><p>如果不是 2.x 则可以通过建立软链的方式切换到 Python2（或者使用你系统自带的切换工具）</p>
+<pre tabindex="0"><code>cd $(dirname $(which python)) &amp;&amp; sudo rm python &amp;&amp; sudo ln -s python2 python
+</code></pre><p>假设 http proxy 端口为 8123，创建 boto.cfg 文件，记下保存路径：</p>
+<pre tabindex="0"><code>[Boto]
+proxy=127.0.0.1
+proxy_port=8123
+</code></pre><p>配置 proxy 相关内容：</p>
+<pre tabindex="0"><code>export http_proxy=&#34;127.0.0.1:8123&#34;
+export https_proxy=&#34;127.0.0.1:8123&#34;
+export NO_AUTH_BOTO_CONFIG={your path}/boto.cfg
+git config --global http.proxy 127.0.0.1:8123
+</code></pre><p>至此，可以按照<a href="https://chromium.googlesource.com/chromium/src/+/master/docs/linux_build_instructions.md">官方文档</a>进行编译。</p>
+<p>下面为相关命令，运行前需要先保证有稳定的网络，以及接上外部电源，在我的 P52 上下载源码大概需要 2小时，编译大概需要 3 小时：</p>
+<p><strong>注意：下面为Manjaro下的编译方式，其他系统请按需修改或者参考官方文档。</strong></p>
+<pre tabindex="0"><code>sudo pacman -S --needed python perl gcc gcc-libs bison flex gperf pkgconfig nss alsa-lib glib2 gtk3 nspr ttf-ms-fonts freetype2 cairo dbus libgnome-keyring
+git clone https://chromium.googlesource.com/chromium/tools/depot_tools.git
+export PATH=&#34;$PATH:/path/to/depot_tools&#34;
+mkdir chromium &amp;&amp; cd chromium
+fetch --nohooks chromium
+cd src
+gclient runhooks
+gn gen --enable_nacl=false --symbol_level=1 --remove_webcore_debug_symbols=true out/Default
+autoninja -C out/Default chrome
+git config --global --unset-all http.proxy
+cd $(dirname $(which python)) &amp;&amp; sudo rm python &amp;&amp; sudo ln -s python3 python
+</code></pre><p>如无意外会生成 out/Default/chrome ,尝试一下是否可以正常运行 ./out/Default/chrome &ndash;no-sandbox</p>
+<h3 id="更新代码">更新代码</h3>
+<p>更新代码的方式与上面类似，主要是解决 proxy 问题：</p>
+<pre tabindex="0"><code>cd $(dirname $(which python)) &amp;&amp; sudo rm python &amp;&amp; sudo ln -s python2 python
+export http_proxy=&#34;127.0.0.1:8123&#34;
+export https_proxy=&#34;127.0.0.1:8123&#34;
+export NO_AUTH_BOTO_CONFIG=/home/yplam/work/chromium/boto.cfg
+git config --global http.proxy 127.0.0.1:8123
+git rebase-update
+gclient sync
+git config --global --unset-all http.proxy
+cd $(dirname $(which python)) &amp;&amp; sudo rm python &amp;&amp; sudo ln -s python3 python
+</code></pre><h3 id="编译与运行test">编译与运行TEST</h3>
+<p>使用 gn ls 命令可以列出所有可编译的 target，譬如，我想跑跑 ui/gfx/color_utils_unittest.cc ，那么可以使用类似命令找出来:</p>
+<pre tabindex="0"><code>gn ls out/Default | grep test | grep ui | grep gfx
+</code></pre><p>可以看到 //ui/gfx:gfx_unittests 的存在， gfx_unittests 定义在 ui/gfx/BUILD.gn，包含 color_utils_unittest.cc。</p>
+<p>可以通过下面命令编译与运行：</p>
+<pre tabindex="0"><code>ninja -C out/Default ui/gfx:gfx_unittests
+out/Default/gfx_unittests --gtest_filter=&#34;ColorUtils.*&#34;
+</code></pre><p>因为编译 TEST 比编译整个 Chromium 要快得多，可以通过此方式比较简单的了解与跟踪某些代码的运行。</p>
+<h3 id="gdb-调试-chromium">GDB 调试 Chromium</h3>
+<p>官方文档在此：<a href="https://chromium.googlesource.com/chromium/src/+/master/docs/linux_debugging.md">https://chromium.googlesource.com/chromium/src/+/master/docs/linux_debugging.md</a></p>
+<p>由于GDB启动较慢，如果只是想简单的跟踪一下程序运行信息，可以直接使用 base/logging.h 中定义的方法，如：</p>
+<pre tabindex="0"><code>LOG(INFO) &lt;&lt; &#34;Found &#34; &lt;&lt; num_cookies &lt;&lt; &#34; cookies&#34;;
+</code></pre><p>再结合上面提到的 TEST，用来跟踪一些小功能的代码比较有效率。当然，如果要对浏览器运行时的状态进行细致一点的跟踪，那么应该还是用 gdb 好点。</p>
+<p>譬如，chrome/browser/themes/theme_service.cc 提供 Theme 服务类，通过阅读代码，可以知道对 Theme 的更新是通过外部调用 ThemeObserver 的 OnExtensionLoaded 方法更新的，但对于是如何调用 OnExtensionLoaded 的
+却不是那么容易可以看出来，那么我们可以简单的使用 GDB 的 backtrace 来查看。</p>
+<p>在开始调试前请保证你的电脑有足够内存（应该需要 5GB+ 的内存，反正我 16GB 内存如果运行其他应用的话有时会内存耗尽），在 src 目录运行下面命令：</p>
+<pre tabindex="0"><code>gdb -tui --args out/Default/chrome --disable-seccomp-sandbox http://google.com
+</code></pre><p>加载需要点时间，加载后设置断点，在 theme_service.cc 的 264 行设置断点：</p>
+<pre tabindex="0"><code>b theme_service.cc:264
+</code></pre><p>然后运行</p>
+<pre tabindex="0"><code>r
+</code></pre><p>启动过程中可能遇到其他断点，使用</p>
+<pre tabindex="0"><code>c
+</code></pre><p>继续运行。</p>
+<p>然后进入 extension 页面，打开 developer 模式，拖一个 crx Theme 扩展进去，此时会进入我们的断点，然后</p>
+<pre tabindex="0"><code>bt
+</code></pre><p>或者如果只需要看最近8个 backtrace：</p>
+<pre tabindex="0"><code>bt 8
+</code></pre><p>得到下面关于 ThemeService::ThemeObserver::OnExtensionLoaded 的调用回溯：</p>
+<pre tabindex="0"><code>#0  0x000055555916362b in ThemeService::ThemeObserver::OnExtensionLoaded(content::BrowserContext*, extensions::Extension const*)
+    (this=0x30e87097be90, browser_context=0x30e86f3abca0, extension=0x30e871bd6260) at ../../chrome/browser/themes/theme_service.cc:264
+#1  0x000055555794596c in extensions::ExtensionRegistry::TriggerOnLoaded(extensions::Extension const*) (this=0x30e86f412a20, extension=0x30e871bd6260) at ../../extensions/browser/extension_registry.cc:64
+#2  0x0000555557941c1e in extensions::ExtensionRegistrar::ActivateExtension(extensions::Extension const*, bool) (this=0x30e86f9dda60, extension=0x30e871bd6260, is_newly_added=true)
+    at ../../extensions/browser/extension_registrar.cc:450)] 244
+#3  0x00005555579419df in extensions::ExtensionRegistrar::AddNewExtension(scoped_refptr&lt;extensions::Extension const&gt;) (this=0x30e86f9dda60, extension=...)
+    at ../../extensions/browser/extension_registrar.cc:140
+#4  0x0000555557940bf1 in extensions::ExtensionRegistrar::AddExtension(scoped_refptr&lt;extensions::Extension const&gt;) (this=0x30e86f9dda60, extension=...)
+    at ../../extensions/browser/extension_registrar.cc:105
+#5  0x000055555a1f88d3 in extensions::ExtensionService::AddExtension(extensions::Extension const*) (this=0x30e86f9dd820, extension=0x30e871bd6260)
+    at ../../chrome/browser/extensions/extension_service.cc:1188
+#6  0x000055555a1fad83 in extensions::ExtensionService::FinishInstallation(extensions::Extension const*) (this=0x30e86f9dd820, extension=0x30e871bd6260)
+    at ../../chrome/browser/extensions/extension_service.cc:1617
+#7  0x000055555a1f90c5 in extensions::ExtensionService::AddNewOrUpdatedExtension(extensions::Extension const*, extensions::Extension::State, int, syncer::Ordinal&lt;syncer::StringOrdinalTraits&gt; const&amp;, std::_
+_Cr::basic_string&lt;char, std::__Cr::char_traits&lt;char&gt;, std::__Cr::allocator&lt;char&gt; &gt; const&amp;, base::Optional&lt;int&gt; const&amp;)
+    (this=0x30e86f9dd820, extension=0x30e871bd6260, initial_state=extensions::Extension::ENABLED, install_flags=0, page_ordinal=..., install_parameter=..., dnr_ruleset_checksum=...)
+</code></pre><p>我们继续执行：</p>
+<pre tabindex="0"><code>c
+</code></pre><p>完成关闭浏览器退出，在 gdb 输入：</p>
+<pre tabindex="0"><code>q
+</code></pre><p>退出。</p>
+<p>因为对 GDB 也不熟悉，上面只演示了一个基础操作。（ps: GDB的官方文档较枯燥，在网上找找别人的使用心得分享，譬如<a href="https://www.kancloud.cn/itfanr/i-100-gdb-tips/81849">100-gdb-tips</a>, <a href="http://www.brendangregg.com/blog/2016-08-09/gdb-example-ncurses.html">gdb Debugging Full Example</a>）</p>
+<h3 id="关于crx3格式的调试结果记录">关于CRX3格式的调试结果记录</h3>
+<p>CRX3格式相关代码位于：</p>
+<pre tabindex="0"><code>components/crx_file/crx_creator.cc
+</code></pre><p>line 62：</p>
+<pre tabindex="0"><code>CreatorResult Create(const base::FilePath&amp; output_path,
+                     const base::FilePath&amp; zip_path,
+                     crypto::RSAPrivateKey* signing_key) 
+</code></pre><p>跟 CRX2 最大的区别在于 CrxFileHeader 部分现在不再是简单的 length+data 的格式，而是使用 Protobuf 编码后的二进制数据，Protobuf格式为 crx3.proto 所示：</p>
+<pre tabindex="0"><code>// Copyright 2017 The Chromium Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file
+
+syntax = &#34;proto2&#34;;
+
+option optimize_for = LITE_RUNTIME;
+
+package crx_file;
+
+// A CRX₃ file is a binary file of the following format:
+// [4 octets]: &#34;Cr24&#34;, a magic number.
+// [4 octets]: The version of the *.crx file format used (currently 3).
+// [4 octets]: N, little-endian, the length of the header section.
+// [N octets]: The header (the binary encoding of a CrxFileHeader).
+// [M octets]: The ZIP archive.
+// Clients should reject CRX₃ files that contain an N that is too large for the
+// client to safely handle in memory.
+
+message CrxFileHeader {
+  // PSS signature with RSA public key. The public key is formatted as a
+  // X.509 SubjectPublicKeyInfo block, as in CRX₂. In the common case of a
+  // developer key proof, the first 128 bits of the SHA-256 hash of the
+  // public key must equal the crx_id.
+  repeated AsymmetricKeyProof sha256_with_rsa = 2;
+
+  // ECDSA signature, using the NIST P-256 curve. Public key appears in
+  // named-curve format.
+  // The pinned algorithm will be this, at least on 2017-01-01.
+  repeated AsymmetricKeyProof sha256_with_ecdsa = 3;
+
+  // The binary form of a SignedData message. We do not use a nested
+  // SignedData message, as handlers of this message must verify the proofs
+  // on exactly these bytes, so it is convenient to parse in two steps.
+  //
+  // All proofs in this CrxFile message are on the value
+  // &#34;CRX3 SignedData\x00&#34; + signed_header_size + signed_header_data +
+  // archive, where &#34;\x00&#34; indicates an octet with value 0, &#34;CRX3 SignedData&#34;
+  // is encoded using UTF-8, signed_header_size is the size in octets of the
+  // contents of this field and is encoded using 4 octets in little-endian
+  // order, signed_header_data is exactly the content of this field, and
+  // archive is the remaining contents of the file following the header.
+  optional bytes signed_header_data = 10000;
+}
+
+message AsymmetricKeyProof {
+  optional bytes public_key = 1;
+  optional bytes signature = 2;
+}
+
+message SignedData {
+  // This is simple binary, not UTF-8 encoded mpdecimal; i.e. it is exactly
+  // 16 bytes long.
+  optional bytes crx_id = 1;
+}
+</code></pre><p>其中 crx_id 为 RSA public key 的 sha256 编码后的前 16 byte。signed_header_data 为 &ldquo;CRX3 SignedData\x00&rdquo; + signed_header_size + signed_header_data + zip archive 的 OPENSSL_ALGO_SHA256 编码（使用私钥）</p>
+<p>关于 Protobuf 可以使用 Google 官方库，然而由于在此只使用了 bytes 数据类型，操作起来比较简单，可以参考 <a href="https://developers.google.com/protocol-buffers/docs/encoding">https://developers.google.com/protocol-buffers/docs/encoding</a> 直接对二进制流进行读写操作。</p>
+<h3 id="windows-环境下编译-chromium">Windows 环境下编译 Chromium</h3>
+<p>下面附带分享一下 Windows 环境编译 Chromium 的附加内容。（2019年1月经测试可以正常下载代码与编译）</p>
+<p>首先第一步是能够解决科学上网，并且网速要够快。</p>
+<p>下载解压 depot_tools 后，先配置proxy，用管理员打开命令行</p>
+<pre tabindex="0"><code>netsh winhttp set proxy 127.0.0.1:1080
+</code></pre><p>修改depot_tools 目录中的 cipd.ps1 文件，配置 System.Net.WebClient 使用代理</p>
+<pre tabindex="0"><code>...
+$proxyAddr = &#34;http://127.0.0.1：1080&#34;
+$proxy = new-object System.Net.WebProxy
+$proxy.Address = $proxyAddr
+...
+$wc.proxy = $proxy
+...
+</code></pre><p>可能还需要添加这两个命令行变量，不然初次运行gclient可能会报错：</p>
+<pre tabindex="0"><code>set HTTP_PROXY=http://127.0.0.1:1080
+set HTTPS_PROXY=%HTTP_PROXY%
+</code></pre><p>按官方文档继续配置 depot_tools</p>
+<p>结束后复位一下代理：</p>
+<pre tabindex="0"><code>netsh winhttp reset proxy
+</code></pre><h3 id="后记">后记</h3>
+<p>折腾了几天 Chromium，解决了 CRX3 文件格式编码问题，突然有点不想就此打住的念头。Chromium 算是自己能遇到的最复杂最优秀的开源项目以及代码库了吧，难得有机会，要不继续学习下去？ Why not？</p>
+<h3 id="参考资料">参考资料</h3>
+<ul>
+<li><a href="https://chromium.googlesource.com/chromium/src/+/master/docs/linux_build_instructions.md">Checking out and building Chromium on Linux</a></li>
+<li><a href="https://chromium.googlesource.com/chromium/src/+/master/docs/linux_debugging.md">Tips for debugging on Linux</a></li>
+<li><a href="https://colinxu.wordpress.com/2018/04/28/sync-chromium-src-behind-proxy/">Sync Chromium src behind proxy</a></li>
+<li><a href="http://blog.gclxry.com/">http://blog.gclxry.com/</a></li>
+</ul>
+    </div>
+
+
+</article>
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/styles/base16/darcula.min.css" integrity="sha512-GfRggx2Wc+POEPR0asMTNTyNug3rWJ9Jp4wxnHZ5VApMOUJRK4cEaRriXsx5tV1DakKHQWQ2noCbuzFiPJaYqA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/highlight.min.js" integrity="sha512-yUUc0qWm2rhM7X0EFe82LNnv2moqArj5nro/w1bi05A09hRVeIZbN6jlMoyu0+4I/Bu4Ck/85JQIU82T82M28w==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlightjs-line-numbers.js/2.8.0/highlightjs-line-numbers.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+
+                </div>
+
+            </div>
+        </div><div id="footer-default" class="g-bg-gray-dark-v1 g-color-white-opacity-0_8 text-center g-py-20">
+    <div class="container">
+        <div class="g-font-size-default g-mr-10 g-mb-10 g-mb-0--md">
+            <p>本站内容如非特别说明，均基于<a rel="license" target="_blank" href="http://creativecommons.org/licenses/by-sa/3.0/">Creative Commons Attribution-Share Alike 3.0 Unported License</a>发布。</p>
+        </div>
+    </div>
+</div></body>
+</section>
+</html>

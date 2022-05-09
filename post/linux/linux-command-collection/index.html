@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html>
+<section class="g-bg-gray-light-v5"><head>
+	
+	<title>YP.Lam  | Linux 小笔记</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<meta http-equiv="x-ua-compatible" content="ie=edge">
+
+	<link rel="stylesheet" href="//stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css">
+	
+	<link rel="stylesheet" href="https://yplam.com/scss/unify.min.css">
+
+	
+	
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-83586141-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+	
+</head>
+
+<body>    <div class="container">
+        <div class="d-sm-flex text-center">
+            <div class="align-self-center ml-auto">
+                <ul class="u-list-inline float-right g-py-20">
+                    <li class="list-inline-item g-mr-5">
+                        <a class="u-link-v5 g-color-gray-dark-v5 g-color-primary--hover" href="/">HOME</a>
+                        <i class="g-color-gray-light-v2 g-ml-5">/</i>
+                    </li>
+                    <li class="list-inline-item g-mr-5">
+                        <a class="u-link-v5 g-color-gray-dark-v5 g-color-primary--hover" href="/about/">ABOUT</a>
+                        <i class="g-color-gray-light-v2 g-ml-5">/</i>
+                    </li>
+                    <li class="list-inline-item">
+                        <a class="u-link-v5 g-color-gray-dark-v5 g-color-primary--hover" href="https://github.com/yplam">GITHUB</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+<div class="container" aria-label="Content">
+            <div class="g-bg-white">
+                <div class="g-px-35 g-py-30 g-mb-30">
+<article>
+    <ul class="list-inline g-color-gray-dark-v4">
+        <li class="list-inline-item mr-0">
+            In
+             
+            
+            
+            
+            <a href="https://yplam.com/tags/linux/">Linux</a>
+            
+            
+        </li>
+        <li class="list-inline-item mx-2">/</li>
+        <li class="list-inline-item">Posted 2012-02-19</li>
+    </ul>
+    <h1 class="g-mb-30">Linux 小笔记</h1>
+    <div class="justify-content-center article-content">
+        <p>此笔记记录 Linux 下的一些命令使用技巧，作为工作中的备忘。</p>
+<ul>
+<li><a href="#no1">导入数据库时跳过某个表</a></li>
+<li><a href="#no2">找出最近修改、创建的文件</a></li>
+<li><a href="#no3">自动压缩旧日志文件的shell脚本</a></li>
+<li><a href="#no4">Linux 初始化 SSH 会话慢的解决方法</a></li>
+<li><a href="#no5">Crontab 控制脚本运行时间段</a></li>
+<li><a href="#no6">rsync 只同步匹配的目录文件</a></li>
+<li><a href="#no7">Ubuntu 下切换 PHP 版本</a></li>
+<li><a href="#no8">ttyACM 插入后被占用问题</a></li>
+<li><a href="#no9">P52 Manjaro 外接显示器输出问题</a></li>
+<li><a href="#no10">Manjaro zsh 新标签页保持路径</a></li>
+</ul>
+<!-- raw HTML omitted -->
+<h3 id="导入数据库时跳过某个表">导入数据库时跳过某个表</h3>
+<p>有时我们需要将某天的数据库备份恢复到内网的机器，用来分析数据，但备份中的某些很大的表对我们的数据分析作用不大，却要占用大量的导入时间（譬如session表，message表），我们可以用简单的sed命令跳过对这些表的插入操作。</p>
+<pre tabindex="0"><code>
+sed &#39;/INSERT INTO `sessions`/d&#39; db.sql &gt; db_new.sql
+</code></pre><!-- raw HTML omitted -->
+<h3 id="找出最近修改创建的文件">找出最近修改、创建的文件</h3>
+<p>以下命令可以用来简单的检查最近目录下哪些文件被修改过。</p>
+<pre tabindex="0"><code>
+find . -newermt &#34;2013-01-01 00:00:00&#34; ! -newermt &#34;2013-01-02 00:00:00&#34;
+
+find . -mtime -10 -mtime +4
+</code></pre><!-- raw HTML omitted -->
+<h3 id="自动压缩旧日志文件的shell脚本">自动压缩旧日志文件的shell脚本</h3>
+<p>logrotate 是 Linux 自带的日志分割压缩工具，但它有个比较让人不爽的缺点就是无法精确的按时间点分割（譬如日志严格的按天）。因此考虑App日志直接按 ×××-Y-m-d.log的方式来按天记录，然后用crontab定时压缩。</p>
+<p>下面是自动gzip压缩多个目录下log文件，并且自动跳过当天文件的shell脚本：</p>
+<pre tabindex="0"><code>
+#!/bin/sh
+
+FOLDERS=(/data/logs/view/ /data/logs/search/)
+NOW=&#34;$(date +&#34;%Y-%m-%d&#34;)&#34;
+for FOLDER in ${FOLDERS[@]}
+do
+	echo &#34;Zipping $FOLDER&#34;
+	for FILE in ${FOLDER}*.log
+	do
+		if [[ ! $FILE =~ $NOW ]]; then
+			echo &#34;$FILE&#34;
+			gzip -9 $FILE
+		fi
+	done
+done
+</code></pre><!-- raw HTML omitted -->
+<h3 id="linux-初始化-ssh-会话慢的解决方法">Linux 初始化 SSH 会话慢的解决方法</h3>
+<p>使用ssh登录Linux服务器，就算是在内网环境中，也需要等待比较长的时间才弹出密码输入界面。</p>
+<p>检查：</p>
+<p>ssh -vvv 加上 v参数，通过分析ssh打印的debug信息，即可找到时间消耗的环节。</p>
+<pre tabindex="0"><code>
+$ ssh -vvv root@*****
+OpenSSH_6.6.1, OpenSSL 1.0.1f 6 Jan 2014
+debug1: Reading configuration data /etc/ssh/ssh_config
+debug1: /etc/ssh/ssh_config line 19: Applying options for *
+debug2: ssh_connect: needpriv 0
+debug1: Connecting to @***** port 22.
+debug1: Connection established.
+debug3: Incorrect RSA1 identifier
+debug1: Enabling compatibility mode for protocol 2.0
+debug1: Local version string SSH-2.0-OpenSSH_6.6.1p1 Ubuntu-2ubuntu2.8
+debug1: Remote protocol version 2.0, remote software version OpenSSH_5.3
+debug1: match: OpenSSH_5.3 pat OpenSSH_5* compat 0x0c000000
+debug2: fd 3 setting O_NONBLOCK
+</code></pre><p>可能原因：</p>
+<p>服务端 /etc/ssh/sshd_config，修改 &ldquo;UseDNS no&rdquo;</p>
+<p>客户端  /etc/ssh/ssh_config，修改 &ldquo;GSSAPIAuthentication no&rdquo;</p>
+<!-- raw HTML omitted -->
+<h3 id="crontab-控制脚本运行时间段">Crontab 控制脚本运行时间段</h3>
+<p>Cronjob 通常用来在指定时间点运行某个命令（脚本），而有时我们不但需要定时启动脚本，还需要定时关闭，譬如需要在空闲时段备份服务器文件到新机器。</p>
+<p>我们可以使用两个cronjob，一个定时启动，一个定时关闭，或者使用类似下面的脚本，启动后后台运行一个进程，通过获取时间来定时关闭：</p>
+<pre tabindex="0"><code>
+#!/bin/bash
+
+rsync ... &amp;
+pid=$!
+
+while /bin/true; do
+  if [ $(date +%H) -ge 8 ]; then
+    kill -TERM $pid
+    exit 0
+  else
+    sleep 60
+  fi
+done
+</code></pre><!-- raw HTML omitted -->
+<h3 id="rsync-只同步匹配的目录文件">rsync 只同步匹配的目录文件</h3>
+<p>通常我们的图片、文件会根据某中规则（譬如2016-09-09）的格式存储在文件系统中，有时我们需要将适合某个</p>
+<pre tabindex="0"><code>rsync -aPv --include=&#39;**/2016-09-09/*&#39; --include=&#39;*/&#39; --exclude=&#39;*&#39; rsync://...
+</code></pre><!-- raw HTML omitted -->
+<h3 id="ubuntu-下切换-php-版本">Ubuntu 下切换 PHP 版本</h3>
+<p>偶尔需要维护一些旧项目，而这些项目无法做到php7兼容，此时就需要安装多个PHP版本，并且用类似下面的命令进行切换</p>
+<pre tabindex="0"><code>sudo a2dismod php7.1 ; sudo a2enmod php5.6 ; sudo service apache2 restart ; sudo update-alternatives --set php /usr/bin/php5.6 ; sudo update-alternatives --set phar /usr/bin/phar5.6 ; sudo update-alternatives --set phar.phar /usr/bin/phar.phar5.6 ;  sudo update-alternatives --set phpize /usr/bin/phpize5.6 ;  sudo update-alternatives --set php-config /usr/bin/php-config5.6
+</code></pre><!-- raw HTML omitted -->
+<h3 id="ttyacm-插入后被占用问题">ttyACM 插入后被占用问题</h3>
+<p>最近在调试 STM32 的 USB 功能的过程中发现，将 STM32 插入电脑的 USB 口后 STM32 模拟出来的串口 ttyACM0 会被占用，使用 lsof 也看不出问题，十几秒中后又会自动释放。</p>
+<p>后来将 USB 口收到的数据包 printf 出来后发现是一堆 AT 指令，看了一下系统进程发现一个可以的 ModemManager。</p>
+<p>Google 了一下，大概就是 ModemManager 检测到 ttyACM* 接入后会尝试进行通讯，看对方是否为合法的 Modem。</p>
+<p>解决方法：将 ModemManager 禁用，或者将设备 id 加入忽略列表。</p>
+<!-- raw HTML omitted -->
+<h3 id="p52-manjaro-外接显示器输出问题">P52 Manjaro 外接显示器输出问题</h3>
+<p>按官方文档安装相关软件后，修改 /etc/bumblebee/xorg.conf.nvidia</p>
+<pre tabindex="0"><code>##
+## Generated by mhwd - Manjaro Hardware Detection
+##
+
+
+Section &#34;ServerLayout&#34;
+    Identifier &#34;Layout0&#34;
+    Option &#34;AutoAddDevices&#34; &#34;true&#34;
+EndSection
+
+Section &#34;Device&#34;
+    Identifier  &#34;Device1&#34;
+    Driver      &#34;nvidia&#34;
+    BusID       &#34;PCI:1:0:0&#34;
+    VendorName &#34;NVIDIA Corporation&#34;
+    Option &#34;NoLogo&#34; &#34;true&#34;
+    Option &#34;UseEDID&#34; &#34;true&#34;
+    #Option &#34;AllowEmptyInitialConfiguration&#34;
+    #Option &#34;ConnectedMonitor&#34; &#34;DFP&#34;
+EndSection
+</code></pre><!-- raw HTML omitted -->
+<h3 id="manjaro-zsh-新标签页保持路径">Manjaro zsh 新标签页保持路径</h3>
+<p>Manjaro 下默认配置的 zsh，当使用 ctrl-T 打开新标签时，会自动将路径变成用户主目录，会稍微影响效率，修改 ~/.zshrc , 增加下面配置行，可以使新标签依然保持原路径：</p>
+<pre tabindex="0"><code>[[ -f /etc/profile.d/vte.sh ]] &amp;&amp; . /etc/profile.d/vte.sh
+</code></pre>
+    </div>
+
+
+</article>
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/styles/base16/darcula.min.css" integrity="sha512-GfRggx2Wc+POEPR0asMTNTyNug3rWJ9Jp4wxnHZ5VApMOUJRK4cEaRriXsx5tV1DakKHQWQ2noCbuzFiPJaYqA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/highlight.min.js" integrity="sha512-yUUc0qWm2rhM7X0EFe82LNnv2moqArj5nro/w1bi05A09hRVeIZbN6jlMoyu0+4I/Bu4Ck/85JQIU82T82M28w==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlightjs-line-numbers.js/2.8.0/highlightjs-line-numbers.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+
+                </div>
+
+            </div>
+        </div><div id="footer-default" class="g-bg-gray-dark-v1 g-color-white-opacity-0_8 text-center g-py-20">
+    <div class="container">
+        <div class="g-font-size-default g-mr-10 g-mb-10 g-mb-0--md">
+            <p>本站内容如非特别说明，均基于<a rel="license" target="_blank" href="http://creativecommons.org/licenses/by-sa/3.0/">Creative Commons Attribution-Share Alike 3.0 Unported License</a>发布。</p>
+        </div>
+    </div>
+</div></body>
+</section>
+</html>

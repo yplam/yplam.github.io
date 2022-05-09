@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html>
+<section class="g-bg-gray-light-v5"><head>
+	
+	<title>YP.Lam  | 使用twigExtension实现页面区块功能</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<meta http-equiv="x-ua-compatible" content="ie=edge">
+
+	<link rel="stylesheet" href="//stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css">
+	
+	<link rel="stylesheet" href="https://yplam.com/scss/unify.min.css">
+
+	
+	
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-83586141-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+	
+</head>
+
+<body>    <div class="container">
+        <div class="d-sm-flex text-center">
+            <div class="align-self-center ml-auto">
+                <ul class="u-list-inline float-right g-py-20">
+                    <li class="list-inline-item g-mr-5">
+                        <a class="u-link-v5 g-color-gray-dark-v5 g-color-primary--hover" href="/">HOME</a>
+                        <i class="g-color-gray-light-v2 g-ml-5">/</i>
+                    </li>
+                    <li class="list-inline-item g-mr-5">
+                        <a class="u-link-v5 g-color-gray-dark-v5 g-color-primary--hover" href="/about/">ABOUT</a>
+                        <i class="g-color-gray-light-v2 g-ml-5">/</i>
+                    </li>
+                    <li class="list-inline-item">
+                        <a class="u-link-v5 g-color-gray-dark-v5 g-color-primary--hover" href="https://github.com/yplam">GITHUB</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+<div class="container" aria-label="Content">
+            <div class="g-bg-white">
+                <div class="g-px-35 g-py-30 g-mb-30">
+<article>
+    <ul class="list-inline g-color-gray-dark-v4">
+        <li class="list-inline-item mr-0">
+            In
+             
+            
+            
+            
+            <a href="https://yplam.com/tags/php/">PHP</a>
+            
+            
+            
+            
+            <a href="https://yplam.com/tags/symfony/">Symfony</a>
+            
+            
+        </li>
+        <li class="list-inline-item mx-2">/</li>
+        <li class="list-inline-item">Posted 2015-06-03</li>
+    </ul>
+    <h1 class="g-mb-30">使用twigExtension实现页面区块功能</h1>
+    <div class="justify-content-center article-content">
+        <p>所谓区块，就是在页面中展示的一块内容，可以与当前页面内容相关或者无关。譬如常见的在网站侧边栏展示
+“最新文章”区块，或者在文章内容页展示“相关文章”区块。</p>
+<p>对于与当前页面相关的区块，我们可以在页面的控制器中通过查询数据库等方式获取数据，在模板中
+渲染；而对于与当前页面内容无关的区块，我们则需要通过其他方式。</p>
+<p>Symfony在处理这些区块时，提供两种种方式：</p>
+<p>(来源：http://symfony.com/doc/current/book/templating.html)</p>
+<p><strong>include，用来渲染页面相关内容</strong></p>
+<pre tabindex="0"><code>{% raw  %}
+{# app/Resources/views/article/list.html.twig #}
+{% extends &#39;layout.html.twig&#39; %}
+
+{% block body %}
+    &lt;h1&gt;Recent Articles&lt;h1&gt;
+
+    {% for article in articles %}
+        {{ include(&#39;article/article_details.html.twig&#39;, { &#39;article&#39;: article }) }}
+    {% endfor %}
+{% endblock %}
+{% endraw %}
+</code></pre><p><strong>render，用来渲染页面无关内容</strong></p>
+<pre tabindex="0"><code>{% raw  %}
+
+{# app/Resources/views/base.html.twig #}
+
+{# ... #}
+&lt;div id=&#34;sidebar&#34;&gt;
+    {{ render(controller(
+        &#39;AcmeArticleBundle:Article:recentArticles&#39;,
+        { &#39;max&#39;: 3 }
+    )) }}
+&lt;/div&gt;
+
+{% endraw %}
+</code></pre><p>然而，由render的运行原理可以看出，它会发送一个子请求，调用子控制器。虽然官方说它很快，但是测试过后发现有很明显的时间消耗。</p>
+<p><strong>使用Twig扩展函数</strong></p>
+<p>Twig扩展函数是另一个很好的输出区块内容的方式（虽然Symfony官方的介绍不多）。</p>
+<p>譬如：</p>
+<pre tabindex="0"><code>&lt;?php
+
+namespace AppBundle\Twig\Extension;
+
+use Symfony\Component\HttpKernel\KernelInterface;
+use JMS\DiExtraBundle\Annotation as DI;
+
+/**
+ * @DI\Service(&#34;app.twig.extension&#34;, public=false)
+ * @DI\Tag(&#34;twig.extension&#34;)
+ */
+class AppExtension extends \Twig_Extension {
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getFunctions() {
+        return array(
+            &#39;app_sidemenu&#39; =&gt; new \Twig_Function_Method($this, &#39;renderSideMenu&#39;, array(
+                &#39;is_safe&#39; =&gt; array(&#39;html&#39;),
+                &#39;needs_environment&#39; =&gt; true,
+            )),
+        );
+    }
+
+
+    /**
+     * 侧边栏信息
+     */
+    public function renderSideMenu (  \Twig_Environment $twig ) {
+
+        $categories = array();
+        
+        /* 在此处处理区块逻辑 */
+        
+        $template = $twig-&gt;loadTemplate(&#39;AppBundle:Common:sideblock.html.twig&#39;);
+        $content = $template-&gt;render(array(&#39;categories&#39; =&gt; $categories));
+        return $content;
+    }
+
+
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getName() {
+        return &#39;app_bundle&#39;;
+    }
+}
+</code></pre><p>上面是一个简单的Twig扩展，其作用就是提供app_sidemenu函数，在页面中显示网站侧边栏分类菜单。
+renderSideMenu方法从数据库中获取分类信息，用twig模板渲染成菜单html，然后缓存到redis里。</p>
+<p>需要注意的是 getFunctions 方法中，返回数据的 needs_environment 参数，如果设为true，它会为你的回调函数
+传入 \Twig_Environment $twig，使你在回调函数中方便地进行模板渲染。</p>
+<p>使用 twigExtension 来渲染区块还有个好处就是可以很方便的管理缓存，因为我们可以将render出来的内容存在cache中，这样不同的区块可以有自己的缓存清理逻辑。</p>
+<p>下面我们尝试在扩展中使用Redis来缓存区块内容。</p>
+<pre tabindex="0"><code>
+namespace AppBundle\Twig\Extension;
+
+use Symfony\Component\HttpKernel\KernelInterface;
+use JMS\DiExtraBundle\Annotation as DI;
+
+/**
+ * @DI\Service(&#34;app.twig.site.extension&#34;)
+ * @DI\Tag(&#34;twig.extension&#34;)
+ */
+class AppSiteExtension extends \Twig_Extension {
+
+    protected $redis;
+    
+    /**
+     * @DI\InjectParams({
+     *     &#34;redis&#34; = @DI\Inject(&#34;snc_redis.cache&#34;)
+     * })
+     */
+    public function __construct($redis){
+        $this-&gt;redis = $redis;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getFunctions() {
+        return array(
+            &#39;app_header&#39; =&gt; new \Twig_Function_Method($this, &#39;renderHeader&#39;, array(
+                &#39;is_safe&#39; =&gt; array(&#39;html&#39;),
+                &#39;needs_environment&#39; =&gt; true,
+            )),
+        );
+    }
+
+    /**
+     * 缓存头部信息，缓存时间 36000s
+     */
+    public function renderHeader( \Twig_Environment $twig){
+        $key = &#39;app:cache:header&#39;;
+
+        if($content = $this-&gt;redis-&gt;get($key)){
+            return $content;
+        }
+        $template = $twig-&gt;loadTemplate(&#39;AppBundle:Common:header.html.twig&#39;);
+        $content = $template-&gt;render(array());
+        $this-&gt;redis-&gt;setex($key, 36000, $content);
+        return $content;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getName() {
+        return &#39;app_bundle_site&#39;;
+    }
+}
+</code></pre><p>上面是一个使用redis缓存区块内容的简单应用，跟yii的widget缓存类似（对yii了解不多，错了请指正）。</p>
+<p>我们在扩展的构造函数中注入 $redis 实例，然后将渲染后的网站头部模板内容缓存到rendis中，在下一次访问中直接输出。</p>
+<p>ps:在此只是给缓存信息一个定期的过期时间，实际应用场景中对cache的处理可能会更复杂。</p>
+    </div>
+
+
+</article>
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/styles/base16/darcula.min.css" integrity="sha512-GfRggx2Wc+POEPR0asMTNTyNug3rWJ9Jp4wxnHZ5VApMOUJRK4cEaRriXsx5tV1DakKHQWQ2noCbuzFiPJaYqA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/highlight.min.js" integrity="sha512-yUUc0qWm2rhM7X0EFe82LNnv2moqArj5nro/w1bi05A09hRVeIZbN6jlMoyu0+4I/Bu4Ck/85JQIU82T82M28w==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlightjs-line-numbers.js/2.8.0/highlightjs-line-numbers.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+
+                </div>
+
+            </div>
+        </div><div id="footer-default" class="g-bg-gray-dark-v1 g-color-white-opacity-0_8 text-center g-py-20">
+    <div class="container">
+        <div class="g-font-size-default g-mr-10 g-mb-10 g-mb-0--md">
+            <p>本站内容如非特别说明，均基于<a rel="license" target="_blank" href="http://creativecommons.org/licenses/by-sa/3.0/">Creative Commons Attribution-Share Alike 3.0 Unported License</a>发布。</p>
+        </div>
+    </div>
+</div></body>
+</section>
+</html>

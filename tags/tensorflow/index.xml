@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Tensorflow on YP.Lam</title>
+    <link>https://yplam.com/tags/tensorflow/</link>
+    <description>Recent content in Tensorflow on YP.Lam</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    <lastBuildDate>Tue, 03 Dec 2019 15:32:35 +0800</lastBuildDate><atom:link href="https://yplam.com/tags/tensorflow/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Tensorflow Serving Nsfw</title>
+      <link>https://yplam.com/post/tensorflow/tensorflow-serving-nsfw/</link>
+      <pubDate>Tue, 03 Dec 2019 15:32:35 +0800</pubDate>
+      
+      <guid>https://yplam.com/post/tensorflow/tensorflow-serving-nsfw/</guid>
+      <description>&lt;p&gt;两年多前曾经在服务器上部署了个 Tensorflow 模型，由于 Tensorflow serving 刚公布不久，并且还没阅读相关文档，所以当时就粗暴的用 Flask 写了个接口就放到线上跑了两年。&lt;/p&gt;
+&lt;p&gt;最近又需要在服务器上部署些模型，决定用回比较官方的方式，研究一下 Tensorflow serving。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Tensorflow Object Detection API 入门笔记 - 基于 Google Cloud 与 阿里云</title>
+      <link>https://yplam.com/post/tensorflow/tensorflow-object-detection-note/</link>
+      <pubDate>Sat, 21 Oct 2017 00:00:00 +0000</pubDate>
+      
+      <guid>https://yplam.com/post/tensorflow/tensorflow-object-detection-note/</guid>
+      <description>&lt;p&gt;跟风关注机器学习已有一段时间，最近需要做一个图像识别的项目，刚好 Google 开源了 &lt;a href=&#34;https://github.com/tensorflow/models/tree/master/research/object_detection&#34;&gt;Tensorflow Object Detection API&lt;/a&gt; ，
+于是在此基础上做了一次尝试。本笔记从一名程序员的角度记录一次基于 Tensorflow Object Detection API 的图像物体识别项目过程，项目使用 Google Cloud Machine Learning 进行模型训练，
+使用阿里云 GPU 服务器进行模型测试评估。&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

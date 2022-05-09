@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html>
+<section class="g-bg-gray-light-v5"><head>
+	
+	<title>YP.Lam  | iMX6ULL 运行 OpenWRT</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<meta http-equiv="x-ua-compatible" content="ie=edge">
+
+	<link rel="stylesheet" href="//stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css">
+	
+	<link rel="stylesheet" href="https://yplam.com/scss/unify.min.css">
+
+	
+	
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-83586141-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+	
+</head>
+
+<body>    <div class="container">
+        <div class="d-sm-flex text-center">
+            <div class="align-self-center ml-auto">
+                <ul class="u-list-inline float-right g-py-20">
+                    <li class="list-inline-item g-mr-5">
+                        <a class="u-link-v5 g-color-gray-dark-v5 g-color-primary--hover" href="/">HOME</a>
+                        <i class="g-color-gray-light-v2 g-ml-5">/</i>
+                    </li>
+                    <li class="list-inline-item g-mr-5">
+                        <a class="u-link-v5 g-color-gray-dark-v5 g-color-primary--hover" href="/about/">ABOUT</a>
+                        <i class="g-color-gray-light-v2 g-ml-5">/</i>
+                    </li>
+                    <li class="list-inline-item">
+                        <a class="u-link-v5 g-color-gray-dark-v5 g-color-primary--hover" href="https://github.com/yplam">GITHUB</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+<div class="container" aria-label="Content">
+            <div class="g-bg-white">
+                <div class="g-px-35 g-py-30 g-mb-30">
+<article>
+    <ul class="list-inline g-color-gray-dark-v4">
+        <li class="list-inline-item mr-0">
+            In
+             
+            
+            
+            
+            <a href="https://yplam.com/tags/imx6ull/">iMX6ULL</a>
+            
+            
+            
+            
+            <a href="https://yplam.com/tags/linux/">Linux</a>
+            
+            
+            
+            
+            <a href="https://yplam.com/tags/embedded/">Embedded</a>
+            
+            
+            
+            
+            <a href="https://yplam.com/tags/openwrt/">OpenWRT</a>
+            
+            
+        </li>
+        <li class="list-inline-item mx-2">/</li>
+        <li class="list-inline-item">Posted 2021-12-25</li>
+    </ul>
+    <h1 class="g-mb-30">iMX6ULL 运行 OpenWRT</h1>
+    <div class="justify-content-center article-content">
+        <p>本笔记并不是一个完整的关于 OpenWRT 移植的笔记，只作为个人备忘用。同时亦分享出来给需要的朋友作为参考。水平有限，如果有出错地方请反馈 yplam(at)yplam.com</p>
+<p>嵌入式 Linux 三大件：uboot，kernel，rootfs；uboot 暂时不打算动，kernel 之前已编译测试过可启动，所以剩下只需要将 OpenWRT 的 rootfs 构建出来，那么 OpenWRT 运行起来应该也不是很难的事。</p>
+<h2 id="资料搜集">资料搜集</h2>
+<p>可能比较少人在 OpenWRT 上用 imx6ull，能搜集的资料并不多，不过够用</p>
+<ul>
+<li>i.mx6ul 移植Openwrt <a href="https://blog.csdn.net/wind0419/article/details/78036522">https://blog.csdn.net/wind0419/article/details/78036522</a></li>
+<li>i.mx6ul开发板移植openwrt系统 <a href="https://blog.csdn.net/qq_40614144/article/details/105538483">https://blog.csdn.net/qq_40614144/article/details/105538483</a></li>
+<li>一个托管在git上面的 imx6ull openwrt 移植项目 <a href="https://github.com/iuncuim/openwrt-imx6ull">https://github.com/iuncuim/openwrt-imx6ull</a></li>
+</ul>
+<h2 id="增加-target-imx6ull">增加 target imx6ull</h2>
+<p>参考上面的 git 项目，在 OpenWRT 源码 target/linux 下添加一个 imx6ull 目录，然后将我们之前内核编译的 .config 文件拷贝到 target/linux/imx6ull/config-4.14 。</p>
+<p>由于我们用的是官方内核，所以 patch 相关的可以忽略掉。</p>
+<p>最小配置的 imx6ull 目录如下：</p>
+<pre tabindex="0"><code>.
+├── base-files
+│   └── etc
+│       └── inittab
+├── config-4.14
+├── image
+│   └── Makefile
+├── Makefile
+└── profiles
+    └── 100-generic.mk
+</code></pre><p>Makefile:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-makefile" data-lang="makefile"><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"># Copyright (C) 2013-2014 OpenWrt.org
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"># This is free software, licensed under the GNU General Public License v2.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"># See /LICENSE for more information.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#960050;background-color:#1e0010">include</span> <span style="color:#66d9ef">$(</span>TOPDIR<span style="color:#66d9ef">)</span><span style="color:#960050;background-color:#1e0010">/rules.mk</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>ARCH<span style="color:#f92672">:=</span>arm
+</span></span><span style="display:flex;"><span>BOARD<span style="color:#f92672">:=</span>imx6ull
+</span></span><span style="display:flex;"><span>BOARDNAME<span style="color:#f92672">:=</span>Freescale i.MX <span style="color:#ae81ff">6</span> ULL
+</span></span><span style="display:flex;"><span>FEATURES<span style="color:#f92672">:=</span>audio display fpu gpio rtc usb usbgadget squashfs ext4 targz nand ubifs
+</span></span><span style="display:flex;"><span>CPU_TYPE<span style="color:#f92672">:=</span>cortex-a7
+</span></span><span style="display:flex;"><span>CPU_SUBTYPE<span style="color:#f92672">:=</span>neon-vfpv4
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>KERNEL_PATCHVER<span style="color:#f92672">:=</span>4.14
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">include</span> <span style="color:#66d9ef">$(</span>INCLUDE_DIR<span style="color:#66d9ef">)</span><span style="color:#960050;background-color:#1e0010">/target.mk</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>KERNELNAME<span style="color:#f92672">:=</span>zImage
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>DEFAULT_PACKAGES <span style="color:#f92672">+=</span> uboot-envtools 
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">$(</span>eval <span style="color:#66d9ef">$(</span>call BuildTarget<span style="color:#66d9ef">))</span>
+</span></span></code></pre></div><p>profiles/100-generic.mk</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-makefile" data-lang="makefile"><span style="display:flex;"><span><span style="color:#75715e">#
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"># Copyright (C) 2013 OpenWrt.org
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"># This is free software, licensed under the GNU General Public License v2.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"># See /LICENSE for more information.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">define</span> <span style="color:#960050;background-color:#1e0010">Profile/Generic</span>
+</span></span><span style="display:flex;"><span>  PRIORITY<span style="color:#f92672">:=</span><span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>  NAME:<span style="color:#f92672">=</span>Generic <span style="color:#f92672">(</span>default<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">endef</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">define</span> <span style="color:#960050;background-color:#1e0010">Profile/Generic/Description</span>
+</span></span><span style="display:flex;"><span> <span style="color:#960050;background-color:#1e0010">Package</span> <span style="color:#960050;background-color:#1e0010">set</span> <span style="color:#960050;background-color:#1e0010">compatible</span> <span style="color:#960050;background-color:#1e0010">with</span> <span style="color:#960050;background-color:#1e0010">most</span> <span style="color:#960050;background-color:#1e0010">Freescale</span> <span style="color:#960050;background-color:#1e0010">i.MX</span> <span style="color:#960050;background-color:#1e0010">6</span> <span style="color:#960050;background-color:#1e0010">ull</span> <span style="color:#960050;background-color:#1e0010">based</span> <span style="color:#960050;background-color:#1e0010">boards.</span>
+</span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">endef</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">$(</span>eval <span style="color:#66d9ef">$(</span>call Profile,Generic<span style="color:#66d9ef">))</span>
+</span></span></code></pre></div><p>image/Makefile</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-makefile" data-lang="makefile"><span style="display:flex;"><span><span style="color:#75715e">#
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"># Copyright (C) 2013 OpenWrt.org
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"># This is free software, licensed under the GNU General Public License v2.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"># See /LICENSE for more information.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#960050;background-color:#1e0010">include</span> <span style="color:#66d9ef">$(</span>TOPDIR<span style="color:#66d9ef">)</span><span style="color:#960050;background-color:#1e0010">/rules.mk</span>
+</span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">include</span> <span style="color:#66d9ef">$(</span>INCLUDE_DIR<span style="color:#66d9ef">)</span><span style="color:#960050;background-color:#1e0010">/image.mk</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>KERNEL_LOADADDR<span style="color:#f92672">:=</span>0x80800000
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">define</span> <span style="color:#960050;background-color:#1e0010">Device/Default</span>
+</span></span><span style="display:flex;"><span>  PROFILES <span style="color:#f92672">:=</span> Generic
+</span></span><span style="display:flex;"><span>  FILESYSTEMS :<span style="color:#f92672">=</span> squashfs ext4
+</span></span><span style="display:flex;"><span>  KERNEL_INSTALL :<span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>  KERNEL_SUFFIX :<span style="color:#f92672">=</span> -uImage
+</span></span><span style="display:flex;"><span>  KERNEL_NAME :<span style="color:#f92672">=</span> zImage
+</span></span><span style="display:flex;"><span>  KERNEL_PREFIX :<span style="color:#f92672">=</span> $$<span style="color:#f92672">(</span>IMAGE_PREFIX<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">endef</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">$(</span>eval <span style="color:#66d9ef">$(</span>call BuildImage<span style="color:#66d9ef">))</span>
+</span></span></code></pre></div><p>base-files/etc/inittab</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ini" data-lang="ini"><span style="display:flex;"><span><span style="color:#a6e22e">::sysinit:/etc/init.d/rcS S boot</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">::shutdown:/etc/init.d/rcS K shutdown</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">::askconsole:/usr/libexec/login.sh</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">tty1::askfirst:/usr/libexec/login.sh</span>
+</span></span></code></pre></div><p>以上配置基于个人猜测以及参考以下文档：</p>
+<ul>
+<li><a href="https://openwrt.org/docs/techref/image.makefile">https://openwrt.org/docs/techref/image.makefile</a></li>
+<li><a href="https://openwrt.org/docs/techref/process.boot">https://openwrt.org/docs/techref/process.boot</a></li>
+<li><a href="https://openwrt.org/docs/guide-user/additional-software/imagebuilder#addingmodifying_profiles">https://openwrt.org/docs/guide-user/additional-software/imagebuilder#addingmodifying_profiles</a></li>
+</ul>
+<h2 id="编译-rootfs">编译 ROOTFS</h2>
+<p>编译过程与常规类似，主要区别是选择我们自己的内核目录，以及工具链使用 glibc 而不是默认的 musl（推测原因是我们的内核并没有打 musl 相关的 patch）。</p>
+<p>选好 Target System， Target Profile，编译。如无意外会生成我们想要的 rootfs：bin/targets/imx6ull/generic-glibc/openwrt-imx6ull-generic-rootfs.tar.gz</p>
+<p>将 rootfs 解压到 SD 卡分区，启动开发板，更改 uboot 的内核启动相关配置到我们的内核与rootfs，启动</p>
+    </div>
+
+
+</article>
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/styles/base16/darcula.min.css" integrity="sha512-GfRggx2Wc+POEPR0asMTNTyNug3rWJ9Jp4wxnHZ5VApMOUJRK4cEaRriXsx5tV1DakKHQWQ2noCbuzFiPJaYqA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/highlight.min.js" integrity="sha512-yUUc0qWm2rhM7X0EFe82LNnv2moqArj5nro/w1bi05A09hRVeIZbN6jlMoyu0+4I/Bu4Ck/85JQIU82T82M28w==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlightjs-line-numbers.js/2.8.0/highlightjs-line-numbers.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+
+                </div>
+
+            </div>
+        </div><div id="footer-default" class="g-bg-gray-dark-v1 g-color-white-opacity-0_8 text-center g-py-20">
+    <div class="container">
+        <div class="g-font-size-default g-mr-10 g-mb-10 g-mb-0--md">
+            <p>本站内容如非特别说明，均基于<a rel="license" target="_blank" href="http://creativecommons.org/licenses/by-sa/3.0/">Creative Commons Attribution-Share Alike 3.0 Unported License</a>发布。</p>
+        </div>
+    </div>
+</div></body>
+</section>
+</html>

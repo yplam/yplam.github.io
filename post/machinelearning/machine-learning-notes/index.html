@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<section class="g-bg-gray-light-v5"><head>
+	
+	<title>YP.Lam  | 机器学习笔记</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<meta http-equiv="x-ua-compatible" content="ie=edge">
+
+	<link rel="stylesheet" href="//stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css">
+	
+	<link rel="stylesheet" href="https://yplam.com/scss/unify.min.css">
+
+	
+	
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-83586141-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+	
+</head>
+
+<body>    <div class="container">
+        <div class="d-sm-flex text-center">
+            <div class="align-self-center ml-auto">
+                <ul class="u-list-inline float-right g-py-20">
+                    <li class="list-inline-item g-mr-5">
+                        <a class="u-link-v5 g-color-gray-dark-v5 g-color-primary--hover" href="/">HOME</a>
+                        <i class="g-color-gray-light-v2 g-ml-5">/</i>
+                    </li>
+                    <li class="list-inline-item g-mr-5">
+                        <a class="u-link-v5 g-color-gray-dark-v5 g-color-primary--hover" href="/about/">ABOUT</a>
+                        <i class="g-color-gray-light-v2 g-ml-5">/</i>
+                    </li>
+                    <li class="list-inline-item">
+                        <a class="u-link-v5 g-color-gray-dark-v5 g-color-primary--hover" href="https://github.com/yplam">GITHUB</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+<div class="container" aria-label="Content">
+            <div class="g-bg-white">
+                <div class="g-px-35 g-py-30 g-mb-30">
+<article>
+    <ul class="list-inline g-color-gray-dark-v4">
+        <li class="list-inline-item mr-0">
+            In
+             
+            
+            
+            
+            <a href="https://yplam.com/tags/machinelearning/">MachineLearning</a>
+            
+            
+        </li>
+        <li class="list-inline-item mx-2">/</li>
+        <li class="list-inline-item">Posted 2016-12-01</li>
+    </ul>
+    <h1 class="g-mb-30">机器学习笔记</h1>
+    <div class="justify-content-center article-content">
+        <p>机器学习是人工智能的一个分支。人工智能的研究是从以“推理”为重点到以“知识”为重点，再到以“学习”为重点，一条自然、清晰的脉络。显然，机器学习是实现人工智能的一个途径，即以机器学习为手段解决人工智能中的问题。机器学习在近30多年已发展为一门多领域交叉学科，涉及概率论、统计学、逼近论、凸分析、计算复杂性理论等多门学科。机器学习理论主要是设计和分析一些让计算机可以自动“学习”的算法。机器学习算法是一类从数据中自动分析获得规律，并利用规律对未知数据进行预测的算法。因为学习算法中涉及了大量的统计学理论，机器学习与推断统计学联系尤为密切，也被称为统计学习理论。<a href="https://zh.wikipedia.org/wiki/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0">来源</a></p>
+<p>本文记录机器学习相关的概念与资料索引。</p>
+<h3 id="机器学习分类">机器学习分类</h3>
+<p>机器学习可以分成下面几种类别：</p>
+<ul>
+<li>监督学习从给定的训练数据集中学习出一个函数，当新的数据到来时，可以根据这个函数预测结果。监督学习的训练集要求是包括输入和输出，也可以说是特征和目标。训练集中的目标是由人标注的。常见的监督学习算法包括回归分析和统计分类。</li>
+<li>无监督学习与监督学习相比，训练集没有人为标注的结果。常见的无监督学习算法有聚类。</li>
+<li>半监督学习介于监督学习与无监督学习之间。</li>
+<li>增强学习通过观察来学习做成如何的动作。每个动作都会对环境有所影响，学习对象根据观察到的周围环境的反馈来做出判断。</li>
+</ul>
+<h3 id="机器学习资料及读后感">机器学习资料及读后感</h3>
+<ul>
+<li>李航《统计学习方法》，薄薄的一本书，内容很清晰，直接了当，但没有涉及数学基础的讲解，需要边看边翻数学书恶补基础，总的来说值得化时间认真看几遍。感知机、k近邻法、朴素贝叶斯法、决策树、逻辑斯谛回归与最大熵模型、支持向量机、提升方法、EM算法、隐马尔可夫模型和条件随机场。</li>
+<li>TOBY SEGARAN 《集体智慧编程》，应用类的书，主要是为了加深理解，并且避免连续看纯理论的书影响积极性。</li>
+<li><a href="http://neuralnetworksanddeeplearning.com/index.html">Neural Networks and Deep Learning</a>用一种比较简单的方式介绍神经网络、深度学习、卷积神经网络。特别是用了独立的一章来介绍反向传播算法，讲解以及代码实现都非常清晰。</li>
+<li><a href="http://galaxy.agh.edu.pl/~vlsi/AI/backp_t_en/backprop.html">Principles of training multi-layer neural network using backpropagation</a> 一个非常简单的关于反向传播算法图解。</li>
+<li><a href="http://colah.github.io/">colah&rsquo;s blog</a>，一位研究员的博客，写得很用心详细。内容涉及<a href="http://colah.github.io/posts/2014-03-NN-Manifolds-Topology/">神经网络(NN, Neural Networks)</a>，<a href="http://colah.github.io/posts/2015-08-Understanding-LSTMs/">循环神经网络(RNN, Recurrent Neural Networks)</a>,<a href="http://colah.github.io/posts/2014-07-Conv-Nets-Modular/">卷积神经网络(CNN, Convolutional Neural Networks)</a>, <a href="http://colah.github.io/posts/2014-10-Visualizing-MNIST/">神经网络可视化</a>.</li>
+<li><a href="http://statweb.stanford.edu/~tibs/ElemStatLearn/">The Elements of Statistical Learning</a>,正在看的一本书，主要涉及机器学习相关数学基础，可以作为《统计学习方法》的补充，未完待续。</li>
+<li><a href="https://zhuanlan.zhihu.com/p/21407711">CS231n课程笔记翻译：反向传播笔记</a>,对反向传播解析得比较仔细。</li>
+<li><a href="https://github.com/songrotek/Deep-Learning-Papers-Reading-Roadmap">深度学习论文阅读路线图</a></li>
+</ul>
+    </div>
+
+
+</article>
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/styles/base16/darcula.min.css" integrity="sha512-GfRggx2Wc+POEPR0asMTNTyNug3rWJ9Jp4wxnHZ5VApMOUJRK4cEaRriXsx5tV1DakKHQWQ2noCbuzFiPJaYqA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/highlight.min.js" integrity="sha512-yUUc0qWm2rhM7X0EFe82LNnv2moqArj5nro/w1bi05A09hRVeIZbN6jlMoyu0+4I/Bu4Ck/85JQIU82T82M28w==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlightjs-line-numbers.js/2.8.0/highlightjs-line-numbers.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+
+                </div>
+
+            </div>
+        </div><div id="footer-default" class="g-bg-gray-dark-v1 g-color-white-opacity-0_8 text-center g-py-20">
+    <div class="container">
+        <div class="g-font-size-default g-mr-10 g-mb-10 g-mb-0--md">
+            <p>本站内容如非特别说明，均基于<a rel="license" target="_blank" href="http://creativecommons.org/licenses/by-sa/3.0/">Creative Commons Attribution-Share Alike 3.0 Unported License</a>发布。</p>
+        </div>
+    </div>
+</div></body>
+</section>
+</html>

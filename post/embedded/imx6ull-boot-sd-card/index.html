@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+<section class="g-bg-gray-light-v5"><head>
+	
+	<title>YP.Lam  | iMX6ULL SD卡系统制作与启动</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<meta http-equiv="x-ua-compatible" content="ie=edge">
+
+	<link rel="stylesheet" href="//stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css">
+	
+	<link rel="stylesheet" href="https://yplam.com/scss/unify.min.css">
+
+	
+	
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-83586141-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+	
+</head>
+
+<body>    <div class="container">
+        <div class="d-sm-flex text-center">
+            <div class="align-self-center ml-auto">
+                <ul class="u-list-inline float-right g-py-20">
+                    <li class="list-inline-item g-mr-5">
+                        <a class="u-link-v5 g-color-gray-dark-v5 g-color-primary--hover" href="/">HOME</a>
+                        <i class="g-color-gray-light-v2 g-ml-5">/</i>
+                    </li>
+                    <li class="list-inline-item g-mr-5">
+                        <a class="u-link-v5 g-color-gray-dark-v5 g-color-primary--hover" href="/about/">ABOUT</a>
+                        <i class="g-color-gray-light-v2 g-ml-5">/</i>
+                    </li>
+                    <li class="list-inline-item">
+                        <a class="u-link-v5 g-color-gray-dark-v5 g-color-primary--hover" href="https://github.com/yplam">GITHUB</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+<div class="container" aria-label="Content">
+            <div class="g-bg-white">
+                <div class="g-px-35 g-py-30 g-mb-30">
+<article>
+    <ul class="list-inline g-color-gray-dark-v4">
+        <li class="list-inline-item mr-0">
+            In
+             
+            
+            
+            
+            <a href="https://yplam.com/tags/imx6ull/">iMX6ULL</a>
+            
+            
+            
+            
+            <a href="https://yplam.com/tags/linux/">Linux</a>
+            
+            
+            
+            
+            <a href="https://yplam.com/tags/embedded/">Embedded</a>
+            
+            
+        </li>
+        <li class="list-inline-item mx-2">/</li>
+        <li class="list-inline-item">Posted 2021-12-19</li>
+    </ul>
+    <h1 class="g-mb-30">iMX6ULL SD卡系统制作与启动</h1>
+    <div class="justify-content-center article-content">
+        <p>鉴于之前玩的 MT7688A 已经停产并且模块断货，最近把目光投向一款新芯片：iMX6ULL，因为其起点价格在接受范围，最低配置的核心板价格在百元以内，128M+128M 足够跑我的OpenThread网关，通用芯片该有的功能都有，按功能来算的话比 MT7688A 性价比还高。</p>
+<p>拿到开发板，目标是跑 OpenWRT + OpenThread 网关，MQTT/MQTT-SN 或者 LWM2M 服务，把手上一堆传感器、控制器接上，不依赖外部服务运行。</p>
+<p>原装系统运行在 nand 上，不方便折腾，于是准备用 SD 卡启动的方式，修改起来很简单，热风枪把一个配置电阻换个位置。</p>
+<p>由于还不熟悉此板卡 uboot，内核的编译，暂时先用着随板带的固件。</p>
+<h2 id="写入uboot">写入uboot</h2>
+<p>uboot 固件使用 uboot-myimx6ek140-6y-256m-nand.imx，imx 文件格式在这里有个比较详细的介绍：<a href="https://www.cnblogs.com/Lioker/p/13219519.html">https://www.cnblogs.com/Lioker/p/13219519.html</a>。芯片启动时内部 ROM 程序会按 imx 文件格式从 SD 卡的 0x400 地址加载相关配置，并且启动。</p>
+<p>所以我们要以以下命令将 uboot 写入sd卡：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo dd <span style="color:#66d9ef">if</span><span style="color:#f92672">=</span>uboot-myimx6ek140-6y-256m-nand.imx of<span style="color:#f92672">=</span>/dev/sdx bs<span style="color:#f92672">=</span>1k seek<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span> conv<span style="color:#f92672">=</span>fsync
+</span></span></code></pre></div><p>上面的命令含义是以 1k 的块大小写入，并且跳过第一个块（第一个块一般为分区表）；详细解说可以参考 i.MX_Linux_User&rsquo;s_Guide.pdf 4.3 章节以及上面关于 imx 格式的文章。</p>
+<p>顺便吐槽一下国内某些卖开发板的，文档就只是一堆关于软件使用，脚本运行，却完全不涉及这么操作的原理</p>
+<h2 id="sd卡分区烧写文件">SD卡分区，烧写文件</h2>
+<p>如果平时用的是 Linux 系统，SD 卡的分区就简单一点，分两个区，一个 fat32 格式用来放内核文件以及设备树（不确定为何要 fat32，看自带的 uboot 是已经支持 ext4 ），一个选一个你喜欢的格式，用来放根目录；可以按官方推荐的分区方式：</p>
+<ul>
+<li>前面 10MB 空出来，因为要留给 uboot</li>
+<li>10MB 开始，分 500MB 格式化成 FAT32 用来存放内核与设备树文件</li>
+<li>后面一个 ext3/ext4 用来做根文件</li>
+</ul>
+<p>通过 fdisk 与 mkfs 指令完成，参考官方文档（需要注意sdx需要与你sd卡对应）：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>$ sudo fdisk /dev/sdx
+</span></span><span style="display:flex;"><span>Type the following parameters <span style="color:#f92672">(</span>each followed by &lt;ENTER&gt;<span style="color:#f92672">)</span>:
+</span></span><span style="display:flex;"><span>p <span style="color:#f92672">[</span>lists the current partitions<span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span>d <span style="color:#f92672">[</span>to delete existing partitions. Repeat this <span style="color:#66d9ef">until</span> no unnecessary partitions
+</span></span><span style="display:flex;"><span>are reported by the <span style="color:#e6db74">&#39;p&#39;</span> command to start fresh.<span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span>n <span style="color:#f92672">[</span>create a new partition<span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span>p <span style="color:#f92672">[</span>create a primary partition - use <span style="color:#66d9ef">for</span> both partitions<span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">1</span> <span style="color:#f92672">[</span>the first partition<span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">20480</span> <span style="color:#f92672">[</span>starting at offset sector<span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">1024000</span> <span style="color:#f92672">[</span>size <span style="color:#66d9ef">for</span> the first partition to be used <span style="color:#66d9ef">for</span> the boot images<span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span>p <span style="color:#f92672">[</span>to check the partitions<span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span>np2
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">1228800</span> <span style="color:#f92672">[</span>starting at offset sector, which leaves enough space <span style="color:#66d9ef">for</span> the kernel,
+</span></span><span style="display:flex;"><span>the bootloader and its configuration data<span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span>&lt;enter&gt; <span style="color:#f92672">[</span>using the default value will create a partition that extends to
+</span></span><span style="display:flex;"><span>the last sector of the media<span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span>p <span style="color:#f92672">[</span>to check the partitions<span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span>w <span style="color:#f92672">[</span>this writes the partition table to the media and fdisk exits<span style="color:#f92672">]</span>
+</span></span></code></pre></div><p>格式化：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo mkfs.fat -F32 -v -n <span style="color:#e6db74">&#34;BOOT&#34;</span> /dev/sdx1
+</span></span><span style="display:flex;"><span>sudo mkfs.ext4 -F -L <span style="color:#e6db74">&#34;rootfs&#34;</span> /dev/sdx2
+</span></span></code></pre></div><p>然后将内核文件、dtb、rootfs分别拷贝过去。</p>
+<h2 id="uboot-启动">uboot 启动</h2>
+<p>将 SD 卡换过去，加电，如无以外 uboot 应该是可以起来，内核起不来（如果内核也能起来的话可以uboot启动的时候按一下键盘暂停内核启动）</p>
+<p>在 uboot 终端运行 printenv 命令，查看厂家预定义的一些参数根据自己的需要进行修改。</p>
+<p>譬如在我的开发板上运行下面的指令就可以从 SD 卡启动：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>fatload mmc 0:1 <span style="color:#e6db74">${</span>kernel_addr_r<span style="color:#e6db74">}</span> zimage-myimx6a7
+</span></span><span style="display:flex;"><span>fatload mmc 0:1 <span style="color:#e6db74">${</span>fdt_addr_r<span style="color:#e6db74">}</span> myimx6ek140-6y-256m-nand.dtb
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>setenv bootargs console<span style="color:#f92672">=</span><span style="color:#e6db74">${</span>console<span style="color:#e6db74">}</span>,<span style="color:#e6db74">${</span>baudrate<span style="color:#e6db74">}</span> root<span style="color:#f92672">=</span>/dev/mmcblk0p2
+</span></span><span style="display:flex;"><span>bootz <span style="color:#e6db74">${</span>kernel_addr_r<span style="color:#e6db74">}</span> - <span style="color:#e6db74">${</span>fdt_addr_r<span style="color:#e6db74">}</span>
+</span></span></code></pre></div><p>上面指令依次从 SD 卡的第一个分区加载 zimage-myimx6a7 内核文件到内核启动的内存地址，myimx6ek140-6y-256m-nand.dtb 设备树文件到设备树内存地址，然后设置 bootargs （传递给内核的启动参数），然后启动。</p>
+<p>参数化一下：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>setenv my_load_ker fatload mmc 0:1 <span style="color:#e6db74">${</span>kernel_addr_r<span style="color:#e6db74">}</span> zimage-myimx6a7
+</span></span><span style="display:flex;"><span>setenv my_load_dtb fatload mmc 0:1 <span style="color:#e6db74">${</span>fdt_addr_r<span style="color:#e6db74">}</span> myimx6ek140-6y-256m-nand.dtb
+</span></span><span style="display:flex;"><span>setenv my_bootz bootz <span style="color:#e6db74">${</span>kernel_addr_r<span style="color:#e6db74">}</span> - <span style="color:#e6db74">${</span>fdt_addr_r<span style="color:#e6db74">}</span>
+</span></span><span style="display:flex;"><span>setenv bootargs console<span style="color:#f92672">=</span><span style="color:#e6db74">${</span>console<span style="color:#e6db74">}</span>,<span style="color:#e6db74">${</span>baudrate<span style="color:#e6db74">}</span> root<span style="color:#f92672">=</span>/dev/mmcblk0p2
+</span></span><span style="display:flex;"><span>saveenv
+</span></span></code></pre></div><p>然后就可以用此单行指令启动：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>run my_load_ker; run my_load_dtb; run my_bootz
+</span></span></code></pre></div><p>更进一步：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>setenv bootcmd_my <span style="color:#e6db74">&#34;run my_load_ker; run my_load_dtb; run my_bootz&#34;</span>
+</span></span><span style="display:flex;"><span>setenv my_env_flag set
+</span></span><span style="display:flex;"><span>saveenv
+</span></span></code></pre></div><p>或者直接改掉原开发板的 bootcmd</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>setenv bootcmd <span style="color:#e6db74">&#34;run my_load_ker; run my_load_dtb; run my_bootz&#34;</span>
+</span></span><span style="display:flex;"><span>saveenv
+</span></span></code></pre></div><p>重启，可以直接从SD卡启动</p>
+<p>参考：</p>
+<ul>
+<li><a href="https://blog.csdn.net/wofeile880_jian/article/details/64444029">https://blog.csdn.net/wofeile880_jian/article/details/64444029</a></li>
+<li>i.MX_Linux_User&rsquo;s_Guide.pdf</li>
+</ul>
+    </div>
+
+
+</article>
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/styles/base16/darcula.min.css" integrity="sha512-GfRggx2Wc+POEPR0asMTNTyNug3rWJ9Jp4wxnHZ5VApMOUJRK4cEaRriXsx5tV1DakKHQWQ2noCbuzFiPJaYqA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/highlight.min.js" integrity="sha512-yUUc0qWm2rhM7X0EFe82LNnv2moqArj5nro/w1bi05A09hRVeIZbN6jlMoyu0+4I/Bu4Ck/85JQIU82T82M28w==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlightjs-line-numbers.js/2.8.0/highlightjs-line-numbers.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+
+                </div>
+
+            </div>
+        </div><div id="footer-default" class="g-bg-gray-dark-v1 g-color-white-opacity-0_8 text-center g-py-20">
+    <div class="container">
+        <div class="g-font-size-default g-mr-10 g-mb-10 g-mb-0--md">
+            <p>本站内容如非特别说明，均基于<a rel="license" target="_blank" href="http://creativecommons.org/licenses/by-sa/3.0/">Creative Commons Attribution-Share Alike 3.0 Unported License</a>发布。</p>
+        </div>
+    </div>
+</div></body>
+</section>
+</html>

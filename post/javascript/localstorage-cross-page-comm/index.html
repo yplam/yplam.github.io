@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<section class="g-bg-gray-light-v5"><head>
+	
+	<title>YP.Lam  | 使用localStorage进行跨标签页通讯</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<meta http-equiv="x-ua-compatible" content="ie=edge">
+
+	<link rel="stylesheet" href="//stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css">
+	
+	<link rel="stylesheet" href="https://yplam.com/scss/unify.min.css">
+
+	
+	
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-83586141-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+	
+</head>
+
+<body>    <div class="container">
+        <div class="d-sm-flex text-center">
+            <div class="align-self-center ml-auto">
+                <ul class="u-list-inline float-right g-py-20">
+                    <li class="list-inline-item g-mr-5">
+                        <a class="u-link-v5 g-color-gray-dark-v5 g-color-primary--hover" href="/">HOME</a>
+                        <i class="g-color-gray-light-v2 g-ml-5">/</i>
+                    </li>
+                    <li class="list-inline-item g-mr-5">
+                        <a class="u-link-v5 g-color-gray-dark-v5 g-color-primary--hover" href="/about/">ABOUT</a>
+                        <i class="g-color-gray-light-v2 g-ml-5">/</i>
+                    </li>
+                    <li class="list-inline-item">
+                        <a class="u-link-v5 g-color-gray-dark-v5 g-color-primary--hover" href="https://github.com/yplam">GITHUB</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+<div class="container" aria-label="Content">
+            <div class="g-bg-white">
+                <div class="g-px-35 g-py-30 g-mb-30">
+<article>
+    <ul class="list-inline g-color-gray-dark-v4">
+        <li class="list-inline-item mr-0">
+            In
+             
+            
+            
+            
+            <a href="https://yplam.com/tags/javascript/">Javascript</a>
+            
+            
+            
+            
+            <a href="https://yplam.com/tags/html5/">HTML5</a>
+            
+            
+        </li>
+        <li class="list-inline-item mx-2">/</li>
+        <li class="list-inline-item">Posted 2016-09-11</li>
+    </ul>
+    <h1 class="g-mb-30">使用localStorage进行跨标签页通讯</h1>
+    <div class="justify-content-center article-content">
+        <p>localStorage 对象用来在浏览器本地存取数据，并且数据不因浏览器的关闭而丢失。浏览器中同一个域下的窗口可以共享 localStorage 数据。因此我们可以利用这一特性进行跨浏览器内的跨页的事件发送，从而进行通讯。</p>
+<p>下面介绍一个简单的应用场景：用户打开了我们网站的多个页面，其状态为未登录，那么可能所有页面上都会有登录按钮或者登录框，评论框也会提示登录，而当他在某一个页面登陆后，我们希望同时更新其他非活动页面的UI，这样当他返回到其他在登录前已打开的页面时，可以以已登录状态进行相关操作（至少不会再出现登录框）。</p>
+<pre tabindex="0"><code>    // isLogin 由后台模板生成，标识当前页用户的登录状态
+    var isLogin = true;
+    
+    var isLoginLocal = localStorage.getItem(&#39;isLogin&#39;);
+    if(isLogin &amp;&amp; (isLoginLocal==&#39;no&#39; || isLoginLocal==null)){
+        localStorage.setItem(&#39;isLogin&#39;, &#39;yes&#39;);
+    }
+    else if( !isLogin &amp;&amp; (isLoginLocal==&#39;yes&#39; || isLoginLocal==null)){
+        localStorage.setItem(&#39;isLogin&#39;, &#39;no&#39;);
+    }
+    window.addEventListener(&#34;storage&#34;, function(e){
+        if(e.key == &#39;isLogin&#39;){
+            // 用户在其他页面进行登录或者登出操作，当前页面ui需要做相应的调整
+            if(e.newValue == &#39;yes&#39;){
+                $(&#39;.showLogin&#39;).show();
+                $(&#39;.hideLogin&#39;).hide();
+            }
+            else{
+                $(&#39;.showLogin&#39;).hide();
+                $(&#39;.hideLogin&#39;).show();
+            }
+        }
+    }, false);
+    
+</code></pre>
+    </div>
+
+
+</article>
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/styles/base16/darcula.min.css" integrity="sha512-GfRggx2Wc+POEPR0asMTNTyNug3rWJ9Jp4wxnHZ5VApMOUJRK4cEaRriXsx5tV1DakKHQWQ2noCbuzFiPJaYqA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/highlight.min.js" integrity="sha512-yUUc0qWm2rhM7X0EFe82LNnv2moqArj5nro/w1bi05A09hRVeIZbN6jlMoyu0+4I/Bu4Ck/85JQIU82T82M28w==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlightjs-line-numbers.js/2.8.0/highlightjs-line-numbers.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+
+                </div>
+
+            </div>
+        </div><div id="footer-default" class="g-bg-gray-dark-v1 g-color-white-opacity-0_8 text-center g-py-20">
+    <div class="container">
+        <div class="g-font-size-default g-mr-10 g-mb-10 g-mb-0--md">
+            <p>本站内容如非特别说明，均基于<a rel="license" target="_blank" href="http://creativecommons.org/licenses/by-sa/3.0/">Creative Commons Attribution-Share Alike 3.0 Unported License</a>发布。</p>
+        </div>
+    </div>
+</div></body>
+</section>
+</html>

@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html>
+<section class="g-bg-gray-light-v5"><head>
+	
+	<title>YP.Lam  | 基于 OpenWRT 与 MT7688 DIY 4G WIFI 路由器</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<meta http-equiv="x-ua-compatible" content="ie=edge">
+
+	<link rel="stylesheet" href="//stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css">
+	
+	<link rel="stylesheet" href="https://yplam.com/scss/unify.min.css">
+
+	
+	
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-83586141-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+	
+</head>
+
+<body>    <div class="container">
+        <div class="d-sm-flex text-center">
+            <div class="align-self-center ml-auto">
+                <ul class="u-list-inline float-right g-py-20">
+                    <li class="list-inline-item g-mr-5">
+                        <a class="u-link-v5 g-color-gray-dark-v5 g-color-primary--hover" href="/">HOME</a>
+                        <i class="g-color-gray-light-v2 g-ml-5">/</i>
+                    </li>
+                    <li class="list-inline-item g-mr-5">
+                        <a class="u-link-v5 g-color-gray-dark-v5 g-color-primary--hover" href="/about/">ABOUT</a>
+                        <i class="g-color-gray-light-v2 g-ml-5">/</i>
+                    </li>
+                    <li class="list-inline-item">
+                        <a class="u-link-v5 g-color-gray-dark-v5 g-color-primary--hover" href="https://github.com/yplam">GITHUB</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+<div class="container" aria-label="Content">
+            <div class="g-bg-white">
+                <div class="g-px-35 g-py-30 g-mb-30">
+<article>
+    <ul class="list-inline g-color-gray-dark-v4">
+        <li class="list-inline-item mr-0">
+            In
+             
+            
+            
+            
+            <a href="https://yplam.com/tags/openwrt/">OpenWRT</a>
+            
+            
+            
+            
+            <a href="https://yplam.com/tags/linux/">Linux</a>
+            
+            
+            
+            
+            <a href="https://yplam.com/tags/embedded/">Embedded</a>
+            
+            
+        </li>
+        <li class="list-inline-item mx-2">/</li>
+        <li class="list-inline-item">Posted 2020-08-02</li>
+    </ul>
+    <h1 class="g-mb-30">基于 OpenWRT 与 MT7688 DIY 4G WIFI 路由器</h1>
+    <div class="justify-content-center article-content">
+        <p>最近经常要到一些没有有线网络的地方，虽然手机可以共享WIFI出来，但总不能24小时开着，刚好手上空闲着一块 EC20 4G 模块，
+于是淘宝弄了块最便宜的 MT7688 4G 路由板回来，DIY 自己的 4G WIFI共享路由器。</p>
+<p>MT7688 路由板为 5V 供电，核心板 8MB Flash，64MB RAM（怪不得这么便宜，低配中的底配），MPS 两路 DCDC 供电，
+SIM 卡连 ESD 器件都省了；</p>
+<p>硬件不需要太多改动，只是加了个金升阳的12V转5V DCDC 模块，找个外壳装起来，热融胶固定，钻空加电源座、天线座；完工。</p>
+<p>国内网上资料多是基于 Openwrt 15 的版本，使用官方驱动，不过实在是有点旧了，并且查了一下开源的 MT76 WIFI 驱动感觉也足够稳定，于是决定使用最新的 19.07 版本。</p>
+<p>新版有个好处就是内核比较新，已经自带 EC20 驱动，并且提供 qmi 网卡支持。</p>
+<p>使用 mwan3 实现有线与4G网络的切换。</p>
+<p>项目相关代码脚本位于 <a href="https://github.com/yplam/openwrt-mt7688-4g">https://github.com/yplam/openwrt-mt7688-4g</a></p>
+<h2 id="编译">编译</h2>
+<p>编译环境基于 docker 与 docker-compose；</p>
+<p>下载代码</p>
+<pre tabindex="0"><code>git clone https://github.com/yplam/openwrt-mt7688-4g.git
+cd openwrt-mt7688-4g
+git submodule update --init
+</code></pre><p>或者手动下载 openwrt 源码到 /src/openwrt 目录（只在 openwrt 19.07 下测试过）</p>
+<p>本机安装好docker与docker-compose, 运行</p>
+<pre tabindex="0"><code>docker-compose up --build
+</code></pre><p>启动编译环境。</p>
+<p>然后运行：</p>
+<pre tabindex="0"><code>docker-compose exec -u docker compiler /bin/bash
+</code></pre><p>进入编译环境；</p>
+<p>因为OpenWRT并不支持我们的核心板，需要对设备树进行修改，为了方便直接基于 LINKIT7688 进行小改；</p>
+<p>修改 openwrt/target/linux/ramips/dts/LINKIT7688.dts，包括内存大小，Flash大小，console 串口</p>
+<pre tabindex="0"><code>  chosen {
+		bootargs = &#34;console=ttyS0,57600&#34;;
+	};
+
+	memory@0 {
+		device_type = &#34;memory&#34;;
+		reg = &lt;0x0 0x4000000&gt;;
+	};
+</code></pre><pre tabindex="0"><code>      partition@50000 {
+				compatible = &#34;denx,uimage&#34;;
+				label = &#34;firmware&#34;;
+				reg = &lt;0x50000 0x7b0000&gt;;
+			};
+</code></pre><p>为了提升代码下载速度，需要本机的 8123 端口提供 http 代理，如果没有，请修改 docker-compose.yml，删除运行环境相关代码，并且重启 docker-compose;</p>
+<p>运行：</p>
+<pre tabindex="0"><code>cd /src/openwrt
+./scripts/feeds update -a
+./scripts/feeds install -a
+make menuconfig
+</code></pre><p>选择</p>
+<p>MediaTek Ralink MIPS</p>
+<p>MT76x8 based boards</p>
+<p>MediaTek LinkIt Smart 7688</p>
+<p>Network -&gt; mt7688-4g</p>
+<p>可以用 make download 下载各包的代码（因为如果网络不通，可能会多次失败）</p>
+<p>运行编译：</p>
+<pre tabindex="0"><code>make V=99
+</code></pre><p>如无意外，编译成功后会生成</p>
+<pre tabindex="0"><code>openwrt-mt7688-4g/src/openwrt/bin/targets/ramips/mt76x8/openwrt-ramips-mt76x8-LinkIt7688-squashfs-sysupgrade.bin
+</code></pre><p>文件；可以选择在原固件的管理界面直接上传升级，或者通过 uboot 使用 tftp 升级（需要配置tftp服务器，以及配置主机IP）</p>
+<p>完成！</p>
+<p>编译出来的路由器固件相关信息：</p>
+<ul>
+<li>路由器默认IP为 192.16.0.1</li>
+<li>WIFI SSID 为 ot4g 密码 12345678</li>
+<li>默认 root 用户密码为空，请登录后设置</li>
+<li>有线网卡默认为dhcp client的方式获取IP</li>
+<li>如果同时接入有线网与4G，将优先使用有线网，如果有线网断开，将切换到4G</li>
+</ul>
+<h2 id="mt7688-问题与解决">MT7688 问题与解决</h2>
+<h3 id="网口切换到gpio模式">网口切换到GPIO模式</h3>
+<p>MT7688 官方提供 mt7688_pinmux 工具来查看与配置 GPIO 模式，然而对于网口1-4却不起作用，表现出来是电压为 1.6V 左右，
+无法通过 gpioset 与 gpioget 命令读写。</p>
+<p>解决方案参考数据手册 P59，通过配置 1000003C AGPIO_CFG 寄存器的 20:17 位设置为 1 来将该 4 个网口设置成数字引脚。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>devmem 0x1000003c <span style="color:#ae81ff">32</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 0x00E001FF</span>
+</span></span><span style="display:flex;"><span>devmem 0x1000003c <span style="color:#ae81ff">32</span> 0x00FE01FF
+</span></span></code></pre></div><p>然后就可以用 gpioset/gpioget 进行配置：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>gpioget <span style="color:#ae81ff">0</span> <span style="color:#ae81ff">14</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 1</span>
+</span></span><span style="display:flex;"><span>gpioset <span style="color:#ae81ff">0</span> 14<span style="color:#f92672">=</span><span style="color:#ae81ff">0</span>
+</span></span></code></pre></div><h3 id="watchdog-功能怎么用">watchdog 功能怎么用</h3>
+<p>使用以下命令查看 watchdog 状态</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>ubus call system watchdog
+</span></span></code></pre></div><p>输出</p>
+<pre tabindex="0"><code>{
+        &#34;status&#34;: &#34;running&#34;,
+        &#34;timeout&#34;: 30,
+        &#34;frequency&#34;: 5,
+        &#34;magicclose&#34;: false
+}
+</code></pre><p>使用以下命令关闭喂狗，强制看门狗超时：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>ubus call system watchdog <span style="color:#e6db74">&#39;{&#34;stop&#34;: true}&#39;</span>
+</span></span></code></pre></div><pre tabindex="0"><code>***********************
+Watchdog Reset Occurred
+***********************
+</code></pre>
+    </div>
+
+
+</article>
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/styles/base16/darcula.min.css" integrity="sha512-GfRggx2Wc+POEPR0asMTNTyNug3rWJ9Jp4wxnHZ5VApMOUJRK4cEaRriXsx5tV1DakKHQWQ2noCbuzFiPJaYqA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/highlight.min.js" integrity="sha512-yUUc0qWm2rhM7X0EFe82LNnv2moqArj5nro/w1bi05A09hRVeIZbN6jlMoyu0+4I/Bu4Ck/85JQIU82T82M28w==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlightjs-line-numbers.js/2.8.0/highlightjs-line-numbers.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+
+                </div>
+
+            </div>
+        </div><div id="footer-default" class="g-bg-gray-dark-v1 g-color-white-opacity-0_8 text-center g-py-20">
+    <div class="container">
+        <div class="g-font-size-default g-mr-10 g-mb-10 g-mb-0--md">
+            <p>本站内容如非特别说明，均基于<a rel="license" target="_blank" href="http://creativecommons.org/licenses/by-sa/3.0/">Creative Commons Attribution-Share Alike 3.0 Unported License</a>发布。</p>
+        </div>
+    </div>
+</div></body>
+</section>
+</html>

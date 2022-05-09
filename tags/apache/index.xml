@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Apache on YP.Lam</title>
+    <link>https://yplam.com/tags/apache/</link>
+    <description>Recent content in Apache on YP.Lam</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    <lastBuildDate>Tue, 25 Aug 2015 00:00:00 +0000</lastBuildDate><atom:link href="https://yplam.com/tags/apache/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>不能忽略 .htaccess 对性能的影响</title>
+      <link>https://yplam.com/post/linux/apache-htaccess-performance/</link>
+      <pubDate>Tue, 25 Aug 2015 00:00:00 +0000</pubDate>
+      
+      <guid>https://yplam.com/post/linux/apache-htaccess-performance/</guid>
+      <description>&lt;p&gt;在Apache环境下使用 .htaccess 进行URL重写或许已经是一种非常常用的方式；然而，如果URL重写规则比较复杂，使用.htaccess的方式可能会影响到Apache的性能。&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

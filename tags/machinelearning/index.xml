@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>MachineLearning on YP.Lam</title>
+    <link>https://yplam.com/tags/machinelearning/</link>
+    <description>Recent content in MachineLearning on YP.Lam</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    <lastBuildDate>Tue, 03 Dec 2019 15:32:35 +0800</lastBuildDate><atom:link href="https://yplam.com/tags/machinelearning/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Tensorflow Serving Nsfw</title>
+      <link>https://yplam.com/post/tensorflow/tensorflow-serving-nsfw/</link>
+      <pubDate>Tue, 03 Dec 2019 15:32:35 +0800</pubDate>
+      
+      <guid>https://yplam.com/post/tensorflow/tensorflow-serving-nsfw/</guid>
+      <description>&lt;p&gt;两年多前曾经在服务器上部署了个 Tensorflow 模型，由于 Tensorflow serving 刚公布不久，并且还没阅读相关文档，所以当时就粗暴的用 Flask 写了个接口就放到线上跑了两年。&lt;/p&gt;
+&lt;p&gt;最近又需要在服务器上部署些模型，决定用回比较官方的方式，研究一下 Tensorflow serving。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>PredictionIO Universal Recommender 笔记</title>
+      <link>https://yplam.com/post/machinelearning/predictionio-universal-recommender/</link>
+      <pubDate>Wed, 13 Jun 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://yplam.com/post/machinelearning/predictionio-universal-recommender/</guid>
+      <description>&lt;p&gt;Universal Recommender (UR) 是 ActionML 公司基于 PredictionIO 开发的协同过滤引擎，使用 Correlated Cross-Occurrence (CCO) 算法，可以应用与个性化推荐、物品相关推荐、购物车推荐、基于业务逻辑的推荐等。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>PredictionIO实现论坛广告贴过滤</title>
+      <link>https://yplam.com/post/machinelearning/predictionio/</link>
+      <pubDate>Sat, 28 Apr 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://yplam.com/post/machinelearning/predictionio/</guid>
+      <description>&lt;p&gt;关注 Apache PredictionIO 已有一段时间，最近需要做一个过滤论坛广告贴的功能，调研了一番市面上提供文本检测的API服务，发现靠谱的公司都比较贵，并且准确率不高（一个可能性是他们使用的训练数据集是互联网上的通用信息，而我们是一个垂直行业论坛，攻击来源也可能是固定的那么若干个），于是尝试自己实现个文本分类器来过滤广告。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>推荐系统笔记</title>
+      <link>https://yplam.com/post/machinelearning/recommender-system/</link>
+      <pubDate>Wed, 04 Apr 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://yplam.com/post/machinelearning/recommender-system/</guid>
+      <description>距离度量
+评估
+RMSE
+AUC
+算法</description>
+    </item>
+    
+    <item>
+      <title>Tensorflow Object Detection API 入门笔记 - 基于 Google Cloud 与 阿里云</title>
+      <link>https://yplam.com/post/tensorflow/tensorflow-object-detection-note/</link>
+      <pubDate>Sat, 21 Oct 2017 00:00:00 +0000</pubDate>
+      
+      <guid>https://yplam.com/post/tensorflow/tensorflow-object-detection-note/</guid>
+      <description>&lt;p&gt;跟风关注机器学习已有一段时间，最近需要做一个图像识别的项目，刚好 Google 开源了 &lt;a href=&#34;https://github.com/tensorflow/models/tree/master/research/object_detection&#34;&gt;Tensorflow Object Detection API&lt;/a&gt; ，
+于是在此基础上做了一次尝试。本笔记从一名程序员的角度记录一次基于 Tensorflow Object Detection API 的图像物体识别项目过程，项目使用 Google Cloud Machine Learning 进行模型训练，
+使用阿里云 GPU 服务器进行模型测试评估。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Netflix Prize 相关资料</title>
+      <link>https://yplam.com/post/machinelearning/netflix-prize/</link>
+      <pubDate>Tue, 01 Aug 2017 00:00:00 +0000</pubDate>
+      
+      <guid>https://yplam.com/post/machinelearning/netflix-prize/</guid>
+      <description>&lt;p&gt;Netflix Prize 是2006年Netflix启动的一个机器学习和数据挖掘比赛，旨在解决电影评分预测问题。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>《 Hands-On Machine Learning with Scikit-Learn and TensorFlow 》笔记</title>
+      <link>https://yplam.com/post/machinelearning/hands-on-machine-learning-scikit-learn-tensorflow/</link>
+      <pubDate>Sun, 16 Apr 2017 00:00:00 +0000</pubDate>
+      
+      <guid>https://yplam.com/post/machinelearning/hands-on-machine-learning-scikit-learn-tensorflow/</guid>
+      <description>&lt;p&gt;最近看了一本挺不错的新书：&lt;a href=&#34;http://shop.oreilly.com/product/0636920052289.do&#34;&gt;《 Hands-On Machine Learning with Scikit-Learn and TensorFlow 》&lt;/a&gt;，在此分享一下。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>[翻译]用户行为预测：使用机器学习技术预测付费用户</title>
+      <link>https://yplam.com/post/machinelearning/machine-learning-predicting-customer-behavior/</link>
+      <pubDate>Sun, 19 Feb 2017 00:00:00 +0000</pubDate>
+      
+      <guid>https://yplam.com/post/machinelearning/machine-learning-predicting-customer-behavior/</guid>
+      <description>&lt;p&gt;&lt;strong&gt;注&lt;/strong&gt;：本文为 &lt;a href=&#34;http://www.strong.io/blog/predicting-customer-behavior-machine-learning-to-identify-paying-customers&#34;&gt;Predicting customer behavior: How we use machine learning to identify paying customers before they subscribe&lt;/a&gt; 的简单翻译版本，详细内容请阅读原文。&lt;/p&gt;
+&lt;p&gt;本案例为 strong.io 公司的一位创业公司客户，该客户开发了一个类SaaS软件，但在经过多年的稳固发展后，他们的每月收入增长却开始变得很缓慢。他们曾经尝试改善他们的产品，但效果可能不好，因此现在将重点放在客户获取上面。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>用户画像笔记</title>
+      <link>https://yplam.com/post/machinelearning/user-profile-learning-notes/</link>
+      <pubDate>Sat, 11 Feb 2017 00:00:00 +0000</pubDate>
+      
+      <guid>https://yplam.com/post/machinelearning/user-profile-learning-notes/</guid>
+      <description>&lt;p&gt;用户画像是根据用户社会属性、生活习惯和消费行为等信息而抽象出的一个标签化的用户模型。构建用户画像的核心工作即是给用户贴“标签”，而标签是通过对用户信息分析而来的高度精炼的特征标识。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>AWS TensorFlow 安装与测试</title>
+      <link>https://yplam.com/post/tensorflow/aws-cuda-tensorflow/</link>
+      <pubDate>Mon, 12 Dec 2016 00:00:00 +0000</pubDate>
+      
+      <guid>https://yplam.com/post/tensorflow/aws-cuda-tensorflow/</guid>
+      <description>&lt;p&gt;最近迷上了机器学习，花了不少时间学习相关的基础内容；虽然数学跟不上，也不妨碍跟风玩玩各位大牛的开源成果。
+本文记录了购买AWS GPU服务器，安装cuda、 TensorFlow，运行 Neural Style 测试的过程。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>机器学习笔记</title>
+      <link>https://yplam.com/post/machinelearning/machine-learning-notes/</link>
+      <pubDate>Thu, 01 Dec 2016 00:00:00 +0000</pubDate>
+      
+      <guid>https://yplam.com/post/machinelearning/machine-learning-notes/</guid>
+      <description>&lt;p&gt;机器学习是人工智能的一个分支。人工智能的研究是从以“推理”为重点到以“知识”为重点，再到以“学习”为重点，一条自然、清晰的脉络。显然，机器学习是实现人工智能的一个途径，即以机器学习为手段解决人工智能中的问题。机器学习在近30多年已发展为一门多领域交叉学科，涉及概率论、统计学、逼近论、凸分析、计算复杂性理论等多门学科。机器学习理论主要是设计和分析一些让计算机可以自动“学习”的算法。机器学习算法是一类从数据中自动分析获得规律，并利用规律对未知数据进行预测的算法。因为学习算法中涉及了大量的统计学理论，机器学习与推断统计学联系尤为密切，也被称为统计学习理论。&lt;a href=&#34;https://zh.wikipedia.org/wiki/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0&#34;&gt;来源&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;本文记录机器学习相关的概念与资料索引。&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

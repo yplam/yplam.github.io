@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+<section class="g-bg-gray-light-v5"><head>
+	
+	<title>YP.Lam  | PHP中的empty()与isset()</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<meta http-equiv="x-ua-compatible" content="ie=edge">
+
+	<link rel="stylesheet" href="//stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css">
+	
+	<link rel="stylesheet" href="https://yplam.com/scss/unify.min.css">
+
+	
+	
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-83586141-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+	
+</head>
+
+<body>    <div class="container">
+        <div class="d-sm-flex text-center">
+            <div class="align-self-center ml-auto">
+                <ul class="u-list-inline float-right g-py-20">
+                    <li class="list-inline-item g-mr-5">
+                        <a class="u-link-v5 g-color-gray-dark-v5 g-color-primary--hover" href="/">HOME</a>
+                        <i class="g-color-gray-light-v2 g-ml-5">/</i>
+                    </li>
+                    <li class="list-inline-item g-mr-5">
+                        <a class="u-link-v5 g-color-gray-dark-v5 g-color-primary--hover" href="/about/">ABOUT</a>
+                        <i class="g-color-gray-light-v2 g-ml-5">/</i>
+                    </li>
+                    <li class="list-inline-item">
+                        <a class="u-link-v5 g-color-gray-dark-v5 g-color-primary--hover" href="https://github.com/yplam">GITHUB</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+<div class="container" aria-label="Content">
+            <div class="g-bg-white">
+                <div class="g-px-35 g-py-30 g-mb-30">
+<article>
+    <ul class="list-inline g-color-gray-dark-v4">
+        <li class="list-inline-item mr-0">
+            In
+             
+            
+            
+            
+            <a href="https://yplam.com/tags/php/">PHP</a>
+            
+            
+        </li>
+        <li class="list-inline-item mx-2">/</li>
+        <li class="list-inline-item">Posted 2014-12-02</li>
+    </ul>
+    <h1 class="g-mb-30">PHP中的empty()与isset()</h1>
+    <div class="justify-content-center article-content">
+        <p>对PHP程序员而言，empty()与isset()肯定不会陌生，甚至是每天都会调用N百遍，正因为如此，我们每个人都认为对它们已经熟悉的不得了，甚至连文档都懒得再翻阅一下，前赴后继的往坑里冲。</p>
+<p>我今天又掉坑里一次了，所以特意又翻阅了一遍文档：</p>
+<p><strong>empty — 检查一个变量是否为空</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-php" data-lang="php"><span style="display:flex;"><span><span style="color:#a6e22e">bool</span> <span style="color:#66d9ef">empty</span> ( <span style="color:#a6e22e">mixed</span> $var )</span></span></code></pre></div>
+<p>如果 var 是非空或非零的值，则 empty() 返回 FALSE。换句话说，&quot;&quot;、0、&ldquo;0&rdquo;、NULL、FALSE、array()、var $var; 以及没有任何属性的对象都将被认为是空的，如果 var 为空，则返回 TRUE。</p>
+<p>因为是一个语言构造器而不是一个函数，不能被 可变函数 调用。empty() 只检测变量，检测任何非变量的东西都将导致解析错误。换句话说，后边的语句将不会起作用： empty(addslashes($name))。</p>
+<p><strong>isset — 检测变量是否设置</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-php" data-lang="php"><span style="display:flex;"><span><span style="color:#a6e22e">bool</span> <span style="color:#a6e22e">isset</span> ( <span style="color:#a6e22e">mixed</span> $var [, <span style="color:#a6e22e">mixed</span> <span style="color:#960050;background-color:#1e0010">$</span><span style="color:#f92672">...</span> ] )</span></span></code></pre></div>
+<p>检测变量是否设置，并且不是 NULL。</p>
+<p>如果已经使用 unset() 释放了一个变量之后，它将不再是 isset()。若使用 isset() 测试一个被设置成 NULL 的变量，将返回 FALSE。同时要注意的是一个 NULL 字节（&quot;\0&quot;）并不等同于 PHP 的 NULL 常数。</p>
+<p>因为是一个语言构造器而不是一个函数，不能被 可变函数 调用</p>
+<h3 id="php-54-中empty与isset已经发生改变"><strong>PHP 5.4 中empty()与isset()已经发生改变</strong></h3>
+<p>PHP 5.4 changes how empty() behaves when passed string offsets.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-php" data-lang="php"><span style="display:flex;"><span>$expected_array_got_string <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;somestring&#39;</span>;
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">var_dump</span>(<span style="color:#66d9ef">empty</span>($expected_array_got_string[<span style="color:#e6db74">&#39;some_key&#39;</span>]));
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">var_dump</span>(<span style="color:#66d9ef">empty</span>($expected_array_got_string[<span style="color:#ae81ff">0</span>]));
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">var_dump</span>(<span style="color:#66d9ef">empty</span>($expected_array_got_string[<span style="color:#e6db74">&#39;0&#39;</span>]));
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">var_dump</span>(<span style="color:#66d9ef">empty</span>($expected_array_got_string[<span style="color:#ae81ff">0.5</span>]));
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">var_dump</span>(<span style="color:#66d9ef">empty</span>($expected_array_got_string[<span style="color:#e6db74">&#39;0.5&#39;</span>]));
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">var_dump</span>(<span style="color:#66d9ef">empty</span>($expected_array_got_string[<span style="color:#e6db74">&#39;0 Mostel&#39;</span>]));</span></span></code></pre></div>
+<p>以上例程在PHP 5.3中的输出：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-php" data-lang="php"><span style="display:flex;"><span>    <span style="color:#a6e22e">bool</span>(<span style="color:#66d9ef">false</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">bool</span>(<span style="color:#66d9ef">false</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">bool</span>(<span style="color:#66d9ef">false</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">bool</span>(<span style="color:#66d9ef">false</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">bool</span>(<span style="color:#66d9ef">false</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">bool</span>(<span style="color:#66d9ef">false</span>)</span></span></code></pre></div>
+<p>以上例程在PHP 5.4中的输出：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-php" data-lang="php"><span style="display:flex;"><span>    <span style="color:#a6e22e">bool</span>(<span style="color:#66d9ef">true</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">bool</span>(<span style="color:#66d9ef">false</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">bool</span>(<span style="color:#66d9ef">false</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">bool</span>(<span style="color:#66d9ef">false</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">bool</span>(<span style="color:#66d9ef">true</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">bool</span>(<span style="color:#66d9ef">true</span>)</span></span></code></pre></div>
+<p>PHP 5.4 changes how isset() behaves when passed string offsets.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-php" data-lang="php"><span style="display:flex;"><span>$expected_array_got_string <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;somestring&#39;</span>;
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">var_dump</span>(<span style="color:#a6e22e">isset</span>($expected_array_got_string[<span style="color:#e6db74">&#39;some_key&#39;</span>]));
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">var_dump</span>(<span style="color:#a6e22e">isset</span>($expected_array_got_string[<span style="color:#ae81ff">0</span>]));
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">var_dump</span>(<span style="color:#a6e22e">isset</span>($expected_array_got_string[<span style="color:#e6db74">&#39;0&#39;</span>]));
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">var_dump</span>(<span style="color:#a6e22e">isset</span>($expected_array_got_string[<span style="color:#ae81ff">0.5</span>]));
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">var_dump</span>(<span style="color:#a6e22e">isset</span>($expected_array_got_string[<span style="color:#e6db74">&#39;0.5&#39;</span>]));
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">var_dump</span>(<span style="color:#a6e22e">isset</span>($expected_array_got_string[<span style="color:#e6db74">&#39;0 Mostel&#39;</span>]));</span></span></code></pre></div>
+<p>以上例程在PHP 5.3中的输出：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-php" data-lang="php"><span style="display:flex;"><span>    <span style="color:#a6e22e">bool</span>(<span style="color:#66d9ef">true</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">bool</span>(<span style="color:#66d9ef">true</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">bool</span>(<span style="color:#66d9ef">true</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">bool</span>(<span style="color:#66d9ef">true</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">bool</span>(<span style="color:#66d9ef">true</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">bool</span>(<span style="color:#66d9ef">true</span>)</span></span></code></pre></div>
+<p>以上例程在PHP 5.4中的输出：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-php" data-lang="php"><span style="display:flex;"><span>    <span style="color:#a6e22e">bool</span>(<span style="color:#66d9ef">false</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">bool</span>(<span style="color:#66d9ef">true</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">bool</span>(<span style="color:#66d9ef">true</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">bool</span>(<span style="color:#66d9ef">true</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">bool</span>(<span style="color:#66d9ef">false</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">bool</span>(<span style="color:#66d9ef">false</span>)</span></span></code></pre></div>
+    </div>
+
+
+</article>
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/styles/base16/darcula.min.css" integrity="sha512-GfRggx2Wc+POEPR0asMTNTyNug3rWJ9Jp4wxnHZ5VApMOUJRK4cEaRriXsx5tV1DakKHQWQ2noCbuzFiPJaYqA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/highlight.min.js" integrity="sha512-yUUc0qWm2rhM7X0EFe82LNnv2moqArj5nro/w1bi05A09hRVeIZbN6jlMoyu0+4I/Bu4Ck/85JQIU82T82M28w==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlightjs-line-numbers.js/2.8.0/highlightjs-line-numbers.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+
+                </div>
+
+            </div>
+        </div><div id="footer-default" class="g-bg-gray-dark-v1 g-color-white-opacity-0_8 text-center g-py-20">
+    <div class="container">
+        <div class="g-font-size-default g-mr-10 g-mb-10 g-mb-0--md">
+            <p>本站内容如非特别说明，均基于<a rel="license" target="_blank" href="http://creativecommons.org/licenses/by-sa/3.0/">Creative Commons Attribution-Share Alike 3.0 Unported License</a>发布。</p>
+        </div>
+    </div>
+</div></body>
+</section>
+</html>

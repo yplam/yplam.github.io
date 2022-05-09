@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+<section class="g-bg-gray-light-v5"><head>
+	
+	<title>YP.Lam  | Drupal 8服务与依赖注入</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<meta http-equiv="x-ua-compatible" content="ie=edge">
+
+	<link rel="stylesheet" href="//stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css">
+	
+	<link rel="stylesheet" href="https://yplam.com/scss/unify.min.css">
+
+	
+	
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-83586141-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+	
+</head>
+
+<body>    <div class="container">
+        <div class="d-sm-flex text-center">
+            <div class="align-self-center ml-auto">
+                <ul class="u-list-inline float-right g-py-20">
+                    <li class="list-inline-item g-mr-5">
+                        <a class="u-link-v5 g-color-gray-dark-v5 g-color-primary--hover" href="/">HOME</a>
+                        <i class="g-color-gray-light-v2 g-ml-5">/</i>
+                    </li>
+                    <li class="list-inline-item g-mr-5">
+                        <a class="u-link-v5 g-color-gray-dark-v5 g-color-primary--hover" href="/about/">ABOUT</a>
+                        <i class="g-color-gray-light-v2 g-ml-5">/</i>
+                    </li>
+                    <li class="list-inline-item">
+                        <a class="u-link-v5 g-color-gray-dark-v5 g-color-primary--hover" href="https://github.com/yplam">GITHUB</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+<div class="container" aria-label="Content">
+            <div class="g-bg-white">
+                <div class="g-px-35 g-py-30 g-mb-30">
+<article>
+    <ul class="list-inline g-color-gray-dark-v4">
+        <li class="list-inline-item mr-0">
+            In
+             
+            
+            
+            
+            <a href="https://yplam.com/tags/php/">PHP</a>
+            
+            
+            
+            
+            <a href="https://yplam.com/tags/drupal/">Drupal</a>
+            
+            
+        </li>
+        <li class="list-inline-item mx-2">/</li>
+        <li class="list-inline-item">Posted 2014-08-28</li>
+    </ul>
+    <h1 class="g-mb-30">Drupal 8服务与依赖注入</h1>
+    <div class="justify-content-center article-content">
+        <p>原文地址：<a href="https://www.drupal.org/node/2133171">Services and dependency injection in Drupal 8</a></p>
+<p>Drupal 8 引入了服务的概念，用来解耦可复用的功能，并且可以通过在服务容器中注册这些服务，让它们可插拔与可替换。身为开发者，最佳的方式就是通过服务容器来访问Drupal提供的所有服务，这样可以保证遵循系统的解耦特性。在<a href="http://symfony.com/doc/current/book/service_container.html">Symfony 2的文档</a>中对服务有非常好的介绍。</p>
+<p>对开发者而言，服务用来执行类似访问数据库，发送邮件等操作。我们不使用PHP原生的MySQL函数，而是通过服务容器来使用Drupal提供的核心服务来执行这些操作，这样我们的代码可以很简单的访问数据库，而不需要考虑数据库是MySQL还是SQLite，同样，发邮件时也不需要考虑是通过SMTP还是其他方式。</p>
+<p><strong>核心服务</strong></p>
+<p>核心服务在<a href="https://api.drupal.org/api/drupal/core%21lib%21Drupal%21Core%21CoreServiceProvider.php/8">CoreServiceProvider.php</a> 与 <a href="https://api.drupal.org/api/drupal/core%21core.services.yml/8">core.services.yml </a>中定义。如：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yml" data-lang="yml"><span style="display:flex;"><span>      <span style="color:#ae81ff">...</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">language_manager</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">class</span>: <span style="color:#ae81ff">Drupal\Core\Language\LanguageManager</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">arguments</span>: [<span style="color:#e6db74">&#39;@language.default&#39;</span>]
+</span></span><span style="display:flex;"><span>      <span style="color:#ae81ff">...</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">path.alias_manager</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">class</span>: <span style="color:#ae81ff">Drupal\Core\Path\AliasManager</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">arguments</span>: [<span style="color:#e6db74">&#39;@path.crud&#39;</span>, <span style="color:#e6db74">&#39;@path.alias_whitelist&#39;</span>, <span style="color:#e6db74">&#39;@language_manager&#39;</span>]
+</span></span><span style="display:flex;"><span>      <span style="color:#ae81ff">...</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">string_translation</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">class</span>: <span style="color:#ae81ff">Drupal\Core\StringTranslation\TranslationManager</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#ae81ff">...</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">breadcrumb</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">class</span>: <span style="color:#ae81ff">Drupal\Core\Breadcrumb\BreadcrumbManager</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">arguments</span>: [<span style="color:#e6db74">&#39;@module_handler&#39;</span>]
+</span></span><span style="display:flex;"><span>      <span style="color:#ae81ff">...</span></span></span></code></pre></div>
+<p>某个服务可以依赖于其他服务。譬如在上面的例子中，path.alias_manager在arguments参数中指定依赖服务 path.crud， path.alias_whitelist 与 language_manager。可以通过@服务名的方式来定义一个服务的依赖，如@language_manager。当Drupal中的某代码请求path.alias_manager服务时，服务容器会保证path.crud， path.alias_whitelist 与 language_manager 服务可以传递给path.alias_manager的构造函数，因此它会先请求上面的每一个服务。依次地，language_manager依赖于language.default，等等等。</p>
+<p>Drupal包含大量的服务，获取该列表的最好方法是查看<a href="https://api.drupal.org/api/drupal/core%21lib%21Drupal%21Core%21CoreServiceProvider.php/8">CoreServiceProvider.php</a> 与 <a href="https://api.drupal.org/api/drupal/core%21core.services.yml/8">core.services.yml </a> 文件。</p>
+<p>服务容器（或者叫依赖注入容器）是一个管理服务实例的PHP对象。Drupal的服务容器是在Symfony服务容器的基础上建立的，关于文件结构、特殊字符、可选依赖等相关内容文档可以查看<a href="http://symfony.com/doc/current/book/service_container.html">Symfony 2服务容器文档</a>。</p>
+<p><strong>通过依赖注入来访问服务</strong></p>
+<p>在Drupal 8中，依赖注入是访问服务的首选方式，并且应该尽可能的使用。服务通过构造函数参数或者setter方法的方式进行传递，而不是直接调用全局的服务容器。很多由核心模块提供的控制器以及插件类都是使用此方式，并且在运行中被视作是优质资源。</p>
+<p>Drupal全局类用于全局函数中。然而，Drupal 8的控制器、插件等是基于类的。其首先方式是将依赖的服务以构造函数参数的方式进行传递，或者以服务setter方法来注入，而不是调用全局的服务容器。</p>
+<p>将某个对象依赖的服务显式传递，称为依赖注入。在很多情况下，依赖都是通过构造函数进行显式传递。如：<a href="https://www.drupal.org/node/2122195">路由访问检测</a>在服务创建时插入当前用户，而当前请求对象则在访问检测时传递。你也可以通过setter方法来设置依赖。</p>
+<p><strong>在全局函数中访问服务</strong></p>
+<p>Drupal全局类提供静态方法来访问一些最常用的服务，如：Drupal::moduleHandler()返回模块处理程序服务，Drupal::translation()返回字符串翻译服务。如果你调用的服务没有专用方法，你也可以使用Drupal::service()来获取任何已定义的服务。</p>
+<p>例子：使用专用方法\Drupal::database()来访问数据库服务</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-php" data-lang="php"><span style="display:flex;"><span>    <span style="color:#75715e">// Returns a Drupal\Core\Database\Connection object.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    $connection <span style="color:#f92672">=</span> <span style="color:#a6e22e">\Drupal</span><span style="color:#f92672">::</span><span style="color:#a6e22e">database</span>();
+</span></span><span style="display:flex;"><span>    $result <span style="color:#f92672">=</span> $connection<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">select</span>(<span style="color:#e6db74">&#39;node&#39;</span>, <span style="color:#e6db74">&#39;n&#39;</span>)
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">fields</span>(<span style="color:#e6db74">&#39;n&#39;</span>, <span style="color:#66d9ef">array</span>(<span style="color:#e6db74">&#39;nid&#39;</span>))
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">execute</span>();
+</span></span><span style="display:flex;"><span>      
+</span></span></code></pre></div>
+<p>例子：使用通用的\Drupal::service()方法来访问date服务</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-php" data-lang="php"><span style="display:flex;"><span>    <span style="color:#f92672">&lt;?</span><span style="color:#a6e22e">php</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// Returns a Drupal\Core\Datetime\Date object.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    $date <span style="color:#f92672">=</span> <span style="color:#a6e22e">\Drupal</span><span style="color:#f92672">::</span><span style="color:#a6e22e">service</span>(<span style="color:#e6db74">&#39;date&#39;</span>);
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">?&gt;</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">    
+</span></span></span></code></pre></div>
+<p>理想情况下，你应该尽量少的使用全局函数，并且重构控制器、事件监听、插件等。适当的方式应该是使用依赖注入；查看下面的文档。</p>
+<p>在<a href="http://symfony.com/doc/current/book/service_container.html">Symfony 2的文档</a>中均有代码范例。</p>
+<p><strong>定义你的服务</strong></p>
+<p>你可以使用example.services.yml文件来定义自己的服务，其中example就是你定义服务所在的模块名称。文件的格式与core.services.yml相同。</p>
+<p>有多个子系统需要你定义服务，如：<a href="https://www.drupal.org/node/2122195">自定义路由访问检测类</a>，<a href="http://drupal.org/node/2122223">自定义参数转换</a>，或者<a href="http://drupal.org/node/1637730">定义一个插件管理器</a>，这都需要将你的类注册为服务。</p>
+<p>也可以使用 $GLOBALS[&lsquo;conf&rsquo;][&lsquo;container_yamls&rsquo;]来增加用于定义服务的YAML文件，只是这样做十分少见。</p>
+<p><strong>Drupal 7全局函数与Drupal 8服务对比</strong></p>
+<p>我们用运行一个模块钩子所需要的代码来对比一下Drupal 7与8的区别。在Drupal中，你会使用module_invoke_all(&lsquo;help&rsquo;)来运行所有hook_help钩子，因为我们是在代码中直接调用module_invoke_all()函数，那么其他人就很难在不改变Drupal核心函数的情况下修改Drupal运行钩子的方式。</p>
+<p>在Drupal 8中，用ModuleHandler代替了module_*函数。因此在Drupal 8中，你应该使用\Drupal::moduleHandler()-&gt;invokeAll(&lsquo;help&rsquo;)。在这个例子中\Drupal::moduleHandler()通过服务容器找出已注册的模块处理程序服务，然后调用服务的invokeAll()方法。</p>
+<p>这种机制比Drupal 7的好，因为它允许Drupal 发行版、托管商或者其他模块通过修改注册的模块处理服务类，实现ModuleHandlerInterface接口，来覆写模块运行其他模块钩子的方式。这种修改对于其他部分的Drupal代码而言是透明的。这意味着Drupal的更多部分可以在不修改核心的情况下进行替换。代码的依赖也有更好的文档并且有关的边界也更好的分离。最好，服务可以通过接口进行更加简便的单元测试，而不是整合测试。</p>
+<p><strong>对比Drupal 7全局变量与Drupal 8服务</strong></p>
+<p>Drupal7的一些全局变量，如 global $language 与 global $user 在Drupal 8中也是通过服务进行访问（并且不再是全局变量）。请参考<a href="https://api.drupal.org/api/drupal/core%21lib%21Drupal%21Core%21Language%21LanguageManager.php/function/LanguageManager%3A%3AgetLanguage/8">Drupal::languageManager()-&gt;getLanguage(Language::TYPE_INTERFACE)</a> 与 <a href="https://api.drupal.org/api/drupal/core%21lib%21Drupal.php/function/Drupal%3A%3AcurrentUser/8">Drupal::currentUser()</a>。</p>
+    </div>
+
+
+</article>
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/styles/base16/darcula.min.css" integrity="sha512-GfRggx2Wc+POEPR0asMTNTyNug3rWJ9Jp4wxnHZ5VApMOUJRK4cEaRriXsx5tV1DakKHQWQ2noCbuzFiPJaYqA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/highlight.min.js" integrity="sha512-yUUc0qWm2rhM7X0EFe82LNnv2moqArj5nro/w1bi05A09hRVeIZbN6jlMoyu0+4I/Bu4Ck/85JQIU82T82M28w==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlightjs-line-numbers.js/2.8.0/highlightjs-line-numbers.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+
+                </div>
+
+            </div>
+        </div><div id="footer-default" class="g-bg-gray-dark-v1 g-color-white-opacity-0_8 text-center g-py-20">
+    <div class="container">
+        <div class="g-font-size-default g-mr-10 g-mb-10 g-mb-0--md">
+            <p>本站内容如非特别说明，均基于<a rel="license" target="_blank" href="http://creativecommons.org/licenses/by-sa/3.0/">Creative Commons Attribution-Share Alike 3.0 Unported License</a>发布。</p>
+        </div>
+    </div>
+</div></body>
+</section>
+</html>

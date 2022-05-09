@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+<section class="g-bg-gray-light-v5"><head>
+	
+	<title>YP.Lam  | Symfony服务容器 ( Symfony Service Container )</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<meta http-equiv="x-ua-compatible" content="ie=edge">
+
+	<link rel="stylesheet" href="//stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css">
+	
+	<link rel="stylesheet" href="https://yplam.com/scss/unify.min.css">
+
+	
+	
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-83586141-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+	
+</head>
+
+<body>    <div class="container">
+        <div class="d-sm-flex text-center">
+            <div class="align-self-center ml-auto">
+                <ul class="u-list-inline float-right g-py-20">
+                    <li class="list-inline-item g-mr-5">
+                        <a class="u-link-v5 g-color-gray-dark-v5 g-color-primary--hover" href="/">HOME</a>
+                        <i class="g-color-gray-light-v2 g-ml-5">/</i>
+                    </li>
+                    <li class="list-inline-item g-mr-5">
+                        <a class="u-link-v5 g-color-gray-dark-v5 g-color-primary--hover" href="/about/">ABOUT</a>
+                        <i class="g-color-gray-light-v2 g-ml-5">/</i>
+                    </li>
+                    <li class="list-inline-item">
+                        <a class="u-link-v5 g-color-gray-dark-v5 g-color-primary--hover" href="https://github.com/yplam">GITHUB</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+<div class="container" aria-label="Content">
+            <div class="g-bg-white">
+                <div class="g-px-35 g-py-30 g-mb-30">
+<article>
+    <ul class="list-inline g-color-gray-dark-v4">
+        <li class="list-inline-item mr-0">
+            In
+             
+            
+            
+            
+            <a href="https://yplam.com/tags/php/">PHP</a>
+            
+            
+            
+            
+            <a href="https://yplam.com/tags/symfony/">Symfony</a>
+            
+            
+        </li>
+        <li class="list-inline-item mx-2">/</li>
+        <li class="list-inline-item">Posted 2013-06-18</li>
+    </ul>
+    <h1 class="g-mb-30">Symfony服务容器 ( Symfony Service Container )</h1>
+    <div class="justify-content-center article-content">
+        <p>这是一篇关于Symfony2服务容器实现的笔记，原文请查看文章末尾的相关资料部分。</p>
+<p>上一篇笔记介绍了依赖注入容器，依赖注入容器使得对各种系统功能的调用变得简便，但同时引入了一个新的问题就是容器的编写与维护变得非常复杂。Symfony2试图通过ServiceContainer、ServiceContainerBuilder以及xml、yml配置文件来使容器的实现变得简单。</p>
+<p><strong>ServiceContainer</strong></p>
+<p>首先，引入sfServiceContainer类<a href="http://svn.symfony-project.com/components/dependency_injection/trunk/lib/sfServiceContainer.php">http://svn.symfony-project.com/components/dependency_injection/trunk/lib/sfServiceContainer.php</a>，将上一篇笔记中的container作点修改，继承sfServiceContainer：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-php" data-lang="php"><span style="display:flex;"><span>    <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Container</span> <span style="color:#66d9ef">extends</span> <span style="color:#a6e22e">sfServiceContainer</span>
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>      <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">protected</span> $shared <span style="color:#f92672">=</span> <span style="color:#66d9ef">array</span>();
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>      <span style="color:#66d9ef">protected</span> <span style="color:#66d9ef">function</span> <span style="color:#a6e22e">getMailTransportService</span>()
+</span></span><span style="display:flex;"><span>      {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">Zend_Mail_Transport_Smtp</span>(<span style="color:#e6db74">&#39;smtp.gmail.com&#39;</span>, <span style="color:#66d9ef">array</span>(
+</span></span><span style="display:flex;"><span>          <span style="color:#e6db74">&#39;auth&#39;</span>     <span style="color:#f92672">=&gt;</span> <span style="color:#e6db74">&#39;login&#39;</span>,
+</span></span><span style="display:flex;"><span>          <span style="color:#e6db74">&#39;username&#39;</span> <span style="color:#f92672">=&gt;</span> $this[<span style="color:#e6db74">&#39;mailer.username&#39;</span>],
+</span></span><span style="display:flex;"><span>          <span style="color:#e6db74">&#39;password&#39;</span> <span style="color:#f92672">=&gt;</span> $this[<span style="color:#e6db74">&#39;mailer.password&#39;</span>],
+</span></span><span style="display:flex;"><span>          <span style="color:#e6db74">&#39;ssl&#39;</span>      <span style="color:#f92672">=&gt;</span> <span style="color:#e6db74">&#39;ssl&#39;</span>,
+</span></span><span style="display:flex;"><span>          <span style="color:#e6db74">&#39;port&#39;</span>     <span style="color:#f92672">=&gt;</span> <span style="color:#ae81ff">465</span>,
+</span></span><span style="display:flex;"><span>        ));
+</span></span><span style="display:flex;"><span>      }
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>      <span style="color:#66d9ef">protected</span> <span style="color:#66d9ef">function</span> <span style="color:#a6e22e">getMailerService</span>()
+</span></span><span style="display:flex;"><span>      {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">isset</span>(<span style="color:#a6e22e">self</span><span style="color:#f92672">::</span>$shared[<span style="color:#e6db74">&#39;mailer&#39;</span>]))
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>          <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">self</span><span style="color:#f92672">::</span>$shared[<span style="color:#e6db74">&#39;mailer&#39;</span>];
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>        $class <span style="color:#f92672">=</span> $this[<span style="color:#e6db74">&#39;mailer.class&#39;</span>];
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>        $mailer <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> $class();
+</span></span><span style="display:flex;"><span>        $mailer<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">setDefaultTransport</span>($this<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">getMailTransportService</span>());
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">self</span><span style="color:#f92672">::</span>$shared[<span style="color:#e6db74">&#39;mailer&#39;</span>] <span style="color:#f92672">=</span> $mailer;
+</span></span><span style="display:flex;"><span>      }
+</span></span><span style="display:flex;"><span>    }</span></span></code></pre></div>
+<p>然后通过这种方式来调用：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-php" data-lang="php"><span style="display:flex;"><span>    <span style="color:#66d9ef">require_once</span> <span style="color:#e6db74">&#39;PATH/TO/sf/lib/sfServiceContainerAutoloader.php&#39;</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">sfServiceContainerAutoloader</span><span style="color:#f92672">::</span><span style="color:#a6e22e">register</span>();
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    $sc <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">Container</span>(<span style="color:#66d9ef">array</span>(
+</span></span><span style="display:flex;"><span>      <span style="color:#e6db74">&#39;mailer.username&#39;</span> <span style="color:#f92672">=&gt;</span> <span style="color:#e6db74">&#39;foo&#39;</span>,
+</span></span><span style="display:flex;"><span>      <span style="color:#e6db74">&#39;mailer.password&#39;</span> <span style="color:#f92672">=&gt;</span> <span style="color:#e6db74">&#39;bar&#39;</span>,
+</span></span><span style="display:flex;"><span>      <span style="color:#e6db74">&#39;mailer.class&#39;</span>    <span style="color:#f92672">=&gt;</span> <span style="color:#e6db74">&#39;Zend_Mail&#39;</span>,
+</span></span><span style="display:flex;"><span>    ));
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    $mailer <span style="color:#f92672">=</span> $sc<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">mailer</span>;</span></span></code></pre></div>
+<p>通过实现__get方法，我们可以通过container对象属性的方式来调用各种服务，可以通过setService对容器进行配置，而需要我们编写的Container类变得更加格式化，都是由一系列get&hellip;Service方法组成。</p>
+<p><strong>ServiceContainerBuilder</strong></p>
+<p>因此我们可以通过一个ServiceContainerBuilder对ServiceContainer进行动态配置，sfServiceContainerBuilder: <a href="http://svn.symfony-project.com/components/dependency_injection/trunk/lib/sfServiceContainerBuilder.php">http://svn.symfony-project.com/components/dependency_injection/trunk/lib/sfServiceContainerBuilder.php</a></p>
+<p><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-php" data-lang="php"><span style="display:flex;"><span>    <span style="color:#66d9ef">require_once</span> <span style="color:#e6db74">&#39;PATH/TO/sf/lib/sfServiceContainerAutoloader.php&#39;</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">sfServiceContainerAutoloader</span><span style="color:#f92672">::</span><span style="color:#a6e22e">register</span>();
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    $sc <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">sfServiceContainerBuilder</span>();
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    $sc<span style="color:#f92672">-&gt;</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#a6e22e">register</span>(<span style="color:#e6db74">&#39;mail.transport&#39;</span>, <span style="color:#e6db74">&#39;Zend_Mail_Transport_Smtp&#39;</span>)<span style="color:#f92672">-&gt;</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#a6e22e">addArgument</span>(<span style="color:#e6db74">&#39;smtp.gmail.com&#39;</span>)<span style="color:#f92672">-&gt;</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#a6e22e">addArgument</span>(<span style="color:#66d9ef">array</span>(
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#39;auth&#39;</span>     <span style="color:#f92672">=&gt;</span> <span style="color:#e6db74">&#39;login&#39;</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#39;username&#39;</span> <span style="color:#f92672">=&gt;</span> <span style="color:#e6db74">&#39;%mailer.username%&#39;</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#39;password&#39;</span> <span style="color:#f92672">=&gt;</span> <span style="color:#e6db74">&#39;%mailer.password%&#39;</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#39;ssl&#39;</span>      <span style="color:#f92672">=&gt;</span> <span style="color:#e6db74">&#39;ssl&#39;</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#39;port&#39;</span>     <span style="color:#f92672">=&gt;</span> <span style="color:#ae81ff">465</span>,
+</span></span><span style="display:flex;"><span>      ))<span style="color:#f92672">-&gt;</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#a6e22e">setShared</span>(<span style="color:#66d9ef">false</span>)
+</span></span><span style="display:flex;"><span>    ;
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    $sc<span style="color:#f92672">-&gt;</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#a6e22e">register</span>(<span style="color:#e6db74">&#39;mailer&#39;</span>, <span style="color:#e6db74">&#39;%mailer.class%&#39;</span>)<span style="color:#f92672">-&gt;</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#a6e22e">addMethodCall</span>(<span style="color:#e6db74">&#39;setDefaultTransport&#39;</span>, <span style="color:#66d9ef">array</span>(<span style="color:#66d9ef">new</span> <span style="color:#a6e22e">sfServiceReference</span>(<span style="color:#e6db74">&#39;mail.transport&#39;</span>)))</span></span></code></pre></div>
+sfServiceContainerBuilder通过register函数来创建一个service，传入service的id以及对应的类，再通过addArgument传入将类实例化时传给构造函数的参数，通过addMethodCall来设置对象创建后调用的初始化函数，通过setShared来指定service是否全局共享。 sfServiceContainerBuilder继承自sfServiceContainer，覆写了getService方法，使得既可以调用静态设置的service，也可以使用动态添加的service。</p>
+<p><strong>使用配置文件来描述Service</strong></p>
+<p>既然service可以通过php动态添加，那么是否可以通过读取配置文件来动态生成呢？答案是肯定的。Symfony提供 sfServiceContainerLoader*** 类，通过读取配置文件，将配置文件转换成 sfServiceDefinition 并且对其进行配置，然后通过containerbuilder的setServiceDefinition方法来添加service，实现方式可以参考 <a href="http://svn.symfony-project.com/components/dependency_injection/trunk/lib/sfServiceContainerLoader.php">http://svn.symfony-project.com/components/dependency_injection/trunk/lib/sfServiceContainerLoader.php</a> 以及相关loader 的类。</p>
+<p><strong>使用缓存提升性能</strong></p>
+<p>使用配置文件来描述service非常强大而灵活，但会引入一个问题，如果每次运行都要读取配置文件，动态生成service，导致性能问题，而使用PHP代码扩展sfServiceContainer类则可以获得最大的性能优化。 Symfony除了有sfServiceContainerLoader来加载service以外，还可以通过sfServiceContainerDumper来将service的写入到文件中，譬如 sfServiceContainerDumperXml 可以生成上面的使用的配置文件，而sfServiceContainerDumperPhp则可以将service生成一个sfServiceContainer子类的代码。 通过这种方式，Symfony2可以将配置文件的灵活与PHP代码的性能很好的结合起来。</p>
+<p><strong>Symfony2中的实现</strong></p>
+<p>在Symfony2启动流程分析中，有以下的代码段：</p>
+<p><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-php" data-lang="php"><span style="display:flex;"><span>                $container <span style="color:#f92672">=</span> $this<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">buildContainer</span>();
+</span></span><span style="display:flex;"><span>                $container<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">compile</span>();
+</span></span><span style="display:flex;"><span>                $this<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">dumpContainer</span>($cache, $container, $class, $this<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">getContainerBaseClass</span>());</span></span></code></pre></div>
+这就是Symfony对container的实现。</p>
+<p><strong>相关资料：</strong></p>
+<p><a href="http://svn.symfony-project.com/components/dependency_injection/trunk/lib/">http://svn.symfony-project.com/components/dependency_injection/trunk/lib/</a></p>
+<p><a href="http://fabien.potencier.org/article/13/introduction-to-the-symfony-service-container">http://fabien.potencier.org/article/13/introduction-to-the-symfony-service-container</a></p>
+<p><a href="http://fabien.potencier.org/article/14/symfony-service-container-using-a-builder-to-create-services">http://fabien.potencier.org/article/14/symfony-service-container-using-a-builder-to-create-services</a></p>
+<p><a href="http://fabien.potencier.org/article/15/symfony-service-container-using-xml-or-yaml-to-describe-services">http://fabien.potencier.org/article/15/symfony-service-container-using-xml-or-yaml-to-describe-services</a></p>
+<p><a href="http://fabien.potencier.org/article/16/symfony-service-container-the-need-for-speed">http://fabien.potencier.org/article/16/symfony-service-container-the-need-for-speed</a></p>
+    </div>
+
+
+</article>
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/styles/base16/darcula.min.css" integrity="sha512-GfRggx2Wc+POEPR0asMTNTyNug3rWJ9Jp4wxnHZ5VApMOUJRK4cEaRriXsx5tV1DakKHQWQ2noCbuzFiPJaYqA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/highlight.min.js" integrity="sha512-yUUc0qWm2rhM7X0EFe82LNnv2moqArj5nro/w1bi05A09hRVeIZbN6jlMoyu0+4I/Bu4Ck/85JQIU82T82M28w==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlightjs-line-numbers.js/2.8.0/highlightjs-line-numbers.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+
+                </div>
+
+            </div>
+        </div><div id="footer-default" class="g-bg-gray-dark-v1 g-color-white-opacity-0_8 text-center g-py-20">
+    <div class="container">
+        <div class="g-font-size-default g-mr-10 g-mb-10 g-mb-0--md">
+            <p>本站内容如非特别说明，均基于<a rel="license" target="_blank" href="http://creativecommons.org/licenses/by-sa/3.0/">Creative Commons Attribution-Share Alike 3.0 Unported License</a>发布。</p>
+        </div>
+    </div>
+</div></body>
+</section>
+</html>

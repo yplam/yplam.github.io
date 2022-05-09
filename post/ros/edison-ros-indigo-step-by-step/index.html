@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html>
+<section class="g-bg-gray-light-v5"><head>
+	
+	<title>YP.Lam  | 一步步搭建 Edison ROS Indigo 环境</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<meta http-equiv="x-ua-compatible" content="ie=edge">
+
+	<link rel="stylesheet" href="//stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css">
+	
+	<link rel="stylesheet" href="https://yplam.com/scss/unify.min.css">
+
+	
+	
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-83586141-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+	
+</head>
+
+<body>    <div class="container">
+        <div class="d-sm-flex text-center">
+            <div class="align-self-center ml-auto">
+                <ul class="u-list-inline float-right g-py-20">
+                    <li class="list-inline-item g-mr-5">
+                        <a class="u-link-v5 g-color-gray-dark-v5 g-color-primary--hover" href="/">HOME</a>
+                        <i class="g-color-gray-light-v2 g-ml-5">/</i>
+                    </li>
+                    <li class="list-inline-item g-mr-5">
+                        <a class="u-link-v5 g-color-gray-dark-v5 g-color-primary--hover" href="/about/">ABOUT</a>
+                        <i class="g-color-gray-light-v2 g-ml-5">/</i>
+                    </li>
+                    <li class="list-inline-item">
+                        <a class="u-link-v5 g-color-gray-dark-v5 g-color-primary--hover" href="https://github.com/yplam">GITHUB</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+<div class="container" aria-label="Content">
+            <div class="g-bg-white">
+                <div class="g-px-35 g-py-30 g-mb-30">
+<article>
+    <ul class="list-inline g-color-gray-dark-v4">
+        <li class="list-inline-item mr-0">
+            In
+             
+            
+            
+            
+            <a href="https://yplam.com/tags/ros/">ROS</a>
+            
+            
+        </li>
+        <li class="list-inline-item mx-2">/</li>
+        <li class="list-inline-item">Posted 2017-03-25</li>
+    </ul>
+    <h1 class="g-mb-30">一步步搭建 Edison ROS Indigo 环境</h1>
+    <div class="justify-content-center article-content">
+        <p>最近在琢磨能不能用 CNN 来训练一个模型，用于控制一个模型小车，实现简单的循迹或者所谓的自动驾驶。于是拿出布灰已久的 Edison + 两轮平衡车 + 罗技摄像头，计划将这几样组装起来，上面运行 ROS 作为我的“机器人”平台，然后在笔记本上运行 master 做运算与控制。本笔记记录 ROS 在 Edison 上安装与运行 usb_cam 获取图像传输到主机的过程。</p>
+<p>主要还是按照 <a href="http://wiki.ros.org/wiki/edison">Installing ROS Indigo on Intel Edison</a>, <a href="http://wiki.ros.org/ROSberryPi/Installing%20ROS%20Indigo%20on%20Raspberry%20Pi">Installing ROS Indigo on Raspberry Pi</a> 这两个文档进行安装，但过程中会遇到不少问题，并且由于 Edison 用户可能比较少，大多都需要找相关资料来解决。</p>
+<p>本笔记假设读者已经拥有基础 Linux 操作技能，某些基础操作不会细说。</p>
+<h3 id="安装-ubilinux">安装 ubilinux</h3>
+<p>参考下面文档：</p>
+<p><a href="https://learn.sparkfun.com/tutorials/loading-debian-ubilinux-on-the-edison">https://learn.sparkfun.com/tutorials/loading-debian-ubilinux-on-the-edison</a></p>
+<h3 id="将-ubilinux-安装到-sd-卡启动">将 ubilinux 安装到 sd 卡启动</h3>
+<p>因为 Edison 自带的 emmc 只有 4G，安装各种包之后空间只能勉强够用，因此建议使用 8G 以上的 sd 卡安装系统，安装在sd卡上还有一个好处就是可以简单的将系统备份下来。可参考下面文档：</p>
+<p><a href="https://github.com/sarweshkumar47/Boot-Intel-Edison-from-SDCard-with-Debian-Ubilinux">https://github.com/sarweshkumar47/Boot-Intel-Edison-from-SDCard-with-Debian-Ubilinux</a></p>
+<h3 id="系统初始化">系统初始化</h3>
+<p>配置 wifi：</p>
+<pre tabindex="0"><code>wpa_passphrase wifiid wifi_password
+</code></pre><p>然后修改 /etc/network/interfaces，禁用 usb 网卡，使用 wlan0，将 wpa-ssid 跟 wpa-psk 配置上。</p>
+<p>初始化的配置，顺便把 locale 配置一下</p>
+<pre tabindex="0"><code>apt-get update
+dpkg-reconfigure locale
+</code></pre><h3 id="安装-boost-153-库">安装 boost 1.5.3 库</h3>
+<p>Debian Wheezy 自带的 boost 库版本为 1.4.9，如果按此版本编译安装 ROS Indigo 的话会报以下错误：</p>
+<pre tabindex="0"><code>error: macro &#34;BOOST_SCOPE_EXIT&#34; passed 2 arguments, but takes just 1
+</code></pre><p>查看相关文档得知，Indigo 对应的 boost 版本为 1.5.3，可以按 <a href="http://www.boost.org/doc/libs/1_53_0/more/getting_started/unix-variants.html">Getting Started on Unix Variants</a> 编译安装，也可以下载我编译好的 deb 包进行安装（编译一次需要 N 个小时）。当然，如果你有兴趣的话也可以尝试编译自己的deb包，参考 <a href="https://github.com/ulikoehler/deb-buildscripts/blob/master/deb-boost.sh">https://github.com/ulikoehler/deb-buildscripts/blob/master/deb-boost.sh</a></p>
+<p>下载 deb 包： [boost-all_1.53.0-1_i386.deb]({{ site.url }}/assets/2017/boost-all_1.53.0-1_i386.deb) [boost-all-dev_1.53.0-1_i386.deb]({{ site.url }}/assets/2017/boost-all-dev_1.53.0-1_i386.deb)</p>
+<p>安装：</p>
+<pre tabindex="0"><code>apt-get install libicu48
+dpkg -i boost-all_1.53.0-1_i386.deb boost-all-dev_1.53.0-1_i386.deb
+</code></pre><h3 id="安装-opencv-库">安装 opencv 库</h3>
+<p>编译安装：</p>
+<p>下载opencv 2.4.9 代码</p>
+<p>环境准备</p>
+<pre tabindex="0"><code>apt-get install build-essential
+apt-get install cmake git libgtk2.0-dev pkg-config libavcodec-dev libavformat-dev libswscale-dev ffmpeg
+apt-get install python-dev python-numpy
+</code></pre><p>根据这里对代码进行修改 <a href="https://github.com/NextThingCo/buildroot/blob/master/package/opencv/0002-superres-Fix-return-type-value-VideoFrameSource_GPU.patch">https://github.com/NextThingCo/buildroot/blob/master/package/opencv/0002-superres-Fix-return-type-value-VideoFrameSource_GPU.patch</a></p>
+<p>263 行</p>
+<pre tabindex="0"><code>
+-    return new VideoFrameSource(fileName);
++    return new VideoFrameSource_GPU(fileName);
+</code></pre><p>在 CMakeLists.txt 中 set(OPENCV_VCSVERSION &ldquo;2.4.9&rdquo;)</p>
+<pre tabindex="0"><code>mkdir release
+cd release
+cmake -D CMAKE_BUILD_TYPE=RELEASE -D CMAKE_INSTALL_PREFIX=/usr/local ..
+
+编辑 CMakeCache.txt CPACK_BINARY_DEB:BOOL=ON
+
+make
+make install
+</code></pre><p>上面这步可能需要运行 N 个小时</p>
+<pre tabindex="0"><code>make package
+</code></pre><p>可能会出错</p>
+<pre tabindex="0"><code>CPackDeb: dpkg-shlibdeps: dpkg-shlibdeps: need at least one executable
+</code></pre><p>按照这里的 patch 对 cmake 进行修正：https://public.kitware.com/Bug/view.php?id=13488</p>
+<p>附预编译的 deb 包： [OpenCV-2.4.9-i686-libs.deb]({{ site.url }}/assets/2017/OpenCV-2.4.9-i686-libs.deb) [OpenCV-2.4.9-i686-dev.deb]({{ site.url }}/assets/2017/OpenCV-2.4.9-i686-dev.deb) [OpenCV-2.4.9-i686-python.deb]({{ site.url }}/assets/2017/OpenCV-2.4.9-i686-python.deb)</p>
+<h2 id="编辑安装-ros">编辑安装 ROS</h2>
+<p>可以参考 <a href="http://wiki.ros.org/wiki/edison">Installing ROS Indigo on Intel Edison</a>, <a href="http://wiki.ros.org/ROSberryPi/Installing%20ROS%20Indigo%20on%20Raspberry%20Pi">Installing ROS Indigo on Raspberry Pi</a> 进行安装，但有两点区别：</p>
+<p><strong>1.2 console_bridge:</strong></p>
+<p>在运行下面命令后</p>
+<pre tabindex="0"><code>sudo checkinstall make install
+</code></pre><p>输入 2 并且将包名改为 &rsquo;libconsole_bridge&rsquo; .</p>
+<p><strong>3.2.2 Resolving Dependencies with rosdep</strong></p>
+<p>运行 rosdep install 的时候去掉 -y 参数，并且跳过 apt-get install libboost-all-dev.</p>
+<p><strong>error while loading shared libraries: libconsole_bridge.so.0.3: cannot open shared object file: No such file or directory</strong></p>
+<p>如果你遇到这个错误，可以通过下面方式处理</p>
+<pre tabindex="0"><code>cd /opt/ros/indigo/lib
+sudo ln -s /usr/local/lib/i386-linux-gnu/libconsole_bridge.so.0.3 libconsole_bridge.so.0.3
+</code></pre><h2 id="编译-usb_cam">编译 usb_cam</h2>
+<p>usb_cam 的编译跟前面 ros_comm 类似：</p>
+<pre tabindex="0"><code>mkdir catkin_ws
+cd catkin_ws
+mkdir src
+rosinstall_generator usb_cam image_transport_plugins --rosdistro indigo --deps --wet-only --exclude roslisp --tar &gt; indigo-usb_cam.rosinstall
+wstool init src indigo-usb_cam.rosinstall
+rosdep install --from-paths src --ignore-src --rosdistro indigo -r --os=debian:wheezy
+#跳过opencv boost相关的包
+source /opt/ros/indigo/setup.bash
+catkin_make
+</code></pre><p>你也可以在之前的工作区上操作，因为新工作区会导致某些包又要重新编译，但好处就是以后 make 跑的时间会短一点。</p>
+<h2 id="运行-usb_cam-将-edison-图像传输到电脑">运行 usb_cam 将 Edison 图像传输到电脑</h2>
+<p>开始运行之前请确认主机跟从机都可以相互ping通，并且可以ping通自己。</p>
+<p>现在主机运行：</p>
+<pre tabindex="0"><code>roscore
+</code></pre><p>主机上开多一个终端，运行：</p>
+<pre tabindex="0"><code>rosrun rviz rviz
+</code></pre><p>Edison上编辑 launch 文件，运行</p>
+<pre tabindex="0"><code>source devel/setup.bash
+roscd usb_cam
+vim launch/usb_cam.launch
+roslaunch usb_cam.launch
+</code></pre><p>usb_cam.launch 的内容，假设你主机的名字为 lam</p>
+<pre tabindex="0"><code>&lt;launch&gt;
+  &lt;env name=&#34;ROS_MASTER_URI&#34; value=&#34;http://lam.local:11311&#34;/&gt; 
+  &lt;node name=&#34;usb_cam&#34; pkg=&#34;usb_cam&#34; type=&#34;usb_cam_node&#34; output=&#34;screen&#34; &gt;
+    &lt;param name=&#34;video_device&#34; value=&#34;/dev/video0&#34; /&gt;
+    &lt;param name=&#34;image_width&#34; value=&#34;640&#34; /&gt;
+    &lt;param name=&#34;image_height&#34; value=&#34;480&#34; /&gt;
+    &lt;param name=&#34;pixel_format&#34; value=&#34;yuyv&#34; /&gt;
+    &lt;param name=&#34;camera_frame_id&#34; value=&#34;usb_cam&#34; /&gt;
+    &lt;param name=&#34;io_method&#34; value=&#34;mmap&#34;/&gt;
+  &lt;/node&gt;
+&lt;/launch&gt;
+</code></pre><p>在 rviz 窗口上添加一个 Image，topic 为 /usb_cam/image_raw ，使用 compressed 传输。</p>
+<p>Done.</p>
+<p><strong>Update 2017-04-22:</strong></p>
+<p>最终成果，由于加上电池后二轮平衡车难以平衡起来，干脆在万能的淘宝加工了几张有机玻璃板做成三轮车。Edison用串口跟单片机通讯，控制前进后退转弯。</p>
+<p>发现 ROS 的确方便，除了跟底层通讯的模块用 C 写之外，其他用 python 写起来会感觉好享受。</p>
+<p>![Edison ROS]({{ site.url }}/assets/2017/20170422ros.jpg &ldquo;Edison ROS&rdquo;)</p>
+    </div>
+
+
+</article>
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/styles/base16/darcula.min.css" integrity="sha512-GfRggx2Wc+POEPR0asMTNTyNug3rWJ9Jp4wxnHZ5VApMOUJRK4cEaRriXsx5tV1DakKHQWQ2noCbuzFiPJaYqA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/highlight.min.js" integrity="sha512-yUUc0qWm2rhM7X0EFe82LNnv2moqArj5nro/w1bi05A09hRVeIZbN6jlMoyu0+4I/Bu4Ck/85JQIU82T82M28w==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlightjs-line-numbers.js/2.8.0/highlightjs-line-numbers.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+
+                </div>
+
+            </div>
+        </div><div id="footer-default" class="g-bg-gray-dark-v1 g-color-white-opacity-0_8 text-center g-py-20">
+    <div class="container">
+        <div class="g-font-size-default g-mr-10 g-mb-10 g-mb-0--md">
+            <p>本站内容如非特别说明，均基于<a rel="license" target="_blank" href="http://creativecommons.org/licenses/by-sa/3.0/">Creative Commons Attribution-Share Alike 3.0 Unported License</a>发布。</p>
+        </div>
+    </div>
+</div></body>
+</section>
+</html>

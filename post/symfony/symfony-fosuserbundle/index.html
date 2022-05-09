@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html>
+<section class="g-bg-gray-light-v5"><head>
+	
+	<title>YP.Lam  | FOSUserBundle 入门</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<meta http-equiv="x-ua-compatible" content="ie=edge">
+
+	<link rel="stylesheet" href="//stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css">
+	
+	<link rel="stylesheet" href="https://yplam.com/scss/unify.min.css">
+
+	
+	
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-83586141-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+	
+</head>
+
+<body>    <div class="container">
+        <div class="d-sm-flex text-center">
+            <div class="align-self-center ml-auto">
+                <ul class="u-list-inline float-right g-py-20">
+                    <li class="list-inline-item g-mr-5">
+                        <a class="u-link-v5 g-color-gray-dark-v5 g-color-primary--hover" href="/">HOME</a>
+                        <i class="g-color-gray-light-v2 g-ml-5">/</i>
+                    </li>
+                    <li class="list-inline-item g-mr-5">
+                        <a class="u-link-v5 g-color-gray-dark-v5 g-color-primary--hover" href="/about/">ABOUT</a>
+                        <i class="g-color-gray-light-v2 g-ml-5">/</i>
+                    </li>
+                    <li class="list-inline-item">
+                        <a class="u-link-v5 g-color-gray-dark-v5 g-color-primary--hover" href="https://github.com/yplam">GITHUB</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+<div class="container" aria-label="Content">
+            <div class="g-bg-white">
+                <div class="g-px-35 g-py-30 g-mb-30">
+<article>
+    <ul class="list-inline g-color-gray-dark-v4">
+        <li class="list-inline-item mr-0">
+            In
+             
+            
+            
+            
+            <a href="https://yplam.com/tags/php/">PHP</a>
+            
+            
+            
+            
+            <a href="https://yplam.com/tags/symfony/">Symfony</a>
+            
+            
+        </li>
+        <li class="list-inline-item mx-2">/</li>
+        <li class="list-inline-item">Posted 2013-06-20</li>
+    </ul>
+    <h1 class="g-mb-30">FOSUserBundle 入门</h1>
+    <div class="justify-content-center article-content">
+        <p>这是一篇介绍FOSUserBundle的安装与配置笔记，面向Symfony2.1+，更详细的内容请参考：<a href="https://github.com/FriendsOfSymfony/FOSUserBundle/blob/master/Resources/doc/index.md">https://github.com/FriendsOfSymfony/FOSUserBundle/blob/master/Resources/doc/index.md</a></p>
+<p>Symfony2的安全组件提供了一个具有扩展性的安全机制，允许你从配置文件、数据库或者任何你能想象到的地方加载用户。FOSUserBundle就是基于这种安全机制上建立的，为你提供一个简便的方式来将用户保存在数据库中。</p>
+<p><strong>下载FOSUserBundle</strong></p>
+<p>修改composer.json文件，在require部分增加以下内容：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-json" data-lang="json"><span style="display:flex;"><span><span style="color:#e6db74">&#34;friendsofsymfony/user-bundle&#34;</span><span style="color:#960050;background-color:#1e0010">:</span> <span style="color:#e6db74">&#34;~2.0@dev&#34;</span></span></span></code></pre></div>
+<p>使用composer更新</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>$ php composer.phar update friendsofsymfony/user-bundle</span></span></code></pre></div>
+<p><strong>使能FOSUserBundle</strong></p>
+<p>修改app/AppKernel.php文件，使能FOSUserBundle</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-php" data-lang="php"><span style="display:flex;"><span>    <span style="color:#f92672">&lt;?</span><span style="color:#a6e22e">php</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// app/AppKernel.php
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">function</span> <span style="color:#a6e22e">registerBundles</span>()
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        $bundles <span style="color:#f92672">=</span> <span style="color:#66d9ef">array</span>(
+</span></span><span style="display:flex;"><span>            <span style="color:#75715e">// ...
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>            <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">FOS\UserBundle\FOSUserBundle</span>(),
+</span></span><span style="display:flex;"><span>        );
+</span></span><span style="display:flex;"><span>    }</span></span></code></pre></div>
+<p><strong>创建用户类</strong></p>
+<p>创建一个自己的UserBundle，建立自己的User Entity。这样做有一个好处是以后可以用这个UserBundle来覆写FOSUserBundle。</p>
+<p><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-php" data-lang="php"><span style="display:flex;"><span>    <span style="color:#f92672">&lt;?</span><span style="color:#a6e22e">php</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// src/Acme/UserBundle/Entity/User.php
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">namespace</span> <span style="color:#a6e22e">Acme\UserBundle\Entity</span>;
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">use</span> <span style="color:#a6e22e">FOS\UserBundle\Model\User</span> <span style="color:#66d9ef">as</span> <span style="color:#a6e22e">BaseUser</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">use</span> <span style="color:#a6e22e">Doctrine\ORM\Mapping</span> <span style="color:#66d9ef">as</span> <span style="color:#a6e22e">ORM</span>;
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">/**
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">     * @ORM\Entity
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">     * @ORM\Table(name=&#34;fos_user&#34;)
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">     */</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">User</span> <span style="color:#66d9ef">extends</span> <span style="color:#a6e22e">BaseUser</span>
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">/**
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">         * @ORM\Id
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">         * @ORM\Column(type=&#34;integer&#34;)
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">         * @ORM\GeneratedValue(strategy=&#34;AUTO&#34;)
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">         */</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">protected</span> $id;
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">function</span> __construct()
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">parent</span><span style="color:#f92672">::</span><span style="color:#a6e22e">__construct</span>();
+</span></span><span style="display:flex;"><span>            <span style="color:#75715e">// your own logic
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        }
+</span></span><span style="display:flex;"><span>    }</span></span></code></pre></div>
+ 
+ 
+<strong>配置security.yml</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yml" data-lang="yml"><span style="display:flex;"><span>    <span style="color:#75715e"># app/config/security.yml</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">security</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">encoders</span>:
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">FOS\UserBundle\Model\UserInterface</span>: <span style="color:#ae81ff">sha512</span>
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">role_hierarchy</span>:
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">ROLE_ADMIN</span>:       <span style="color:#ae81ff">ROLE_USER</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">ROLE_SUPER_ADMIN</span>: <span style="color:#ae81ff">ROLE_ADMIN</span>
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">providers</span>:
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">fos_userbundle</span>:
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">id</span>: <span style="color:#ae81ff">fos_user.user_provider.username</span>
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">firewalls</span>:
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">main</span>:
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">pattern</span>: <span style="color:#ae81ff">^/</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">form_login</span>:
+</span></span><span style="display:flex;"><span>                    <span style="color:#f92672">provider</span>: <span style="color:#ae81ff">fos_userbundle</span>
+</span></span><span style="display:flex;"><span>                    <span style="color:#f92672">csrf_provider</span>: <span style="color:#ae81ff">form.csrf_provider</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">logout</span>:       <span style="color:#66d9ef">true</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">anonymous</span>:    <span style="color:#66d9ef">true</span>
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">access_control</span>:
+</span></span><span style="display:flex;"><span>            - { <span style="color:#f92672">path: ^/login$, role</span>: <span style="color:#ae81ff">IS_AUTHENTICATED_ANONYMOUSLY }</span>
+</span></span><span style="display:flex;"><span>            - { <span style="color:#f92672">path: ^/register, role</span>: <span style="color:#ae81ff">IS_AUTHENTICATED_ANONYMOUSLY }</span>
+</span></span><span style="display:flex;"><span>            - { <span style="color:#f92672">path: ^/resetting, role</span>: <span style="color:#ae81ff">IS_AUTHENTICATED_ANONYMOUSLY }</span>
+</span></span><span style="display:flex;"><span>            - { <span style="color:#f92672">path: ^/admin/, role</span>: <span style="color:#ae81ff">ROLE_ADMIN }</span></span></span></code></pre></div>
+<p><strong>配置FOSUserBundle</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yml" data-lang="yml"><span style="display:flex;"><span>    <span style="color:#75715e"># app/config/config.yml</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">fos_user</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">db_driver</span>: <span style="color:#ae81ff">orm</span> <span style="color:#75715e"># other valid values are &#39;mongodb&#39;, &#39;couchdb&#39; and &#39;propel&#39;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">firewall_name</span>: <span style="color:#ae81ff">main</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">user_class</span>: <span style="color:#ae81ff">Your\UserBundle\Entity\User</span></span></span></code></pre></div>
+<p>user_class需要按照自己的需求来设置。</p>
+<p><strong>加载路由配置文件</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yml" data-lang="yml"><span style="display:flex;"><span>    <span style="color:#75715e"># app/config/routing.yml</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">fos_user_security</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">resource</span>: <span style="color:#e6db74">&#34;@FOSUserBundle/Resources/config/routing/security.xml&#34;</span>
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">fos_user_profile</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">resource</span>: <span style="color:#e6db74">&#34;@FOSUserBundle/Resources/config/routing/profile.xml&#34;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">prefix</span>: <span style="color:#ae81ff">/profile</span>
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">fos_user_register</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">resource</span>: <span style="color:#e6db74">&#34;@FOSUserBundle/Resources/config/routing/registration.xml&#34;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">prefix</span>: <span style="color:#ae81ff">/register</span>
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">fos_user_resetting</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">resource</span>: <span style="color:#e6db74">&#34;@FOSUserBundle/Resources/config/routing/resetting.xml&#34;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">prefix</span>: <span style="color:#ae81ff">/resetting</span>
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">fos_user_change_password</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">resource</span>: <span style="color:#e6db74">&#34;@FOSUserBundle/Resources/config/routing/change_password.xml&#34;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">prefix</span>: <span style="color:#ae81ff">/profile</span></span></span></code></pre></div>
+<p>需要注意的是，需要配置好SwiftmailerBundle后，重置密码等功能才能正常工作。</p>
+<p><strong>更新数据库</strong></p>
+<p>可以先看看是不是一切正常</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>    $ php app/console doctrine:schema:update --dump-sql</span></span></code></pre></div>
+<p>然后更新数据库</p>
+<p><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>    $ php app/console doctrine:schema:update --force</span></span></code></pre></div>
+如无意外，至此FOSUserBundle的功能就已经可以正常功能。可以尝试访问 /login /register 等进行测试。</p>
+    </div>
+
+
+</article>
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/styles/base16/darcula.min.css" integrity="sha512-GfRggx2Wc+POEPR0asMTNTyNug3rWJ9Jp4wxnHZ5VApMOUJRK4cEaRriXsx5tV1DakKHQWQ2noCbuzFiPJaYqA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/highlight.min.js" integrity="sha512-yUUc0qWm2rhM7X0EFe82LNnv2moqArj5nro/w1bi05A09hRVeIZbN6jlMoyu0+4I/Bu4Ck/85JQIU82T82M28w==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlightjs-line-numbers.js/2.8.0/highlightjs-line-numbers.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+
+                </div>
+
+            </div>
+        </div><div id="footer-default" class="g-bg-gray-dark-v1 g-color-white-opacity-0_8 text-center g-py-20">
+    <div class="container">
+        <div class="g-font-size-default g-mr-10 g-mb-10 g-mb-0--md">
+            <p>本站内容如非特别说明，均基于<a rel="license" target="_blank" href="http://creativecommons.org/licenses/by-sa/3.0/">Creative Commons Attribution-Share Alike 3.0 Unported License</a>发布。</p>
+        </div>
+    </div>
+</div></body>
+</section>
+</html>

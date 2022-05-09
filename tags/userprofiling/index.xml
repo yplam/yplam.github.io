@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>UserProfiling on YP.Lam</title>
+    <link>https://yplam.com/tags/userprofiling/</link>
+    <description>Recent content in UserProfiling on YP.Lam</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    <lastBuildDate>Sat, 11 Feb 2017 00:00:00 +0000</lastBuildDate><atom:link href="https://yplam.com/tags/userprofiling/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>用户画像笔记</title>
+      <link>https://yplam.com/post/machinelearning/user-profile-learning-notes/</link>
+      <pubDate>Sat, 11 Feb 2017 00:00:00 +0000</pubDate>
+      
+      <guid>https://yplam.com/post/machinelearning/user-profile-learning-notes/</guid>
+      <description>&lt;p&gt;用户画像是根据用户社会属性、生活习惯和消费行为等信息而抽象出的一个标签化的用户模型。构建用户画像的核心工作即是给用户贴“标签”，而标签是通过对用户信息分析而来的高度精炼的特征标识。&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>
