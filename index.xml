@@ -6,7 +6,17 @@
     <description>Recent content on YP.Lam</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Sat, 25 Dec 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://yplam.com/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Mon, 02 May 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://yplam.com/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>斐讯 N1 搭建私有 Kubernetes 集群</title>
+      <link>https://yplam.com/post/k8s/k8s-n1/</link>
+      <pubDate>Mon, 02 May 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://yplam.com/post/k8s/k8s-n1/</guid>
+      <description>&lt;p&gt;之前玩 K8S 都是用 minucube 或者虚拟机，总觉得不够过瘾，刚好手上闲置的几台斐讯 N1 达到安装 Kubernetes 的最低硬件要求，
+于是趁着五一假期在家捣弄个“高可用”斐讯 N1 K8S 集群。&lt;/p&gt;</description>
+    </item>
+    
     <item>
       <title>iMX6ULL 运行 OpenWRT</title>
       <link>https://yplam.com/post/embedded/imx6ull-openwrt/</link>

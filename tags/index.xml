@@ -6,7 +6,16 @@
     <description>Recent content in Tags on YP.Lam</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Sat, 25 Dec 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://yplam.com/tags/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Mon, 02 May 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://yplam.com/tags/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Kubernetes</title>
+      <link>https://yplam.com/tags/kubernetes/</link>
+      <pubDate>Mon, 02 May 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://yplam.com/tags/kubernetes/</guid>
+      <description></description>
+    </item>
+    
     <item>
       <title>Embedded</title>
       <link>https://yplam.com/tags/embedded/</link>
