@@ -8,13 +8,12 @@
     <language>zh-cn</language>
     <lastBuildDate>Mon, 02 May 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://yplam.com/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>斐讯 N1 搭建私有 Kubernetes 集群</title>
+      <title>斐讯 N1 搭建私有 Kubernetes 集群运行 HomeAssistant</title>
       <link>https://yplam.com/post/k8s/k8s-n1/</link>
       <pubDate>Mon, 02 May 2022 00:00:00 +0000</pubDate>
       
       <guid>https://yplam.com/post/k8s/k8s-n1/</guid>
-      <description>&lt;p&gt;之前玩 K8S 都是用 minucube 或者虚拟机，总觉得不够过瘾，刚好手上闲置的几台斐讯 N1 达到安装 Kubernetes 的最低硬件要求，
-于是趁着五一假期在家捣弄个“高可用”斐讯 N1 K8S 集群。&lt;/p&gt;</description>
+      <description>&lt;p&gt;手上有几台闲置的几台斐讯 N1 刚好达到安装 Kubernetes 的最低硬件要求，于是趁着五一假期在家捣弄个“高可用”斐讯 N1 K8S 集群，用于运行 HomeAssistant&lt;/p&gt;</description>
     </item>
     
     <item>

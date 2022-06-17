@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Kubernetes on YP.Lam</title>
-    <link>https://yplam.com/tags/kubernetes/</link>
-    <description>Recent content in Kubernetes on YP.Lam</description>
+    <title>HomeAssistant on YP.Lam</title>
+    <link>https://yplam.com/tags/homeassistant/</link>
+    <description>Recent content in HomeAssistant on YP.Lam</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Mon, 02 May 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://yplam.com/tags/kubernetes/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Mon, 02 May 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://yplam.com/tags/homeassistant/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>斐讯 N1 搭建私有 Kubernetes 集群运行 HomeAssistant</title>
       <link>https://yplam.com/post/k8s/k8s-n1/</link>

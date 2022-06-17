@@ -2,7 +2,7 @@
 <html>
 <section class="g-bg-gray-light-v5"><head>
 	
-	<title>YP.Lam  | 斐讯 N1 搭建私有 Kubernetes 集群</title>
+	<title>YP.Lam  | 斐讯 N1 搭建私有 Kubernetes 集群运行 HomeAssistant</title>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 	<meta http-equiv="x-ua-compatible" content="ie=edge">
@@ -60,16 +60,20 @@ if (!doNotTrack) {
             <a href="https://yplam.com/tags/kubernetes/">Kubernetes</a>
             
             
+            
+            
+            <a href="https://yplam.com/tags/homeassistant/">HomeAssistant</a>
+            
+            
         </li>
         <li class="list-inline-item mx-2">/</li>
         <li class="list-inline-item">Posted 2022-05-02</li>
     </ul>
-    <h1 class="g-mb-30">斐讯 N1 搭建私有 Kubernetes 集群</h1>
+    <h1 class="g-mb-30">斐讯 N1 搭建私有 Kubernetes 集群运行 HomeAssistant</h1>
     <div class="justify-content-center article-content">
-        <p>之前玩 K8S 都是用 minucube 或者虚拟机，总觉得不够过瘾，刚好手上闲置的几台斐讯 N1 达到安装 Kubernetes 的最低硬件要求，
-于是趁着五一假期在家捣弄个“高可用”斐讯 N1 K8S 集群。</p>
+        <p>手上有几台闲置的几台斐讯 N1 刚好达到安装 Kubernetes 的最低硬件要求，于是趁着五一假期在家捣弄个“高可用”斐讯 N1 K8S 集群，用于运行 HomeAssistant</p>
 <h2 id="硬件准备">硬件准备</h2>
-<p>5 台 N1，一个 8 口千兆交换机，明纬 12V5A 电源，1 分 5DC 电源线，短网线若干，厚双面胶</p>
+<p>1 台树莓派 CM4+256G SSD，5 台 N1+5 个 32G 迷你 U 盘，两个 cc2652p zigbee dongle， 一个 8 口千兆交换机，明纬 12V5A 电源，1 分 5DC 电源线，短网线若干，厚双面胶。</p>
 <p>一顿操作下来，刚好整整齐齐的粘成一块：</p>
 <p><img src="/assets/2022/n1-k8s.jpg" alt="k8s-n1"></p>
 <h2 id="armbian-准备">Armbian 准备</h2>
@@ -138,22 +142,19 @@ index fa4d782..5829e3e 100644
 <p>注意 1：N1 为 arm64 架构，某些较旧的镜像可能不支持（譬如一些过旧的 nginx），因此适当时候要 &lsquo;kubectl get pods -A&rsquo; 查看一下，
 如果是 CrashLoopBackOff 状态可优先排查一下用到的镜像版本是否支持 arm64</p>
 <p>注意 2: armbian 启动默认会开启 swap，需要通过 /etc/default/armbian-zram-config 配置</p>
-<h2 id="部署-ingress">部署 ingress</h2>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>helm upgrade --install ingress-nginx ingress-nginx/ingress-nginx --namespace ingress-nginx --create-namespace -f helm-ingress.yaml
-</span></span></code></pre></div><p>ingress 直接使用 host 模式，绑定到 node</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">controller</span>:
-</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">controller</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#f92672">hostPort</span>:
-</span></span><span style="display:flex;"><span>    <span style="color:#f92672">enabled</span>: <span style="color:#66d9ef">true</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#f92672">nodeSelector</span>:
-</span></span><span style="display:flex;"><span>    <span style="color:#f92672">kubernetes.io/hostname</span>: <span style="color:#ae81ff">node6</span>
+<h2 id="部署-lb--ingress">部署 lb + ingress</h2>
+<p>使用 metallb 作为二层负载均衡，nginx ingress</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>helm repo add metallb https://metallb.github.io/metallb
+</span></span><span style="display:flex;"><span>helm upgrade --install metallb metallb/metallb --namespace metallb-system --create-namespace -f metallb.yaml
+</span></span><span style="display:flex;"><span>helm upgrade --install ingress-nginx ingress-nginx/ingress-nginx --namespace ingress-nginx --create-namespace -f ingress.yaml
 </span></span></code></pre></div><h2 id="部署-nfs">部署 nfs</h2>
-<p>尝试了一通 ceph，发现 N1 的渣资源根本跑不起来，于是还是把数据存在局域网一台 zfs 的 nas 上</p>
+<p>尝试了一通 ceph，发现 N1 的渣资源根本跑不起来，于是决定把数据存在局域网一台 zfs 的 nas 上</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>helm repo add nfs-subdir-external-provisioner https://kubernetes-sigs.github.io/nfs-subdir-external-provisioner/
 </span></span><span style="display:flex;"><span>helm install nfs-subdir-external-provisioner nfs-subdir-external-provisioner/nfs-subdir-external-provisioner  --set nfs.server<span style="color:#f92672">=</span>xxx  --set nfs.path<span style="color:#f92672">=</span>/data/k8s --set storageClass.provisionerName<span style="color:#f92672">=</span>k8s-sigs.io/nfs-subdir-external-provisioner --set image.repository<span style="color:#f92672">=</span>xxx
 </span></span></code></pre></div><h2 id="部署-homeassistant">部署 homeassistant</h2>
 <p>暂时只想将一些 zigbee 传感器接入，于是部署了以下三个服务：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>helm install mosquitto k8s-at-home/mosquitto -f mosquitto.yaml
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl apply -f pvc.yaml
+</span></span><span style="display:flex;"><span>helm install mosquitto k8s-at-home/mosquitto -f mosquitto.yaml
 </span></span><span style="display:flex;"><span>helm install home-assistant k8s-at-home/home-assistant -f homeassistant.yaml
 </span></span><span style="display:flex;"><span>helm install zigbee2mqtt k8s-at-home/zigbee2mqtt -f zigbee2mqtt.yaml
 </span></span></code></pre></div><p>其中 config 文件通过 nfs pvc 配置，zigbee2mqtt 绑定到 zigbee dongle 所在的 node</p>
