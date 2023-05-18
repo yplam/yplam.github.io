@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html>
+<section class="g-bg-gray-light-v5"><head>
+	
+	<title>YP.Lam  | Live555 RTSP 视频流服务端开发笔记</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<meta http-equiv="x-ua-compatible" content="ie=edge">
+
+	<link rel="stylesheet" href="//stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css">
+	
+	<link rel="stylesheet" href="https://yplam.com/scss/unify.min.css">
+
+	
+	
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-83586141-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+	
+</head>
+
+<body>    <div class="container">
+        <div class="d-sm-flex text-center">
+            <div class="align-self-center ml-auto">
+                <ul class="u-list-inline float-right g-py-20">
+                    <li class="list-inline-item g-mr-5">
+                        <a class="u-link-v5 g-color-gray-dark-v5 g-color-primary--hover" href="/">HOME</a>
+                        <i class="g-color-gray-light-v2 g-ml-5">/</i>
+                    </li>
+                    <li class="list-inline-item g-mr-5">
+                        <a class="u-link-v5 g-color-gray-dark-v5 g-color-primary--hover" href="/about/">ABOUT</a>
+                        <i class="g-color-gray-light-v2 g-ml-5">/</i>
+                    </li>
+                    <li class="list-inline-item">
+                        <a class="u-link-v5 g-color-gray-dark-v5 g-color-primary--hover" href="https://github.com/yplam">GITHUB</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+<div class="container" aria-label="Content">
+            <div class="g-bg-white">
+                <div class="g-px-35 g-py-30 g-mb-30">
+<article>
+    <ul class="list-inline g-color-gray-dark-v4">
+        <li class="list-inline-item mr-0">
+            In
+             
+            
+            
+            
+            <a href="https://yplam.com/tags/rtsp/">RTSP</a>
+            
+            
+        </li>
+        <li class="list-inline-item mx-2">/</li>
+        <li class="list-inline-item">Posted 2023-05-13</li>
+    </ul>
+    <h1 class="g-mb-30">Live555 RTSP 视频流服务端开发笔记</h1>
+    <div class="justify-content-center article-content">
+        <p>最近需要为一个 IPC 项目实现 RTSP 功能，记录一下 Live555 实现 ISP 获取 H265 帧实现 RTSP 服务端的过程。</p>
+<p>Live555 代码结构相对比较清晰：</p>
+
+
+
+<div class="goat svg-container ">
+  
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      font-family="Menlo,Lucida Console,monospace"
+      
+        viewBox="0 0 560 137"
+      >
+      <g transform='translate(8,16)'>
+<path d='M 0,0 L 136,0' fill='none' stroke='currentColor'></path>
+<path d='M 176,0 L 312,0' fill='none' stroke='currentColor'></path>
+<path d='M 352,0 L 512,0' fill='none' stroke='currentColor'></path>
+<path d='M 152,16 L 168,16' fill='none' stroke='currentColor'></path>
+<path d='M 328,16 L 344,16' fill='none' stroke='currentColor'></path>
+<path d='M 528,16 L 544,16' fill='none' stroke='currentColor'></path>
+<path d='M 0,32 L 136,32' fill='none' stroke='currentColor'></path>
+<path d='M 176,32 L 312,32' fill='none' stroke='currentColor'></path>
+<path d='M 352,32 L 512,32' fill='none' stroke='currentColor'></path>
+<path d='M 0,80 L 136,80' fill='none' stroke='currentColor'></path>
+<path d='M 176,80 L 312,80' fill='none' stroke='currentColor'></path>
+<path d='M 352,80 L 512,80' fill='none' stroke='currentColor'></path>
+<path d='M 144,96 L 160,96' fill='none' stroke='currentColor'></path>
+<path d='M 320,96 L 336,96' fill='none' stroke='currentColor'></path>
+<path d='M 520,96 L 544,96' fill='none' stroke='currentColor'></path>
+<path d='M 0,112 L 136,112' fill='none' stroke='currentColor'></path>
+<path d='M 176,112 L 312,112' fill='none' stroke='currentColor'></path>
+<path d='M 352,112 L 512,112' fill='none' stroke='currentColor'></path>
+<path d='M 0,0 L 0,32' fill='none' stroke='currentColor'></path>
+<path d='M 0,80 L 0,112' fill='none' stroke='currentColor'></path>
+<path d='M 136,0 L 136,32' fill='none' stroke='currentColor'></path>
+<path d='M 136,80 L 136,112' fill='none' stroke='currentColor'></path>
+<path d='M 176,0 L 176,32' fill='none' stroke='currentColor'></path>
+<path d='M 176,80 L 176,112' fill='none' stroke='currentColor'></path>
+<path d='M 312,0 L 312,32' fill='none' stroke='currentColor'></path>
+<path d='M 312,80 L 312,112' fill='none' stroke='currentColor'></path>
+<path d='M 352,0 L 352,32' fill='none' stroke='currentColor'></path>
+<path d='M 352,80 L 352,112' fill='none' stroke='currentColor'></path>
+<path d='M 512,0 L 512,32' fill='none' stroke='currentColor'></path>
+<path d='M 512,80 L 512,112' fill='none' stroke='currentColor'></path>
+<path d='M 544,16 L 544,96' fill='none' stroke='currentColor'></path>
+<polygon points='160.000000,16.000000 148.000000,10.400000 148.000000,21.600000' fill='currentColor' transform='rotate(180.000000, 152.000000, 16.000000)'></polygon>
+<polygon points='168.000000,96.000000 156.000000,90.400002 156.000000,101.599998' fill='currentColor' transform='rotate(0.000000, 160.000000, 96.000000)'></polygon>
+<polygon points='336.000000,16.000000 324.000000,10.400000 324.000000,21.600000' fill='currentColor' transform='rotate(180.000000, 328.000000, 16.000000)'></polygon>
+<polygon points='344.000000,96.000000 332.000000,90.400002 332.000000,101.599998' fill='currentColor' transform='rotate(0.000000, 336.000000, 96.000000)'></polygon>
+<polygon points='536.000000,16.000000 524.000000,10.400000 524.000000,21.600000' fill='currentColor' transform='rotate(180.000000, 528.000000, 16.000000)'></polygon>
+<text text-anchor='middle' x='16' y='20' fill='currentColor' style='font-size:1em'>R</text>
+<text text-anchor='middle' x='16' y='100' fill='currentColor' style='font-size:1em'>F</text>
+<text text-anchor='middle' x='24' y='20' fill='currentColor' style='font-size:1em'>t</text>
+<text text-anchor='middle' x='24' y='100' fill='currentColor' style='font-size:1em'>r</text>
+<text text-anchor='middle' x='32' y='20' fill='currentColor' style='font-size:1em'>s</text>
+<text text-anchor='middle' x='32' y='100' fill='currentColor' style='font-size:1em'>a</text>
+<text text-anchor='middle' x='40' y='20' fill='currentColor' style='font-size:1em'>p</text>
+<text text-anchor='middle' x='40' y='100' fill='currentColor' style='font-size:1em'>m</text>
+<text text-anchor='middle' x='48' y='20' fill='currentColor' style='font-size:1em'>S</text>
+<text text-anchor='middle' x='48' y='100' fill='currentColor' style='font-size:1em'>e</text>
+<text text-anchor='middle' x='56' y='20' fill='currentColor' style='font-size:1em'>e</text>
+<text text-anchor='middle' x='56' y='100' fill='currentColor' style='font-size:1em'>d</text>
+<text text-anchor='middle' x='64' y='20' fill='currentColor' style='font-size:1em'>r</text>
+<text text-anchor='middle' x='64' y='100' fill='currentColor' style='font-size:1em'>S</text>
+<text text-anchor='middle' x='72' y='20' fill='currentColor' style='font-size:1em'>v</text>
+<text text-anchor='middle' x='72' y='100' fill='currentColor' style='font-size:1em'>o</text>
+<text text-anchor='middle' x='80' y='20' fill='currentColor' style='font-size:1em'>e</text>
+<text text-anchor='middle' x='80' y='100' fill='currentColor' style='font-size:1em'>u</text>
+<text text-anchor='middle' x='88' y='20' fill='currentColor' style='font-size:1em'>r</text>
+<text text-anchor='middle' x='88' y='100' fill='currentColor' style='font-size:1em'>r</text>
+<text text-anchor='middle' x='96' y='100' fill='currentColor' style='font-size:1em'>c</text>
+<text text-anchor='middle' x='104' y='100' fill='currentColor' style='font-size:1em'>e</text>
+<text text-anchor='middle' x='200' y='20' fill='currentColor' style='font-size:1em'>M</text>
+<text text-anchor='middle' x='200' y='100' fill='currentColor' style='font-size:1em'>F</text>
+<text text-anchor='middle' x='208' y='20' fill='currentColor' style='font-size:1em'>e</text>
+<text text-anchor='middle' x='208' y='100' fill='currentColor' style='font-size:1em'>r</text>
+<text text-anchor='middle' x='216' y='20' fill='currentColor' style='font-size:1em'>d</text>
+<text text-anchor='middle' x='216' y='100' fill='currentColor' style='font-size:1em'>a</text>
+<text text-anchor='middle' x='224' y='20' fill='currentColor' style='font-size:1em'>i</text>
+<text text-anchor='middle' x='224' y='100' fill='currentColor' style='font-size:1em'>m</text>
+<text text-anchor='middle' x='232' y='20' fill='currentColor' style='font-size:1em'>a</text>
+<text text-anchor='middle' x='232' y='100' fill='currentColor' style='font-size:1em'>e</text>
+<text text-anchor='middle' x='240' y='20' fill='currentColor' style='font-size:1em'>S</text>
+<text text-anchor='middle' x='240' y='100' fill='currentColor' style='font-size:1em'>d</text>
+<text text-anchor='middle' x='248' y='20' fill='currentColor' style='font-size:1em'>e</text>
+<text text-anchor='middle' x='248' y='100' fill='currentColor' style='font-size:1em'>S</text>
+<text text-anchor='middle' x='256' y='20' fill='currentColor' style='font-size:1em'>s</text>
+<text text-anchor='middle' x='256' y='100' fill='currentColor' style='font-size:1em'>o</text>
+<text text-anchor='middle' x='264' y='20' fill='currentColor' style='font-size:1em'>s</text>
+<text text-anchor='middle' x='264' y='100' fill='currentColor' style='font-size:1em'>u</text>
+<text text-anchor='middle' x='272' y='20' fill='currentColor' style='font-size:1em'>i</text>
+<text text-anchor='middle' x='272' y='100' fill='currentColor' style='font-size:1em'>r</text>
+<text text-anchor='middle' x='280' y='20' fill='currentColor' style='font-size:1em'>o</text>
+<text text-anchor='middle' x='280' y='100' fill='currentColor' style='font-size:1em'>c</text>
+<text text-anchor='middle' x='288' y='20' fill='currentColor' style='font-size:1em'>n</text>
+<text text-anchor='middle' x='288' y='100' fill='currentColor' style='font-size:1em'>e</text>
+<text text-anchor='middle' x='376' y='20' fill='currentColor' style='font-size:1em'>M</text>
+<text text-anchor='middle' x='376' y='100' fill='currentColor' style='font-size:1em'>R</text>
+<text text-anchor='middle' x='384' y='20' fill='currentColor' style='font-size:1em'>e</text>
+<text text-anchor='middle' x='384' y='100' fill='currentColor' style='font-size:1em'>T</text>
+<text text-anchor='middle' x='392' y='20' fill='currentColor' style='font-size:1em'>d</text>
+<text text-anchor='middle' x='392' y='100' fill='currentColor' style='font-size:1em'>P</text>
+<text text-anchor='middle' x='400' y='20' fill='currentColor' style='font-size:1em'>i</text>
+<text text-anchor='middle' x='400' y='100' fill='currentColor' style='font-size:1em'>S</text>
+<text text-anchor='middle' x='408' y='20' fill='currentColor' style='font-size:1em'>a</text>
+<text text-anchor='middle' x='408' y='100' fill='currentColor' style='font-size:1em'>i</text>
+<text text-anchor='middle' x='416' y='20' fill='currentColor' style='font-size:1em'>S</text>
+<text text-anchor='middle' x='416' y='100' fill='currentColor' style='font-size:1em'>n</text>
+<text text-anchor='middle' x='424' y='20' fill='currentColor' style='font-size:1em'>u</text>
+<text text-anchor='middle' x='424' y='100' fill='currentColor' style='font-size:1em'>k</text>
+<text text-anchor='middle' x='432' y='20' fill='currentColor' style='font-size:1em'>b</text>
+<text text-anchor='middle' x='440' y='20' fill='currentColor' style='font-size:1em'>S</text>
+<text text-anchor='middle' x='448' y='20' fill='currentColor' style='font-size:1em'>e</text>
+<text text-anchor='middle' x='456' y='20' fill='currentColor' style='font-size:1em'>s</text>
+<text text-anchor='middle' x='464' y='20' fill='currentColor' style='font-size:1em'>s</text>
+<text text-anchor='middle' x='472' y='20' fill='currentColor' style='font-size:1em'>i</text>
+<text text-anchor='middle' x='480' y='20' fill='currentColor' style='font-size:1em'>o</text>
+<text text-anchor='middle' x='488' y='20' fill='currentColor' style='font-size:1em'>n</text>
+</g>
+
+    </svg>
+  
+</div>
+<p>其中 FramedSource 可以通过多层嵌套的方式实现 filter 功能。</p>
+<p>官方提供大量测试代码以及若干范例，然而大多视频源来自文件，因此需要针对 ISP 视频流的应用场景做修改。要点如下：</p>
+<ol>
+<li>
+<p>实现 FramedSource 子类，可以参考 DeviceSource 的实现，但测试中发现没有必要实现新帧到达事件触发的过程，因为 rtsp 连接后会调用 FramedSource 的 doGetNextFrame 方法，在此方法中如果调用 FramedSource::afterGetting(this) 则会继续触发 doGetNextFrame 的调用，因此只需要考虑缓冲区无数据的情况下通过 envir().taskScheduler().scheduleDelayedTask() 操作延时触发即可。</p>
+</li>
+<li>
+<p>需要注意的是，请勿阻塞的形式等待缓冲区数据到来，因为 live555 是单线程运行，阻塞会影响其他功能的正确执行。</p>
+</li>
+<li>
+<p>实现 OnDemandServerMediaSubsession 子类，实现 createNewStreamSource 与 createNewRTPSink 方法，针对 ISP 帧的形式，需要设置 reuseFirstSource 为 True</p>
+</li>
+<li>
+<p>需要注意 ISP 获取的视频帧信息是否带有 00000001 等帧头信息，根据实际情况使用 H265VideoStreamFramer 或 H265VideoStreamDiscreteFramer 等。</p>
+</li>
+</ol>
+    </div>
+
+
+</article>
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/styles/base16/darcula.min.css" integrity="sha512-GfRggx2Wc+POEPR0asMTNTyNug3rWJ9Jp4wxnHZ5VApMOUJRK4cEaRriXsx5tV1DakKHQWQ2noCbuzFiPJaYqA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/highlight.min.js" integrity="sha512-yUUc0qWm2rhM7X0EFe82LNnv2moqArj5nro/w1bi05A09hRVeIZbN6jlMoyu0+4I/Bu4Ck/85JQIU82T82M28w==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlightjs-line-numbers.js/2.8.0/highlightjs-line-numbers.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+
+                </div>
+
+            </div>
+        </div><div id="footer-default" class="g-bg-gray-dark-v1 g-color-white-opacity-0_8 text-center g-py-20">
+    <div class="container">
+        <div class="g-font-size-default g-mr-10 g-mb-10 g-mb-0--md">
+            <p>本站内容如非特别说明，均基于<a rel="license" target="_blank" href="http://creativecommons.org/licenses/by-sa/3.0/">Creative Commons Attribution-Share Alike 3.0 Unported License</a>发布。</p>
+        </div>
+    </div>
+</div></body>
+</section>
+</html>
