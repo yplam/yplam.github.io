@@ -2,7 +2,7 @@
 <html>
 <section class="g-bg-gray-light-v5"><head>
 	
-	<title>YP.Lam  | iMX6ULL 内核编译</title>
+	<title>YP.Lam  | Rust patch.crates-io 同一 package 多版本支持</title>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 	<meta http-equiv="x-ua-compatible" content="ie=edge">
@@ -57,41 +57,22 @@ if (!doNotTrack) {
             
             
             
-            <a href="https://yplam.com/tags/imx6ull/">iMX6ULL</a>
-            
-            
-            
-            
-            <a href="https://yplam.com/tags/linux/">Linux</a>
-            
-            
-            
-            
-            <a href="https://yplam.com/tags/embedded/">Embedded</a>
+            <a href="https://yplam.com/tags/rust/">Rust</a>
             
             
         </li>
         <li class="list-inline-item mx-2">/</li>
-        <li class="list-inline-item">Posted 2021-12-18</li>
+        <li class="list-inline-item">Posted 2023-06-03</li>
     </ul>
-    <h1 class="g-mb-30">iMX6ULL 内核编译</h1>
+    <h1 class="g-mb-30">Rust patch.crates-io 同一 package 多版本支持</h1>
     <div class="justify-content-center article-content">
-        <p>最近想在 iMX6ULL 上运行 OpenWRT，第一步准备将内核版本升到 4.14，按着官方说明操作一通，顺便在此记录一下</p>
-<p>源码下载：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>git clone https://source.codeaurora.org/external/imx/linux-imx
-</span></span><span style="display:flex;"><span>git remote show origin
-</span></span><span style="display:flex;"><span>git branch -a
-</span></span><span style="display:flex;"><span>git checkout -b imx_4.14.98_2.0.0_ga
-</span></span></code></pre></div><p>编译：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>cd linux-imx/
-</span></span><span style="display:flex;"><span>export ARCH<span style="color:#f92672">=</span>arm
-</span></span><span style="display:flex;"><span>export CROSS_COMPILE<span style="color:#f92672">=</span>/src/gcc-linaro-7.5/bin/arm-linux-gnueabihf-
-</span></span><span style="display:flex;"><span>cp arch/arm/configs/imx_v6_v7_defconfig ./.config
-</span></span><span style="display:flex;"><span>make menuconfig
-</span></span><span style="display:flex;"><span>make V<span style="color:#f92672">=</span><span style="color:#ae81ff">99</span> -j8
-</span></span></code></pre></div><p>如无意外会在 arch/arm/boot 下生成 zImage，拷贝到开发板覆盖原内核，启动。</p>
-<p>如果是一些还不是很稳定的分支的话可能会有各种问题，一般看报错信息、修改相关代码，以及 Google 都能解决。实在不行，换一个分支再跑一遍。</p>
-<p>PS：如果你的开发板供应商有提供内核源码，而你又不清楚自己编译的源码能不能兼容的话；可以通过一个简单方式验证，就是从 imx 官方 git 下载最接近的分支版本下来，然后 diff -r 比对一下；大多数情况下 99% 以上的代码是一致的，区别只是官方开发板的 dts，以及部分外设驱动的修改。</p>
+        <p>最近在一个 mips 架构的嵌入式 Linux 上用到 ring 与 rustls，由于 ring 0.16.20 对 mips 的支持较差，而 0.17 又迟迟不发布，只能魔改一堆包。</p>
+<p>其中重点是 rustls，并且不同上层包对 rustls 版本依赖还不一样，幸好 cargo patch.crates-io 机制可以比较容易兼容项目中同时 patch 多个版本。</p>
+<p>修改 Cargo.toml</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-toml" data-lang="toml"><span style="display:flex;"><span>[<span style="color:#a6e22e">patch</span>.<span style="color:#a6e22e">crates-io</span>]
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">rustls</span> = { <span style="color:#a6e22e">version</span> = <span style="color:#e6db74">&#34;0.19&#34;</span>, <span style="color:#a6e22e">path</span> = <span style="color:#e6db74">&#34;./third_party/rustls-0.19.1&#34;</span> }
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">rustls1</span> = { <span style="color:#a6e22e">version</span> = <span style="color:#e6db74">&#34;0.21&#34;</span>, <span style="color:#a6e22e">package</span> = <span style="color:#e6db74">&#34;rustls&#34;</span>, <span style="color:#a6e22e">path</span> = <span style="color:#e6db74">&#34;./third_party/rustls-0.21.1&#34;</span> }
+</span></span></code></pre></div>
     </div>
 
 

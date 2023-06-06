@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Rust on YP.Lam</title>
+    <link>https://yplam.com/tags/rust/</link>
+    <description>Recent content in Rust on YP.Lam</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    <lastBuildDate>Sat, 03 Jun 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://yplam.com/tags/rust/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Rust patch.crates-io 同一 package 多版本支持</title>
+      <link>https://yplam.com/post/rust/patch-crates-io-multipile-version/</link>
+      <pubDate>Sat, 03 Jun 2023 00:00:00 +0000</pubDate>
+      
+      <guid>https://yplam.com/post/rust/patch-crates-io-multipile-version/</guid>
+      <description>&lt;p&gt;最近在一个 mips 架构的嵌入式 Linux 上用到 ring 与 rustls，由于 ring 0.16.20 对 mips 的支持较差，而 0.17 又迟迟不发布，只能魔改一堆包。&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

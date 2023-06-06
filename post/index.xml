@@ -6,7 +6,16 @@
     <description>Recent content in Posts on YP.Lam</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Sat, 13 May 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://yplam.com/post/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 03 Jun 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://yplam.com/post/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Rust patch.crates-io 同一 package 多版本支持</title>
+      <link>https://yplam.com/post/rust/patch-crates-io-multipile-version/</link>
+      <pubDate>Sat, 03 Jun 2023 00:00:00 +0000</pubDate>
+      
+      <guid>https://yplam.com/post/rust/patch-crates-io-multipile-version/</guid>
+      <description>&lt;p&gt;最近在一个 mips 架构的嵌入式 Linux 上用到 ring 与 rustls，由于 ring 0.16.20 对 mips 的支持较差，而 0.17 又迟迟不发布，只能魔改一堆包。&lt;/p&gt;</description>
+    </item>
+    
     <item>
       <title>Live555 RTSP 视频流服务端开发笔记</title>
       <link>https://yplam.com/post/embedded/live555-rtsp-stream/</link>
