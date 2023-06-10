@@ -2,8 +2,23 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
+    <loc>https://yplam.com/tags/av/</loc>
+    <lastmod>2023-06-10T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://yplam.com/tags/ffmpeg/</loc>
+    <lastmod>2023-06-10T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://yplam.com/post/av/ffmpeg-hls-fmp4/</loc>
+    <lastmod>2023-06-10T00:00:00+00:00</lastmod>
+  </url><url>
     <loc>https://yplam.com/post/</loc>
-    <lastmod>2023-06-03T00:00:00+00:00</lastmod>
+    <lastmod>2023-06-10T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://yplam.com/tags/</loc>
+    <lastmod>2023-06-10T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://yplam.com/</loc>
+    <lastmod>2023-06-10T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://yplam.com/tags/rust/</loc>
     <lastmod>2023-06-03T00:00:00+00:00</lastmod>
@@ -11,13 +26,7 @@
     <loc>https://yplam.com/post/rust/patch-crates-io-multipile-version/</loc>
     <lastmod>2023-06-03T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://yplam.com/tags/</loc>
-    <lastmod>2023-06-03T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://yplam.com/</loc>
-    <lastmod>2023-06-03T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://yplam.com/post/embedded/live555-rtsp-stream/</loc>
+    <loc>https://yplam.com/post/av/live555-rtsp-stream/</loc>
     <lastmod>2023-05-13T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://yplam.com/tags/rtsp/</loc>

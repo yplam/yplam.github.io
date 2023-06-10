@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html>
+<section class="g-bg-gray-light-v5"><head>
+	
+	<title>YP.Lam  | FFmpeg HLS Fragmented Mp4 封装过程分析</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<meta http-equiv="x-ua-compatible" content="ie=edge">
+
+	<link rel="stylesheet" href="//stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css">
+	
+	<link rel="stylesheet" href="https://yplam.com/scss/unify.min.css">
+
+	
+	
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-83586141-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+	
+</head>
+
+<body>    <div class="container">
+        <div class="d-sm-flex text-center">
+            <div class="align-self-center ml-auto">
+                <ul class="u-list-inline float-right g-py-20">
+                    <li class="list-inline-item g-mr-5">
+                        <a class="u-link-v5 g-color-gray-dark-v5 g-color-primary--hover" href="/">HOME</a>
+                        <i class="g-color-gray-light-v2 g-ml-5">/</i>
+                    </li>
+                    <li class="list-inline-item g-mr-5">
+                        <a class="u-link-v5 g-color-gray-dark-v5 g-color-primary--hover" href="/about/">ABOUT</a>
+                        <i class="g-color-gray-light-v2 g-ml-5">/</i>
+                    </li>
+                    <li class="list-inline-item">
+                        <a class="u-link-v5 g-color-gray-dark-v5 g-color-primary--hover" href="https://github.com/yplam">GITHUB</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+<div class="container" aria-label="Content">
+            <div class="g-bg-white">
+                <div class="g-px-35 g-py-30 g-mb-30">
+<article>
+    <ul class="list-inline g-color-gray-dark-v4">
+        <li class="list-inline-item mr-0">
+            In
+             
+            
+            
+            
+            <a href="https://yplam.com/tags/ffmpeg/">FFmpeg</a>
+            
+            
+            
+            
+            <a href="https://yplam.com/tags/av/">AV</a>
+            
+            
+        </li>
+        <li class="list-inline-item mx-2">/</li>
+        <li class="list-inline-item">Posted 2023-06-10</li>
+    </ul>
+    <h1 class="g-mb-30">FFmpeg HLS Fragmented Mp4 封装过程分析</h1>
+    <div class="justify-content-center article-content">
+        <p>本笔记记录 FFmpeg HLS Fragmented Mp4  封装过程，主要关注点为 Fragmented Mp4 容器格式。</p>
+<p>测试对应的 ffmpeg 命令为:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>./ffmpeg -i 2023-06-07-07-40-44.mp4 -c:v copy -c:a copy -hls_segment_type fmp4 -hls_list_size <span style="color:#ae81ff">10</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  -hls_flags delete_segments+append_list -hls_playlist_type event -bsf:a aac_adtstoasc -brand isom <span style="color:#ae81ff">\ </span>
+</span></span><span style="display:flex;"><span>  -loglevel debug -v verbose /tmp/index.m3u8
+</span></span></code></pre></div><p>功能上不涉及编解码，只是将 mp4 文件重新封装为 hls m3u8，其中分片格式使用 fmp4，主要涉及代码为 libavformat 的 hlsenc.c，基础数据结构如下：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C" data-lang="C"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> FFOutputFormat ff_hls_muxer <span style="color:#f92672">=</span> {
+</span></span><span style="display:flex;"><span>    .p.name           <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;hls&#34;</span>,
+</span></span><span style="display:flex;"><span>    .p.long_name      <span style="color:#f92672">=</span> <span style="color:#a6e22e">NULL_IF_CONFIG_SMALL</span>(<span style="color:#e6db74">&#34;Apple HTTP Live Streaming&#34;</span>),
+</span></span><span style="display:flex;"><span>    .p.extensions     <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;m3u8&#34;</span>,
+</span></span><span style="display:flex;"><span>    .p.audio_codec    <span style="color:#f92672">=</span> AV_CODEC_ID_AAC,
+</span></span><span style="display:flex;"><span>    .p.video_codec    <span style="color:#f92672">=</span> AV_CODEC_ID_H264,
+</span></span><span style="display:flex;"><span>    .p.subtitle_codec <span style="color:#f92672">=</span> AV_CODEC_ID_WEBVTT,
+</span></span><span style="display:flex;"><span>    .p.flags          <span style="color:#f92672">=</span> AVFMT_NOFILE <span style="color:#f92672">|</span> AVFMT_GLOBALHEADER <span style="color:#f92672">|</span> AVFMT_ALLOW_FLUSH <span style="color:#f92672">|</span> AVFMT_NODIMENSIONS,
+</span></span><span style="display:flex;"><span>    .p.priv_class     <span style="color:#f92672">=</span> <span style="color:#f92672">&amp;</span>hls_class,
+</span></span><span style="display:flex;"><span>    .priv_data_size <span style="color:#f92672">=</span> <span style="color:#66d9ef">sizeof</span>(HLSContext),
+</span></span><span style="display:flex;"><span>    .init           <span style="color:#f92672">=</span> hls_init,
+</span></span><span style="display:flex;"><span>    .write_header   <span style="color:#f92672">=</span> hls_write_header,
+</span></span><span style="display:flex;"><span>    .write_packet   <span style="color:#f92672">=</span> hls_write_packet,
+</span></span><span style="display:flex;"><span>    .write_trailer  <span style="color:#f92672">=</span> hls_write_trailer,
+</span></span><span style="display:flex;"><span>    .deinit         <span style="color:#f92672">=</span> hls_deinit,
+</span></span><span style="display:flex;"><span>};
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">typedef</span> <span style="color:#66d9ef">struct</span> HLSContext {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">const</span> AVClass <span style="color:#f92672">*</span>class;  <span style="color:#75715e">// Class for private options.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">int64_t</span> start_sequence;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">uint32_t</span> start_sequence_source_type;  <span style="color:#75715e">// enum StartSequenceSourceType
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">int64_t</span> time;          <span style="color:#75715e">// Set by a private option.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">int64_t</span> init_time;     <span style="color:#75715e">// Set by a private option.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">int</span> max_nb_segments;   <span style="color:#75715e">// Set by a private option.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">int</span> hls_delete_threshold; <span style="color:#75715e">// Set by a private option.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">uint32_t</span> flags;        <span style="color:#75715e">// enum HLSFlags
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">uint32_t</span> pl_type;      <span style="color:#75715e">// enum PlaylistType
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">char</span> <span style="color:#f92672">*</span>segment_filename;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">char</span> <span style="color:#f92672">*</span>fmp4_init_filename;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">int</span> segment_type;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">int</span> resend_init_file;  <span style="color:#75715e">///&lt; resend init file into disk after refresh m3u8
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">int</span> use_localtime;      <span style="color:#75715e">///&lt; flag to expand filename with localtime
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">int</span> use_localtime_mkdir;<span style="color:#75715e">///&lt; flag to mkdir dirname in timebased filename
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">int</span> allowcache;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">int64_t</span> recording_time;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">int64_t</span> max_seg_size; <span style="color:#75715e">// every segment file max size
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">char</span> <span style="color:#f92672">*</span>baseurl;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">char</span> <span style="color:#f92672">*</span>vtt_format_options_str;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">char</span> <span style="color:#f92672">*</span>subtitle_filename;
+</span></span><span style="display:flex;"><span>    AVDictionary <span style="color:#f92672">*</span>format_options;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">int</span> encrypt;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">char</span> <span style="color:#f92672">*</span>key;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">char</span> <span style="color:#f92672">*</span>key_url;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">char</span> <span style="color:#f92672">*</span>iv;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">char</span> <span style="color:#f92672">*</span>key_basename;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">int</span> encrypt_started;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">char</span> <span style="color:#f92672">*</span>key_info_file;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">char</span> key_file[LINE_BUFFER_SIZE <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>];
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">char</span> key_uri[LINE_BUFFER_SIZE <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>];
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">char</span> key_string[KEYSIZE<span style="color:#f92672">*</span><span style="color:#ae81ff">2</span> <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>];
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">char</span> iv_string[KEYSIZE<span style="color:#f92672">*</span><span style="color:#ae81ff">2</span> <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>];
+</span></span><span style="display:flex;"><span>    AVDictionary <span style="color:#f92672">*</span>vtt_format_options;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">char</span> <span style="color:#f92672">*</span>method;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">char</span> <span style="color:#f92672">*</span>user_agent;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    VariantStream <span style="color:#f92672">*</span>var_streams;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">unsigned</span> <span style="color:#66d9ef">int</span> nb_varstreams;
+</span></span><span style="display:flex;"><span>    ClosedCaptionsStream <span style="color:#f92672">*</span>cc_streams;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">unsigned</span> <span style="color:#66d9ef">int</span> nb_ccstreams;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">int</span> master_m3u8_created; <span style="color:#75715e">/* status of master play-list creation */</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">char</span> <span style="color:#f92672">*</span>master_m3u8_url; <span style="color:#75715e">/* URL of the master m3u8 file */</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">int</span> version; <span style="color:#75715e">/* HLS version */</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">char</span> <span style="color:#f92672">*</span>var_stream_map; <span style="color:#75715e">/* user specified variant stream map string */</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">char</span> <span style="color:#f92672">*</span>cc_stream_map; <span style="color:#75715e">/* user specified closed caption streams map string */</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">char</span> <span style="color:#f92672">*</span>master_pl_name;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">unsigned</span> <span style="color:#66d9ef">int</span> master_publish_rate;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">int</span> http_persistent;
+</span></span><span style="display:flex;"><span>    AVIOContext <span style="color:#f92672">*</span>m3u8_out;
+</span></span><span style="display:flex;"><span>    AVIOContext <span style="color:#f92672">*</span>sub_m3u8_out;
+</span></span><span style="display:flex;"><span>    AVIOContext <span style="color:#f92672">*</span>http_delete;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">int64_t</span> timeout;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">int</span> ignore_io_errors;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">char</span> <span style="color:#f92672">*</span>headers;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">int</span> has_default_key; <span style="color:#75715e">/* has DEFAULT field of var_stream_map */</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">int</span> has_video_m3u8; <span style="color:#75715e">/* has video stream m3u8 list */</span>
+</span></span><span style="display:flex;"><span>} HLSContext;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#define OFFSET(x) offsetof(HLSContext, x)
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#define E AV_OPT_FLAG_ENCODING_PARAM
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">static</span> <span style="color:#66d9ef">const</span> AVOption options[] <span style="color:#f92672">=</span> {
+</span></span><span style="display:flex;"><span>    {<span style="color:#e6db74">&#34;start_number&#34;</span>,  <span style="color:#e6db74">&#34;set first number in the sequence&#34;</span>,        <span style="color:#a6e22e">OFFSET</span>(start_sequence),AV_OPT_TYPE_INT64,  {.i64 <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>},     <span style="color:#ae81ff">0</span>, INT64_MAX, E},
+</span></span><span style="display:flex;"><span>    {<span style="color:#e6db74">&#34;hls_time&#34;</span>,      <span style="color:#e6db74">&#34;set segment length&#34;</span>,                      <span style="color:#a6e22e">OFFSET</span>(time),          AV_OPT_TYPE_DURATION, {.i64 <span style="color:#f92672">=</span> <span style="color:#ae81ff">2000000</span>}, <span style="color:#ae81ff">0</span>, INT64_MAX, E},
+</span></span><span style="display:flex;"><span>    {<span style="color:#e6db74">&#34;hls_init_time&#34;</span>, <span style="color:#e6db74">&#34;set segment length at init list&#34;</span>,         <span style="color:#a6e22e">OFFSET</span>(init_time),     AV_OPT_TYPE_DURATION, {.i64 <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>},       <span style="color:#ae81ff">0</span>, INT64_MAX, E},
+</span></span><span style="display:flex;"><span>    {<span style="color:#e6db74">&#34;hls_list_size&#34;</span>, <span style="color:#e6db74">&#34;set maximum number of playlist entries&#34;</span>,  <span style="color:#a6e22e">OFFSET</span>(max_nb_segments),    AV_OPT_TYPE_INT,    {.i64 <span style="color:#f92672">=</span> <span style="color:#ae81ff">5</span>},     <span style="color:#ae81ff">0</span>, INT_MAX, E},
+</span></span><span style="display:flex;"><span>    {<span style="color:#e6db74">&#34;hls_delete_threshold&#34;</span>, <span style="color:#e6db74">&#34;set number of unreferenced segments to keep before deleting&#34;</span>,  <span style="color:#a6e22e">OFFSET</span>(hls_delete_threshold),    AV_OPT_TYPE_INT,    {.i64 <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>},     <span style="color:#ae81ff">1</span>, INT_MAX, E},
+</span></span><span style="display:flex;"><span>    {<span style="color:#e6db74">&#34;hls_vtt_options&#34;</span>,<span style="color:#e6db74">&#34;set hls vtt list of options for the container format used for hls&#34;</span>, <span style="color:#a6e22e">OFFSET</span>(vtt_format_options_str), AV_OPT_TYPE_STRING, {.str <span style="color:#f92672">=</span> NULL},  <span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">0</span>,    E},
+</span></span><span style="display:flex;"><span>    {<span style="color:#e6db74">&#34;hls_allow_cache&#34;</span>, <span style="color:#e6db74">&#34;explicitly set whether the client MAY (1) or MUST NOT (0) cache media segments&#34;</span>, <span style="color:#a6e22e">OFFSET</span>(allowcache), AV_OPT_TYPE_INT, {.i64 <span style="color:#f92672">=</span> <span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>}, INT_MIN, INT_MAX, E},
+</span></span><span style="display:flex;"><span>    {<span style="color:#e6db74">&#34;hls_base_url&#34;</span>,  <span style="color:#e6db74">&#34;url to prepend to each playlist entry&#34;</span>,   <span style="color:#a6e22e">OFFSET</span>(baseurl), AV_OPT_TYPE_STRING, {.str <span style="color:#f92672">=</span> NULL},  <span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">0</span>,       E},
+</span></span><span style="display:flex;"><span>    {<span style="color:#e6db74">&#34;hls_segment_filename&#34;</span>, <span style="color:#e6db74">&#34;filename template for segment files&#34;</span>, <span style="color:#a6e22e">OFFSET</span>(segment_filename),   AV_OPT_TYPE_STRING, {.str <span style="color:#f92672">=</span> NULL},            <span style="color:#ae81ff">0</span>,       <span style="color:#ae81ff">0</span>,         E},
+</span></span><span style="display:flex;"><span>    {<span style="color:#e6db74">&#34;hls_segment_options&#34;</span>,<span style="color:#e6db74">&#34;set segments files format options of hls&#34;</span>, <span style="color:#a6e22e">OFFSET</span>(format_options), AV_OPT_TYPE_DICT, {.str <span style="color:#f92672">=</span> NULL},  <span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">0</span>,    E},
+</span></span><span style="display:flex;"><span>    {<span style="color:#e6db74">&#34;hls_segment_size&#34;</span>, <span style="color:#e6db74">&#34;maximum size per segment file, (in bytes)&#34;</span>,  <span style="color:#a6e22e">OFFSET</span>(max_seg_size),    AV_OPT_TYPE_INT,    {.i64 <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>},               <span style="color:#ae81ff">0</span>,       INT_MAX,   E},
+</span></span><span style="display:flex;"><span>    {<span style="color:#e6db74">&#34;hls_key_info_file&#34;</span>,    <span style="color:#e6db74">&#34;file with key URI and key file path&#34;</span>, <span style="color:#a6e22e">OFFSET</span>(key_info_file),      AV_OPT_TYPE_STRING, {.str <span style="color:#f92672">=</span> NULL},            <span style="color:#ae81ff">0</span>,       <span style="color:#ae81ff">0</span>,         E},
+</span></span><span style="display:flex;"><span>    {<span style="color:#e6db74">&#34;hls_enc&#34;</span>,    <span style="color:#e6db74">&#34;enable AES128 encryption support&#34;</span>, <span style="color:#a6e22e">OFFSET</span>(encrypt),      AV_OPT_TYPE_BOOL, {.i64 <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>},            <span style="color:#ae81ff">0</span>,       <span style="color:#ae81ff">1</span>,         E},
+</span></span><span style="display:flex;"><span>    {<span style="color:#e6db74">&#34;hls_enc_key&#34;</span>,    <span style="color:#e6db74">&#34;hex-coded 16 byte key to encrypt the segments&#34;</span>, <span style="color:#a6e22e">OFFSET</span>(key),      AV_OPT_TYPE_STRING, .flags <span style="color:#f92672">=</span> E},
+</span></span><span style="display:flex;"><span>    {<span style="color:#e6db74">&#34;hls_enc_key_url&#34;</span>,    <span style="color:#e6db74">&#34;url to access the key to decrypt the segments&#34;</span>, <span style="color:#a6e22e">OFFSET</span>(key_url),      AV_OPT_TYPE_STRING, {.str <span style="color:#f92672">=</span> NULL},            <span style="color:#ae81ff">0</span>,       <span style="color:#ae81ff">0</span>,         E},
+</span></span><span style="display:flex;"><span>    {<span style="color:#e6db74">&#34;hls_enc_iv&#34;</span>,    <span style="color:#e6db74">&#34;hex-coded 16 byte initialization vector&#34;</span>, <span style="color:#a6e22e">OFFSET</span>(iv),      AV_OPT_TYPE_STRING, .flags <span style="color:#f92672">=</span> E},
+</span></span><span style="display:flex;"><span>    {<span style="color:#e6db74">&#34;hls_subtitle_path&#34;</span>,     <span style="color:#e6db74">&#34;set path of hls subtitles&#34;</span>, <span style="color:#a6e22e">OFFSET</span>(subtitle_filename), AV_OPT_TYPE_STRING, {.str <span style="color:#f92672">=</span> NULL},  <span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">0</span>,    E},
+</span></span><span style="display:flex;"><span>    {<span style="color:#e6db74">&#34;hls_segment_type&#34;</span>,     <span style="color:#e6db74">&#34;set hls segment files type&#34;</span>, <span style="color:#a6e22e">OFFSET</span>(segment_type), AV_OPT_TYPE_INT, {.i64 <span style="color:#f92672">=</span> SEGMENT_TYPE_MPEGTS }, <span style="color:#ae81ff">0</span>, SEGMENT_TYPE_FMP4, E, <span style="color:#e6db74">&#34;segment_type&#34;</span>},
+</span></span><span style="display:flex;"><span>    {<span style="color:#e6db74">&#34;mpegts&#34;</span>,   <span style="color:#e6db74">&#34;make segment file to mpegts files in m3u8&#34;</span>, <span style="color:#ae81ff">0</span>, AV_OPT_TYPE_CONST, {.i64 <span style="color:#f92672">=</span> SEGMENT_TYPE_MPEGTS }, <span style="color:#ae81ff">0</span>, UINT_MAX,   E, <span style="color:#e6db74">&#34;segment_type&#34;</span>},
+</span></span><span style="display:flex;"><span>    {<span style="color:#e6db74">&#34;fmp4&#34;</span>,   <span style="color:#e6db74">&#34;make segment file to fragment mp4 files in m3u8&#34;</span>, <span style="color:#ae81ff">0</span>, AV_OPT_TYPE_CONST, {.i64 <span style="color:#f92672">=</span> SEGMENT_TYPE_FMP4 }, <span style="color:#ae81ff">0</span>, UINT_MAX,   E, <span style="color:#e6db74">&#34;segment_type&#34;</span>},
+</span></span><span style="display:flex;"><span>    {<span style="color:#e6db74">&#34;hls_fmp4_init_filename&#34;</span>, <span style="color:#e6db74">&#34;set fragment mp4 file init filename&#34;</span>, <span style="color:#a6e22e">OFFSET</span>(fmp4_init_filename),   AV_OPT_TYPE_STRING, {.str <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;init.mp4&#34;</span>},            <span style="color:#ae81ff">0</span>,       <span style="color:#ae81ff">0</span>,         E},
+</span></span><span style="display:flex;"><span>    {<span style="color:#e6db74">&#34;hls_RtspServerfmp4_init_resend&#34;</span>, <span style="color:#e6db74">&#34;resend fragment mp4 init file after refresh m3u8 every time&#34;</span>, <span style="color:#a6e22e">OFFSET</span>(resend_init_file), AV_OPT_TYPE_BOOL, {.i64 <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span> }, <span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">1</span>, E },
+</span></span><span style="display:flex;"><span>    {<span style="color:#e6db74">&#34;hls_flags&#34;</span>,     <span style="color:#e6db74">&#34;set flags affecting HLS playlist and media file generation&#34;</span>, <span style="color:#a6e22e">OFFSET</span>(flags), AV_OPT_TYPE_FLAGS, {.i64 <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span> }, <span style="color:#ae81ff">0</span>, UINT_MAX, E, <span style="color:#e6db74">&#34;flags&#34;</span>},
+</span></span><span style="display:flex;"><span>    {<span style="color:#e6db74">&#34;single_file&#34;</span>,   <span style="color:#e6db74">&#34;generate a single media file indexed with byte ranges&#34;</span>, <span style="color:#ae81ff">0</span>, AV_OPT_TYPE_CONST, {.i64 <span style="color:#f92672">=</span> HLS_SINGLE_FILE }, <span style="color:#ae81ff">0</span>, UINT_MAX,   E, <span style="color:#e6db74">&#34;flags&#34;</span>},
+</span></span><span style="display:flex;"><span>    {<span style="color:#e6db74">&#34;temp_file&#34;</span>, <span style="color:#e6db74">&#34;write segment and playlist to temporary file and rename when complete&#34;</span>, <span style="color:#ae81ff">0</span>, AV_OPT_TYPE_CONST, {.i64 <span style="color:#f92672">=</span> HLS_TEMP_FILE }, <span style="color:#ae81ff">0</span>, UINT_MAX,   E, <span style="color:#e6db74">&#34;flags&#34;</span>},
+</span></span><span style="display:flex;"><span>    {<span style="color:#e6db74">&#34;delete_segments&#34;</span>, <span style="color:#e6db74">&#34;delete segment files that are no longer part of the playlist&#34;</span>, <span style="color:#ae81ff">0</span>, AV_OPT_TYPE_CONST, {.i64 <span style="color:#f92672">=</span> HLS_DELETE_SEGMENTS }, <span style="color:#ae81ff">0</span>, UINT_MAX,   E, <span style="color:#e6db74">&#34;flags&#34;</span>},
+</span></span><span style="display:flex;"><span>    {<span style="color:#e6db74">&#34;round_durations&#34;</span>, <span style="color:#e6db74">&#34;round durations in m3u8 to whole numbers&#34;</span>, <span style="color:#ae81ff">0</span>, AV_OPT_TYPE_CONST, {.i64 <span style="color:#f92672">=</span> HLS_ROUND_DURATIONS }, <span style="color:#ae81ff">0</span>, UINT_MAX,   E, <span style="color:#e6db74">&#34;flags&#34;</span>},
+</span></span><span style="display:flex;"><span>    {<span style="color:#e6db74">&#34;discont_start&#34;</span>, <span style="color:#e6db74">&#34;start the playlist with a discontinuity tag&#34;</span>, <span style="color:#ae81ff">0</span>, AV_OPT_TYPE_CONST, {.i64 <span style="color:#f92672">=</span> HLS_DISCONT_START }, <span style="color:#ae81ff">0</span>, UINT_MAX,   E, <span style="color:#e6db74">&#34;flags&#34;</span>},
+</span></span><span style="display:flex;"><span>    {<span style="color:#e6db74">&#34;omit_endlist&#34;</span>, <span style="color:#e6db74">&#34;Do not append an endlist when ending stream&#34;</span>, <span style="color:#ae81ff">0</span>, AV_OPT_TYPE_CONST, {.i64 <span style="color:#f92672">=</span> HLS_OMIT_ENDLIST }, <span style="color:#ae81ff">0</span>, UINT_MAX,   E, <span style="color:#e6db74">&#34;flags&#34;</span>},
+</span></span><span style="display:flex;"><span>    {<span style="color:#e6db74">&#34;split_by_time&#34;</span>, <span style="color:#e6db74">&#34;split the hls segment by time which user set by hls_time&#34;</span>, <span style="color:#ae81ff">0</span>, AV_OPT_TYPE_CONST, {.i64 <span style="color:#f92672">=</span> HLS_SPLIT_BY_TIME }, <span style="color:#ae81ff">0</span>, UINT_MAX,   E, <span style="color:#e6db74">&#34;flags&#34;</span>},
+</span></span><span style="display:flex;"><span>    {<span style="color:#e6db74">&#34;append_list&#34;</span>, <span style="color:#e6db74">&#34;append the new segments into old hls segment list&#34;</span>, <span style="color:#ae81ff">0</span>, AV_OPT_TYPE_CONST, {.i64 <span style="color:#f92672">=</span> HLS_APPEND_LIST }, <span style="color:#ae81ff">0</span>, UINT_MAX,   E, <span style="color:#e6db74">&#34;flags&#34;</span>},
+</span></span><span style="display:flex;"><span>    {<span style="color:#e6db74">&#34;program_date_time&#34;</span>, <span style="color:#e6db74">&#34;add EXT-X-PROGRAM-DATE-TIME&#34;</span>, <span style="color:#ae81ff">0</span>, AV_OPT_TYPE_CONST, {.i64 <span style="color:#f92672">=</span> HLS_PROGRAM_DATE_TIME }, <span style="color:#ae81ff">0</span>, UINT_MAX,   E, <span style="color:#e6db74">&#34;flags&#34;</span>},
+</span></span><span style="display:flex;"><span>    {<span style="color:#e6db74">&#34;second_level_segment_index&#34;</span>, <span style="color:#e6db74">&#34;include segment index in segment filenames when use_localtime&#34;</span>, <span style="color:#ae81ff">0</span>, AV_OPT_TYPE_CONST, {.i64 <span style="color:#f92672">=</span> HLS_SECOND_LEVEL_SEGMENT_INDEX }, <span style="color:#ae81ff">0</span>, UINT_MAX,   E, <span style="color:#e6db74">&#34;flags&#34;</span>},
+</span></span><span style="display:flex;"><span>    {<span style="color:#e6db74">&#34;second_level_segment_duration&#34;</span>, <span style="color:#e6db74">&#34;include segment duration in segment filenames when use_localtime&#34;</span>, <span style="color:#ae81ff">0</span>, AV_OPT_TYPE_CONST, {.i64 <span style="color:#f92672">=</span> HLS_SECOND_LEVEL_SEGMENT_DURATION }, <span style="color:#ae81ff">0</span>, UINT_MAX,   E, <span style="color:#e6db74">&#34;flags&#34;</span>},
+</span></span><span style="display:flex;"><span>    {<span style="color:#e6db74">&#34;second_level_segment_size&#34;</span>, <span style="color:#e6db74">&#34;include segment size in segment filenames when use_localtime&#34;</span>, <span style="color:#ae81ff">0</span>, AV_OPT_TYPE_CONST, {.i64 <span style="color:#f92672">=</span> HLS_SECOND_LEVEL_SEGMENT_SIZE }, <span style="color:#ae81ff">0</span>, UINT_MAX,   E, <span style="color:#e6db74">&#34;flags&#34;</span>},
+</span></span><span style="display:flex;"><span>    {<span style="color:#e6db74">&#34;periodic_rekey&#34;</span>, <span style="color:#e6db74">&#34;reload keyinfo file periodically for re-keying&#34;</span>, <span style="color:#ae81ff">0</span>, AV_OPT_TYPE_CONST, {.i64 <span style="color:#f92672">=</span> HLS_PERIODIC_REKEY }, <span style="color:#ae81ff">0</span>, UINT_MAX,   E, <span style="color:#e6db74">&#34;flags&#34;</span>},
+</span></span><span style="display:flex;"><span>    {<span style="color:#e6db74">&#34;independent_segments&#34;</span>, <span style="color:#e6db74">&#34;add EXT-X-INDEPENDENT-SEGMENTS, whenever applicable&#34;</span>, <span style="color:#ae81ff">0</span>, AV_OPT_TYPE_CONST, { .i64 <span style="color:#f92672">=</span> HLS_INDEPENDENT_SEGMENTS }, <span style="color:#ae81ff">0</span>, UINT_MAX, E, <span style="color:#e6db74">&#34;flags&#34;</span>},
+</span></span><span style="display:flex;"><span>    {<span style="color:#e6db74">&#34;iframes_only&#34;</span>, <span style="color:#e6db74">&#34;add EXT-X-I-FRAMES-ONLY, whenever applicable&#34;</span>, <span style="color:#ae81ff">0</span>, AV_OPT_TYPE_CONST, { .i64 <span style="color:#f92672">=</span> HLS_I_FRAMES_ONLY }, <span style="color:#ae81ff">0</span>, UINT_MAX, E, <span style="color:#e6db74">&#34;flags&#34;</span>},
+</span></span><span style="display:flex;"><span>    {<span style="color:#e6db74">&#34;strftime&#34;</span>, <span style="color:#e6db74">&#34;set filename expansion with strftime at segment creation&#34;</span>, <span style="color:#a6e22e">OFFSET</span>(use_localtime), AV_OPT_TYPE_BOOL, {.i64 <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span> }, <span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">1</span>, E },
+</span></span><span style="display:flex;"><span>    {<span style="color:#e6db74">&#34;strftime_mkdir&#34;</span>, <span style="color:#e6db74">&#34;create last directory component in strftime-generated filename&#34;</span>, <span style="color:#a6e22e">OFFSET</span>(use_localtime_mkdir), AV_OPT_TYPE_BOOL, {.i64 <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span> }, <span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">1</span>, E },
+</span></span><span style="display:flex;"><span>    {<span style="color:#e6db74">&#34;hls_playlist_type&#34;</span>, <span style="color:#e6db74">&#34;set the HLS playlist type&#34;</span>, <span style="color:#a6e22e">OFFSET</span>(pl_type), AV_OPT_TYPE_INT, {.i64 <span style="color:#f92672">=</span> PLAYLIST_TYPE_NONE }, <span style="color:#ae81ff">0</span>, PLAYLIST_TYPE_NB<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>, E, <span style="color:#e6db74">&#34;pl_type&#34;</span> },
+</span></span><span style="display:flex;"><span>    {<span style="color:#e6db74">&#34;event&#34;</span>, <span style="color:#e6db74">&#34;EVENT playlist&#34;</span>, <span style="color:#ae81ff">0</span>, AV_OPT_TYPE_CONST, {.i64 <span style="color:#f92672">=</span> PLAYLIST_TYPE_EVENT }, INT_MIN, INT_MAX, E, <span style="color:#e6db74">&#34;pl_type&#34;</span> },
+</span></span><span style="display:flex;"><span>    {<span style="color:#e6db74">&#34;vod&#34;</span>, <span style="color:#e6db74">&#34;VOD playlist&#34;</span>, <span style="color:#ae81ff">0</span>, AV_OPT_TYPE_CONST, {.i64 <span style="color:#f92672">=</span> PLAYLIST_TYPE_VOD }, INT_MIN, INT_MAX, E, <span style="color:#e6db74">&#34;pl_type&#34;</span> },
+</span></span><span style="display:flex;"><span>    {<span style="color:#e6db74">&#34;method&#34;</span>, <span style="color:#e6db74">&#34;set the HTTP method(default: PUT)&#34;</span>, <span style="color:#a6e22e">OFFSET</span>(method), AV_OPT_TYPE_STRING, {.str <span style="color:#f92672">=</span> NULL},  <span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">0</span>,    E},
+</span></span><span style="display:flex;"><span>    {<span style="color:#e6db74">&#34;hls_start_number_source&#34;</span>, <span style="color:#e6db74">&#34;set source of first number in sequence&#34;</span>, <span style="color:#a6e22e">OFFSET</span>(start_sequence_source_type), AV_OPT_TYPE_INT, {.i64 <span style="color:#f92672">=</span> HLS_START_SEQUENCE_AS_START_NUMBER }, <span style="color:#ae81ff">0</span>, HLS_START_SEQUENCE_LAST<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>, E, <span style="color:#e6db74">&#34;start_sequence_source_type&#34;</span> },
+</span></span><span style="display:flex;"><span>    {<span style="color:#e6db74">&#34;generic&#34;</span>, <span style="color:#e6db74">&#34;start_number value (default)&#34;</span>, <span style="color:#ae81ff">0</span>, AV_OPT_TYPE_CONST, {.i64 <span style="color:#f92672">=</span> HLS_START_SEQUENCE_AS_START_NUMBER }, INT_MIN, INT_MAX, E, <span style="color:#e6db74">&#34;start_sequence_source_type&#34;</span> },
+</span></span><span style="display:flex;"><span>    {<span style="color:#e6db74">&#34;epoch&#34;</span>, <span style="color:#e6db74">&#34;seconds since epoch&#34;</span>, <span style="color:#ae81ff">0</span>, AV_OPT_TYPE_CONST, {.i64 <span style="color:#f92672">=</span> HLS_START_SEQUENCE_AS_SECONDS_SINCE_EPOCH }, INT_MIN, INT_MAX, E, <span style="color:#e6db74">&#34;start_sequence_source_type&#34;</span> },
+</span></span><span style="display:flex;"><span>    {<span style="color:#e6db74">&#34;epoch_us&#34;</span>, <span style="color:#e6db74">&#34;microseconds since epoch&#34;</span>, <span style="color:#ae81ff">0</span>, AV_OPT_TYPE_CONST, {.i64 <span style="color:#f92672">=</span> HLS_START_SEQUENCE_AS_MICROSECONDS_SINCE_EPOCH }, INT_MIN, INT_MAX, E, <span style="color:#e6db74">&#34;start_sequence_source_type&#34;</span> },
+</span></span><span style="display:flex;"><span>    {<span style="color:#e6db74">&#34;datetime&#34;</span>, <span style="color:#e6db74">&#34;current datetime as YYYYMMDDhhmmss&#34;</span>, <span style="color:#ae81ff">0</span>, AV_OPT_TYPE_CONST, {.i64 <span style="color:#f92672">=</span> HLS_START_SEQUENCE_AS_FORMATTED_DATETIME }, INT_MIN, INT_MAX, E, <span style="color:#e6db74">&#34;start_sequence_source_type&#34;</span> },
+</span></span><span style="display:flex;"><span>    {<span style="color:#e6db74">&#34;http_user_agent&#34;</span>, <span style="color:#e6db74">&#34;override User-Agent field in HTTP header&#34;</span>, <span style="color:#a6e22e">OFFSET</span>(user_agent), AV_OPT_TYPE_STRING, {.str <span style="color:#f92672">=</span> NULL},  <span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">0</span>,    E},
+</span></span><span style="display:flex;"><span>    {<span style="color:#e6db74">&#34;var_stream_map&#34;</span>, <span style="color:#e6db74">&#34;Variant stream map string&#34;</span>, <span style="color:#a6e22e">OFFSET</span>(var_stream_map), AV_OPT_TYPE_STRING, {.str <span style="color:#f92672">=</span> NULL},  <span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">0</span>,    E},
+</span></span><span style="display:flex;"><span>    {<span style="color:#e6db74">&#34;cc_stream_map&#34;</span>, <span style="color:#e6db74">&#34;Closed captions stream map string&#34;</span>, <span style="color:#a6e22e">OFFSET</span>(cc_stream_map), AV_OPT_TYPE_STRING, {.str <span style="color:#f92672">=</span> NULL},  <span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">0</span>,    E},
+</span></span><span style="display:flex;"><span>    {<span style="color:#e6db74">&#34;master_pl_name&#34;</span>, <span style="color:#e6db74">&#34;Create HLS master playlist with this name&#34;</span>, <span style="color:#a6e22e">OFFSET</span>(master_pl_name), AV_OPT_TYPE_STRING, {.str <span style="color:#f92672">=</span> NULL},  <span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">0</span>,    E},
+</span></span><span style="display:flex;"><span>    {<span style="color:#e6db74">&#34;master_pl_publish_rate&#34;</span>, <span style="color:#e6db74">&#34;Publish master play list every after this many segment intervals&#34;</span>, <span style="color:#a6e22e">OFFSET</span>(master_publish_rate), AV_OPT_TYPE_INT, {.i64 <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>}, <span style="color:#ae81ff">0</span>, UINT_MAX, E},
+</span></span><span style="display:flex;"><span>    {<span style="color:#e6db74">&#34;http_persistent&#34;</span>, <span style="color:#e6db74">&#34;Use persistent HTTP connections&#34;</span>, <span style="color:#a6e22e">OFFSET</span>(http_persistent), AV_OPT_TYPE_BOOL, {.i64 <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span> }, <span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">1</span>, E },
+</span></span><span style="display:flex;"><span>    {<span style="color:#e6db74">&#34;timeout&#34;</span>, <span style="color:#e6db74">&#34;set timeout for socket I/O operations&#34;</span>, <span style="color:#a6e22e">OFFSET</span>(timeout), AV_OPT_TYPE_DURATION, { .i64 <span style="color:#f92672">=</span> <span style="color:#f92672">-</span><span style="color:#ae81ff">1</span> }, <span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>, INT_MAX, .flags <span style="color:#f92672">=</span> E },
+</span></span><span style="display:flex;"><span>    {<span style="color:#e6db74">&#34;ignore_io_errors&#34;</span>, <span style="color:#e6db74">&#34;Ignore IO errors for stable long-duration runs with network output&#34;</span>, <span style="color:#a6e22e">OFFSET</span>(ignore_io_errors), AV_OPT_TYPE_BOOL, { .i64 <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span> }, <span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">1</span>, E },
+</span></span><span style="display:flex;"><span>    {<span style="color:#e6db74">&#34;headers&#34;</span>, <span style="color:#e6db74">&#34;set custom HTTP headers, can override built in default headers&#34;</span>, <span style="color:#a6e22e">OFFSET</span>(headers), AV_OPT_TYPE_STRING, { .str <span style="color:#f92672">=</span> NULL }, <span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">0</span>, E },
+</span></span><span style="display:flex;"><span>    { NULL },
+</span></span><span style="display:flex;"><span>};
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">static</span> <span style="color:#66d9ef">const</span> AVClass hls_class <span style="color:#f92672">=</span> {
+</span></span><span style="display:flex;"><span>    .class_name <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;hls muxer&#34;</span>,
+</span></span><span style="display:flex;"><span>    .item_name  <span style="color:#f92672">=</span> av_default_item_name,
+</span></span><span style="display:flex;"><span>    .option     <span style="color:#f92672">=</span> options,
+</span></span><span style="display:flex;"><span>    .version    <span style="color:#f92672">=</span> LIBAVUTIL_VERSION_INT,
+</span></span><span style="display:flex;"><span>};
+</span></span></code></pre></div><p>ff_hls_muxer 调用的生命周期如下:</p>
+
+
+
+<div class="goat svg-container ">
+  
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      font-family="Menlo,Lucida Console,monospace"
+      
+        viewBox="0 0 864 105"
+      >
+      <g transform='translate(8,16)'>
+<path d='M 0,16 L 88,16' fill='none' stroke='currentColor'></path>
+<path d='M 128,16 L 280,16' fill='none' stroke='currentColor'></path>
+<path d='M 320,16 L 472,16' fill='none' stroke='currentColor'></path>
+<path d='M 536,16 L 696,16' fill='none' stroke='currentColor'></path>
+<path d='M 736,16 L 848,16' fill='none' stroke='currentColor'></path>
+<path d='M 96,32 L 112,32' fill='none' stroke='currentColor'></path>
+<path d='M 288,32 L 304,32' fill='none' stroke='currentColor'></path>
+<path d='M 480,32 L 496,32' fill='none' stroke='currentColor'></path>
+<path d='M 496,32 L 520,32' fill='none' stroke='currentColor'></path>
+<path d='M 704,32 L 720,32' fill='none' stroke='currentColor'></path>
+<path d='M 0,48 L 88,48' fill='none' stroke='currentColor'></path>
+<path d='M 128,48 L 280,48' fill='none' stroke='currentColor'></path>
+<path d='M 320,48 L 472,48' fill='none' stroke='currentColor'></path>
+<path d='M 536,48 L 696,48' fill='none' stroke='currentColor'></path>
+<path d='M 736,48 L 848,48' fill='none' stroke='currentColor'></path>
+<path d='M 384,80 L 496,80' fill='none' stroke='currentColor'></path>
+<path d='M 0,16 L 0,48' fill='none' stroke='currentColor'></path>
+<path d='M 88,16 L 88,48' fill='none' stroke='currentColor'></path>
+<path d='M 128,16 L 128,48' fill='none' stroke='currentColor'></path>
+<path d='M 280,16 L 280,48' fill='none' stroke='currentColor'></path>
+<path d='M 320,16 L 320,48' fill='none' stroke='currentColor'></path>
+<path d='M 384,64 L 384,80' fill='none' stroke='currentColor'></path>
+<path d='M 472,16 L 472,48' fill='none' stroke='currentColor'></path>
+<path d='M 496,32 L 496,80' fill='none' stroke='currentColor'></path>
+<path d='M 536,16 L 536,48' fill='none' stroke='currentColor'></path>
+<path d='M 696,16 L 696,48' fill='none' stroke='currentColor'></path>
+<path d='M 736,16 L 736,48' fill='none' stroke='currentColor'></path>
+<path d='M 848,16 L 848,48' fill='none' stroke='currentColor'></path>
+<polygon points='120.000000,32.000000 108.000000,26.400000 108.000000,37.599998' fill='currentColor' transform='rotate(0.000000, 112.000000, 32.000000)'></polygon>
+<polygon points='312.000000,32.000000 300.000000,26.400000 300.000000,37.599998' fill='currentColor' transform='rotate(0.000000, 304.000000, 32.000000)'></polygon>
+<path d='M 384,56 L 384,64' fill='none' stroke='currentColor'></path>
+<polygon points='400.000000,64.000000 388.000000,58.400002 388.000000,69.599998' fill='currentColor' transform='rotate(270.000000, 384.000000, 64.000000)'></polygon>
+<polygon points='528.000000,32.000000 516.000000,26.400000 516.000000,37.599998' fill='currentColor' transform='rotate(0.000000, 520.000000, 32.000000)'></polygon>
+<polygon points='728.000000,32.000000 716.000000,26.400000 716.000000,37.599998' fill='currentColor' transform='rotate(0.000000, 720.000000, 32.000000)'></polygon>
+<text text-anchor='middle' x='16' y='36' fill='currentColor' style='font-size:1em'>h</text>
+<text text-anchor='middle' x='24' y='36' fill='currentColor' style='font-size:1em'>l</text>
+<text text-anchor='middle' x='32' y='36' fill='currentColor' style='font-size:1em'>s</text>
+<text text-anchor='middle' x='40' y='36' fill='currentColor' style='font-size:1em'>_</text>
+<text text-anchor='middle' x='48' y='36' fill='currentColor' style='font-size:1em'>i</text>
+<text text-anchor='middle' x='56' y='36' fill='currentColor' style='font-size:1em'>n</text>
+<text text-anchor='middle' x='64' y='36' fill='currentColor' style='font-size:1em'>i</text>
+<text text-anchor='middle' x='72' y='36' fill='currentColor' style='font-size:1em'>t</text>
+<text text-anchor='middle' x='144' y='36' fill='currentColor' style='font-size:1em'>h</text>
+<text text-anchor='middle' x='152' y='36' fill='currentColor' style='font-size:1em'>l</text>
+<text text-anchor='middle' x='160' y='36' fill='currentColor' style='font-size:1em'>s</text>
+<text text-anchor='middle' x='168' y='36' fill='currentColor' style='font-size:1em'>_</text>
+<text text-anchor='middle' x='176' y='36' fill='currentColor' style='font-size:1em'>w</text>
+<text text-anchor='middle' x='184' y='36' fill='currentColor' style='font-size:1em'>r</text>
+<text text-anchor='middle' x='192' y='36' fill='currentColor' style='font-size:1em'>i</text>
+<text text-anchor='middle' x='200' y='36' fill='currentColor' style='font-size:1em'>t</text>
+<text text-anchor='middle' x='208' y='36' fill='currentColor' style='font-size:1em'>e</text>
+<text text-anchor='middle' x='216' y='36' fill='currentColor' style='font-size:1em'>_</text>
+<text text-anchor='middle' x='224' y='36' fill='currentColor' style='font-size:1em'>h</text>
+<text text-anchor='middle' x='232' y='36' fill='currentColor' style='font-size:1em'>e</text>
+<text text-anchor='middle' x='240' y='36' fill='currentColor' style='font-size:1em'>a</text>
+<text text-anchor='middle' x='248' y='36' fill='currentColor' style='font-size:1em'>d</text>
+<text text-anchor='middle' x='256' y='36' fill='currentColor' style='font-size:1em'>e</text>
+<text text-anchor='middle' x='264' y='36' fill='currentColor' style='font-size:1em'>r</text>
+<text text-anchor='middle' x='336' y='36' fill='currentColor' style='font-size:1em'>h</text>
+<text text-anchor='middle' x='344' y='36' fill='currentColor' style='font-size:1em'>l</text>
+<text text-anchor='middle' x='352' y='36' fill='currentColor' style='font-size:1em'>s</text>
+<text text-anchor='middle' x='360' y='36' fill='currentColor' style='font-size:1em'>_</text>
+<text text-anchor='middle' x='368' y='36' fill='currentColor' style='font-size:1em'>w</text>
+<text text-anchor='middle' x='376' y='36' fill='currentColor' style='font-size:1em'>r</text>
+<text text-anchor='middle' x='384' y='36' fill='currentColor' style='font-size:1em'>i</text>
+<text text-anchor='middle' x='392' y='36' fill='currentColor' style='font-size:1em'>t</text>
+<text text-anchor='middle' x='400' y='36' fill='currentColor' style='font-size:1em'>e</text>
+<text text-anchor='middle' x='408' y='36' fill='currentColor' style='font-size:1em'>_</text>
+<text text-anchor='middle' x='416' y='36' fill='currentColor' style='font-size:1em'>p</text>
+<text text-anchor='middle' x='424' y='36' fill='currentColor' style='font-size:1em'>a</text>
+<text text-anchor='middle' x='432' y='36' fill='currentColor' style='font-size:1em'>c</text>
+<text text-anchor='middle' x='440' y='36' fill='currentColor' style='font-size:1em'>k</text>
+<text text-anchor='middle' x='448' y='36' fill='currentColor' style='font-size:1em'>e</text>
+<text text-anchor='middle' x='456' y='36' fill='currentColor' style='font-size:1em'>t</text>
+<text text-anchor='middle' x='552' y='36' fill='currentColor' style='font-size:1em'>h</text>
+<text text-anchor='middle' x='560' y='36' fill='currentColor' style='font-size:1em'>l</text>
+<text text-anchor='middle' x='568' y='36' fill='currentColor' style='font-size:1em'>s</text>
+<text text-anchor='middle' x='576' y='36' fill='currentColor' style='font-size:1em'>_</text>
+<text text-anchor='middle' x='584' y='36' fill='currentColor' style='font-size:1em'>w</text>
+<text text-anchor='middle' x='592' y='36' fill='currentColor' style='font-size:1em'>r</text>
+<text text-anchor='middle' x='600' y='36' fill='currentColor' style='font-size:1em'>i</text>
+<text text-anchor='middle' x='608' y='36' fill='currentColor' style='font-size:1em'>t</text>
+<text text-anchor='middle' x='616' y='36' fill='currentColor' style='font-size:1em'>e</text>
+<text text-anchor='middle' x='624' y='36' fill='currentColor' style='font-size:1em'>_</text>
+<text text-anchor='middle' x='632' y='36' fill='currentColor' style='font-size:1em'>t</text>
+<text text-anchor='middle' x='640' y='36' fill='currentColor' style='font-size:1em'>r</text>
+<text text-anchor='middle' x='648' y='36' fill='currentColor' style='font-size:1em'>a</text>
+<text text-anchor='middle' x='656' y='36' fill='currentColor' style='font-size:1em'>i</text>
+<text text-anchor='middle' x='664' y='36' fill='currentColor' style='font-size:1em'>l</text>
+<text text-anchor='middle' x='672' y='36' fill='currentColor' style='font-size:1em'>e</text>
+<text text-anchor='middle' x='680' y='36' fill='currentColor' style='font-size:1em'>r</text>
+<text text-anchor='middle' x='760' y='36' fill='currentColor' style='font-size:1em'>h</text>
+<text text-anchor='middle' x='768' y='36' fill='currentColor' style='font-size:1em'>l</text>
+<text text-anchor='middle' x='776' y='36' fill='currentColor' style='font-size:1em'>s</text>
+<text text-anchor='middle' x='784' y='36' fill='currentColor' style='font-size:1em'>_</text>
+<text text-anchor='middle' x='792' y='36' fill='currentColor' style='font-size:1em'>d</text>
+<text text-anchor='middle' x='800' y='36' fill='currentColor' style='font-size:1em'>e</text>
+<text text-anchor='middle' x='808' y='36' fill='currentColor' style='font-size:1em'>i</text>
+<text text-anchor='middle' x='816' y='36' fill='currentColor' style='font-size:1em'>n</text>
+<text text-anchor='middle' x='824' y='36' fill='currentColor' style='font-size:1em'>i</text>
+<text text-anchor='middle' x='832' y='36' fill='currentColor' style='font-size:1em'>t</text>
+</g>
+
+    </svg>
+  
+</div>
+<p>其中重点关注 hls_write_packet 函数，其调用流程如下：</p>
+<ul>
+<li>main 函数调用 ffmpeg_parse_options，通过 of_open 申请内存，初始化 Muxer，并放入全局 output_files 数组</li>
+<li>of_open 中较关键为 avformat_alloc_output_context2 ，根据输出格式申请 AVFormatContext</li>
+<li>ffmpeg_mux.c 初始化后启动 muxer_thread，唯一参数为 Muxer，</li>
+<li>muxer_thread 轮询 mux-&gt;tq 读取帧信息 AVPacket</li>
+<li>ffmpeg_mux.c write_packet 修正时间相关数据</li>
+<li>mux.c write_packets_common, 如果该 bitstream 没有 filter 则通过 write_packet_common 处理</li>
+<li>mux.c write_packet_common 处理帧时长，注意此时参数 AVFormatContext 为 mux-&gt;fc，即 hls</li>
+<li>mux.c write_packet 修正相关数据</li>
+<li>hlsenc.c hls_write_packet</li>
+</ul>
+<p>hls_write_packet 函数实现的功能如下：</p>
+<ul>
+<li>找出 AVPacket 对应的 VariantStream 与 AVFormatContext</li>
+<li>修正 end_pts 与 start_pts 时间参数</li>
+<li>检查是否需要切分新 Fragment，譬如是否设置 split_by_time 参数，当前帧是否为关键帧</li>
+<li>处理 ref_pkt （暂时未知作用）</li>
+<li>如果通过 split_by_time 参数指定分割时间，并且为I帧，则进行分割操作, 通过 av_write_frame 写入 NULL pkt，触发 movenc.c mov_write_packet 函数调用 mov_flush_fragment 完成</li>
+<li>如果不需要分片，则将 AVPacket 发送到 ff_write_chained 处理，注意此时的 AVFormatContext 已经转换为 s-&gt;priv_data-&gt;var_streams[i]-&gt;avf，即 mp4</li>
+<li>ff_write_chained 修正 pts 后发送到 av_write_frame</li>
+<li>重新进入 mux.c write_packets_common，只不过此时 pkt 为 mp4 格式，会发送到 movenc.c 的 mov_write_packet 函数进行处理</li>
+</ul>
+<p>mov_write_packet 为 Mp4 帧封装函数，实现的功能如下：</p>
+<ul>
+<li>如果接收到空 AVPacket，则调用 mov_flush_fragment 进行 Fragmented Mp4 封装，否则调用 mov_write_single_packet（不考虑与我们场景不相干分支）</li>
+<li>mov_write_single_packet 先修正 AVPacket 数据，获取 mov 与 trk 相关参数，判断是否需要 mov_auto_flush_fragment，然后调用 ff_mov_write_packet；</li>
+<li>ff_mov_write_packet 写入 mdat，然后将帧数据 MOVIentry 添加到 trk-&gt;cluster，后续写入 fMp4 相关数据 Box 时会大量依赖 trk-&gt;cluster</li>
+</ul>
+<p>mov_flush_fragment 为 Fragmented Mp4 文件封装函数，实现功能如下：</p>
+<ul>
+<li>计算、修正 track 的时长与 end_pts</li>
+<li>写 moov box</li>
+<li>写 moof box</li>
+</ul>
+    </div>
+
+
+</article>
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/styles/base16/darcula.min.css" integrity="sha512-GfRggx2Wc+POEPR0asMTNTyNug3rWJ9Jp4wxnHZ5VApMOUJRK4cEaRriXsx5tV1DakKHQWQ2noCbuzFiPJaYqA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/highlight.min.js" integrity="sha512-yUUc0qWm2rhM7X0EFe82LNnv2moqArj5nro/w1bi05A09hRVeIZbN6jlMoyu0+4I/Bu4Ck/85JQIU82T82M28w==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlightjs-line-numbers.js/2.8.0/highlightjs-line-numbers.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+
+                </div>
+
+            </div>
+        </div><div id="footer-default" class="g-bg-gray-dark-v1 g-color-white-opacity-0_8 text-center g-py-20">
+    <div class="container">
+        <div class="g-font-size-default g-mr-10 g-mb-10 g-mb-0--md">
+            <p>本站内容如非特别说明，均基于 <a rel="license" target="_blank" href="http://creativecommons.org/licenses/by-sa/3.0/">Creative Commons Attribution-Share Alike 3.0 Unported License</a> 发布。</p>
+        </div>
+    </div>
+</div></body>
+</section>
+</html>

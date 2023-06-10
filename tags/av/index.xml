@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>AV on YP.Lam</title>
+    <link>https://yplam.com/tags/av/</link>
+    <description>Recent content in AV on YP.Lam</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    <lastBuildDate>Sat, 10 Jun 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://yplam.com/tags/av/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>FFmpeg HLS Fragmented Mp4 封装过程分析</title>
+      <link>https://yplam.com/post/av/ffmpeg-hls-fmp4/</link>
+      <pubDate>Sat, 10 Jun 2023 00:00:00 +0000</pubDate>
+      
+      <guid>https://yplam.com/post/av/ffmpeg-hls-fmp4/</guid>
+      <description>&lt;p&gt;本笔记记录 FFmpeg HLS Fragmented Mp4  封装过程，主要关注点为 Fragmented Mp4 容器格式。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Live555 RTSP 视频流服务端开发笔记</title>
+      <link>https://yplam.com/post/av/live555-rtsp-stream/</link>
+      <pubDate>Sat, 13 May 2023 00:00:00 +0000</pubDate>
+      
+      <guid>https://yplam.com/post/av/live555-rtsp-stream/</guid>
+      <description>&lt;p&gt;最近需要为一个 IPC 项目实现 RTSP 功能，记录一下 Live555 实现 ISP 获取 H265 帧实现 RTSP 服务端的过程。&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>
