@@ -2,6 +2,21 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
+    <loc>https://yplam.com/tags/machinelearning/</loc>
+    <lastmod>2023-12-02T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://yplam.com/post/</loc>
+    <lastmod>2023-12-02T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://yplam.com/post/machinelearning/pytorch-multiple-gpus-error/</loc>
+    <lastmod>2023-12-02T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://yplam.com/tags/</loc>
+    <lastmod>2023-12-02T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://yplam.com/</loc>
+    <lastmod>2023-12-02T00:00:00+00:00</lastmod>
+  </url><url>
     <loc>https://yplam.com/tags/av/</loc>
     <lastmod>2023-06-10T00:00:00+00:00</lastmod>
   </url><url>
@@ -9,15 +24,6 @@
     <lastmod>2023-06-10T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://yplam.com/post/av/ffmpeg-hls-fmp4/</loc>
-    <lastmod>2023-06-10T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://yplam.com/post/</loc>
-    <lastmod>2023-06-10T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://yplam.com/tags/</loc>
-    <lastmod>2023-06-10T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://yplam.com/</loc>
     <lastmod>2023-06-10T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://yplam.com/tags/rust/</loc>
@@ -80,13 +86,10 @@
     <loc>https://yplam.com/post/symfony/symfony-the-new-way/</loc>
     <lastmod>2020-03-29T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://yplam.com/tags/machinelearning/</loc>
-    <lastmod>2019-12-03T15:32:35+08:00</lastmod>
-  </url><url>
     <loc>https://yplam.com/tags/tensorflow/</loc>
     <lastmod>2019-12-03T15:32:35+08:00</lastmod>
   </url><url>
-    <loc>https://yplam.com/post/tensorflow/tensorflow-serving-nsfw/</loc>
+    <loc>https://yplam.com/post/machinelearning/tensorflow-serving-nsfw/</loc>
     <lastmod>2019-12-03T15:32:35+08:00</lastmod>
   </url><url>
     <loc>https://yplam.com/tags/c&#43;&#43;/</loc>
@@ -116,7 +119,7 @@
     <loc>https://yplam.com/post/embedded/lora-ranging-test/</loc>
     <lastmod>2018-12-19T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://yplam.com/post/mbed/mbed-custom-bootloader/</loc>
+    <loc>https://yplam.com/post/embedded/mbed-custom-bootloader/</loc>
     <lastmod>2018-11-10T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://yplam.com/tags/predictionio/</loc>
@@ -134,7 +137,7 @@
     <loc>https://yplam.com/post/symfony/hello-symfony-4/</loc>
     <lastmod>2017-12-01T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://yplam.com/post/tensorflow/tensorflow-object-detection-note/</loc>
+    <loc>https://yplam.com/post/machinelearning/tensorflow-object-detection-note/</loc>
     <lastmod>2017-10-21T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://yplam.com/post/machinelearning/netflix-prize/</loc>
@@ -146,10 +149,10 @@
     <loc>https://yplam.com/tags/ros/</loc>
     <lastmod>2017-03-25T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://yplam.com/post/ros/edison-ros-indigo-step-by-step/</loc>
+    <loc>https://yplam.com/post/embedded/edison-ros-indigo-step-by-step/</loc>
     <lastmod>2017-03-25T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://yplam.com/post/ros/edison-ros-install/</loc>
+    <loc>https://yplam.com/post/embedded/edison-ros-install/</loc>
     <lastmod>2017-03-19T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://yplam.com/post/machinelearning/machine-learning-predicting-customer-behavior/</loc>
@@ -161,7 +164,7 @@
     <loc>https://yplam.com/post/machinelearning/user-profile-learning-notes/</loc>
     <lastmod>2017-02-11T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://yplam.com/post/tensorflow/aws-cuda-tensorflow/</loc>
+    <loc>https://yplam.com/post/machinelearning/aws-cuda-tensorflow/</loc>
     <lastmod>2016-12-12T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://yplam.com/post/machinelearning/machine-learning-notes/</loc>
@@ -179,7 +182,7 @@
     <loc>https://yplam.com/tags/elk/</loc>
     <lastmod>2016-09-09T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://yplam.com/post/elk/elk-log-analytics/</loc>
+    <loc>https://yplam.com/post/linux/elk-log-analytics/</loc>
     <lastmod>2016-09-09T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://yplam.com/post/symfony/symfony-performance/</loc>
@@ -248,13 +251,13 @@
     <loc>https://yplam.com/post/php/discuz-api/</loc>
     <lastmod>2014-11-26T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://yplam.com/post/drupal/drupal-services-and-dependency-injection/</loc>
+    <loc>https://yplam.com/post/php/drupal-services-and-dependency-injection/</loc>
     <lastmod>2014-08-28T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://yplam.com/post/drupal/drupal-special-topic/</loc>
+    <loc>https://yplam.com/post/php/drupal-special-topic/</loc>
     <lastmod>2014-06-18T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://yplam.com/post/drupal/drupal-wechat/</loc>
+    <loc>https://yplam.com/post/php/drupal-wechat/</loc>
     <lastmod>2014-04-23T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://yplam.com/post/symfony/doctrine-resolve-target-entity/</loc>

@@ -6,16 +6,15 @@
     <description>Recent content in I on YP.Lam</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Sat, 01 Jan 2011 00:00:00 +0000</lastBuildDate><atom:link href="https://yplam.com/tags/i/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 01 Jan 2011 00:00:00 +0000</lastBuildDate>
+    <atom:link href="https://yplam.com/tags/i/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>关于YPLam</title>
       <link>https://yplam.com/about/</link>
       <pubDate>Sat, 01 Jan 2011 00:00:00 +0000</pubDate>
-      
       <guid>https://yplam.com/about/</guid>
       <description>YPLam 是一名后端工程师，也是一名骑行爱好者，目前就职于广州一家物联网行业公司。
 欢迎与我交流：yplam#yplam.com</description>
     </item>
-    
   </channel>
 </rss>

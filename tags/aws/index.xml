@@ -6,15 +6,14 @@
     <description>Recent content in AWS on YP.Lam</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Thu, 27 Aug 2015 00:00:00 +0000</lastBuildDate><atom:link href="https://yplam.com/tags/aws/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Thu, 27 Aug 2015 00:00:00 +0000</lastBuildDate>
+    <atom:link href="https://yplam.com/tags/aws/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>使用Nginx做AWS S3的反向代理</title>
       <link>https://yplam.com/post/linux/nginx-aws-proxy/</link>
       <pubDate>Thu, 27 Aug 2015 00:00:00 +0000</pubDate>
-      
       <guid>https://yplam.com/post/linux/nginx-aws-proxy/</guid>
       <description>&lt;p&gt;对于一些UGC（用户创建内容）类网站而言，特别是图片网站，随着用户数的增长，时间的推移，网站上的文件会越来越多；得益于云服务的出现，存储系统的扩展变得简单，一个比较常用的做法就是将文件存储于AWS S3，然后用户通过S3或者CloudFront下载。然而虽然AWS S3的储存价格相对便宜，但流量价格却非常高，最终导致网站的托管开销增加。&lt;/p&gt;</description>
     </item>
-    
   </channel>
 </rss>

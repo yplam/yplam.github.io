@@ -6,15 +6,14 @@
     <description>Recent content in FFmpeg on YP.Lam</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Sat, 10 Jun 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://yplam.com/tags/ffmpeg/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 10 Jun 2023 00:00:00 +0000</lastBuildDate>
+    <atom:link href="https://yplam.com/tags/ffmpeg/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>FFmpeg HLS Fragmented Mp4 封装过程分析</title>
       <link>https://yplam.com/post/av/ffmpeg-hls-fmp4/</link>
       <pubDate>Sat, 10 Jun 2023 00:00:00 +0000</pubDate>
-      
       <guid>https://yplam.com/post/av/ffmpeg-hls-fmp4/</guid>
       <description>&lt;p&gt;本笔记记录 FFmpeg HLS Fragmented Mp4  封装过程，主要关注点为 Fragmented Mp4 容器格式。&lt;/p&gt;</description>
     </item>
-    
   </channel>
 </rss>

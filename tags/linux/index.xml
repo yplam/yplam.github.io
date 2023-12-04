@@ -6,114 +6,92 @@
     <description>Recent content in Linux on YP.Lam</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Sat, 25 Dec 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://yplam.com/tags/linux/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 25 Dec 2021 00:00:00 +0000</lastBuildDate>
+    <atom:link href="https://yplam.com/tags/linux/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>iMX6ULL 运行 OpenWRT</title>
       <link>https://yplam.com/post/embedded/imx6ull-openwrt/</link>
       <pubDate>Sat, 25 Dec 2021 00:00:00 +0000</pubDate>
-      
       <guid>https://yplam.com/post/embedded/imx6ull-openwrt/</guid>
       <description>&lt;p&gt;本笔记并不是一个完整的关于 OpenWRT 移植的笔记，只作为个人备忘用。同时亦分享出来给需要的朋友作为参考。水平有限，如果有出错地方请反馈 yplam(at)yplam.com&lt;/p&gt;</description>
     </item>
-    
     <item>
       <title>iMX6ULL SD卡系统制作与启动</title>
       <link>https://yplam.com/post/embedded/imx6ull-boot-sd-card/</link>
       <pubDate>Sun, 19 Dec 2021 00:00:00 +0000</pubDate>
-      
       <guid>https://yplam.com/post/embedded/imx6ull-boot-sd-card/</guid>
       <description>&lt;p&gt;鉴于之前玩的 MT7688A 已经停产并且模块断货，最近把目光投向一款新芯片：iMX6ULL，因为其起点价格在接受范围，最低配置的核心板价格在百元以内，128M+128M 足够跑我的OpenThread网关，通用芯片该有的功能都有，按功能来算的话比 MT7688A 性价比还高。&lt;/p&gt;</description>
     </item>
-    
     <item>
       <title>iMX6ULL 内核编译</title>
       <link>https://yplam.com/post/embedded/imx6ull-kernel-compile/</link>
       <pubDate>Sat, 18 Dec 2021 00:00:00 +0000</pubDate>
-      
       <guid>https://yplam.com/post/embedded/imx6ull-kernel-compile/</guid>
       <description>&lt;p&gt;最近想在 iMX6ULL 上运行 OpenWRT，第一步准备将内核版本升到 4.14，按着官方说明操作一通，顺便在此记录一下&lt;/p&gt;</description>
     </item>
-    
     <item>
       <title>树莓派 OpenThread 边界路由器配置</title>
       <link>https://yplam.com/post/embedded/raspberry-pi-openthread/</link>
       <pubDate>Sat, 27 Mar 2021 00:00:00 +0000</pubDate>
-      
       <guid>https://yplam.com/post/embedded/raspberry-pi-openthread/</guid>
       <description>&lt;p&gt;OpenThread 边界路由器的作用是作为 Thread 网络与其他基于IP的网络（如WIFI、以太网）的桥梁。有了边界路由器的存在才让 Thread 网络中的设备成了跟手机、电脑等对等的一员（是的，基于IP就是那么自信）。&lt;/p&gt;</description>
     </item>
-    
     <item>
       <title>基于 OpenWRT 与 MT7688 DIY 4G WIFI 路由器</title>
       <link>https://yplam.com/post/embedded/openwrt-mt7688-4g/</link>
       <pubDate>Sun, 02 Aug 2020 00:00:00 +0000</pubDate>
-      
       <guid>https://yplam.com/post/embedded/openwrt-mt7688-4g/</guid>
       <description>&lt;p&gt;最近经常要到一些没有有线网络的地方，虽然手机可以共享WIFI出来，但总不能24小时开着，刚好手上空闲着一块 EC20 4G 模块，
 于是淘宝弄了块最便宜的 MT7688 4G 路由板回来，DIY 自己的 4G WIFI共享路由器。&lt;/p&gt;</description>
     </item>
-    
     <item>
       <title>配置 Nginx Http 认证以及 IP 访问策略</title>
       <link>https://yplam.com/post/linux/nginx-http-auth/</link>
       <pubDate>Thu, 29 Oct 2015 00:00:00 +0000</pubDate>
-      
       <guid>https://yplam.com/post/linux/nginx-http-auth/</guid>
       <description>&lt;p&gt;网络世界充满漏洞，同样，网络世界充满着寻找漏洞的人。为Web服务器的后台路径添加HTTP AUTH认证，是防范漏洞被探测到的一个简单有有效的方法。&lt;/p&gt;</description>
     </item>
-    
     <item>
       <title>Debian 8 服务器运行多Redis实例</title>
       <link>https://yplam.com/post/linux/debian-mul-redis/</link>
       <pubDate>Wed, 28 Oct 2015 00:00:00 +0000</pubDate>
-      
       <guid>https://yplam.com/post/linux/debian-mul-redis/</guid>
       <description>&lt;p&gt;Redis 由于功能强大、性能优越、支持持久化等优点，在很多应用上已经替代Memcached，成为首选的缓存系统，还可以作为简单的db使用。&lt;/p&gt;</description>
     </item>
-    
     <item>
       <title>使用Nginx做AWS S3的反向代理</title>
       <link>https://yplam.com/post/linux/nginx-aws-proxy/</link>
       <pubDate>Thu, 27 Aug 2015 00:00:00 +0000</pubDate>
-      
       <guid>https://yplam.com/post/linux/nginx-aws-proxy/</guid>
       <description>&lt;p&gt;对于一些UGC（用户创建内容）类网站而言，特别是图片网站，随着用户数的增长，时间的推移，网站上的文件会越来越多；得益于云服务的出现，存储系统的扩展变得简单，一个比较常用的做法就是将文件存储于AWS S3，然后用户通过S3或者CloudFront下载。然而虽然AWS S3的储存价格相对便宜，但流量价格却非常高，最终导致网站的托管开销增加。&lt;/p&gt;</description>
     </item>
-    
     <item>
       <title>不能忽略 .htaccess 对性能的影响</title>
       <link>https://yplam.com/post/linux/apache-htaccess-performance/</link>
       <pubDate>Tue, 25 Aug 2015 00:00:00 +0000</pubDate>
-      
       <guid>https://yplam.com/post/linux/apache-htaccess-performance/</guid>
       <description>&lt;p&gt;在Apache环境下使用 .htaccess 进行URL重写或许已经是一种非常常用的方式；然而，如果URL重写规则比较复杂，使用.htaccess的方式可能会影响到Apache的性能。&lt;/p&gt;</description>
     </item>
-    
     <item>
       <title>服务器SSD以及SSD RAID性能测试</title>
       <link>https://yplam.com/post/linux/ssd-raid-performance/</link>
       <pubDate>Sat, 15 Aug 2015 00:00:00 +0000</pubDate>
-      
       <guid>https://yplam.com/post/linux/ssd-raid-performance/</guid>
       <description>&lt;p&gt;最近拿到几块Intel的企业级SSD准备搭建新的服务器，下面分享一些这段时间的测试数据。&lt;/p&gt;
 &lt;p&gt;测试主要在DELL R610、阿里云4核非IO优化SSD服务器环境下进行，测试工具为sysbench。&lt;/p&gt;
 &lt;p&gt;测试过程主要是使用sysbench命令分别对 SATA、SAS、SSD盘进行测试，其中测试重点在于SSD性能对比。&lt;/p&gt;</description>
     </item>
-    
     <item>
       <title>为个人博客配置 HTTPS 访问</title>
       <link>https://yplam.com/post/linux/nginx-https/</link>
       <pubDate>Wed, 12 Aug 2015 00:00:00 +0000</pubDate>
-      
       <guid>https://yplam.com/post/linux/nginx-https/</guid>
       <description>&lt;p&gt;如何能让个人博客显得更有逼格？配置成HTTPS访问是一个不错的选择，下面分享 yplam.com 切换到 HTTPS 的过程。&lt;/p&gt;</description>
     </item>
-    
     <item>
       <title>Linux 小笔记</title>
       <link>https://yplam.com/post/linux/linux-command-collection/</link>
       <pubDate>Sun, 19 Feb 2012 00:00:00 +0000</pubDate>
-      
       <guid>https://yplam.com/post/linux/linux-command-collection/</guid>
       <description>&lt;p&gt;此笔记记录 Linux 下的一些命令使用技巧，作为工作中的备忘。&lt;/p&gt;
 &lt;ul&gt;
@@ -129,15 +107,12 @@
 &lt;li&gt;&lt;a href=&#34;#no10&#34;&gt;Manjaro zsh 新标签页保持路径&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;</description>
     </item>
-    
     <item>
       <title>Centos Nginx PHP-FPM Mysql 服务器环境配置</title>
       <link>https://yplam.com/post/linux/centos-php-fpm-52/</link>
       <pubDate>Tue, 15 Feb 2011 00:00:00 +0000</pubDate>
-      
       <guid>https://yplam.com/post/linux/centos-php-fpm-52/</guid>
       <description>&lt;p&gt;此笔记基于Linode Centos 5.x 64 bit 系统，安装与配置LNMP服务器环境，此配置主要用于运行Drupal。&lt;/p&gt;</description>
     </item>
-    
   </channel>
 </rss>

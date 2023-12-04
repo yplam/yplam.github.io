@@ -6,15 +6,14 @@
     <description>Recent content in RTSP on YP.Lam</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Sat, 13 May 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://yplam.com/tags/rtsp/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 13 May 2023 00:00:00 +0000</lastBuildDate>
+    <atom:link href="https://yplam.com/tags/rtsp/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Live555 RTSP 视频流服务端开发笔记</title>
       <link>https://yplam.com/post/av/live555-rtsp-stream/</link>
       <pubDate>Sat, 13 May 2023 00:00:00 +0000</pubDate>
-      
       <guid>https://yplam.com/post/av/live555-rtsp-stream/</guid>
       <description>&lt;p&gt;最近需要为一个 IPC 项目实现 RTSP 功能，记录一下 Live555 实现 ISP 获取 H265 帧实现 RTSP 服务端的过程。&lt;/p&gt;</description>
     </item>
-    
   </channel>
 </rss>
