@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+<section class="g-bg-gray-light-v5"><head>
+	
+	<title>YP.Lam  | Tensorflow Serving Nsfw</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<meta http-equiv="x-ua-compatible" content="ie=edge">
+
+	<link rel="stylesheet" href="//stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css">
+	
+	<link rel="stylesheet" href="https://yplam.com/scss/unify.min.css">
+
+	
+	
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-83586141-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+	
+</head>
+
+<body>    <div class="container">
+        <div class="d-sm-flex text-center">
+            <div class="align-self-center ml-auto">
+                <ul class="u-list-inline float-right g-py-20">
+                    <li class="list-inline-item g-mr-5">
+                        <a class="u-link-v5 g-color-gray-dark-v5 g-color-primary--hover" href="/">HOME</a>
+                        <i class="g-color-gray-light-v2 g-ml-5">/</i>
+                    </li>
+                    <li class="list-inline-item g-mr-5">
+                        <a class="u-link-v5 g-color-gray-dark-v5 g-color-primary--hover" href="/about/">ABOUT</a>
+                        <i class="g-color-gray-light-v2 g-ml-5">/</i>
+                    </li>
+                    <li class="list-inline-item">
+                        <a class="u-link-v5 g-color-gray-dark-v5 g-color-primary--hover" href="https://github.com/yplam">GITHUB</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+<div class="container" aria-label="Content">
+            <div class="g-bg-white">
+                <div class="g-px-35 g-py-30 g-mb-30">
+<article>
+    <ul class="list-inline g-color-gray-dark-v4">
+        <li class="list-inline-item mr-0">
+            In
+             
+            
+            
+            
+            <a href="https://yplam.com/tags/machinelearning/">MachineLearning</a>
+            
+            
+            
+            
+            <a href="https://yplam.com/tags/tensorflow/">Tensorflow</a>
+            
+            
+        </li>
+        <li class="list-inline-item mx-2">/</li>
+        <li class="list-inline-item">Posted 2019-12-03</li>
+    </ul>
+    <h1 class="g-mb-30">Tensorflow Serving Nsfw</h1>
+    <div class="justify-content-center article-content">
+        <p>两年多前曾经在服务器上部署了个 Tensorflow 模型，由于 Tensorflow serving 刚公布不久，并且还没阅读相关文档，所以当时就粗暴的用 Flask 写了个接口就放到线上跑了两年。</p>
+<p>最近又需要在服务器上部署些模型，决定用回比较官方的方式，研究一下 Tensorflow serving。</p>
+<h3 id="安装">安装</h3>
+<p>使用 docker compose 安装，需要注意的是，由于 Tensorflow 的接口不断在变化，Tensorflow serving 的版本需要与模型训练、模型导出的版本一致，否则可能会出现某些操作符不存在的错误。</p>
+<p>docker-compose.yml</p>
+<pre tabindex="0"><code>version: &#39;3.7&#39;
+services:
+  tensorflow_serving:
+    build:
+      context: ./bin/TensorflowServing
+    ports: [&#34;127.0.0.1:8501:8501&#34;]
+    volumes:
+      - ./models:/models
+    environment:
+      - MODEL_NAME=nsfw
+</code></pre><p>bin/TensorflowServing/Dockerfile，虽然是默认镜像，但习惯加个 Dockerfile</p>
+<pre tabindex="0"><code>FROM tensorflow/serving:1.12.0
+</code></pre><h3 id="测试">测试</h3>
+<p>在此测试的是 <a href="https://github.com/mdietrichstein/tensorflow-open_nsfw">tensorflow-open_nsfw</a> 模型，此模型提供模型导出以及数据请求格式生成相关的脚本，适合用来快速测试。</p>
+<p>用 virtualenv 安装 tensorflow 1.12 版本，以及 numpy==1.16.1 ，然后运行下面命令导出模型：</p>
+<pre tabindex="0"><code>python tools/export_savedmodel.py -i base64_jpeg -v 1 -m data/open_nsfw-weights.npy nsfw
+</code></pre><p>使用以下命令查看模型输入输出格式：</p>
+<pre tabindex="0"><code>saved_model_cli show --dir nsfw/1 --all
+</code></pre><p>结果如下，输入是一个 base64 encode 的 jpeg 图片字符串：</p>
+<pre tabindex="0"><code>
+MetaGraphDef with tag-set: &#39;serve&#39; contains the following SignatureDefs:
+
+signature_def[&#39;serving_default&#39;]:
+  The given SavedModel SignatureDef contains the following input(s):
+    inputs[&#39;inputs&#39;] tensor_info:
+        dtype: DT_STRING
+        shape: (-1)
+        name: input:0
+  The given SavedModel SignatureDef contains the following output(s):
+    outputs[&#39;outputs&#39;] tensor_info:
+        dtype: DT_FLOAT
+        shape: (-1, 2)
+        name: predictions:0
+  Method name is: tensorflow/serving/predict
+</code></pre><p>将导出的模型放到 docker compose 工作目录下的 models 下，然后启动 docker ：</p>
+<pre tabindex="0"><code>docker-compose up --build
+</code></pre><p>拿一张需要测试的jpeg图片，运行下面命令：</p>
+<pre tabindex="0"><code>python tools/create_predict_request.py -i base64_jpeg -l tensorflow -t tf-serving test.jpg &gt; test.txt
+</code></pre><p>test.txt 中会生成用于请求 Tensorflow serving 的格式，大概如下：</p>
+<pre tabindex="0"><code>{&#34;instances&#34;: [&#34;_9j_4AAQSkZ......UUCP__Z&#34;]}
+</code></pre><p>需要注意的是这里的base64 encode图片需要为urlsafe格式，如果客户端为PHP的话需要对encode的字符串做替换处理。</p>
+<p>然后测试一下：</p>
+<pre tabindex="0"><code>curl -d &#39;@test.txt&#39; -X POST http://localhost:8501/v1/models/nsfw:predict
+</code></pre><p>会返回类似下面结果：</p>
+<pre tabindex="0"><code>{
+    &#34;predictions&#34;: [[0.337196, 0.662804]
+    ]
+}
+</code></pre><p>结果中第一个代表 sfw，第二个代表 nsfw，因此模型判断此图片包含不良内容。</p>
+    </div>
+
+
+</article>
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/styles/base16/darcula.min.css" integrity="sha512-GfRggx2Wc+POEPR0asMTNTyNug3rWJ9Jp4wxnHZ5VApMOUJRK4cEaRriXsx5tV1DakKHQWQ2noCbuzFiPJaYqA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/highlight.min.js" integrity="sha512-yUUc0qWm2rhM7X0EFe82LNnv2moqArj5nro/w1bi05A09hRVeIZbN6jlMoyu0+4I/Bu4Ck/85JQIU82T82M28w==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlightjs-line-numbers.js/2.8.0/highlightjs-line-numbers.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+
+                </div>
+
+            </div>
+        </div><div id="footer-default" class="g-bg-gray-dark-v1 g-color-white-opacity-0_8 text-center g-py-20">
+    <div class="container">
+        <div class="g-font-size-default g-mr-10 g-mb-10 g-mb-0--md">
+            <p>本站内容如非特别说明，均基于 <a rel="license" target="_blank" href="http://creativecommons.org/licenses/by-sa/3.0/">Creative Commons Attribution-Share Alike 3.0 Unported License</a> 发布。</p>
+        </div>
+    </div>
+</div></body>
+</section>
+</html>
