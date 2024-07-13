@@ -4,7 +4,7 @@
     <title>Linux on YP.Lam</title>
     <link>https://yplam.com/tags/linux/</link>
     <description>Recent content in Linux on YP.Lam</description>
-    <generator>Hugo -- gohugo.io</generator>
+    <generator>Hugo</generator>
     <language>zh-cn</language>
     <lastBuildDate>Sat, 25 Dec 2021 00:00:00 +0000</lastBuildDate>
     <atom:link href="https://yplam.com/tags/linux/index.xml" rel="self" type="application/rss+xml" />
@@ -41,8 +41,7 @@
       <link>https://yplam.com/post/embedded/openwrt-mt7688-4g/</link>
       <pubDate>Sun, 02 Aug 2020 00:00:00 +0000</pubDate>
       <guid>https://yplam.com/post/embedded/openwrt-mt7688-4g/</guid>
-      <description>&lt;p&gt;最近经常要到一些没有有线网络的地方，虽然手机可以共享WIFI出来，但总不能24小时开着，刚好手上空闲着一块 EC20 4G 模块，
-于是淘宝弄了块最便宜的 MT7688 4G 路由板回来，DIY 自己的 4G WIFI共享路由器。&lt;/p&gt;</description>
+      <description>&lt;p&gt;最近经常要到一些没有有线网络的地方，虽然手机可以共享WIFI出来，但总不能24小时开着，刚好手上空闲着一块 EC20 4G 模块，&#xA;于是淘宝弄了块最便宜的 MT7688 4G 路由板回来，DIY 自己的 4G WIFI共享路由器。&lt;/p&gt;</description>
     </item>
     <item>
       <title>配置 Nginx Http 认证以及 IP 访问策略</title>
@@ -77,9 +76,7 @@
       <link>https://yplam.com/post/linux/ssd-raid-performance/</link>
       <pubDate>Sat, 15 Aug 2015 00:00:00 +0000</pubDate>
       <guid>https://yplam.com/post/linux/ssd-raid-performance/</guid>
-      <description>&lt;p&gt;最近拿到几块Intel的企业级SSD准备搭建新的服务器，下面分享一些这段时间的测试数据。&lt;/p&gt;
-&lt;p&gt;测试主要在DELL R610、阿里云4核非IO优化SSD服务器环境下进行，测试工具为sysbench。&lt;/p&gt;
-&lt;p&gt;测试过程主要是使用sysbench命令分别对 SATA、SAS、SSD盘进行测试，其中测试重点在于SSD性能对比。&lt;/p&gt;</description>
+      <description>&lt;p&gt;最近拿到几块Intel的企业级SSD准备搭建新的服务器，下面分享一些这段时间的测试数据。&lt;/p&gt;&#xA;&lt;p&gt;测试主要在DELL R610、阿里云4核非IO优化SSD服务器环境下进行，测试工具为sysbench。&lt;/p&gt;&#xA;&lt;p&gt;测试过程主要是使用sysbench命令分别对 SATA、SAS、SSD盘进行测试，其中测试重点在于SSD性能对比。&lt;/p&gt;</description>
     </item>
     <item>
       <title>为个人博客配置 HTTPS 访问</title>
@@ -93,19 +90,7 @@
       <link>https://yplam.com/post/linux/linux-command-collection/</link>
       <pubDate>Sun, 19 Feb 2012 00:00:00 +0000</pubDate>
       <guid>https://yplam.com/post/linux/linux-command-collection/</guid>
-      <description>&lt;p&gt;此笔记记录 Linux 下的一些命令使用技巧，作为工作中的备忘。&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;#no1&#34;&gt;导入数据库时跳过某个表&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;#no2&#34;&gt;找出最近修改、创建的文件&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;#no3&#34;&gt;自动压缩旧日志文件的shell脚本&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;#no4&#34;&gt;Linux 初始化 SSH 会话慢的解决方法&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;#no5&#34;&gt;Crontab 控制脚本运行时间段&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;#no6&#34;&gt;rsync 只同步匹配的目录文件&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;#no7&#34;&gt;Ubuntu 下切换 PHP 版本&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;#no8&#34;&gt;ttyACM 插入后被占用问题&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;#no9&#34;&gt;P52 Manjaro 外接显示器输出问题&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;#no10&#34;&gt;Manjaro zsh 新标签页保持路径&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;</description>
+      <description>&lt;p&gt;此笔记记录 Linux 下的一些命令使用技巧，作为工作中的备忘。&lt;/p&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;&lt;a href=&#34;#no1&#34;&gt;导入数据库时跳过某个表&lt;/a&gt;&lt;/li&gt;&#xA;&lt;li&gt;&lt;a href=&#34;#no2&#34;&gt;找出最近修改、创建的文件&lt;/a&gt;&lt;/li&gt;&#xA;&lt;li&gt;&lt;a href=&#34;#no3&#34;&gt;自动压缩旧日志文件的shell脚本&lt;/a&gt;&lt;/li&gt;&#xA;&lt;li&gt;&lt;a href=&#34;#no4&#34;&gt;Linux 初始化 SSH 会话慢的解决方法&lt;/a&gt;&lt;/li&gt;&#xA;&lt;li&gt;&lt;a href=&#34;#no5&#34;&gt;Crontab 控制脚本运行时间段&lt;/a&gt;&lt;/li&gt;&#xA;&lt;li&gt;&lt;a href=&#34;#no6&#34;&gt;rsync 只同步匹配的目录文件&lt;/a&gt;&lt;/li&gt;&#xA;&lt;li&gt;&lt;a href=&#34;#no7&#34;&gt;Ubuntu 下切换 PHP 版本&lt;/a&gt;&lt;/li&gt;&#xA;&lt;li&gt;&lt;a href=&#34;#no8&#34;&gt;ttyACM 插入后被占用问题&lt;/a&gt;&lt;/li&gt;&#xA;&lt;li&gt;&lt;a href=&#34;#no9&#34;&gt;P52 Manjaro 外接显示器输出问题&lt;/a&gt;&lt;/li&gt;&#xA;&lt;li&gt;&lt;a href=&#34;#no10&#34;&gt;Manjaro zsh 新标签页保持路径&lt;/a&gt;&lt;/li&gt;&#xA;&lt;/ul&gt;</description>
     </item>
     <item>
       <title>Centos Nginx PHP-FPM Mysql 服务器环境配置</title>

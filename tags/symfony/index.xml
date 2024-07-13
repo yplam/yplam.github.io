@@ -4,7 +4,7 @@
     <title>Symfony on YP.Lam</title>
     <link>https://yplam.com/tags/symfony/</link>
     <description>Recent content in Symfony on YP.Lam</description>
-    <generator>Hugo -- gohugo.io</generator>
+    <generator>Hugo</generator>
     <language>zh-cn</language>
     <lastBuildDate>Sun, 29 Mar 2020 00:00:00 +0000</lastBuildDate>
     <atom:link href="https://yplam.com/tags/symfony/index.xml" rel="self" type="application/rss+xml" />
@@ -13,8 +13,7 @@
       <link>https://yplam.com/post/symfony/symfony-the-new-way/</link>
       <pubDate>Sun, 29 Mar 2020 00:00:00 +0000</pubDate>
       <guid>https://yplam.com/post/symfony/symfony-the-new-way/</guid>
-      <description>&lt;p&gt;Symfony 5 已经发布了一段时间，Symfony 4 也出了 4.4 LTS 版本，于是准备把手上一个历史遗留项目升级到 4.4，然而一动手就遇到麻烦，因为现在官方已经不推荐使用之前那种传统的大 bundle，而是倾向于更通用的组件（作为一个从 Symfony 2 过来的用户，不得不说挺支持官方的做法，因为经常会因为有 bundle 不及时更新而导致 composer 冲突）。&lt;/p&gt;
-&lt;p&gt;本文章将尝试从头开始创建一个 Symfony 4 基础应用。&lt;/p&gt;</description>
+      <description>&lt;p&gt;Symfony 5 已经发布了一段时间，Symfony 4 也出了 4.4 LTS 版本，于是准备把手上一个历史遗留项目升级到 4.4，然而一动手就遇到麻烦，因为现在官方已经不推荐使用之前那种传统的大 bundle，而是倾向于更通用的组件（作为一个从 Symfony 2 过来的用户，不得不说挺支持官方的做法，因为经常会因为有 bundle 不及时更新而导致 composer 冲突）。&lt;/p&gt;&#xA;&lt;p&gt;本文章将尝试从头开始创建一个 Symfony 4 基础应用。&lt;/p&gt;</description>
     </item>
     <item>
       <title>Symfony 4 尝鲜</title>
@@ -63,8 +62,7 @@
       <link>https://yplam.com/post/symfony/symfony-twig-block/</link>
       <pubDate>Wed, 03 Jun 2015 00:00:00 +0000</pubDate>
       <guid>https://yplam.com/post/symfony/symfony-twig-block/</guid>
-      <description>&lt;p&gt;所谓区块，就是在页面中展示的一块内容，可以与当前页面内容相关或者无关。譬如常见的在网站侧边栏展示
-“最新文章”区块，或者在文章内容页展示“相关文章”区块。&lt;/p&gt;</description>
+      <description>&lt;p&gt;所谓区块，就是在页面中展示的一块内容，可以与当前页面内容相关或者无关。譬如常见的在网站侧边栏展示&#xA;“最新文章”区块，或者在文章内容页展示“相关文章”区块。&lt;/p&gt;</description>
     </item>
     <item>
       <title>30个最常用的Symfony组件</title>
@@ -92,8 +90,7 @@
       <link>https://yplam.com/post/symfony/symfony-service-container/</link>
       <pubDate>Tue, 18 Jun 2013 00:00:00 +0000</pubDate>
       <guid>https://yplam.com/post/symfony/symfony-service-container/</guid>
-      <description>&lt;p&gt;这是一篇关于Symfony2服务容器实现的笔记，原文请查看文章末尾的相关资料部分。&lt;/p&gt;
-&lt;p&gt;上一篇笔记介绍了依赖注入容器，依赖注入容器使得对各种系统功能的调用变得简便，但同时引入了一个新的问题就是容器的编写与维护变得非常复杂。Symfony2试图通过ServiceContainer、ServiceContainerBuilder以及xml、yml配置文件来使容器的实现变得简单。&lt;/p&gt;</description>
+      <description>&lt;p&gt;这是一篇关于Symfony2服务容器实现的笔记，原文请查看文章末尾的相关资料部分。&lt;/p&gt;&#xA;&lt;p&gt;上一篇笔记介绍了依赖注入容器，依赖注入容器使得对各种系统功能的调用变得简便，但同时引入了一个新的问题就是容器的编写与维护变得非常复杂。Symfony2试图通过ServiceContainer、ServiceContainerBuilder以及xml、yml配置文件来使容器的实现变得简单。&lt;/p&gt;</description>
     </item>
     <item>
       <title>依赖注入容器（Dependency Injection Container）</title>

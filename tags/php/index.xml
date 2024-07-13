@@ -4,7 +4,7 @@
     <title>PHP on YP.Lam</title>
     <link>https://yplam.com/tags/php/</link>
     <description>Recent content in PHP on YP.Lam</description>
-    <generator>Hugo -- gohugo.io</generator>
+    <generator>Hugo</generator>
     <language>zh-cn</language>
     <lastBuildDate>Sun, 29 Mar 2020 00:00:00 +0000</lastBuildDate>
     <atom:link href="https://yplam.com/tags/php/index.xml" rel="self" type="application/rss+xml" />
@@ -13,8 +13,7 @@
       <link>https://yplam.com/post/symfony/symfony-the-new-way/</link>
       <pubDate>Sun, 29 Mar 2020 00:00:00 +0000</pubDate>
       <guid>https://yplam.com/post/symfony/symfony-the-new-way/</guid>
-      <description>&lt;p&gt;Symfony 5 已经发布了一段时间，Symfony 4 也出了 4.4 LTS 版本，于是准备把手上一个历史遗留项目升级到 4.4，然而一动手就遇到麻烦，因为现在官方已经不推荐使用之前那种传统的大 bundle，而是倾向于更通用的组件（作为一个从 Symfony 2 过来的用户，不得不说挺支持官方的做法，因为经常会因为有 bundle 不及时更新而导致 composer 冲突）。&lt;/p&gt;
-&lt;p&gt;本文章将尝试从头开始创建一个 Symfony 4 基础应用。&lt;/p&gt;</description>
+      <description>&lt;p&gt;Symfony 5 已经发布了一段时间，Symfony 4 也出了 4.4 LTS 版本，于是准备把手上一个历史遗留项目升级到 4.4，然而一动手就遇到麻烦，因为现在官方已经不推荐使用之前那种传统的大 bundle，而是倾向于更通用的组件（作为一个从 Symfony 2 过来的用户，不得不说挺支持官方的做法，因为经常会因为有 bundle 不及时更新而导致 composer 冲突）。&lt;/p&gt;&#xA;&lt;p&gt;本文章将尝试从头开始创建一个 Symfony 4 基础应用。&lt;/p&gt;</description>
     </item>
     <item>
       <title>Symfony 4 尝鲜</title>
@@ -63,8 +62,7 @@
       <link>https://yplam.com/post/symfony/symfony-twig-block/</link>
       <pubDate>Wed, 03 Jun 2015 00:00:00 +0000</pubDate>
       <guid>https://yplam.com/post/symfony/symfony-twig-block/</guid>
-      <description>&lt;p&gt;所谓区块，就是在页面中展示的一块内容，可以与当前页面内容相关或者无关。譬如常见的在网站侧边栏展示
-“最新文章”区块，或者在文章内容页展示“相关文章”区块。&lt;/p&gt;</description>
+      <description>&lt;p&gt;所谓区块，就是在页面中展示的一块内容，可以与当前页面内容相关或者无关。譬如常见的在网站侧边栏展示&#xA;“最新文章”区块，或者在文章内容页展示“相关文章”区块。&lt;/p&gt;</description>
     </item>
     <item>
       <title>30个最常用的Symfony组件</title>
@@ -92,16 +90,14 @@
       <link>https://yplam.com/post/php/drupal-services-and-dependency-injection/</link>
       <pubDate>Thu, 28 Aug 2014 00:00:00 +0000</pubDate>
       <guid>https://yplam.com/post/php/drupal-services-and-dependency-injection/</guid>
-      <description>&lt;p&gt;原文地址：&lt;a href=&#34;https://www.drupal.org/node/2133171&#34;&gt;Services and dependency injection in Drupal 8&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;Drupal 8 引入了服务的概念，用来解耦可复用的功能，并且可以通过在服务容器中注册这些服务，让它们可插拔与可替换。身为开发者，最佳的方式就是通过服务容器来访问Drupal提供的所有服务，这样可以保证遵循系统的解耦特性。在&lt;a href=&#34;http://symfony.com/doc/current/book/service_container.html&#34;&gt;Symfony 2的文档&lt;/a&gt;中对服务有非常好的介绍。&lt;/p&gt;</description>
+      <description>&lt;p&gt;原文地址：&lt;a href=&#34;https://www.drupal.org/node/2133171&#34;&gt;Services and dependency injection in Drupal 8&lt;/a&gt;&lt;/p&gt;&#xA;&lt;p&gt;Drupal 8 引入了服务的概念，用来解耦可复用的功能，并且可以通过在服务容器中注册这些服务，让它们可插拔与可替换。身为开发者，最佳的方式就是通过服务容器来访问Drupal提供的所有服务，这样可以保证遵循系统的解耦特性。在&lt;a href=&#34;http://symfony.com/doc/current/book/service_container.html&#34;&gt;Symfony 2的文档&lt;/a&gt;中对服务有非常好的介绍。&lt;/p&gt;</description>
     </item>
     <item>
       <title>Drupal 专题页面模块</title>
       <link>https://yplam.com/post/php/drupal-special-topic/</link>
       <pubDate>Wed, 18 Jun 2014 00:00:00 +0000</pubDate>
       <guid>https://yplam.com/post/php/drupal-special-topic/</guid>
-      <description>&lt;p&gt;Drupal Special Topic 模块提供一种通用并且可定制的 Drupal 专题页面功能。&lt;/p&gt;
-&lt;p&gt;这里的专题页面，指的是将网站中与某个话题相关的内容聚合到一个页面中，具有特殊的布局与样式设计。国内常见的专题页面大多以区块的形式展现，不同的位置显示不同的内容列表，有链接与图文混合等展示形式。&lt;/p&gt;</description>
+      <description>&lt;p&gt;Drupal Special Topic 模块提供一种通用并且可定制的 Drupal 专题页面功能。&lt;/p&gt;&#xA;&lt;p&gt;这里的专题页面，指的是将网站中与某个话题相关的内容聚合到一个页面中，具有特殊的布局与样式设计。国内常见的专题页面大多以区块的形式展现，不同的位置显示不同的内容列表，有链接与图文混合等展示形式。&lt;/p&gt;</description>
     </item>
     <item>
       <title>Drupal微信公众平台模块</title>
@@ -129,8 +125,7 @@
       <link>https://yplam.com/post/symfony/symfony-service-container/</link>
       <pubDate>Tue, 18 Jun 2013 00:00:00 +0000</pubDate>
       <guid>https://yplam.com/post/symfony/symfony-service-container/</guid>
-      <description>&lt;p&gt;这是一篇关于Symfony2服务容器实现的笔记，原文请查看文章末尾的相关资料部分。&lt;/p&gt;
-&lt;p&gt;上一篇笔记介绍了依赖注入容器，依赖注入容器使得对各种系统功能的调用变得简便，但同时引入了一个新的问题就是容器的编写与维护变得非常复杂。Symfony2试图通过ServiceContainer、ServiceContainerBuilder以及xml、yml配置文件来使容器的实现变得简单。&lt;/p&gt;</description>
+      <description>&lt;p&gt;这是一篇关于Symfony2服务容器实现的笔记，原文请查看文章末尾的相关资料部分。&lt;/p&gt;&#xA;&lt;p&gt;上一篇笔记介绍了依赖注入容器，依赖注入容器使得对各种系统功能的调用变得简便，但同时引入了一个新的问题就是容器的编写与维护变得非常复杂。Symfony2试图通过ServiceContainer、ServiceContainerBuilder以及xml、yml配置文件来使容器的实现变得简单。&lt;/p&gt;</description>
     </item>
     <item>
       <title>依赖注入容器（Dependency Injection Container）</title>

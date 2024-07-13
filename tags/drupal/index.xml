@@ -4,7 +4,7 @@
     <title>Drupal on YP.Lam</title>
     <link>https://yplam.com/tags/drupal/</link>
     <description>Recent content in Drupal on YP.Lam</description>
-    <generator>Hugo -- gohugo.io</generator>
+    <generator>Hugo</generator>
     <language>zh-cn</language>
     <lastBuildDate>Tue, 11 Aug 2015 00:00:00 +0000</lastBuildDate>
     <atom:link href="https://yplam.com/tags/drupal/index.xml" rel="self" type="application/rss+xml" />
@@ -20,16 +20,14 @@
       <link>https://yplam.com/post/php/drupal-services-and-dependency-injection/</link>
       <pubDate>Thu, 28 Aug 2014 00:00:00 +0000</pubDate>
       <guid>https://yplam.com/post/php/drupal-services-and-dependency-injection/</guid>
-      <description>&lt;p&gt;原文地址：&lt;a href=&#34;https://www.drupal.org/node/2133171&#34;&gt;Services and dependency injection in Drupal 8&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;Drupal 8 引入了服务的概念，用来解耦可复用的功能，并且可以通过在服务容器中注册这些服务，让它们可插拔与可替换。身为开发者，最佳的方式就是通过服务容器来访问Drupal提供的所有服务，这样可以保证遵循系统的解耦特性。在&lt;a href=&#34;http://symfony.com/doc/current/book/service_container.html&#34;&gt;Symfony 2的文档&lt;/a&gt;中对服务有非常好的介绍。&lt;/p&gt;</description>
+      <description>&lt;p&gt;原文地址：&lt;a href=&#34;https://www.drupal.org/node/2133171&#34;&gt;Services and dependency injection in Drupal 8&lt;/a&gt;&lt;/p&gt;&#xA;&lt;p&gt;Drupal 8 引入了服务的概念，用来解耦可复用的功能，并且可以通过在服务容器中注册这些服务，让它们可插拔与可替换。身为开发者，最佳的方式就是通过服务容器来访问Drupal提供的所有服务，这样可以保证遵循系统的解耦特性。在&lt;a href=&#34;http://symfony.com/doc/current/book/service_container.html&#34;&gt;Symfony 2的文档&lt;/a&gt;中对服务有非常好的介绍。&lt;/p&gt;</description>
     </item>
     <item>
       <title>Drupal 专题页面模块</title>
       <link>https://yplam.com/post/php/drupal-special-topic/</link>
       <pubDate>Wed, 18 Jun 2014 00:00:00 +0000</pubDate>
       <guid>https://yplam.com/post/php/drupal-special-topic/</guid>
-      <description>&lt;p&gt;Drupal Special Topic 模块提供一种通用并且可定制的 Drupal 专题页面功能。&lt;/p&gt;
-&lt;p&gt;这里的专题页面，指的是将网站中与某个话题相关的内容聚合到一个页面中，具有特殊的布局与样式设计。国内常见的专题页面大多以区块的形式展现，不同的位置显示不同的内容列表，有链接与图文混合等展示形式。&lt;/p&gt;</description>
+      <description>&lt;p&gt;Drupal Special Topic 模块提供一种通用并且可定制的 Drupal 专题页面功能。&lt;/p&gt;&#xA;&lt;p&gt;这里的专题页面，指的是将网站中与某个话题相关的内容聚合到一个页面中，具有特殊的布局与样式设计。国内常见的专题页面大多以区块的形式展现，不同的位置显示不同的内容列表，有链接与图文混合等展示形式。&lt;/p&gt;</description>
     </item>
     <item>
       <title>Drupal微信公众平台模块</title>

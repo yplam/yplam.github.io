@@ -4,10 +4,31 @@
     <title>Tags on YP.Lam</title>
     <link>https://yplam.com/tags/</link>
     <description>Recent content in Tags on YP.Lam</description>
-    <generator>Hugo -- gohugo.io</generator>
+    <generator>Hugo</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Sat, 02 Dec 2023 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sat, 13 Jul 2024 00:00:00 +0000</lastBuildDate>
     <atom:link href="https://yplam.com/tags/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>EFR32</title>
+      <link>https://yplam.com/tags/efr32/</link>
+      <pubDate>Sat, 13 Jul 2024 00:00:00 +0000</pubDate>
+      <guid>https://yplam.com/tags/efr32/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Embedded</title>
+      <link>https://yplam.com/tags/embedded/</link>
+      <pubDate>Sat, 13 Jul 2024 00:00:00 +0000</pubDate>
+      <guid>https://yplam.com/tags/embedded/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>HomeAssistant</title>
+      <link>https://yplam.com/tags/homeassistant/</link>
+      <pubDate>Sat, 13 Jul 2024 00:00:00 +0000</pubDate>
+      <guid>https://yplam.com/tags/homeassistant/</guid>
+      <description></description>
+    </item>
     <item>
       <title>MachineLearning</title>
       <link>https://yplam.com/tags/machinelearning/</link>
@@ -44,13 +65,6 @@
       <description></description>
     </item>
     <item>
-      <title>HomeAssistant</title>
-      <link>https://yplam.com/tags/homeassistant/</link>
-      <pubDate>Mon, 02 May 2022 00:00:00 +0000</pubDate>
-      <guid>https://yplam.com/tags/homeassistant/</guid>
-      <description></description>
-    </item>
-    <item>
       <title>Kubernetes</title>
       <link>https://yplam.com/tags/kubernetes/</link>
       <pubDate>Mon, 02 May 2022 00:00:00 +0000</pubDate>
@@ -58,14 +72,7 @@
       <description></description>
     </item>
     <item>
-      <title>Embedded</title>
-      <link>https://yplam.com/tags/embedded/</link>
-      <pubDate>Sat, 25 Dec 2021 00:00:00 +0000</pubDate>
-      <guid>https://yplam.com/tags/embedded/</guid>
-      <description></description>
-    </item>
-    <item>
-      <title>iMX6ULL</title>
+      <title>IMX6ULL</title>
       <link>https://yplam.com/tags/imx6ull/</link>
       <pubDate>Sat, 25 Dec 2021 00:00:00 +0000</pubDate>
       <guid>https://yplam.com/tags/imx6ull/</guid>
@@ -121,9 +128,16 @@
       <description></description>
     </item>
     <item>
-      <title>Chromium</title>
+      <title>Chromium,</title>
       <link>https://yplam.com/tags/chromium/</link>
       <pubDate>Sat, 06 Apr 2019 00:00:00 +0000</pubDate>
+      <guid>https://yplam.com/tags/chromium/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Chromium</title>
+      <link>https://yplam.com/tags/chromium/</link>
+      <pubDate>Sat, 09 Mar 2019 00:00:00 +0000</pubDate>
       <guid>https://yplam.com/tags/chromium/</guid>
       <description></description>
     </item>

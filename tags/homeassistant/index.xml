@@ -4,10 +4,17 @@
     <title>HomeAssistant on YP.Lam</title>
     <link>https://yplam.com/tags/homeassistant/</link>
     <description>Recent content in HomeAssistant on YP.Lam</description>
-    <generator>Hugo -- gohugo.io</generator>
+    <generator>Hugo</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Mon, 02 May 2022 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sat, 13 Jul 2024 00:00:00 +0000</lastBuildDate>
     <atom:link href="https://yplam.com/tags/homeassistant/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Panther EFR32MG21 固件打包</title>
+      <link>https://yplam.com/post/embedded/panther-efr32mg21/</link>
+      <pubDate>Sat, 13 Jul 2024 00:00:00 +0000</pubDate>
+      <guid>https://yplam.com/post/embedded/panther-efr32mg21/</guid>
+      <description>&lt;p&gt;基于 EFR32MG21 官方提供模板项目实现协调器固件编译打包与烧录。&lt;/p&gt;</description>
+    </item>
     <item>
       <title>斐讯 N1 搭建私有 Kubernetes 集群运行 HomeAssistant</title>
       <link>https://yplam.com/post/k8s/k8s-n1/</link>

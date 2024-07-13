@@ -4,10 +4,17 @@
     <title>YP.Lam</title>
     <link>https://yplam.com/</link>
     <description>Recent content on YP.Lam</description>
-    <generator>Hugo -- gohugo.io</generator>
+    <generator>Hugo</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Sat, 02 Dec 2023 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sat, 13 Jul 2024 00:00:00 +0000</lastBuildDate>
     <atom:link href="https://yplam.com/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Panther EFR32MG21 固件打包</title>
+      <link>https://yplam.com/post/embedded/panther-efr32mg21/</link>
+      <pubDate>Sat, 13 Jul 2024 00:00:00 +0000</pubDate>
+      <guid>https://yplam.com/post/embedded/panther-efr32mg21/</guid>
+      <description>&lt;p&gt;基于 EFR32MG21 官方提供模板项目实现协调器固件编译打包与烧录。&lt;/p&gt;</description>
+    </item>
     <item>
       <title>PyTorch 多显卡推理与问题排查</title>
       <link>https://yplam.com/post/machinelearning/pytorch-multiple-gpus-error/</link>
@@ -76,41 +83,35 @@
       <link>https://yplam.com/post/embedded/openwrt-mt7688-4g/</link>
       <pubDate>Sun, 02 Aug 2020 00:00:00 +0000</pubDate>
       <guid>https://yplam.com/post/embedded/openwrt-mt7688-4g/</guid>
-      <description>&lt;p&gt;最近经常要到一些没有有线网络的地方，虽然手机可以共享WIFI出来，但总不能24小时开着，刚好手上空闲着一块 EC20 4G 模块，
-于是淘宝弄了块最便宜的 MT7688 4G 路由板回来，DIY 自己的 4G WIFI共享路由器。&lt;/p&gt;</description>
+      <description>&lt;p&gt;最近经常要到一些没有有线网络的地方，虽然手机可以共享WIFI出来，但总不能24小时开着，刚好手上空闲着一块 EC20 4G 模块，&#xA;于是淘宝弄了块最便宜的 MT7688 4G 路由板回来，DIY 自己的 4G WIFI共享路由器。&lt;/p&gt;</description>
     </item>
     <item>
       <title>Symfony 4 the new way</title>
       <link>https://yplam.com/post/symfony/symfony-the-new-way/</link>
       <pubDate>Sun, 29 Mar 2020 00:00:00 +0000</pubDate>
       <guid>https://yplam.com/post/symfony/symfony-the-new-way/</guid>
-      <description>&lt;p&gt;Symfony 5 已经发布了一段时间，Symfony 4 也出了 4.4 LTS 版本，于是准备把手上一个历史遗留项目升级到 4.4，然而一动手就遇到麻烦，因为现在官方已经不推荐使用之前那种传统的大 bundle，而是倾向于更通用的组件（作为一个从 Symfony 2 过来的用户，不得不说挺支持官方的做法，因为经常会因为有 bundle 不及时更新而导致 composer 冲突）。&lt;/p&gt;
-&lt;p&gt;本文章将尝试从头开始创建一个 Symfony 4 基础应用。&lt;/p&gt;</description>
+      <description>&lt;p&gt;Symfony 5 已经发布了一段时间，Symfony 4 也出了 4.4 LTS 版本，于是准备把手上一个历史遗留项目升级到 4.4，然而一动手就遇到麻烦，因为现在官方已经不推荐使用之前那种传统的大 bundle，而是倾向于更通用的组件（作为一个从 Symfony 2 过来的用户，不得不说挺支持官方的做法，因为经常会因为有 bundle 不及时更新而导致 composer 冲突）。&lt;/p&gt;&#xA;&lt;p&gt;本文章将尝试从头开始创建一个 Symfony 4 基础应用。&lt;/p&gt;</description>
     </item>
     <item>
       <title>Tensorflow Serving Nsfw</title>
       <link>https://yplam.com/post/machinelearning/tensorflow-serving-nsfw/</link>
       <pubDate>Tue, 03 Dec 2019 15:32:35 +0800</pubDate>
       <guid>https://yplam.com/post/machinelearning/tensorflow-serving-nsfw/</guid>
-      <description>&lt;p&gt;两年多前曾经在服务器上部署了个 Tensorflow 模型，由于 Tensorflow serving 刚公布不久，并且还没阅读相关文档，所以当时就粗暴的用 Flask 写了个接口就放到线上跑了两年。&lt;/p&gt;
-&lt;p&gt;最近又需要在服务器上部署些模型，决定用回比较官方的方式，研究一下 Tensorflow serving。&lt;/p&gt;</description>
+      <description>&lt;p&gt;两年多前曾经在服务器上部署了个 Tensorflow 模型，由于 Tensorflow serving 刚公布不久，并且还没阅读相关文档，所以当时就粗暴的用 Flask 写了个接口就放到线上跑了两年。&lt;/p&gt;&#xA;&lt;p&gt;最近又需要在服务器上部署些模型，决定用回比较官方的方式，研究一下 Tensorflow serving。&lt;/p&gt;</description>
     </item>
     <item>
       <title>Chromium 源码阅读：Could not decode image bug 跟踪</title>
       <link>https://yplam.com/post/chromium/chromium-image-decode-error/</link>
       <pubDate>Sat, 06 Apr 2019 00:00:00 +0000</pubDate>
       <guid>https://yplam.com/post/chromium/chromium-image-decode-error/</guid>
-      <description>&lt;p&gt;偶尔有收到用户关于 &amp;ldquo;Could not decode image: ***&amp;rdquo; 的反馈，并且最近频率有增加的趋势，解开
-Theme 文件除了图片有点大以外看不出其他问题，所以决定花点时间跟踪一下 Chromium 源码。&lt;/p&gt;</description>
+      <description>&lt;p&gt;偶尔有收到用户关于 &amp;ldquo;Could not decode image: ***&amp;rdquo; 的反馈，并且最近频率有增加的趋势，解开&#xA;Theme 文件除了图片有点大以外看不出其他问题，所以决定花点时间跟踪一下 Chromium 源码。&lt;/p&gt;</description>
     </item>
     <item>
       <title>Chromium 源码阅读：C&#43;&#43; 基础</title>
       <link>https://yplam.com/post/chromium/chromium-cpp/</link>
       <pubDate>Sat, 23 Mar 2019 00:00:00 +0000</pubDate>
       <guid>https://yplam.com/post/chromium/chromium-cpp/</guid>
-      <description>&lt;p&gt;阅读 Chromium 源码的过程中，发现最大的障碍在于自己对 C++ 的理解还停留在大学时期，平时使用 C++ 也
-仅仅停留在写个简单类，单例、工厂等简单的模式；所以在此针对 Chromium 源码中自己未曾用过的编程方式
-做一个笔记。&lt;/p&gt;</description>
+      <description>&lt;p&gt;阅读 Chromium 源码的过程中，发现最大的障碍在于自己对 C++ 的理解还停留在大学时期，平时使用 C++ 也&#xA;仅仅停留在写个简单类，单例、工厂等简单的模式；所以在此针对 Chromium 源码中自己未曾用过的编程方式&#xA;做一个笔记。&lt;/p&gt;</description>
     </item>
     <item>
       <title>Chromium 源码阅读：chrome/browser/ui/views 入门概览</title>
@@ -138,8 +139,7 @@ Theme 文件除了图片有点大以外看不出其他问题，所以决定花�
       <link>https://yplam.com/post/embedded/lora-ranging-test/</link>
       <pubDate>Wed, 19 Dec 2018 00:00:00 +0000</pubDate>
       <guid>https://yplam.com/post/embedded/lora-ranging-test/</guid>
-      <description>&lt;p&gt;之前用现成的Lora串口模块感觉挺顺手，最近偶尔看到带 LoraRanging 功能的 SX1280，于是买了两个模块回来测试一下。&lt;/p&gt;
-&lt;p&gt;源码地址 &lt;a href=&#34;https://github.com/yplam/LoraRangingTest&#34;&gt;https://github.com/yplam/LoraRangingTest&lt;/a&gt;&lt;/p&gt;</description>
+      <description>&lt;p&gt;之前用现成的Lora串口模块感觉挺顺手，最近偶尔看到带 LoraRanging 功能的 SX1280，于是买了两个模块回来测试一下。&lt;/p&gt;&#xA;&lt;p&gt;源码地址 &lt;a href=&#34;https://github.com/yplam/LoraRangingTest&#34;&gt;https://github.com/yplam/LoraRangingTest&lt;/a&gt;&lt;/p&gt;</description>
     </item>
     <item>
       <title>Mbed Bootloader配置笔记</title>
@@ -167,11 +167,7 @@ Theme 文件除了图片有点大以外看不出其他问题，所以决定花�
       <link>https://yplam.com/post/machinelearning/recommender-system/</link>
       <pubDate>Wed, 04 Apr 2018 00:00:00 +0000</pubDate>
       <guid>https://yplam.com/post/machinelearning/recommender-system/</guid>
-      <description>距离度量
-评估
-RMSE
-AUC
-算法</description>
+      <description>距离度量&#xA;评估&#xA;RMSE&#xA;AUC&#xA;算法</description>
     </item>
     <item>
       <title>Symfony 4 尝鲜</title>
@@ -185,9 +181,7 @@ AUC
       <link>https://yplam.com/post/machinelearning/tensorflow-object-detection-note/</link>
       <pubDate>Sat, 21 Oct 2017 00:00:00 +0000</pubDate>
       <guid>https://yplam.com/post/machinelearning/tensorflow-object-detection-note/</guid>
-      <description>&lt;p&gt;跟风关注机器学习已有一段时间，最近需要做一个图像识别的项目，刚好 Google 开源了 &lt;a href=&#34;https://github.com/tensorflow/models/tree/master/research/object_detection&#34;&gt;Tensorflow Object Detection API&lt;/a&gt; ，
-于是在此基础上做了一次尝试。本笔记从一名程序员的角度记录一次基于 Tensorflow Object Detection API 的图像物体识别项目过程，项目使用 Google Cloud Machine Learning 进行模型训练，
-使用阿里云 GPU 服务器进行模型测试评估。&lt;/p&gt;</description>
+      <description>&lt;p&gt;跟风关注机器学习已有一段时间，最近需要做一个图像识别的项目，刚好 Google 开源了 &lt;a href=&#34;https://github.com/tensorflow/models/tree/master/research/object_detection&#34;&gt;Tensorflow Object Detection API&lt;/a&gt; ，&#xA;于是在此基础上做了一次尝试。本笔记从一名程序员的角度记录一次基于 Tensorflow Object Detection API 的图像物体识别项目过程，项目使用 Google Cloud Machine Learning 进行模型训练，&#xA;使用阿里云 GPU 服务器进行模型测试评估。&lt;/p&gt;</description>
     </item>
     <item>
       <title>Netflix Prize 相关资料</title>
@@ -198,9 +192,9 @@ AUC
     </item>
     <item>
       <title>《 Hands-On Machine Learning with Scikit-Learn and TensorFlow 》笔记</title>
-      <link>https://yplam.com/post/machinelearning/hands-on-machine-learning-scikit-learn-tensorflow/</link>
+      <link>https://yplam.com/post/machinelearning/hands-on-machine-learning-scikit-learn--tensorflow/</link>
       <pubDate>Sun, 16 Apr 2017 00:00:00 +0000</pubDate>
-      <guid>https://yplam.com/post/machinelearning/hands-on-machine-learning-scikit-learn-tensorflow/</guid>
+      <guid>https://yplam.com/post/machinelearning/hands-on-machine-learning-scikit-learn--tensorflow/</guid>
       <description>&lt;p&gt;最近看了一本挺不错的新书：&lt;a href=&#34;http://shop.oreilly.com/product/0636920052289.do&#34;&gt;《 Hands-On Machine Learning with Scikit-Learn and TensorFlow 》&lt;/a&gt;，在此分享一下。&lt;/p&gt;</description>
     </item>
     <item>
@@ -222,8 +216,7 @@ AUC
       <link>https://yplam.com/post/machinelearning/machine-learning-predicting-customer-behavior/</link>
       <pubDate>Sun, 19 Feb 2017 00:00:00 +0000</pubDate>
       <guid>https://yplam.com/post/machinelearning/machine-learning-predicting-customer-behavior/</guid>
-      <description>&lt;p&gt;&lt;strong&gt;注&lt;/strong&gt;：本文为 &lt;a href=&#34;http://www.strong.io/blog/predicting-customer-behavior-machine-learning-to-identify-paying-customers&#34;&gt;Predicting customer behavior: How we use machine learning to identify paying customers before they subscribe&lt;/a&gt; 的简单翻译版本，详细内容请阅读原文。&lt;/p&gt;
-&lt;p&gt;本案例为 strong.io 公司的一位创业公司客户，该客户开发了一个类SaaS软件，但在经过多年的稳固发展后，他们的每月收入增长却开始变得很缓慢。他们曾经尝试改善他们的产品，但效果可能不好，因此现在将重点放在客户获取上面。&lt;/p&gt;</description>
+      <description>&lt;p&gt;&lt;strong&gt;注&lt;/strong&gt;：本文为 &lt;a href=&#34;http://www.strong.io/blog/predicting-customer-behavior-machine-learning-to-identify-paying-customers&#34;&gt;Predicting customer behavior: How we use machine learning to identify paying customers before they subscribe&lt;/a&gt; 的简单翻译版本，详细内容请阅读原文。&lt;/p&gt;&#xA;&lt;p&gt;本案例为 strong.io 公司的一位创业公司客户，该客户开发了一个类SaaS软件，但在经过多年的稳固发展后，他们的每月收入增长却开始变得很缓慢。他们曾经尝试改善他们的产品，但效果可能不好，因此现在将重点放在客户获取上面。&lt;/p&gt;</description>
     </item>
     <item>
       <title>用户画像笔记</title>
@@ -237,16 +230,14 @@ AUC
       <link>https://yplam.com/post/machinelearning/aws-cuda-tensorflow/</link>
       <pubDate>Mon, 12 Dec 2016 00:00:00 +0000</pubDate>
       <guid>https://yplam.com/post/machinelearning/aws-cuda-tensorflow/</guid>
-      <description>&lt;p&gt;最近迷上了机器学习，花了不少时间学习相关的基础内容；虽然数学跟不上，也不妨碍跟风玩玩各位大牛的开源成果。
-本文记录了购买AWS GPU服务器，安装cuda、 TensorFlow，运行 Neural Style 测试的过程。&lt;/p&gt;</description>
+      <description>&lt;p&gt;最近迷上了机器学习，花了不少时间学习相关的基础内容；虽然数学跟不上，也不妨碍跟风玩玩各位大牛的开源成果。&#xA;本文记录了购买AWS GPU服务器，安装cuda、 TensorFlow，运行 Neural Style 测试的过程。&lt;/p&gt;</description>
     </item>
     <item>
       <title>机器学习笔记</title>
       <link>https://yplam.com/post/machinelearning/machine-learning-notes/</link>
       <pubDate>Thu, 01 Dec 2016 00:00:00 +0000</pubDate>
       <guid>https://yplam.com/post/machinelearning/machine-learning-notes/</guid>
-      <description>&lt;p&gt;机器学习是人工智能的一个分支。人工智能的研究是从以“推理”为重点到以“知识”为重点，再到以“学习”为重点，一条自然、清晰的脉络。显然，机器学习是实现人工智能的一个途径，即以机器学习为手段解决人工智能中的问题。机器学习在近30多年已发展为一门多领域交叉学科，涉及概率论、统计学、逼近论、凸分析、计算复杂性理论等多门学科。机器学习理论主要是设计和分析一些让计算机可以自动“学习”的算法。机器学习算法是一类从数据中自动分析获得规律，并利用规律对未知数据进行预测的算法。因为学习算法中涉及了大量的统计学理论，机器学习与推断统计学联系尤为密切，也被称为统计学习理论。&lt;a href=&#34;https://zh.wikipedia.org/wiki/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0&#34;&gt;来源&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;本文记录机器学习相关的概念与资料索引。&lt;/p&gt;</description>
+      <description>&lt;p&gt;机器学习是人工智能的一个分支。人工智能的研究是从以“推理”为重点到以“知识”为重点，再到以“学习”为重点，一条自然、清晰的脉络。显然，机器学习是实现人工智能的一个途径，即以机器学习为手段解决人工智能中的问题。机器学习在近30多年已发展为一门多领域交叉学科，涉及概率论、统计学、逼近论、凸分析、计算复杂性理论等多门学科。机器学习理论主要是设计和分析一些让计算机可以自动“学习”的算法。机器学习算法是一类从数据中自动分析获得规律，并利用规律对未知数据进行预测的算法。因为学习算法中涉及了大量的统计学理论，机器学习与推断统计学联系尤为密切，也被称为统计学习理论。&lt;a href=&#34;https://zh.wikipedia.org/wiki/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0&#34;&gt;来源&lt;/a&gt;&lt;/p&gt;&#xA;&lt;p&gt;本文记录机器学习相关的概念与资料索引。&lt;/p&gt;</description>
     </item>
     <item>
       <title>使用localStorage进行跨标签页通讯</title>
@@ -323,9 +314,7 @@ AUC
       <link>https://yplam.com/post/linux/ssd-raid-performance/</link>
       <pubDate>Sat, 15 Aug 2015 00:00:00 +0000</pubDate>
       <guid>https://yplam.com/post/linux/ssd-raid-performance/</guid>
-      <description>&lt;p&gt;最近拿到几块Intel的企业级SSD准备搭建新的服务器，下面分享一些这段时间的测试数据。&lt;/p&gt;
-&lt;p&gt;测试主要在DELL R610、阿里云4核非IO优化SSD服务器环境下进行，测试工具为sysbench。&lt;/p&gt;
-&lt;p&gt;测试过程主要是使用sysbench命令分别对 SATA、SAS、SSD盘进行测试，其中测试重点在于SSD性能对比。&lt;/p&gt;</description>
+      <description>&lt;p&gt;最近拿到几块Intel的企业级SSD准备搭建新的服务器，下面分享一些这段时间的测试数据。&lt;/p&gt;&#xA;&lt;p&gt;测试主要在DELL R610、阿里云4核非IO优化SSD服务器环境下进行，测试工具为sysbench。&lt;/p&gt;&#xA;&lt;p&gt;测试过程主要是使用sysbench命令分别对 SATA、SAS、SSD盘进行测试，其中测试重点在于SSD性能对比。&lt;/p&gt;</description>
     </item>
     <item>
       <title>为个人博客配置 HTTPS 访问</title>
@@ -353,8 +342,7 @@ AUC
       <link>https://yplam.com/post/symfony/symfony-twig-block/</link>
       <pubDate>Wed, 03 Jun 2015 00:00:00 +0000</pubDate>
       <guid>https://yplam.com/post/symfony/symfony-twig-block/</guid>
-      <description>&lt;p&gt;所谓区块，就是在页面中展示的一块内容，可以与当前页面内容相关或者无关。譬如常见的在网站侧边栏展示
-“最新文章”区块，或者在文章内容页展示“相关文章”区块。&lt;/p&gt;</description>
+      <description>&lt;p&gt;所谓区块，就是在页面中展示的一块内容，可以与当前页面内容相关或者无关。譬如常见的在网站侧边栏展示&#xA;“最新文章”区块，或者在文章内容页展示“相关文章”区块。&lt;/p&gt;</description>
     </item>
     <item>
       <title>30个最常用的Symfony组件</title>
@@ -382,16 +370,14 @@ AUC
       <link>https://yplam.com/post/php/drupal-services-and-dependency-injection/</link>
       <pubDate>Thu, 28 Aug 2014 00:00:00 +0000</pubDate>
       <guid>https://yplam.com/post/php/drupal-services-and-dependency-injection/</guid>
-      <description>&lt;p&gt;原文地址：&lt;a href=&#34;https://www.drupal.org/node/2133171&#34;&gt;Services and dependency injection in Drupal 8&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;Drupal 8 引入了服务的概念，用来解耦可复用的功能，并且可以通过在服务容器中注册这些服务，让它们可插拔与可替换。身为开发者，最佳的方式就是通过服务容器来访问Drupal提供的所有服务，这样可以保证遵循系统的解耦特性。在&lt;a href=&#34;http://symfony.com/doc/current/book/service_container.html&#34;&gt;Symfony 2的文档&lt;/a&gt;中对服务有非常好的介绍。&lt;/p&gt;</description>
+      <description>&lt;p&gt;原文地址：&lt;a href=&#34;https://www.drupal.org/node/2133171&#34;&gt;Services and dependency injection in Drupal 8&lt;/a&gt;&lt;/p&gt;&#xA;&lt;p&gt;Drupal 8 引入了服务的概念，用来解耦可复用的功能，并且可以通过在服务容器中注册这些服务，让它们可插拔与可替换。身为开发者，最佳的方式就是通过服务容器来访问Drupal提供的所有服务，这样可以保证遵循系统的解耦特性。在&lt;a href=&#34;http://symfony.com/doc/current/book/service_container.html&#34;&gt;Symfony 2的文档&lt;/a&gt;中对服务有非常好的介绍。&lt;/p&gt;</description>
     </item>
     <item>
       <title>Drupal 专题页面模块</title>
       <link>https://yplam.com/post/php/drupal-special-topic/</link>
       <pubDate>Wed, 18 Jun 2014 00:00:00 +0000</pubDate>
       <guid>https://yplam.com/post/php/drupal-special-topic/</guid>
-      <description>&lt;p&gt;Drupal Special Topic 模块提供一种通用并且可定制的 Drupal 专题页面功能。&lt;/p&gt;
-&lt;p&gt;这里的专题页面，指的是将网站中与某个话题相关的内容聚合到一个页面中，具有特殊的布局与样式设计。国内常见的专题页面大多以区块的形式展现，不同的位置显示不同的内容列表，有链接与图文混合等展示形式。&lt;/p&gt;</description>
+      <description>&lt;p&gt;Drupal Special Topic 模块提供一种通用并且可定制的 Drupal 专题页面功能。&lt;/p&gt;&#xA;&lt;p&gt;这里的专题页面，指的是将网站中与某个话题相关的内容聚合到一个页面中，具有特殊的布局与样式设计。国内常见的专题页面大多以区块的形式展现，不同的位置显示不同的内容列表，有链接与图文混合等展示形式。&lt;/p&gt;</description>
     </item>
     <item>
       <title>Drupal微信公众平台模块</title>
@@ -419,8 +405,7 @@ AUC
       <link>https://yplam.com/post/symfony/symfony-service-container/</link>
       <pubDate>Tue, 18 Jun 2013 00:00:00 +0000</pubDate>
       <guid>https://yplam.com/post/symfony/symfony-service-container/</guid>
-      <description>&lt;p&gt;这是一篇关于Symfony2服务容器实现的笔记，原文请查看文章末尾的相关资料部分。&lt;/p&gt;
-&lt;p&gt;上一篇笔记介绍了依赖注入容器，依赖注入容器使得对各种系统功能的调用变得简便，但同时引入了一个新的问题就是容器的编写与维护变得非常复杂。Symfony2试图通过ServiceContainer、ServiceContainerBuilder以及xml、yml配置文件来使容器的实现变得简单。&lt;/p&gt;</description>
+      <description>&lt;p&gt;这是一篇关于Symfony2服务容器实现的笔记，原文请查看文章末尾的相关资料部分。&lt;/p&gt;&#xA;&lt;p&gt;上一篇笔记介绍了依赖注入容器，依赖注入容器使得对各种系统功能的调用变得简便，但同时引入了一个新的问题就是容器的编写与维护变得非常复杂。Symfony2试图通过ServiceContainer、ServiceContainerBuilder以及xml、yml配置文件来使容器的实现变得简单。&lt;/p&gt;</description>
     </item>
     <item>
       <title>依赖注入容器（Dependency Injection Container）</title>
@@ -455,19 +440,7 @@ AUC
       <link>https://yplam.com/post/linux/linux-command-collection/</link>
       <pubDate>Sun, 19 Feb 2012 00:00:00 +0000</pubDate>
       <guid>https://yplam.com/post/linux/linux-command-collection/</guid>
-      <description>&lt;p&gt;此笔记记录 Linux 下的一些命令使用技巧，作为工作中的备忘。&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;#no1&#34;&gt;导入数据库时跳过某个表&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;#no2&#34;&gt;找出最近修改、创建的文件&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;#no3&#34;&gt;自动压缩旧日志文件的shell脚本&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;#no4&#34;&gt;Linux 初始化 SSH 会话慢的解决方法&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;#no5&#34;&gt;Crontab 控制脚本运行时间段&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;#no6&#34;&gt;rsync 只同步匹配的目录文件&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;#no7&#34;&gt;Ubuntu 下切换 PHP 版本&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;#no8&#34;&gt;ttyACM 插入后被占用问题&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;#no9&#34;&gt;P52 Manjaro 外接显示器输出问题&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;#no10&#34;&gt;Manjaro zsh 新标签页保持路径&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;</description>
+      <description>&lt;p&gt;此笔记记录 Linux 下的一些命令使用技巧，作为工作中的备忘。&lt;/p&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;&lt;a href=&#34;#no1&#34;&gt;导入数据库时跳过某个表&lt;/a&gt;&lt;/li&gt;&#xA;&lt;li&gt;&lt;a href=&#34;#no2&#34;&gt;找出最近修改、创建的文件&lt;/a&gt;&lt;/li&gt;&#xA;&lt;li&gt;&lt;a href=&#34;#no3&#34;&gt;自动压缩旧日志文件的shell脚本&lt;/a&gt;&lt;/li&gt;&#xA;&lt;li&gt;&lt;a href=&#34;#no4&#34;&gt;Linux 初始化 SSH 会话慢的解决方法&lt;/a&gt;&lt;/li&gt;&#xA;&lt;li&gt;&lt;a href=&#34;#no5&#34;&gt;Crontab 控制脚本运行时间段&lt;/a&gt;&lt;/li&gt;&#xA;&lt;li&gt;&lt;a href=&#34;#no6&#34;&gt;rsync 只同步匹配的目录文件&lt;/a&gt;&lt;/li&gt;&#xA;&lt;li&gt;&lt;a href=&#34;#no7&#34;&gt;Ubuntu 下切换 PHP 版本&lt;/a&gt;&lt;/li&gt;&#xA;&lt;li&gt;&lt;a href=&#34;#no8&#34;&gt;ttyACM 插入后被占用问题&lt;/a&gt;&lt;/li&gt;&#xA;&lt;li&gt;&lt;a href=&#34;#no9&#34;&gt;P52 Manjaro 外接显示器输出问题&lt;/a&gt;&lt;/li&gt;&#xA;&lt;li&gt;&lt;a href=&#34;#no10&#34;&gt;Manjaro zsh 新标签页保持路径&lt;/a&gt;&lt;/li&gt;&#xA;&lt;/ul&gt;</description>
     </item>
     <item>
       <title>Centos Nginx PHP-FPM Mysql 服务器环境配置</title>
@@ -481,8 +454,7 @@ AUC
       <link>https://yplam.com/about/</link>
       <pubDate>Sat, 01 Jan 2011 00:00:00 +0000</pubDate>
       <guid>https://yplam.com/about/</guid>
-      <description>YPLam 是一名后端工程师，也是一名骑行爱好者，目前就职于广州一家物联网行业公司。
-欢迎与我交流：yplam#yplam.com</description>
+      <description>YPLam 是一名后端工程师，也是一名骑行爱好者，目前就职于广州一家物联网行业公司。&#xA;欢迎与我交流：yplam#yplam.com</description>
     </item>
   </channel>
 </rss>

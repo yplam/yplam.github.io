@@ -4,7 +4,7 @@
     <title>Mbed on YP.Lam</title>
     <link>https://yplam.com/tags/mbed/</link>
     <description>Recent content in Mbed on YP.Lam</description>
-    <generator>Hugo -- gohugo.io</generator>
+    <generator>Hugo</generator>
     <language>zh-cn</language>
     <lastBuildDate>Wed, 19 Dec 2018 00:00:00 +0000</lastBuildDate>
     <atom:link href="https://yplam.com/tags/mbed/index.xml" rel="self" type="application/rss+xml" />
@@ -13,8 +13,7 @@
       <link>https://yplam.com/post/embedded/lora-ranging-test/</link>
       <pubDate>Wed, 19 Dec 2018 00:00:00 +0000</pubDate>
       <guid>https://yplam.com/post/embedded/lora-ranging-test/</guid>
-      <description>&lt;p&gt;之前用现成的Lora串口模块感觉挺顺手，最近偶尔看到带 LoraRanging 功能的 SX1280，于是买了两个模块回来测试一下。&lt;/p&gt;
-&lt;p&gt;源码地址 &lt;a href=&#34;https://github.com/yplam/LoraRangingTest&#34;&gt;https://github.com/yplam/LoraRangingTest&lt;/a&gt;&lt;/p&gt;</description>
+      <description>&lt;p&gt;之前用现成的Lora串口模块感觉挺顺手，最近偶尔看到带 LoraRanging 功能的 SX1280，于是买了两个模块回来测试一下。&lt;/p&gt;&#xA;&lt;p&gt;源码地址 &lt;a href=&#34;https://github.com/yplam/LoraRangingTest&#34;&gt;https://github.com/yplam/LoraRangingTest&lt;/a&gt;&lt;/p&gt;</description>
     </item>
     <item>
       <title>Mbed Bootloader配置笔记</title>

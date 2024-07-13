@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>EFR32 on YP.Lam</title>
+    <link>https://yplam.com/tags/efr32/</link>
+    <description>Recent content in EFR32 on YP.Lam</description>
+    <generator>Hugo</generator>
+    <language>zh-cn</language>
+    <lastBuildDate>Sat, 13 Jul 2024 00:00:00 +0000</lastBuildDate>
+    <atom:link href="https://yplam.com/tags/efr32/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Panther EFR32MG21 固件打包</title>
+      <link>https://yplam.com/post/embedded/panther-efr32mg21/</link>
+      <pubDate>Sat, 13 Jul 2024 00:00:00 +0000</pubDate>
+      <guid>https://yplam.com/post/embedded/panther-efr32mg21/</guid>
+      <description>&lt;p&gt;基于 EFR32MG21 官方提供模板项目实现协调器固件编译打包与烧录。&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>
