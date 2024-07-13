@@ -29,6 +29,18 @@
     <loc>https://yplam.com/post/machinelearning/pytorch-multiple-gpus-error/</loc>
     <lastmod>2023-12-02T00:00:00+00:00</lastmod>
   </url><url>
+    <loc>https://yplam.com/tags/linux/</loc>
+    <lastmod>2023-11-18T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://yplam.com/tags/rockchip/</loc>
+    <lastmod>2023-11-18T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://yplam.com/tags/rv1106/</loc>
+    <lastmod>2023-11-18T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://yplam.com/post/embedded/rv1106-dev/</loc>
+    <lastmod>2023-11-18T00:00:00+00:00</lastmod>
+  </url><url>
     <loc>https://yplam.com/tags/av/</loc>
     <lastmod>2023-06-10T00:00:00+00:00</lastmod>
   </url><url>
@@ -50,6 +62,12 @@
     <loc>https://yplam.com/tags/rtsp/</loc>
     <lastmod>2023-05-13T00:00:00+00:00</lastmod>
   </url><url>
+    <loc>https://yplam.com/tags/esp32/</loc>
+    <lastmod>2022-10-02T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://yplam.com/post/embedded/esp32-rust-mqtt-homeassistant/</loc>
+    <lastmod>2022-10-02T00:00:00+00:00</lastmod>
+  </url><url>
     <loc>https://yplam.com/tags/kubernetes/</loc>
     <lastmod>2022-05-02T00:00:00+00:00</lastmod>
   </url><url>
@@ -60,9 +78,6 @@
     <lastmod>2021-12-25T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://yplam.com/post/embedded/imx6ull-openwrt/</loc>
-    <lastmod>2021-12-25T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://yplam.com/tags/linux/</loc>
     <lastmod>2021-12-25T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://yplam.com/tags/openwrt/</loc>

@@ -16,6 +16,20 @@
       <description>&lt;p&gt;基于 EFR32MG21 官方提供模板项目实现协调器固件编译打包与烧录。&lt;/p&gt;</description>
     </item>
     <item>
+      <title>RV1106 开发笔记</title>
+      <link>https://yplam.com/post/embedded/rv1106-dev/</link>
+      <pubDate>Sat, 18 Nov 2023 00:00:00 +0000</pubDate>
+      <guid>https://yplam.com/post/embedded/rv1106-dev/</guid>
+      <description>&lt;p&gt;记录关于 RV1106 烧录、开发环境配置、SDK与Rust绑定相关内容&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>基于 Rust 实现 ESP32 HomeAssistant MQTT CO2 传感器</title>
+      <link>https://yplam.com/post/embedded/esp32-rust-mqtt-homeassistant/</link>
+      <pubDate>Sun, 02 Oct 2022 00:00:00 +0000</pubDate>
+      <guid>https://yplam.com/post/embedded/esp32-rust-mqtt-homeassistant/</guid>
+      <description>&lt;p&gt;最近发现 ESP32 相对于其他品牌单片机而言对 Rust 的支持还算完善，特别是对 std 的支持，使得很多对嵌入式而言相对高阶的库可以非常简单地使用。&lt;/p&gt;</description>
+    </item>
+    <item>
       <title>iMX6ULL 运行 OpenWRT</title>
       <link>https://yplam.com/post/embedded/imx6ull-openwrt/</link>
       <pubDate>Sat, 25 Dec 2021 00:00:00 +0000</pubDate>

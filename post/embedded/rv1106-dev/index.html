@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<section class="g-bg-gray-light-v5"><head>
+	
+	<title>YP.Lam  | RV1106 开发笔记</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<meta http-equiv="x-ua-compatible" content="ie=edge">
+
+	<link rel="stylesheet" href="//stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css">
+	
+	<link rel="stylesheet" href="https://yplam.com/scss/unify.min.css">
+
+	
+	
+  
+    
+      
+    
+  
+
+
+	
+</head>
+
+<body>    <div class="container">
+        <div class="d-sm-flex text-center">
+            <div class="align-self-center ml-auto">
+                <ul class="u-list-inline float-right g-py-20">
+                    <li class="list-inline-item g-mr-5">
+                        <a class="u-link-v5 g-color-gray-dark-v5 g-color-primary--hover" href="/">HOME</a>
+                        <i class="g-color-gray-light-v2 g-ml-5">/</i>
+                    </li>
+                    <li class="list-inline-item g-mr-5">
+                        <a class="u-link-v5 g-color-gray-dark-v5 g-color-primary--hover" href="/about/">ABOUT</a>
+                        <i class="g-color-gray-light-v2 g-ml-5">/</i>
+                    </li>
+                    <li class="list-inline-item">
+                        <a class="u-link-v5 g-color-gray-dark-v5 g-color-primary--hover" href="https://github.com/yplam">GITHUB</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+<div class="container" aria-label="Content">
+            <div class="g-bg-white">
+                <div class="g-px-35 g-py-30 g-mb-30">
+<article>
+    <ul class="list-inline g-color-gray-dark-v4">
+        <li class="list-inline-item mr-0">
+            In
+             
+            
+            
+            
+            <a href="https://yplam.com/tags/rv1106/">RV1106</a>
+            
+            
+            
+            
+            <a href="https://yplam.com/tags/rockchip/">RockChip</a>
+            
+            
+            
+            
+            <a href="https://yplam.com/tags/linux/">Linux</a>
+            
+            
+            
+            
+            <a href="https://yplam.com/tags/embedded/">Embedded</a>
+            
+            
+        </li>
+        <li class="list-inline-item mx-2">/</li>
+        <li class="list-inline-item">Posted 2023-11-18</li>
+    </ul>
+    <h1 class="g-mb-30">RV1106 开发笔记</h1>
+    <div class="justify-content-center article-content">
+        <p>记录关于 RV1106 烧录、开发环境配置、SDK与Rust绑定相关内容</p>
+<h2 id="clion-配置">CLion 配置</h2>
+<p>Cmake options 添加</p>
+<pre tabindex="0"><code class="language-conf" data-lang="conf">-DCOMPILE_FOR_RV1106_IPC:BOOL=ON -DRKIPC_CROSS_COMPILE=arm-rockchip830-linux-uclibcgnueabihf
+</code></pre><h2 id="rust-绑定">Rust 绑定</h2>
+<p>由于 RV1106 官方 SDK 基于 uclibc，因此 Rust 编译器环境需要基于官方 SDK 手动打包</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>git checkout df871fbf053de3a855398964cd05fadbe91cf4fd
+</span></span><span style="display:flex;"><span>./x check --target<span style="color:#f92672">=</span>armv7-unknown-linux-uclibceabihf
+</span></span><span style="display:flex;"><span>./x build --stage <span style="color:#ae81ff">2</span> --target<span style="color:#f92672">=</span>armv7-unknown-linux-uclibceabihf
+</span></span></code></pre></div><p>打包好的工具链可访问github下载： <a href="https://github.com/yplam/rv1106-rs/releases/tag/v0.1.0">https://github.com/yplam/rv1106-rs/releases/tag/v0.1.0</a></p>
+<p><a href="https://github.com/yplam/rv1106-rs">https://github.com/yplam/rv1106-rs</a> 项目实现了对 RV1106 SDK 的 Rust 基础功能绑定，方便基于 Rust 开发应用，暂时只实现了 rv1106-sys 关于 rockit， rknpu2 的功能绑定。</p>
+    </div>
+
+
+</article>
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/styles/base16/darcula.min.css" integrity="sha512-GfRggx2Wc+POEPR0asMTNTyNug3rWJ9Jp4wxnHZ5VApMOUJRK4cEaRriXsx5tV1DakKHQWQ2noCbuzFiPJaYqA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/highlight.min.js" integrity="sha512-yUUc0qWm2rhM7X0EFe82LNnv2moqArj5nro/w1bi05A09hRVeIZbN6jlMoyu0+4I/Bu4Ck/85JQIU82T82M28w==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlightjs-line-numbers.js/2.8.0/highlightjs-line-numbers.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+
+                </div>
+
+            </div>
+        </div><div id="footer-default" class="g-bg-gray-dark-v1 g-color-white-opacity-0_8 text-center g-py-20">
+    <div class="container">
+        <div class="g-font-size-default g-mr-10 g-mb-10 g-mb-0--md">
+            <p>本站内容如非特别说明，均基于 <a rel="license" target="_blank" href="http://creativecommons.org/licenses/by-sa/3.0/">Creative Commons Attribution-Share Alike 3.0 Unported License</a> 发布。</p>
+        </div>
+    </div>
+</div></body>
+</section>
+</html>

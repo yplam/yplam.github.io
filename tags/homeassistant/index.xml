@@ -16,6 +16,13 @@
       <description>&lt;p&gt;基于 EFR32MG21 官方提供模板项目实现协调器固件编译打包与烧录。&lt;/p&gt;</description>
     </item>
     <item>
+      <title>基于 Rust 实现 ESP32 HomeAssistant MQTT CO2 传感器</title>
+      <link>https://yplam.com/post/embedded/esp32-rust-mqtt-homeassistant/</link>
+      <pubDate>Sun, 02 Oct 2022 00:00:00 +0000</pubDate>
+      <guid>https://yplam.com/post/embedded/esp32-rust-mqtt-homeassistant/</guid>
+      <description>&lt;p&gt;最近发现 ESP32 相对于其他品牌单片机而言对 Rust 的支持还算完善，特别是对 std 的支持，使得很多对嵌入式而言相对高阶的库可以非常简单地使用。&lt;/p&gt;</description>
+    </item>
+    <item>
       <title>斐讯 N1 搭建私有 Kubernetes 集群运行 HomeAssistant</title>
       <link>https://yplam.com/post/k8s/k8s-n1/</link>
       <pubDate>Mon, 02 May 2022 00:00:00 +0000</pubDate>
