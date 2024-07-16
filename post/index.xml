@@ -16,6 +16,13 @@
       <description>&lt;p&gt;基于 EFR32MG21 官方提供模板项目实现协调器固件编译打包与烧录。&lt;/p&gt;</description>
     </item>
     <item>
+      <title>Go语言插件系统应用</title>
+      <link>https://yplam.com/post/go/go-plugin/</link>
+      <pubDate>Sun, 17 Dec 2023 00:00:00 +0000</pubDate>
+      <guid>https://yplam.com/post/go/go-plugin/</guid>
+      <description>&lt;p&gt;本文章总结Go语言编程中常用的插件系统设计。&lt;/p&gt;</description>
+    </item>
+    <item>
       <title>PyTorch 多显卡推理与问题排查</title>
       <link>https://yplam.com/post/machinelearning/pytorch-multiple-gpus-error/</link>
       <pubDate>Sat, 02 Dec 2023 00:00:00 +0000</pubDate>

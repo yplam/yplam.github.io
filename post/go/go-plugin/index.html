@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<section class="g-bg-gray-light-v5"><head>
+	
+	<title>YP.Lam  | Go语言插件系统应用</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<meta http-equiv="x-ua-compatible" content="ie=edge">
+
+	<link rel="stylesheet" href="//stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css">
+	
+	<link rel="stylesheet" href="https://yplam.com/scss/unify.min.css">
+
+	
+	
+  
+    
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-960JLZS3KY"></script>
+      <script>
+        var doNotTrack = false;
+        if ( false ) {
+          var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
+          var doNotTrack = (dnt == "1" || dnt == "yes");
+        }
+        if (!doNotTrack) {
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-960JLZS3KY');
+        }
+      </script>
+    
+  
+
+
+	
+</head>
+
+<body>    <div class="container">
+        <div class="d-sm-flex text-center">
+            <div class="align-self-center ml-auto">
+                <ul class="u-list-inline float-right g-py-20">
+                    <li class="list-inline-item g-mr-5">
+                        <a class="u-link-v5 g-color-gray-dark-v5 g-color-primary--hover" href="/">HOME</a>
+                        <i class="g-color-gray-light-v2 g-ml-5">/</i>
+                    </li>
+                    <li class="list-inline-item g-mr-5">
+                        <a class="u-link-v5 g-color-gray-dark-v5 g-color-primary--hover" href="/about/">ABOUT</a>
+                        <i class="g-color-gray-light-v2 g-ml-5">/</i>
+                    </li>
+                    <li class="list-inline-item">
+                        <a class="u-link-v5 g-color-gray-dark-v5 g-color-primary--hover" href="https://github.com/yplam">GITHUB</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+<div class="container" aria-label="Content">
+            <div class="g-bg-white">
+                <div class="g-px-35 g-py-30 g-mb-30">
+<article>
+    <ul class="list-inline g-color-gray-dark-v4">
+        <li class="list-inline-item mr-0">
+            In
+             
+            
+            
+            
+            <a href="https://yplam.com/tags/go/">Go</a>
+            
+            
+        </li>
+        <li class="list-inline-item mx-2">/</li>
+        <li class="list-inline-item">Posted 2023-12-17</li>
+    </ul>
+    <h1 class="g-mb-30">Go语言插件系统应用</h1>
+    <div class="justify-content-center article-content">
+        <p>本文章总结Go语言编程中常用的插件系统设计。</p>
+<h2 id="go-语言自带-plugin-package">Go 语言自带 plugin package</h2>
+<p>Go 1.8 开始自带 plugin 模块，通过 go build -buildmode=plugin 将代码打包成动态链接库；
+然后在主应用程序中通过 plugin.Open，plugin.Lookup 获取插件实例。</p>
+<h2 id="基于-package-init-的编译型插件">基于 package init 的编译型插件</h2>
+<p>Go 语言有个特别的特性就是当 import 某个 package 时，会立刻执行该 package 的 init 函数；这个特性通常不推荐使用，因为会导致代码执行逻辑难以阅读；但该特性十分适合用于实现编译型的插件，譬如 sql 库的各种驱动可以通过 init 函数注册：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">init</span>() {
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">sql</span>.<span style="color:#a6e22e">Register</span>(<span style="color:#e6db74">&#34;mysql&#34;</span>, <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">MySQLDriver</span>{})
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>又譬如 Caddy 扩展:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">init</span>() {
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">caddy</span>.<span style="color:#a6e22e">RegisterModule</span>(<span style="color:#a6e22e">Gizmo</span>{})
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>使用 init 函数的优点是只有用到的插件才会编译，并且插件会编译到主程序执行文件中，符合 go 易于部署的特点。</p>
+<h2 id="基于-grpc-的独立运行插件">基于 gRPC 的独立运行插件</h2>
+<p>由于 go 语言网络相关的组件非常丰富，因此实现一个基于网络的插件系统也非常简单，譬如 gRPC。https://github.com/hashicorp/go-plugin 项目是一个开源的基于gRPC的插件系统；与前面介绍的两种不同，基于gRPC的插件系统的优势是插件可以用多种编程语言编写，并且可以将插件对主程序的调用限定在公开接口上，并且可以通过 Docker 限制插件对系统资源的占用，避免某个插件把系统搞崩溃。</p>
+    </div>
+
+
+</article>
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/styles/base16/darcula.min.css" integrity="sha512-GfRggx2Wc+POEPR0asMTNTyNug3rWJ9Jp4wxnHZ5VApMOUJRK4cEaRriXsx5tV1DakKHQWQ2noCbuzFiPJaYqA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/highlight.min.js" integrity="sha512-yUUc0qWm2rhM7X0EFe82LNnv2moqArj5nro/w1bi05A09hRVeIZbN6jlMoyu0+4I/Bu4Ck/85JQIU82T82M28w==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlightjs-line-numbers.js/2.8.0/highlightjs-line-numbers.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+
+                </div>
+
+            </div>
+        </div><div id="footer-default" class="g-bg-gray-dark-v1 g-color-white-opacity-0_8 text-center g-py-20">
+    <div class="container">
+        <div class="g-font-size-default g-mr-10 g-mb-10 g-mb-0--md">
+            <p>本站内容如非特别说明，均基于 <a rel="license" target="_blank" href="http://creativecommons.org/licenses/by-sa/3.0/">Creative Commons Attribution-Share Alike 3.0 Unported License</a> 发布。</p>
+        </div>
+    </div>
+</div></body>
+</section>
+</html>
