@@ -6,33 +6,19 @@
     <description>Recent content in Tags on YP.Lam</description>
     <generator>Hugo</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Sat, 13 Jul 2024 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Wed, 01 May 2024 00:00:00 +0000</lastBuildDate>
     <atom:link href="https://yplam.com/tags/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>EFR32</title>
-      <link>https://yplam.com/tags/efr32/</link>
-      <pubDate>Sat, 13 Jul 2024 00:00:00 +0000</pubDate>
-      <guid>https://yplam.com/tags/efr32/</guid>
-      <description></description>
-    </item>
-    <item>
-      <title>Embedded</title>
-      <link>https://yplam.com/tags/embedded/</link>
-      <pubDate>Sat, 13 Jul 2024 00:00:00 +0000</pubDate>
-      <guid>https://yplam.com/tags/embedded/</guid>
-      <description></description>
-    </item>
-    <item>
-      <title>HomeAssistant</title>
-      <link>https://yplam.com/tags/homeassistant/</link>
-      <pubDate>Sat, 13 Jul 2024 00:00:00 +0000</pubDate>
-      <guid>https://yplam.com/tags/homeassistant/</guid>
+      <title>Flutter</title>
+      <link>https://yplam.com/tags/flutter/</link>
+      <pubDate>Wed, 01 May 2024 00:00:00 +0000</pubDate>
+      <guid>https://yplam.com/tags/flutter/</guid>
       <description></description>
     </item>
     <item>
       <title>Go</title>
       <link>https://yplam.com/tags/go/</link>
-      <pubDate>Sun, 17 Dec 2023 00:00:00 +0000</pubDate>
+      <pubDate>Wed, 01 May 2024 00:00:00 +0000</pubDate>
       <guid>https://yplam.com/tags/go/</guid>
       <description></description>
     </item>
@@ -44,24 +30,45 @@
       <description></description>
     </item>
     <item>
+      <title>Embedded</title>
+      <link>https://yplam.com/tags/embedded/</link>
+      <pubDate>Sat, 26 Aug 2023 00:00:00 +0000</pubDate>
+      <guid>https://yplam.com/tags/embedded/</guid>
+      <description></description>
+    </item>
+    <item>
       <title>Linux</title>
       <link>https://yplam.com/tags/linux/</link>
-      <pubDate>Sat, 18 Nov 2023 00:00:00 +0000</pubDate>
+      <pubDate>Sat, 26 Aug 2023 00:00:00 +0000</pubDate>
       <guid>https://yplam.com/tags/linux/</guid>
       <description></description>
     </item>
     <item>
       <title>RockChip</title>
       <link>https://yplam.com/tags/rockchip/</link>
-      <pubDate>Sat, 18 Nov 2023 00:00:00 +0000</pubDate>
+      <pubDate>Sat, 26 Aug 2023 00:00:00 +0000</pubDate>
       <guid>https://yplam.com/tags/rockchip/</guid>
       <description></description>
     </item>
     <item>
       <title>RV1106</title>
       <link>https://yplam.com/tags/rv1106/</link>
-      <pubDate>Sat, 18 Nov 2023 00:00:00 +0000</pubDate>
+      <pubDate>Sat, 26 Aug 2023 00:00:00 +0000</pubDate>
       <guid>https://yplam.com/tags/rv1106/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>EFR32</title>
+      <link>https://yplam.com/tags/efr32/</link>
+      <pubDate>Sat, 15 Jul 2023 00:00:00 +0000</pubDate>
+      <guid>https://yplam.com/tags/efr32/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>HomeAssistant</title>
+      <link>https://yplam.com/tags/homeassistant/</link>
+      <pubDate>Sat, 15 Jul 2023 00:00:00 +0000</pubDate>
+      <guid>https://yplam.com/tags/homeassistant/</guid>
       <description></description>
     </item>
     <item>

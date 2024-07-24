@@ -1,25 +1,18 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Go on YP.Lam</title>
-    <link>https://yplam.com/tags/go/</link>
-    <description>Recent content in Go on YP.Lam</description>
+    <title>Flutter on YP.Lam</title>
+    <link>https://yplam.com/tags/flutter/</link>
+    <description>Recent content in Flutter on YP.Lam</description>
     <generator>Hugo</generator>
     <language>zh-cn</language>
     <lastBuildDate>Wed, 01 May 2024 00:00:00 +0000</lastBuildDate>
-    <atom:link href="https://yplam.com/tags/go/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="https://yplam.com/tags/flutter/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Flutter &#43; Go 跨平台应用开发</title>
       <link>https://yplam.com/post/go/flutter-go-mobile/</link>
       <pubDate>Wed, 01 May 2024 00:00:00 +0000</pubDate>
       <guid>https://yplam.com/post/go/flutter-go-mobile/</guid>
-      <description>&lt;p&gt;本文章总结Go语言编程中常用的插件系统设计。&lt;/p&gt;</description>
-    </item>
-    <item>
-      <title>Go语言插件系统应用</title>
-      <link>https://yplam.com/post/go/go-plugin/</link>
-      <pubDate>Sun, 17 Dec 2023 00:00:00 +0000</pubDate>
-      <guid>https://yplam.com/post/go/go-plugin/</guid>
       <description>&lt;p&gt;本文章总结Go语言编程中常用的插件系统设计。&lt;/p&gt;</description>
     </item>
   </channel>

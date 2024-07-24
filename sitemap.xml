@@ -2,29 +2,23 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>https://yplam.com/tags/efr32/</loc>
-    <lastmod>2024-07-13T00:00:00+00:00</lastmod>
+    <loc>https://yplam.com/tags/flutter/</loc>
+    <lastmod>2024-05-01T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://yplam.com/tags/embedded/</loc>
-    <lastmod>2024-07-13T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://yplam.com/tags/homeassistant/</loc>
-    <lastmod>2024-07-13T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://yplam.com/post/embedded/panther-efr32mg21/</loc>
-    <lastmod>2024-07-13T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://yplam.com/post/</loc>
-    <lastmod>2024-07-13T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://yplam.com/tags/</loc>
-    <lastmod>2024-07-13T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://yplam.com/</loc>
-    <lastmod>2024-07-13T00:00:00+00:00</lastmod>
+    <loc>https://yplam.com/post/go/flutter-go-mobile/</loc>
+    <lastmod>2024-05-01T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://yplam.com/tags/go/</loc>
-    <lastmod>2023-12-17T00:00:00+00:00</lastmod>
+    <lastmod>2024-05-01T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://yplam.com/post/</loc>
+    <lastmod>2024-05-01T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://yplam.com/tags/</loc>
+    <lastmod>2024-05-01T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://yplam.com/</loc>
+    <lastmod>2024-05-01T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://yplam.com/post/go/go-plugin/</loc>
     <lastmod>2023-12-17T00:00:00+00:00</lastmod>
@@ -35,17 +29,29 @@
     <loc>https://yplam.com/post/machinelearning/pytorch-multiple-gpus-error/</loc>
     <lastmod>2023-12-02T00:00:00+00:00</lastmod>
   </url><url>
+    <loc>https://yplam.com/tags/embedded/</loc>
+    <lastmod>2023-08-26T00:00:00+00:00</lastmod>
+  </url><url>
     <loc>https://yplam.com/tags/linux/</loc>
-    <lastmod>2023-11-18T00:00:00+00:00</lastmod>
+    <lastmod>2023-08-26T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://yplam.com/tags/rockchip/</loc>
-    <lastmod>2023-11-18T00:00:00+00:00</lastmod>
+    <lastmod>2023-08-26T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://yplam.com/tags/rv1106/</loc>
-    <lastmod>2023-11-18T00:00:00+00:00</lastmod>
+    <lastmod>2023-08-26T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://yplam.com/post/embedded/rv1106-dev/</loc>
-    <lastmod>2023-11-18T00:00:00+00:00</lastmod>
+    <lastmod>2023-08-26T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://yplam.com/tags/efr32/</loc>
+    <lastmod>2023-07-15T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://yplam.com/tags/homeassistant/</loc>
+    <lastmod>2023-07-15T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://yplam.com/post/embedded/efr32mg21-firmware/</loc>
+    <lastmod>2023-07-15T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://yplam.com/tags/av/</loc>
     <lastmod>2023-06-10T00:00:00+00:00</lastmod>

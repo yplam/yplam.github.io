@@ -6,14 +6,14 @@
     <description>Recent content in RV1106 on YP.Lam</description>
     <generator>Hugo</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Sat, 18 Nov 2023 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sat, 26 Aug 2023 00:00:00 +0000</lastBuildDate>
     <atom:link href="https://yplam.com/tags/rv1106/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>RV1106 开发笔记</title>
       <link>https://yplam.com/post/embedded/rv1106-dev/</link>
-      <pubDate>Sat, 18 Nov 2023 00:00:00 +0000</pubDate>
+      <pubDate>Sat, 26 Aug 2023 00:00:00 +0000</pubDate>
       <guid>https://yplam.com/post/embedded/rv1106-dev/</guid>
-      <description>&lt;p&gt;记录关于 RV1106 烧录、开发环境配置、SDK与Rust绑定相关内容&lt;/p&gt;</description>
+      <description>&lt;p&gt;记录关于 RV1106 烧录、开发环境配置、SDK与Rust绑定相关内容。&lt;/p&gt;</description>
     </item>
   </channel>
 </rss>

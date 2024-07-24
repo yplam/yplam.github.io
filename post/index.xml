@@ -6,14 +6,14 @@
     <description>Recent content in Posts on YP.Lam</description>
     <generator>Hugo</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Sat, 13 Jul 2024 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Wed, 01 May 2024 00:00:00 +0000</lastBuildDate>
     <atom:link href="https://yplam.com/post/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>Panther EFR32MG21 固件打包</title>
-      <link>https://yplam.com/post/embedded/panther-efr32mg21/</link>
-      <pubDate>Sat, 13 Jul 2024 00:00:00 +0000</pubDate>
-      <guid>https://yplam.com/post/embedded/panther-efr32mg21/</guid>
-      <description>&lt;p&gt;基于 EFR32MG21 官方提供模板项目实现协调器固件编译打包与烧录。&lt;/p&gt;</description>
+      <title>Flutter &#43; Go 跨平台应用开发</title>
+      <link>https://yplam.com/post/go/flutter-go-mobile/</link>
+      <pubDate>Wed, 01 May 2024 00:00:00 +0000</pubDate>
+      <guid>https://yplam.com/post/go/flutter-go-mobile/</guid>
+      <description>&lt;p&gt;本文章总结Go语言编程中常用的插件系统设计。&lt;/p&gt;</description>
     </item>
     <item>
       <title>Go语言插件系统应用</title>
@@ -32,9 +32,16 @@
     <item>
       <title>RV1106 开发笔记</title>
       <link>https://yplam.com/post/embedded/rv1106-dev/</link>
-      <pubDate>Sat, 18 Nov 2023 00:00:00 +0000</pubDate>
+      <pubDate>Sat, 26 Aug 2023 00:00:00 +0000</pubDate>
       <guid>https://yplam.com/post/embedded/rv1106-dev/</guid>
-      <description>&lt;p&gt;记录关于 RV1106 烧录、开发环境配置、SDK与Rust绑定相关内容&lt;/p&gt;</description>
+      <description>&lt;p&gt;记录关于 RV1106 烧录、开发环境配置、SDK与Rust绑定相关内容。&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>基于 Docker 的 EFR32MG21 Zigbee/Matter 固件打包</title>
+      <link>https://yplam.com/post/embedded/efr32mg21-firmware/</link>
+      <pubDate>Sat, 15 Jul 2023 00:00:00 +0000</pubDate>
+      <guid>https://yplam.com/post/embedded/efr32mg21-firmware/</guid>
+      <description>&lt;p&gt;基于 Docker 环境实现 EFR32MG21 官方 Bootloader， Zigbee 协调器与 Matter 固件编译打包与烧录。&lt;/p&gt;</description>
     </item>
     <item>
       <title>FFmpeg HLS Fragmented Mp4 封装过程分析</title>

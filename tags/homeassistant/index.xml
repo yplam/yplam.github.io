@@ -6,14 +6,14 @@
     <description>Recent content in HomeAssistant on YP.Lam</description>
     <generator>Hugo</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Sat, 13 Jul 2024 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sat, 15 Jul 2023 00:00:00 +0000</lastBuildDate>
     <atom:link href="https://yplam.com/tags/homeassistant/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>Panther EFR32MG21 固件打包</title>
-      <link>https://yplam.com/post/embedded/panther-efr32mg21/</link>
-      <pubDate>Sat, 13 Jul 2024 00:00:00 +0000</pubDate>
-      <guid>https://yplam.com/post/embedded/panther-efr32mg21/</guid>
-      <description>&lt;p&gt;基于 EFR32MG21 官方提供模板项目实现协调器固件编译打包与烧录。&lt;/p&gt;</description>
+      <title>基于 Docker 的 EFR32MG21 Zigbee/Matter 固件打包</title>
+      <link>https://yplam.com/post/embedded/efr32mg21-firmware/</link>
+      <pubDate>Sat, 15 Jul 2023 00:00:00 +0000</pubDate>
+      <guid>https://yplam.com/post/embedded/efr32mg21-firmware/</guid>
+      <description>&lt;p&gt;基于 Docker 环境实现 EFR32MG21 官方 Bootloader， Zigbee 协调器与 Matter 固件编译打包与烧录。&lt;/p&gt;</description>
     </item>
     <item>
       <title>基于 Rust 实现 ESP32 HomeAssistant MQTT CO2 传感器</title>

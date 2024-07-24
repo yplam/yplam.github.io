@@ -2,7 +2,7 @@
 <html>
 <section class="g-bg-gray-light-v5"><head>
 	
-	<title>YP.Lam  | RV1106 开发笔记</title>
+	<title>YP.Lam  | Flutter &#43; Go 跨平台应用开发</title>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 	<meta http-equiv="x-ua-compatible" content="ie=edge">
@@ -66,42 +66,36 @@
             
             
             
-            <a href="https://yplam.com/tags/rv1106/">RV1106</a>
+            <a href="https://yplam.com/tags/go/">Go</a>
             
             
             
             
-            <a href="https://yplam.com/tags/rockchip/">RockChip</a>
-            
-            
-            
-            
-            <a href="https://yplam.com/tags/linux/">Linux</a>
-            
-            
-            
-            
-            <a href="https://yplam.com/tags/embedded/">Embedded</a>
+            <a href="https://yplam.com/tags/flutter/">Flutter</a>
             
             
         </li>
         <li class="list-inline-item mx-2">/</li>
-        <li class="list-inline-item">Posted 2023-08-26</li>
+        <li class="list-inline-item">Posted 2024-05-01</li>
     </ul>
-    <h1 class="g-mb-30">RV1106 开发笔记</h1>
+    <h1 class="g-mb-30">Flutter &#43; Go 跨平台应用开发</h1>
     <div class="justify-content-center article-content">
-        <p>记录关于 RV1106 烧录、开发环境配置、SDK与Rust绑定相关内容。</p>
-<p>最后更新：2024-03-02</p>
-<h2 id="clion-配置">CLion 配置</h2>
-<p>Cmake options 添加</p>
-<pre tabindex="0"><code class="language-conf" data-lang="conf">-DCOMPILE_FOR_RV1106_IPC:BOOL=ON -DRKIPC_CROSS_COMPILE=arm-rockchip830-linux-uclibcgnueabihf
-</code></pre><h2 id="rust-绑定">Rust 绑定</h2>
-<p>由于 RV1106 官方 SDK 基于 uclibc，因此 Rust 编译器环境需要基于官方 SDK 手动打包</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>git checkout df871fbf053de3a855398964cd05fadbe91cf4fd
-</span></span><span style="display:flex;"><span>./x check --target<span style="color:#f92672">=</span>armv7-unknown-linux-uclibceabihf
-</span></span><span style="display:flex;"><span>./x build --stage <span style="color:#ae81ff">2</span> --target<span style="color:#f92672">=</span>armv7-unknown-linux-uclibceabihf
-</span></span></code></pre></div><p>打包好的工具链可访问github下载： <a href="https://github.com/yplam/rv1106-rs/releases/tag/v0.1.0">https://github.com/yplam/rv1106-rs/releases/tag/v0.1.0</a></p>
-<p><a href="https://github.com/yplam/rv1106-rs">https://github.com/yplam/rv1106-rs</a> 项目实现了对 RV1106 SDK 的 Rust 基础功能绑定，方便基于 Rust 开发应用，暂时只实现了 rv1106-sys 关于 rockit， rknpu2 的功能绑定。</p>
+        <p>本文章总结Go语言编程中常用的插件系统设计。</p>
+<h2 id="go-语言自带-plugin-package">Go 语言自带 plugin package</h2>
+<p>Go 1.8 开始自带 plugin 模块，通过 go build -buildmode=plugin 将代码打包成动态链接库；
+然后在主应用程序中通过 plugin.Open，plugin.Lookup 获取插件实例。</p>
+<h2 id="基于-package-init-的编译型插件">基于 package init 的编译型插件</h2>
+<p>Go 语言有个特别的特性就是当 import 某个 package 时，会立刻执行该 package 的 init 函数；这个特性通常不推荐使用，因为会导致代码执行逻辑难以阅读；但该特性十分适合用于实现编译型的插件，譬如 sql 库的各种驱动可以通过 init 函数注册：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">init</span>() {
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">sql</span>.<span style="color:#a6e22e">Register</span>(<span style="color:#e6db74">&#34;mysql&#34;</span>, <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">MySQLDriver</span>{})
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>又譬如 Caddy 扩展:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">init</span>() {
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">caddy</span>.<span style="color:#a6e22e">RegisterModule</span>(<span style="color:#a6e22e">Gizmo</span>{})
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>使用 init 函数的优点是只有用到的插件才会编译，并且插件会编译到主程序执行文件中，符合 go 易于部署的特点。</p>
+<h2 id="基于-grpc-的独立运行插件">基于 gRPC 的独立运行插件</h2>
+<p>由于 go 语言网络相关的组件非常丰富，因此实现一个基于网络的插件系统也非常简单，譬如 gRPC。https://github.com/hashicorp/go-plugin 项目是一个开源的基于gRPC的插件系统；与前面介绍的两种不同，基于gRPC的插件系统的优势是插件可以用多种编程语言编写，并且可以将插件对主程序的调用限定在公开接口上，并且可以通过 Docker 限制插件对系统资源的占用，避免某个插件把系统搞崩溃。</p>
     </div>
 
 
