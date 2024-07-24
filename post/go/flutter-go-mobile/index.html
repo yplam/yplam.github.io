@@ -80,22 +80,44 @@
     </ul>
     <h1 class="g-mb-30">Flutter &#43; Go 跨平台应用开发</h1>
     <div class="justify-content-center article-content">
-        <p>本文章总结Go语言编程中常用的插件系统设计。</p>
-<h2 id="go-语言自带-plugin-package">Go 语言自带 plugin package</h2>
-<p>Go 1.8 开始自带 plugin 模块，通过 go build -buildmode=plugin 将代码打包成动态链接库；
-然后在主应用程序中通过 plugin.Open，plugin.Lookup 获取插件实例。</p>
-<h2 id="基于-package-init-的编译型插件">基于 package init 的编译型插件</h2>
-<p>Go 语言有个特别的特性就是当 import 某个 package 时，会立刻执行该 package 的 init 函数；这个特性通常不推荐使用，因为会导致代码执行逻辑难以阅读；但该特性十分适合用于实现编译型的插件，譬如 sql 库的各种驱动可以通过 init 函数注册：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">init</span>() {
-</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">sql</span>.<span style="color:#a6e22e">Register</span>(<span style="color:#e6db74">&#34;mysql&#34;</span>, <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">MySQLDriver</span>{})
+        <p>Flutter 是由 Google 开发的开源 UI 软件开发工具包，用于构建跨平台的高性能应用程序。通过一套代码库，开发者可以同时为 iOS、Android、Web 和桌面平台创建原生应用。通常情况下，Dart 代码会通过 MethodChannel 的方式与各平台原生代码进行交互，而原生代码通常也是根据不同平台由 Java，Swift，C++ 等语言编写。除此以外，一些与平台相关性不大，但使用 Dart 语言实现困难的跨平台代码，则适合使用 Rust 或者 Go 等编程语言实现，本文章记录 Flutter + Go 实现跨平台应用开发。</p>
+<p>可以通过以下命令创建一个支持多平台的插件：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>flutter create --org com.yplam --platforms<span style="color:#f92672">=</span>android,ios,linux,windows,macos -a java flutter_abc -t plugin
+</span></span></code></pre></div><p>Flutter 插件模板默认会生成 getPlatformVersion 方法，可以在编辑器中全局搜索该方法名查看各平台的接入方式，并且在此基础上修改。</p>
+<p>编写 Go 代码，代码的组织与通常的 Go 项目区别不大，个人经验是项目根目录只包含跨平台可用的导出函数，或者针对每个平台编写对应的导出文件。</p>
+<p>譬如针对桌面平台导出 C 静态库，则编写独立的 main.go，使用 export 导出函数:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#f92672">package</span> <span style="color:#a6e22e">main</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> <span style="color:#e6db74">&#34;C&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">//export Run
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">Run</span>(<span style="color:#a6e22e">fn</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">C</span>.<span style="color:#a6e22e">char</span>) <span style="color:#66d9ef">int32</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#ae81ff">0</span>
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>又譬如 Caddy 扩展:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">init</span>() {
-</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">caddy</span>.<span style="color:#a6e22e">RegisterModule</span>(<span style="color:#a6e22e">Gizmo</span>{})
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">//export Stop
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">Stop</span>() {
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>使用 init 函数的优点是只有用到的插件才会编译，并且插件会编译到主程序执行文件中，符合 go 易于部署的特点。</p>
-<h2 id="基于-grpc-的独立运行插件">基于 gRPC 的独立运行插件</h2>
-<p>由于 go 语言网络相关的组件非常丰富，因此实现一个基于网络的插件系统也非常简单，譬如 gRPC。https://github.com/hashicorp/go-plugin 项目是一个开源的基于gRPC的插件系统；与前面介绍的两种不同，基于gRPC的插件系统的优势是插件可以用多种编程语言编写，并且可以将插件对主程序的调用限定在公开接口上，并且可以通过 Docker 限制插件对系统资源的占用，避免某个插件把系统搞崩溃。</p>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">main</span>() {}
+</span></span></code></pre></div><p>然后使用以下命令生成静态库与对应头文件:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>GOOS<span style="color:#f92672">=</span>linux GOARCH<span style="color:#f92672">=</span>amd64 CGO_ENABLED<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span> go build -buildmode<span style="color:#f92672">=</span>c-archive -o ./libs/linux_amd64/libabc.a ./cmd/libs/main.go
+</span></span><span style="display:flex;"><span>GOOS<span style="color:#f92672">=</span>windows GOARCH<span style="color:#f92672">=</span>amd64 CGO_ENABLED<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span> CXX<span style="color:#f92672">=</span>x86_64-w64-mingw32-g++ CC<span style="color:#f92672">=</span>x86_64-w64-mingw32-gcc go build -buildmode<span style="color:#f92672">=</span>c-archive -o ./libs/windows_amd64/libabc.a ./cmd/libs/main.go
+</span></span></code></pre></div><p>然后更改插件的 linux/CMakeLists.txt 或者 windows/CMakeLists.txt, 把 C 库加到项目</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-cmake" data-lang="cmake"><span style="display:flex;"><span>set(<span style="color:#e6db74">ABC_LIB_DIR</span> <span style="color:#e6db74">&#34;${CMAKE_CURRENT_SOURCE_DIR}/lib&#34;</span>)<span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span>link_directories(<span style="color:#f92672">${</span>ABC_LIB_DIR<span style="color:#f92672">}</span>)<span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span>target_link_libraries(<span style="color:#f92672">${</span>PLUGIN_NAME<span style="color:#f92672">}</span> <span style="color:#e6db74">PRIVATE</span> <span style="color:#f92672">${</span>ABC_LIB_DIR<span style="color:#f92672">}</span><span style="color:#e6db74">/libabc.a</span>)<span style="color:#960050;background-color:#1e0010">
+</span></span></span></code></pre></div><p>然后即可在 xxx_plugin.cc 中 include 头文件，以及调用相关函数。</p>
+<p>Android 与 iOS 可直接使用 gomobile 生成对应的库：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#75715e"># go install golang.org/x/mobile/cmd/gomobile@latest   </span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># gomobile init        </span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>gomobile bind -v -target android -o ./libs/android/libabc.aar -ldflags<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;-w -s&#34;</span>  ./
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># ios 需要在Xcode环境打包</span>
+</span></span><span style="display:flex;"><span>gomobile bind -v -target ios -o ./libs/ios/Libabc.xcframework -ldflags<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;-w -s&#34;</span> ./
+</span></span></code></pre></div><p>针对 ios，需要将 xcframework 添加到项目（未详细测试，请参考网上文档）。</p>
     </div>
 
 
