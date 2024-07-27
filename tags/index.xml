@@ -6,8 +6,15 @@
     <description>Recent content in Tags on YP.Lam</description>
     <generator>Hugo</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Wed, 01 May 2024 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sat, 27 Jul 2024 00:00:00 +0000</lastBuildDate>
     <atom:link href="https://yplam.com/tags/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>JLink</title>
+      <link>https://yplam.com/tags/jlink/</link>
+      <pubDate>Sat, 27 Jul 2024 00:00:00 +0000</pubDate>
+      <guid>https://yplam.com/tags/jlink/</guid>
+      <description></description>
+    </item>
     <item>
       <title>Flutter</title>
       <link>https://yplam.com/tags/flutter/</link>

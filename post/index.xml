@@ -6,8 +6,15 @@
     <description>Recent content in Posts on YP.Lam</description>
     <generator>Hugo</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Wed, 01 May 2024 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sat, 27 Jul 2024 00:00:00 +0000</lastBuildDate>
     <atom:link href="https://yplam.com/post/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>基于 FRP 实现远程 JLink 调试</title>
+      <link>https://yplam.com/post/embedded/jlink-remote-frp/</link>
+      <pubDate>Sat, 27 Jul 2024 00:00:00 +0000</pubDate>
+      <guid>https://yplam.com/post/embedded/jlink-remote-frp/</guid>
+      <description>&lt;p&gt;JLink 软件包提供 JLinkRemoteServer，通过监听 19020 端口，为其他调试客户端提供网络远程调试功能，同时官方提供 tunnel 服务，实现跨局域网调试。如果自己有外网服务器，也可以非常简单地通过 FRP 自建 JLink 中转服务。&lt;/p&gt;</description>
+    </item>
     <item>
       <title>Flutter &#43; Go 跨平台应用开发</title>
       <link>https://yplam.com/post/go/flutter-go-mobile/</link>
