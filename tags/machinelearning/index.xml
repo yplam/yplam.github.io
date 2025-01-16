@@ -6,8 +6,15 @@
     <description>Recent content in MachineLearning on YP.Lam</description>
     <generator>Hugo</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Sat, 02 Dec 2023 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sat, 19 Oct 2024 00:00:00 +0000</lastBuildDate>
     <atom:link href="https://yplam.com/tags/machinelearning/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>推荐系统的简易实现</title>
+      <link>https://yplam.com/post/machinelearning/recommender-system/</link>
+      <pubDate>Sat, 19 Oct 2024 00:00:00 +0000</pubDate>
+      <guid>https://yplam.com/post/machinelearning/recommender-system/</guid>
+      <description>&lt;p&gt;现时推荐系统可以说是内容类网站的基础组件之一，而得益于最近大模型等机器学习领域的快速发展，带动相关技术应用的普及，今天可以利用相关技术实现一个具备基础功能的推荐系统。&lt;/p&gt;</description>
+    </item>
     <item>
       <title>PyTorch 多显卡推理与问题排查</title>
       <link>https://yplam.com/post/machinelearning/pytorch-multiple-gpus-error/</link>
@@ -35,13 +42,6 @@
       <pubDate>Sat, 28 Apr 2018 00:00:00 +0000</pubDate>
       <guid>https://yplam.com/post/machinelearning/predictionio/</guid>
       <description>&lt;p&gt;关注 Apache PredictionIO 已有一段时间，最近需要做一个过滤论坛广告贴的功能，调研了一番市面上提供文本检测的API服务，发现靠谱的公司都比较贵，并且准确率不高（一个可能性是他们使用的训练数据集是互联网上的通用信息，而我们是一个垂直行业论坛，攻击来源也可能是固定的那么若干个），于是尝试自己实现个文本分类器来过滤广告。&lt;/p&gt;</description>
-    </item>
-    <item>
-      <title>推荐系统笔记</title>
-      <link>https://yplam.com/post/machinelearning/recommender-system/</link>
-      <pubDate>Wed, 04 Apr 2018 00:00:00 +0000</pubDate>
-      <guid>https://yplam.com/post/machinelearning/recommender-system/</guid>
-      <description>距离度量&#xA;评估&#xA;RMSE&#xA;AUC&#xA;算法</description>
     </item>
     <item>
       <title>Tensorflow Object Detection API 入门笔记 - 基于 Google Cloud 与 阿里云</title>

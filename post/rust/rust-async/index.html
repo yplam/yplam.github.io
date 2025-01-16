@@ -1,15 +1,15 @@
 <!DOCTYPE html>
 <html>
-<section class="g-bg-gray-light-v5"><head>
+<script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><section class="g-bg-gray-light-v5"><head>
 	
-	<title>YP.Lam  | 推荐系统的简易实现</title>
+	<title>YP.Lam  | Rust Async 笔记</title>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 	<meta http-equiv="x-ua-compatible" content="ie=edge">
 
 	<link rel="stylesheet" href="//stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css">
 	
-	<link rel="stylesheet" href="https://yplam.com/scss/unify.min.css">
+	<link rel="stylesheet" href="http://localhost:1313/scss/unify.min.css">
 
 	
 	
@@ -66,57 +66,20 @@
             
             
             
-            <a href="https://yplam.com/tags/machinelearning/">MachineLearning</a>
+            <a href="http://localhost:1313/tags/rust/">Rust</a>
             
             
         </li>
         <li class="list-inline-item mx-2">/</li>
-        <li class="list-inline-item">Posted 2024-10-19</li>
+        <li class="list-inline-item">Posted 2024-12-14</li>
     </ul>
-    <h1 class="g-mb-30">推荐系统的简易实现</h1>
+    <h1 class="g-mb-30">Rust Async 笔记</h1>
     <div class="justify-content-center article-content">
-        <p>现时推荐系统可以说是内容类网站的基础组件之一，而得益于最近大模型等机器学习领域的快速发展，带动相关技术应用的普及，今天可以利用相关技术实现一个具备基础功能的推荐系统。</p>
-<p>推荐系统的关键技术和方法：</p>
-<ol>
-<li>基于内容的推荐，基于内容的推荐系统通过分析项目的特征来进行推荐。例如，在电影推荐中，系统可能会根据电影的类型、导演、演员等信息进行推荐。</li>
-<li>协同过滤，包括用户-用户协同过滤，物品-物品协同过滤</li>
-<li>基于模型的推荐，使用机器学习模型（如矩阵分解、深度学习）来进行推荐。这些模型通过训练数据学习用户和物品的潜在特征。</li>
-</ol>
-<p>在生成推荐的过程中，主要包括以下步骤：</p>
-<ol>
-<li>选择，选择合适的推荐策略和算法。根据用户需求和业务场景，选择不同的推荐方法（如协同过滤、基于内容的推荐、混合推荐等）。</li>
-<li>召回，从大规模的物品集合中初步筛选出一批可能感兴趣的物品。召回阶段的目标是提高效率，确保不遗漏用户可能感兴趣的内容。</li>
-<li>过滤，对召回的物品进行进一步过滤，去除不符合条件的物品。这一步通常用于应用业务规则或个性化约束。</li>
-<li>排序，对经过过滤的物品进行排序，以确定最终推荐的优先级。排序阶段的目标是优化推荐的相关性和用户满意度。</li>
-</ol>
-<p>推荐系统还涉及冷启动，业务规则等。</p>
-<h3 id="小型推荐系统相关技术">小型推荐系统相关技术</h3>
+        <h2 id="参考资料">参考资料</h2>
 <ul>
-<li>Transformers，自然语言处理的基础库</li>
-<li>ONNX，方便模型跨平台部署</li>
-<li>PGVector，PostgreSQL 扩展，用于高效存储和检索向量数据</li>
-<li>Matrix Factorization，常用于实现协同过滤的推荐算法</li>
+<li><a href="https://os.phil-opp.com/async-await/">https://os.phil-opp.com/async-await/</a></li>
+<li><a href="https://tokio.rs/tokio/tutorial">https://tokio.rs/tokio/tutorial</a></li>
 </ul>
-<h3 id="文本内容相关推荐">文本内容相关推荐</h3>
-<p>相对于 Word2Vec，具有注意力机制的 BERT 能更好地理解内容上下文信息，从而实现更精准的基于内容的相关推荐</p>
-<ol>
-<li>使用 BERT 模型获取文本向量</li>
-<li>向量存储到 PGVector</li>
-<li>根据向量距离排序，得到内容相关文章</li>
-</ol>
-<h3 id="相似图片推荐">相似图片推荐</h3>
-<ol>
-<li>使用 ViT 或者 DEIT 模型获取图片向量</li>
-<li>向量存储到 PGVector</li>
-<li>根据向量距离排序，得到相似图片</li>
-</ol>
-<h3 id="用户感兴趣内容推荐">用户感兴趣内容推荐</h3>
-<ol>
-<li>基于协同过滤</li>
-<li>使用 Matrix Factorization 分解稀疏矩阵</li>
-<li>算出用户特征与物品特征，存储到 PGVector</li>
-<li>根据用户-用户距离，物品-物品距离，用户-物品距离获取推荐</li>
-</ol>
     </div>
 
 

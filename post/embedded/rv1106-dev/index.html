@@ -132,6 +132,8 @@
 </span></span></code></pre></div><p>打包好的工具链可访问github下载： <a href="https://github.com/yplam/rv1106-rs/releases/tag/v0.2.0">https://github.com/yplam/rv1106-rs/releases/tag/v0.2.0</a> ,下载后可通过</p>
 <pre tabindex="0"><code>rustup toolchain link rv1106  path-to/rust-1.72.1-rv1106
 </code></pre><p><a href="https://github.com/yplam/rv1106-rs">https://github.com/yplam/rv1106-rs</a> 项目实现了对 RV1106 SDK 的 Rust 基础功能绑定，方便基于 Rust 开发应用，暂时只实现了 rv1106-sys 关于 rockit， rknpu2 的功能绑定。</p>
+<h2 id="使用-glibc">使用 glibc</h2>
+<p>基于 uclibc 打包的 Rust 工具链只能处于基本可用状态，由于大量库缺乏对 uclibc 的支持（譬如基于 ring、tls 相关的库），因此如果只把 rv1106 作为通用 linux 环境使用的情况下，可以基于 glibc 的工具链打包，缺点是缺乏 media 相关包的支持。</p>
     </div>
 
 
