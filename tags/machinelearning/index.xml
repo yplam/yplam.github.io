@@ -6,14 +6,28 @@
     <description>Recent content in MachineLearning on YP.Lam</description>
     <generator>Hugo</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Sat, 19 Oct 2024 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sun, 09 Feb 2025 00:00:00 +0000</lastBuildDate>
     <atom:link href="https://yplam.com/tags/machinelearning/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Flux Lora 训练笔记</title>
+      <link>https://yplam.com/post/machinelearning/flux-lora-training/</link>
+      <pubDate>Sun, 09 Feb 2025 00:00:00 +0000</pubDate>
+      <guid>https://yplam.com/post/machinelearning/flux-lora-training/</guid>
+      <description>&lt;p&gt;本文记录使用 sd-scripts 与 RTX4090 训练 Flux Lora 流程。&lt;/p&gt;</description>
+    </item>
     <item>
       <title>推荐系统的简易实现</title>
       <link>https://yplam.com/post/machinelearning/recommender-system/</link>
       <pubDate>Sat, 19 Oct 2024 00:00:00 +0000</pubDate>
       <guid>https://yplam.com/post/machinelearning/recommender-system/</guid>
       <description>&lt;p&gt;现时推荐系统可以说是内容类网站的基础组件之一，而得益于最近大模型等机器学习领域的快速发展，带动相关技术应用的普及，今天可以利用相关技术实现一个具备基础功能的推荐系统。&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Stable Diffusion 笔记</title>
+      <link>https://yplam.com/post/machinelearning/stable-diffusion/</link>
+      <pubDate>Sat, 09 Dec 2023 00:00:00 +0000</pubDate>
+      <guid>https://yplam.com/post/machinelearning/stable-diffusion/</guid>
+      <description>&lt;p&gt;本文目的为通过了解 Stable Diffusion 基本概念，学习如何根据需求选择模型、参数、工作流生成图片，探索 Stable Diffusion 技术的应用场景。&lt;/p&gt;</description>
     </item>
     <item>
       <title>PyTorch 多显卡推理与问题排查</title>

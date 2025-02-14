@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html>
+<section class="g-bg-gray-light-v5"><head>
+	
+	<title>YP.Lam  | Flux Lora 训练笔记</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<meta http-equiv="x-ua-compatible" content="ie=edge">
+
+	<link rel="stylesheet" href="//stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css">
+	
+	<link rel="stylesheet" href="https://yplam.com/scss/unify.min.css">
+
+	
+	
+  
+    
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-960JLZS3KY"></script>
+      <script>
+        var doNotTrack = false;
+        if ( false ) {
+          var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
+          var doNotTrack = (dnt == "1" || dnt == "yes");
+        }
+        if (!doNotTrack) {
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-960JLZS3KY');
+        }
+      </script>
+    
+  
+
+
+	
+</head>
+
+<body>    <div class="container">
+        <div class="d-sm-flex text-center">
+            <div class="align-self-center ml-auto">
+                <ul class="u-list-inline float-right g-py-20">
+                    <li class="list-inline-item g-mr-5">
+                        <a class="u-link-v5 g-color-gray-dark-v5 g-color-primary--hover" href="/">HOME</a>
+                        <i class="g-color-gray-light-v2 g-ml-5">/</i>
+                    </li>
+                    <li class="list-inline-item g-mr-5">
+                        <a class="u-link-v5 g-color-gray-dark-v5 g-color-primary--hover" href="/about/">ABOUT</a>
+                        <i class="g-color-gray-light-v2 g-ml-5">/</i>
+                    </li>
+                    <li class="list-inline-item">
+                        <a class="u-link-v5 g-color-gray-dark-v5 g-color-primary--hover" href="https://github.com/yplam">GITHUB</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+<div class="container" aria-label="Content">
+            <div class="g-bg-white">
+                <div class="g-px-35 g-py-30 g-mb-30">
+<article>
+    <ul class="list-inline g-color-gray-dark-v4">
+        <li class="list-inline-item mr-0">
+            In
+             
+            
+            
+            
+            <a href="https://yplam.com/tags/machinelearning/">MachineLearning</a>
+            
+            
+            
+            
+            <a href="https://yplam.com/tags/flux/">Flux</a>
+            
+            
+            
+            
+            <a href="https://yplam.com/tags/lora/">Lora</a>
+            
+            
+        </li>
+        <li class="list-inline-item mx-2">/</li>
+        <li class="list-inline-item">Posted 2025-02-09</li>
+    </ul>
+    <h1 class="g-mb-30">Flux Lora 训练笔记</h1>
+    <div class="justify-content-center article-content">
+        <p>本文记录使用 sd-scripts 与 RTX4090 训练 Flux Lora 流程。</p>
+<h2 id="工具配置">工具配置</h2>
+<p>使用著名的 sd-scripts 脚本进行训练，现时需要 sd3 分支支持，使用以下命令：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>git clone https://github.com/kohya-ss/sd-scripts.git
+</span></span><span style="display:flex;"><span>cd sd-scripts
+</span></span><span style="display:flex;"><span>git checkout sd3
+</span></span><span style="display:flex;"><span>python3.10 -m venv venv
+</span></span><span style="display:flex;"><span>source venv/bin/activate
+</span></span><span style="display:flex;"><span>pip install -i https://mirrors.aliyun.com/pypi/simple --extra-index-url https://download.pytorch.org/whl/cu124 --default-timeout<span style="color:#f92672">=</span><span style="color:#ae81ff">100</span> -r requirements.txt
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 未兼容新版 torch</span>
+</span></span><span style="display:flex;"><span>pip install -i https://mirrors.aliyun.com/pypi/simple --extra-index-url https://download.pytorch.org/whl/cu124 --default-timeout<span style="color:#f92672">=</span><span style="color:#ae81ff">100</span> triton torch<span style="color:#f92672">==</span>2.4.0 torchvision<span style="color:#f92672">==</span>0.19.0
+</span></span></code></pre></div><p>配置 accelerate</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>accelerate config
+</span></span></code></pre></div><p>启用 numa efficiency, 并且选择 bf16，生成的 ~/.cache/huggingface/accelerate/default_config.yaml 内容</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">compute_environment</span>: <span style="color:#ae81ff">LOCAL_MACHINE</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">debug</span>: <span style="color:#66d9ef">false</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">distributed_type</span>: <span style="color:#e6db74">&#39;NO&#39;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">downcast_bf16</span>: <span style="color:#e6db74">&#39;no&#39;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">enable_cpu_affinity</span>: <span style="color:#66d9ef">true</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">gpu_ids</span>: <span style="color:#ae81ff">all</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">machine_rank</span>: <span style="color:#ae81ff">0</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">main_training_function</span>: <span style="color:#ae81ff">main</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">mixed_precision</span>: <span style="color:#ae81ff">bf16</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">num_machines</span>: <span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">num_processes</span>: <span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">rdzv_backend</span>: <span style="color:#ae81ff">static</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">same_network</span>: <span style="color:#66d9ef">true</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">tpu_env</span>: []
+</span></span><span style="display:flex;"><span><span style="color:#f92672">tpu_use_cluster</span>: <span style="color:#66d9ef">false</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">tpu_use_sudo</span>: <span style="color:#66d9ef">false</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">use_cpu</span>: <span style="color:#66d9ef">false</span>
+</span></span></code></pre></div><h2 id="数据集准备">数据集准备</h2>
+<p>准备若干 jpg、png 图片，以及同名但后缀为 .txt 的图片内容描述文件，建议使用脚本通过 ChatGPT 4o api 生成，然后配置 dataset.toml</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-toml" data-lang="toml"><span style="display:flex;"><span>[[<span style="color:#a6e22e">datasets</span>]]
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">enable_bucket</span> = <span style="color:#66d9ef">true</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">resolution</span> = [<span style="color:#ae81ff">350</span>, <span style="color:#ae81ff">350</span>]
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">bucket_reso_steps</span> = <span style="color:#ae81ff">64</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">max_bucket_reso</span> = <span style="color:#ae81ff">2048</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">min_bucket_reso</span> = <span style="color:#ae81ff">128</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">bucket_no_upscale</span> = <span style="color:#66d9ef">false</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">batch_size</span> = <span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">random_crop</span> = <span style="color:#66d9ef">false</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">shuffle_caption</span> = <span style="color:#66d9ef">false</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>[[<span style="color:#a6e22e">datasets</span>.<span style="color:#a6e22e">subsets</span>]]
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">image_dir</span> = <span style="color:#e6db74">&#34;/home/yplam/AI/sd-scripts/data/dataset&#34;</span> 
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">num_repeats</span> = <span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">caption_extension</span> = <span style="color:#960050;background-color:#1e0010">&#34;</span>.<span style="color:#a6e22e">txt</span>
+</span></span></code></pre></div><h2 id="训练">训练</h2>
+<p>需要注意的是训练前需下载对应的模型权重、clip、ae 等，通常如果有用 ComfyUI 等工具则在 models 下可以找到</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>accelerate launch --mixed_precision bf16 --num_cpu_threads_per_process <span style="color:#ae81ff">1</span> flux_train_network.py <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --pretrained_model_name_or_path /home/yplam/AI/ComfyUI-Docker/models/unet/flux1-dev-fp8.safetensors <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --clip_l /home/yplam/AI/ComfyUI-Docker/models/clip/clip_l.safetensors <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --ae /home/yplam/AI/ComfyUI-Docker/models/vae/ae.safetensors <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --cache_latents_to_disk <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --save_model_as safetensors <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --sdpa <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --persistent_data_loader_workers <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --max_data_loader_n_workers <span style="color:#ae81ff">2</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --seed <span style="color:#ae81ff">42</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --gradient_checkpointing <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --mixed_precision bf16 <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --save_precision bf16 <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --network_module networks.lora_flux <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --network_dim <span style="color:#ae81ff">16</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --network_alpha <span style="color:#ae81ff">8</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --optimizer_type adamw8bit <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --learning_rate 2e-4 <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --lr_scheduler constant_with_warmup <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --lr_warmup_steps <span style="color:#ae81ff">20</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --cache_text_encoder_outputs <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --cache_text_encoder_outputs_to_disk <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --fp8_base <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --max_train_steps <span style="color:#ae81ff">1200</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --save_every_n_epochs <span style="color:#ae81ff">10</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --dataset_config /home/yplam/AI/sd-scripts/data/dataset.toml <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --output_dir /home/yplam/AI/sd-scripts/data/output <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --output_name avatarbeta <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --timestep_sampling shift <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --discrete_flow_shift 3.1582 <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --model_prediction_type raw <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --guidance_scale 1.0 <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --t5xxl /home/yplam/AI/ComfyUI-Docker/models/clip/t5xxl_fp16.safetensors <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --split_mode <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --network_args <span style="color:#e6db74">&#34;train_blocks=single&#34;</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --max_grad_norm 1.0 <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --gradient_accumulation_steps <span style="color:#ae81ff">4</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --clip_skip <span style="color:#ae81ff">2</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --min_snr_gamma <span style="color:#ae81ff">5</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --noise_offset 0.1
+</span></span></code></pre></div>
+    </div>
+
+
+</article>
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/styles/base16/darcula.min.css" integrity="sha512-GfRggx2Wc+POEPR0asMTNTyNug3rWJ9Jp4wxnHZ5VApMOUJRK4cEaRriXsx5tV1DakKHQWQ2noCbuzFiPJaYqA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/highlight.min.js" integrity="sha512-yUUc0qWm2rhM7X0EFe82LNnv2moqArj5nro/w1bi05A09hRVeIZbN6jlMoyu0+4I/Bu4Ck/85JQIU82T82M28w==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlightjs-line-numbers.js/2.8.0/highlightjs-line-numbers.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+
+                </div>
+
+            </div>
+        </div><div id="footer-default" class="g-bg-gray-dark-v1 g-color-white-opacity-0_8 text-center g-py-20">
+    <div class="container">
+        <div class="g-font-size-default g-mr-10 g-mb-10 g-mb-0--md">
+            <p>本站内容如非特别说明，均基于 <a rel="license" target="_blank" href="http://creativecommons.org/licenses/by-sa/3.0/">Creative Commons Attribution-Share Alike 3.0 Unported License</a> 发布。</p>
+        </div>
+    </div>
+</div></body>
+</section>
+</html>

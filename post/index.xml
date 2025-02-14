@@ -6,8 +6,15 @@
     <description>Recent content in Posts on YP.Lam</description>
     <generator>Hugo</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Sat, 19 Oct 2024 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sun, 09 Feb 2025 00:00:00 +0000</lastBuildDate>
     <atom:link href="https://yplam.com/post/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Flux Lora 训练笔记</title>
+      <link>https://yplam.com/post/machinelearning/flux-lora-training/</link>
+      <pubDate>Sun, 09 Feb 2025 00:00:00 +0000</pubDate>
+      <guid>https://yplam.com/post/machinelearning/flux-lora-training/</guid>
+      <description>&lt;p&gt;本文记录使用 sd-scripts 与 RTX4090 训练 Flux Lora 流程。&lt;/p&gt;</description>
+    </item>
     <item>
       <title>推荐系统的简易实现</title>
       <link>https://yplam.com/post/machinelearning/recommender-system/</link>
@@ -35,6 +42,13 @@
       <pubDate>Sun, 17 Dec 2023 00:00:00 +0000</pubDate>
       <guid>https://yplam.com/post/go/go-plugin/</guid>
       <description>&lt;p&gt;本文章总结Go语言编程中常用的插件系统设计。&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Stable Diffusion 笔记</title>
+      <link>https://yplam.com/post/machinelearning/stable-diffusion/</link>
+      <pubDate>Sat, 09 Dec 2023 00:00:00 +0000</pubDate>
+      <guid>https://yplam.com/post/machinelearning/stable-diffusion/</guid>
+      <description>&lt;p&gt;本文目的为通过了解 Stable Diffusion 基本概念，学习如何根据需求选择模型、参数、工作流生成图片，探索 Stable Diffusion 技术的应用场景。&lt;/p&gt;</description>
     </item>
     <item>
       <title>PyTorch 多显卡推理与问题排查</title>
