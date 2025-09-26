@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>PyTorch 多显卡推理与问题排查 | YPLAM</title>
+<meta name="keywords" content="MachineLearning">
+<meta name="description" content="本文记录双 RTX4080 显卡运行 Yi-34B-Chat-4bits 模型过程与排错。">
+<meta name="author" content="">
+<link rel="canonical" href="https://yplam.com/posts/machinelearning/pytorch-multiple-gpus-error/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.8a2a5b863c538395920b4f077c6697be31878d530618647d78daca2883f21ff1.css" integrity="sha256-iipbhjxTg5WSC08HfGaXvjGHjVMGGGR9eNrKKIPyH/E=" rel="preload stylesheet" as="style">
+<link rel="icon" href="https://yplam.com/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://yplam.com/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://yplam.com/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://yplam.com/apple-touch-icon.png">
+<link rel="mask-icon" href="https://yplam.com/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="zh-cn" href="https://yplam.com/posts/machinelearning/pytorch-multiple-gpus-error/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --code-block-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript>
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-960JLZS3KY"></script>
+      <script>
+        var doNotTrack = false;
+        if ( false ) {
+          var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
+          var doNotTrack = (dnt == "1" || dnt == "yes");
+        }
+        if (!doNotTrack) {
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-960JLZS3KY');
+        }
+      </script><meta property="og:url" content="https://yplam.com/posts/machinelearning/pytorch-multiple-gpus-error/">
+  <meta property="og:site_name" content="YPLAM">
+  <meta property="og:title" content="PyTorch 多显卡推理与问题排查">
+  <meta property="og:description" content="本文记录双 RTX4080 显卡运行 Yi-34B-Chat-4bits 模型过程与排错。">
+  <meta property="og:locale" content="zh-cn">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2023-12-02T00:00:00+00:00">
+    <meta property="article:modified_time" content="2023-12-02T00:00:00+00:00">
+    <meta property="article:tag" content="MachineLearning">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="PyTorch 多显卡推理与问题排查">
+<meta name="twitter:description" content="本文记录双 RTX4080 显卡运行 Yi-34B-Chat-4bits 模型过程与排错。">
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Posts",
+      "item": "https://yplam.com/posts/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "PyTorch 多显卡推理与问题排查",
+      "item": "https://yplam.com/posts/machinelearning/pytorch-multiple-gpus-error/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "PyTorch 多显卡推理与问题排查",
+  "name": "PyTorch 多显卡推理与问题排查",
+  "description": "本文记录双 RTX4080 显卡运行 Yi-34B-Chat-4bits 模型过程与排错。\n",
+  "keywords": [
+    "MachineLearning"
+  ],
+  "articleBody": "本文记录双 RTX4080 显卡运行 Yi-34B-Chat-4bits 模型过程与排错。\n基于 Ubuntu Server 20.04.6 LTS，并具有基础的科学上网条件。\n由于 CUDA 已绑定对应显卡驱动，因此直接到官网按提示下载安装即可，譬如我选择安装 12.1 版本：\nhttps://developer.nvidia.com/cuda-12-1-0-download-archive\nwget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64/cuda-ubuntu2004.pin sudo mv cuda-ubuntu2004.pin /etc/apt/preferences.d/cuda-repository-pin-600 wget https://developer.download.nvidia.com/compute/cuda/12.1.0/local_installers/cuda-repo-ubuntu2004-12-1-local_12.1.0-530.30.02-1_amd64.deb sudo dpkg -i cuda-repo-ubuntu2004-12-1-local_12.1.0-530.30.02-1_amd64.deb sudo cp /var/cuda-repo-ubuntu2004-12-1-local/cuda-*-keyring.gpg /usr/share/keyrings/ sudo apt-get update sudo apt-get -y install cuda 安装 Docker\nfor pkg in docker.io docker-doc docker-compose docker-compose-v2 podman-docker containerd runc; do sudo apt-get remove $pkg; done # Add Docker's official GPG key: sudo apt-get update sudo apt-get install ca-certificates curl gnupg sudo install -m 0755 -d /etc/apt/keyrings curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg sudo chmod a+r /etc/apt/keyrings/docker.gpg # Add the repository to Apt sources: echo \\ \"deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \\ $(. /etc/os-release \u0026\u0026 echo \"$VERSION_CODENAME\") stable\" | \\ sudo tee /etc/apt/sources.list.d/docker.list \u003e /dev/null sudo apt-get update sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin 如果上面有出错信息，则大概率是访问 docker 服务器间的网络不顺畅。。。\n安装 NVIDIA Container Toolkit\ncurl -fsSL https://nvidia.github.io/libnvidia-container/gpgkey | sudo gpg --dearmor -o /usr/share/keyrings/nvidia-container-toolkit-keyring.gpg \\ \u0026\u0026 curl -s -L https://nvidia.github.io/libnvidia-container/stable/deb/nvidia-container-toolkit.list | \\ sed 's#deb https://#deb [signed-by=/usr/share/keyrings/nvidia-container-toolkit-keyring.gpg] https://#g' | \\ sudo tee /etc/apt/sources.list.d/nvidia-container-toolkit.list \\ \u0026\u0026 \\ sudo apt-get update sudo apt-get install -y nvidia-container-toolkit sudo nvidia-ctk runtime configure --runtime=docker sudo systemctl restart docker Dockerfile 与 compose.yaml\n此 Dockerfile 同时加入 chatglm-cpp 的支持（貌似默认无法支持多卡，需要修改代码？）\nFROM nvidia/cuda:12.1.1-cudnn8-devel-ubuntu20.04 ARG TIMEZONE=Asia/Shanghai ARG UID=1000 ARG GID=1000 ENV DEBIAN_FRONTEND=noninteractive RUN \\ sed -e \"s/archive.ubuntu.com/mirrors.tuna.tsinghua.edu.cn/g\" \\ -e \"s/security.ubuntu.com/mirrors.tuna.tsinghua.edu.cn/g\" -i /etc/apt/sources.list # Set timezone RUN ln -snf /usr/share/zoneinfo/${TIMEZONE} /etc/localtime \u0026\u0026 echo ${TIMEZONE} \u003e /etc/timezone \\ \u0026\u0026 \"date\" RUN apt-get update \u0026\u0026 apt-get install -y \\ curl \\ apt-utils \\ wget \\ build-essential \\ libssl-dev \\ zlib1g-dev \\ libncurses5-dev \\ libncursesw5-dev \\ libreadline-dev \\ libsqlite3-dev \\ libgdbm-dev \\ libdb5.3-dev \\ libbz2-dev \\ libexpat1-dev \\ liblzma-dev \\ git \\ vim \\ libffi-dev \\ libgdbm-compat-dev \\ ffmpeg libsm6 libxext6 RUN wget https://www.python.org/ftp/python/3.10.12/Python-3.10.12.tar.xz -O /tmp/Python-3.10.12.tar.xz \\ \u0026\u0026 tar xvf /tmp/Python-3.10.12.tar.xz -C /tmp \\ \u0026\u0026 cd /tmp/Python-3.10.12 \\ \u0026\u0026 ./configure --enable-optimizations --with-ensurepip=install \\ \u0026\u0026 make -j $(nproc) \\ \u0026\u0026 make altinstall \\ \u0026\u0026 update-alternatives --install /usr/bin/python python /usr/local/bin/python3.10 1 \\ \u0026\u0026 update-alternatives --install /usr/bin/pip pip /usr/local/bin/pip3.10 1 \\ \u0026\u0026 rm -rf /tmp/Python-3.10.12.tar.xz /tmp/Python-3.10.12 RUN export LD_LIBRARY_PATH=/lib/x86_64-linux-gnu:$LD_LIBRARY_PATH RUN pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121 RUN pip install xformers --index-url https://download.pytorch.org/whl/cu118 RUN pip install wheel streamlit transformers_stream_generator cpm_kernels astunparse accelerate tiktoken einops scipy peft auto-gptq optimum RUN CMAKE_ARGS=\"-DGGML_CUBLAS=ON\" pip install -U 'chatglm-cpp[api]' RUN pip install autoawq xformers RUN groupadd -g $GID -o chatglm RUN useradd -m -u $UID -g $GID -o -s /bin/bash chatglm USER chatglm WORKDIR /home/chatglm/work ENTRYPOINT [\"tail\", \"-f\", \"/dev/null\"] compose.yaml\nservices: chatglm: build: context: ./docker network: host container_name: chatglm restart: always # entrypoint: [\"uvicorn\", \"chatglm_cpp.openai_api:app\", \"--host\", \"0.0.0.0\"] dns: - 119.29.29.29 volumes: - ./:/home/chatglm/work/ - ./data/cache:/home/chatglm/.cache - ./data/config:/home/chatglm/.config - ./data/triton:/home/chatglm/.triton - /usr/local/nvidia:/usr/local/nvidia ports: - 8000:8000 deploy: resources: reservations: devices: - driver: nvidia capabilities: [gpu] docker compose up -d –build , 运行，devel镜像较大，可能需要较长时间。\n运行后先进入容器查看是否显卡已正常挂载，nvidia-smi 。\ngit clone https://huggingface.co/01-ai/Yi-34B-Chat-4bits 下载模型，需要先安装 lfs 插件。\n进入容器，按官方资料编写并执行脚本，由于 AutoModelForCausalLM 已支持多 GPU，通常不需要更改代码。\n错误排查 对于多 GPU 的环境，需要先保证 GPU 间数据能正常通讯：\nimport torch x = torch.tensor([1.0, 2.0], device=0) x.to(1) x.to('cpu').to(1) 需要测试 x.to(1) 后的值是否正常，如果为 [0, 0] 则代表 GPU 间数据传递失败，可能存在两种原因：\nIOMMU，可以通过 bios 配置关闭，参考 https://docs.nvidia.com/deeplearning/nccl/user-guide/docs/troubleshooting.html#pci-access-control-services-acs\n显卡驱动问题，建议寻找合适的驱动版本。譬如 CUDA 12.1 对应的驱动版本无法 GPU 间传递数据，升级到 12.2 后正常（容器依然基于 12.1，经测试依然可用）\n",
+  "wordCount" : "497",
+  "inLanguage": "zh-cn",
+  "datePublished": "2023-12-02T00:00:00Z",
+  "dateModified": "2023-12-02T00:00:00Z",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://yplam.com/posts/machinelearning/pytorch-multiple-gpus-error/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "YPLAM",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://yplam.com/favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <div class="logo-switches">
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="https://yplam.com/" title="YPLAM">
+                    <span>HOME</span>
+
+                </a>
+            </li>
+            <li>
+                <a href="https://yplam.com/about/" title="关于YPLam">
+                    <span>ABOUT</span>
+
+                </a>
+            </li>
+            <li>
+                <a href="https://github.com/yplam" title="GITHUB">
+                    <span>GITHUB</span>
+
+                </a>
+            </li>
+            <li>
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title entry-hint-parent">
+      PyTorch 多显卡推理与问题排查
+    </h1>
+    <div class="post-meta"><span title='2023-12-02 00:00:00 +0000 UTC'>2023-12-02</span>
+
+</div>
+  </header> 
+  <div class="post-content"><p>本文记录双 RTX4080 显卡运行 Yi-34B-Chat-4bits 模型过程与排错。</p>
+<p>基于 Ubuntu Server 20.04.6 LTS，并具有基础的科学上网条件。</p>
+<p>由于 CUDA 已绑定对应显卡驱动，因此直接到官网按提示下载安装即可，譬如我选择安装 12.1 版本：</p>
+<p><a href="https://developer.nvidia.com/cuda-12-1-0-download-archive">https://developer.nvidia.com/cuda-12-1-0-download-archive</a></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64/cuda-ubuntu2004.pin
+</span></span><span class="line"><span class="cl">sudo mv cuda-ubuntu2004.pin /etc/apt/preferences.d/cuda-repository-pin-600
+</span></span><span class="line"><span class="cl">wget https://developer.download.nvidia.com/compute/cuda/12.1.0/local_installers/cuda-repo-ubuntu2004-12-1-local_12.1.0-530.30.02-1_amd64.deb
+</span></span><span class="line"><span class="cl">sudo dpkg -i cuda-repo-ubuntu2004-12-1-local_12.1.0-530.30.02-1_amd64.deb
+</span></span><span class="line"><span class="cl">sudo cp /var/cuda-repo-ubuntu2004-12-1-local/cuda-*-keyring.gpg /usr/share/keyrings/
+</span></span><span class="line"><span class="cl">sudo apt-get update
+</span></span><span class="line"><span class="cl">sudo apt-get -y install cuda
+</span></span></code></pre></div><p>安装 Docker</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="k">for</span> pkg in docker.io docker-doc docker-compose docker-compose-v2 podman-docker containerd runc<span class="p">;</span> <span class="k">do</span> sudo apt-get remove <span class="nv">$pkg</span><span class="p">;</span> <span class="k">done</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># Add Docker&#39;s official GPG key:</span>
+</span></span><span class="line"><span class="cl">sudo apt-get update
+</span></span><span class="line"><span class="cl">sudo apt-get install ca-certificates curl gnupg
+</span></span><span class="line"><span class="cl">sudo install -m <span class="m">0755</span> -d /etc/apt/keyrings
+</span></span><span class="line"><span class="cl">curl -fsSL https://download.docker.com/linux/ubuntu/gpg <span class="p">|</span> sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+</span></span><span class="line"><span class="cl">sudo chmod a+r /etc/apt/keyrings/docker.gpg
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># Add the repository to Apt sources:</span>
+</span></span><span class="line"><span class="cl"><span class="nb">echo</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>  <span class="s2">&#34;deb [arch=</span><span class="k">$(</span>dpkg --print-architecture<span class="k">)</span><span class="s2"> signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
+</span></span></span><span class="line"><span class="cl"><span class="s2">  </span><span class="k">$(</span>. /etc/os-release <span class="o">&amp;&amp;</span> <span class="nb">echo</span> <span class="s2">&#34;</span><span class="nv">$VERSION_CODENAME</span><span class="s2">&#34;</span><span class="k">)</span><span class="s2"> stable&#34;</span> <span class="p">|</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>  sudo tee /etc/apt/sources.list.d/docker.list &gt; /dev/null
+</span></span><span class="line"><span class="cl">sudo apt-get update
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+</span></span></code></pre></div><p>如果上面有出错信息，则大概率是访问 docker 服务器间的网络不顺畅。。。</p>
+<p>安装 NVIDIA Container Toolkit</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">curl -fsSL https://nvidia.github.io/libnvidia-container/gpgkey <span class="p">|</span> sudo gpg --dearmor -o /usr/share/keyrings/nvidia-container-toolkit-keyring.gpg <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>  <span class="o">&amp;&amp;</span> curl -s -L https://nvidia.github.io/libnvidia-container/stable/deb/nvidia-container-toolkit.list <span class="p">|</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>    sed <span class="s1">&#39;s#deb https://#deb [signed-by=/usr/share/keyrings/nvidia-container-toolkit-keyring.gpg] https://#g&#39;</span> <span class="p">|</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>    sudo tee /etc/apt/sources.list.d/nvidia-container-toolkit.list <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>  <span class="o">&amp;&amp;</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>    sudo apt-get update
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">sudo apt-get install -y nvidia-container-toolkit
+</span></span><span class="line"><span class="cl">sudo nvidia-ctk runtime configure --runtime<span class="o">=</span>docker
+</span></span><span class="line"><span class="cl">sudo systemctl restart docker
+</span></span></code></pre></div><p>Dockerfile 与 compose.yaml</p>
+<p>此 Dockerfile 同时加入 chatglm-cpp 的支持（貌似默认无法支持多卡，需要修改代码？）</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-Dockerfile" data-lang="Dockerfile"><span class="line"><span class="cl"><span class="k">FROM</span><span class="s"> nvidia/cuda:12.1.1-cudnn8-devel-ubuntu20.04</span><span class="err">
+</span></span></span><span class="line"><span class="cl"><span class="err">
+</span></span></span><span class="line"><span class="cl"><span class="err"></span><span class="k">ARG</span> <span class="nv">TIMEZONE</span><span class="o">=</span>Asia/Shanghai<span class="err">
+</span></span></span><span class="line"><span class="cl"><span class="err"></span><span class="k">ARG</span> <span class="nv">UID</span><span class="o">=</span><span class="m">1000</span>
+</span></span><span class="line"><span class="cl"><span class="k">ARG</span> <span class="nv">GID</span><span class="o">=</span><span class="m">1000</span>
+</span></span><span class="line"><span class="cl"><span class="k">ENV</span> <span class="nv">DEBIAN_FRONTEND</span><span class="o">=</span>noninteractive
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">RUN</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>    sed -e <span class="s2">&#34;s/archive.ubuntu.com/mirrors.tuna.tsinghua.edu.cn/g&#34;</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>        -e <span class="s2">&#34;s/security.ubuntu.com/mirrors.tuna.tsinghua.edu.cn/g&#34;</span> -i /etc/apt/sources.list<span class="err">
+</span></span></span><span class="line"><span class="cl"><span class="err">
+</span></span></span><span class="line"><span class="cl"><span class="err"></span><span class="c"># Set timezone</span><span class="err">
+</span></span></span><span class="line"><span class="cl"><span class="err"></span><span class="k">RUN</span> ln -snf /usr/share/zoneinfo/<span class="si">${</span><span class="nv">TIMEZONE</span><span class="si">}</span> /etc/localtime <span class="o">&amp;&amp;</span> <span class="nb">echo</span> <span class="si">${</span><span class="nv">TIMEZONE</span><span class="si">}</span> &gt; /etc/timezone <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span><span class="o">&amp;&amp;</span> <span class="s2">&#34;date&#34;</span><span class="err">
+</span></span></span><span class="line"><span class="cl"><span class="err">
+</span></span></span><span class="line"><span class="cl"><span class="err"></span><span class="k">RUN</span> apt-get update <span class="o">&amp;&amp;</span> apt-get install -y <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>    curl <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>    apt-utils <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>    wget <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>    build-essential <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>    libssl-dev <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>    zlib1g-dev <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>    libncurses5-dev <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>    libncursesw5-dev <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>    libreadline-dev <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>    libsqlite3-dev <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>    libgdbm-dev <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>    libdb5.3-dev <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>    libbz2-dev <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>    libexpat1-dev <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>    liblzma-dev <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>    git <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>    vim <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>    libffi-dev <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>    libgdbm-compat-dev <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>    ffmpeg libsm6 libxext6<span class="err">
+</span></span></span><span class="line"><span class="cl"><span class="err"></span>    <span class="err">
+</span></span></span><span class="line"><span class="cl"><span class="err"></span><span class="k">RUN</span> wget https://www.python.org/ftp/python/3.10.12/Python-3.10.12.tar.xz -O /tmp/Python-3.10.12.tar.xz <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>    <span class="o">&amp;&amp;</span> tar xvf /tmp/Python-3.10.12.tar.xz -C /tmp <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>    <span class="o">&amp;&amp;</span> <span class="nb">cd</span> /tmp/Python-3.10.12 <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>    <span class="o">&amp;&amp;</span> ./configure --enable-optimizations --with-ensurepip<span class="o">=</span>install <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>    <span class="o">&amp;&amp;</span> make -j <span class="k">$(</span>nproc<span class="k">)</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>    <span class="o">&amp;&amp;</span> make altinstall <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>    <span class="o">&amp;&amp;</span> update-alternatives --install /usr/bin/python python /usr/local/bin/python3.10 <span class="m">1</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>    <span class="o">&amp;&amp;</span> update-alternatives --install /usr/bin/pip pip /usr/local/bin/pip3.10 <span class="m">1</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>    <span class="o">&amp;&amp;</span> rm -rf /tmp/Python-3.10.12.tar.xz /tmp/Python-3.10.12<span class="err">
+</span></span></span><span class="line"><span class="cl"><span class="err">
+</span></span></span><span class="line"><span class="cl"><span class="err"></span><span class="k">RUN</span> <span class="nb">export</span> <span class="nv">LD_LIBRARY_PATH</span><span class="o">=</span>/lib/x86_64-linux-gnu:<span class="nv">$LD_LIBRARY_PATH</span><span class="err">
+</span></span></span><span class="line"><span class="cl"><span class="err">
+</span></span></span><span class="line"><span class="cl"><span class="err"></span><span class="k">RUN</span> pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121<span class="err">
+</span></span></span><span class="line"><span class="cl"><span class="err"></span><span class="k">RUN</span> pip install xformers --index-url https://download.pytorch.org/whl/cu118<span class="err">
+</span></span></span><span class="line"><span class="cl"><span class="err"></span><span class="k">RUN</span> pip install wheel streamlit transformers_stream_generator cpm_kernels astunparse accelerate tiktoken einops scipy peft auto-gptq optimum<span class="err">
+</span></span></span><span class="line"><span class="cl"><span class="err">
+</span></span></span><span class="line"><span class="cl"><span class="err">
+</span></span></span><span class="line"><span class="cl"><span class="err"></span><span class="k">RUN</span> <span class="nv">CMAKE_ARGS</span><span class="o">=</span><span class="s2">&#34;-DGGML_CUBLAS=ON&#34;</span> pip install -U <span class="s1">&#39;chatglm-cpp[api]&#39;</span><span class="err">
+</span></span></span><span class="line"><span class="cl"><span class="err">
+</span></span></span><span class="line"><span class="cl"><span class="err"></span><span class="k">RUN</span> pip install autoawq xformers<span class="err">
+</span></span></span><span class="line"><span class="cl"><span class="err">
+</span></span></span><span class="line"><span class="cl"><span class="err"></span><span class="k">RUN</span> groupadd -g <span class="nv">$GID</span> -o chatglm<span class="err">
+</span></span></span><span class="line"><span class="cl"><span class="err"></span><span class="k">RUN</span> useradd -m -u <span class="nv">$UID</span> -g <span class="nv">$GID</span> -o -s /bin/bash chatglm<span class="err">
+</span></span></span><span class="line"><span class="cl"><span class="err"></span><span class="k">USER</span><span class="s"> chatglm</span><span class="err">
+</span></span></span><span class="line"><span class="cl"><span class="err"></span><span class="k">WORKDIR</span><span class="s"> /home/chatglm/work</span><span class="err">
+</span></span></span><span class="line"><span class="cl"><span class="err">
+</span></span></span><span class="line"><span class="cl"><span class="err">
+</span></span></span><span class="line"><span class="cl"><span class="err"></span><span class="k">ENTRYPOINT</span> <span class="p">[</span><span class="s2">&#34;tail&#34;</span><span class="p">,</span> <span class="s2">&#34;-f&#34;</span><span class="p">,</span> <span class="s2">&#34;/dev/null&#34;</span><span class="p">]</span><span class="err">
+</span></span></span></code></pre></div><p>compose.yaml</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="nt">services</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">chatglm</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">build</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">context</span><span class="p">:</span><span class="w"> </span><span class="l">./docker</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">network</span><span class="p">:</span><span class="w"> </span><span class="l">host</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">container_name</span><span class="p">:</span><span class="w"> </span><span class="l">chatglm</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">restart</span><span class="p">:</span><span class="w"> </span><span class="l">always</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c"># entrypoint: [&#34;uvicorn&#34;, &#34;chatglm_cpp.openai_api:app&#34;, &#34;--host&#34;, &#34;0.0.0.0&#34;]</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">dns</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="m">119.29.29.29</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">volumes</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="l">./:/home/chatglm/work/</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="l">./data/cache:/home/chatglm/.cache</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="l">./data/config:/home/chatglm/.config</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="l">./data/triton:/home/chatglm/.triton</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="l">/usr/local/nvidia:/usr/local/nvidia</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">ports</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="m">8000</span><span class="p">:</span><span class="m">8000</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">deploy</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">resources</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">reservations</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">          </span><span class="nt">devices</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span>- <span class="nt">driver</span><span class="p">:</span><span class="w"> </span><span class="l">nvidia</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">              </span><span class="nt">capabilities</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="l">gpu]</span><span class="w">
+</span></span></span></code></pre></div><p>docker compose up -d &ndash;build , 运行，devel镜像较大，可能需要较长时间。</p>
+<p>运行后先进入容器查看是否显卡已正常挂载，nvidia-smi 。</p>
+<p>git clone <a href="https://huggingface.co/01-ai/Yi-34B-Chat-4bits">https://huggingface.co/01-ai/Yi-34B-Chat-4bits</a> 下载模型，需要先安装 lfs 插件。</p>
+<p>进入容器，按官方资料编写并执行脚本，由于 AutoModelForCausalLM 已支持多 GPU，通常不需要更改代码。</p>
+<h2 id="错误排查">错误排查<a hidden class="anchor" aria-hidden="true" href="#错误排查">#</a></h2>
+<p>对于多 GPU 的环境，需要先保证 GPU 间数据能正常通讯：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">torch</span>
+</span></span><span class="line"><span class="cl"><span class="n">x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">],</span> <span class="n">device</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">x</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">x</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;cpu&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</span></span></code></pre></div><p>需要测试 x.to(1) 后的值是否正常，如果为 [0, 0] 则代表 GPU 间数据传递失败，可能存在两种原因：</p>
+<ol>
+<li>
+<p>IOMMU，可以通过 bios 配置关闭，参考 <a href="https://docs.nvidia.com/deeplearning/nccl/user-guide/docs/troubleshooting.html#pci-access-control-services-acs">https://docs.nvidia.com/deeplearning/nccl/user-guide/docs/troubleshooting.html#pci-access-control-services-acs</a></p>
+</li>
+<li>
+<p>显卡驱动问题，建议寻找合适的驱动版本。譬如 CUDA 12.1 对应的驱动版本无法 GPU 间传递数据，升级到 12.2 后正常（容器依然基于 12.1，经测试依然可用）</p>
+</li>
+</ol>
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+      <li><a href="https://yplam.com/tags/machinelearning/">MachineLearning</a></li>
+    </ul>
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+        <span>&copy; 2025 <a href="https://yplam.com/">YPLAM</a></span> · 
+
+    <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+        CC BY-SA 4.0
+    </a>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>

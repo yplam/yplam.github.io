@@ -1,81 +1,90 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
   <channel>
-    <title>Embedded on YP.Lam</title>
+    <title>Embedded on YPLAM</title>
     <link>https://yplam.com/tags/embedded/</link>
-    <description>Recent content in Embedded on YP.Lam</description>
-    <generator>Hugo</generator>
+    <description>Recent content in Embedded on YPLAM</description>
+    <generator>Hugo -- 0.148.2</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Sat, 26 Aug 2023 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sat, 13 Sep 2025 00:00:00 +0000</lastBuildDate>
     <atom:link href="https://yplam.com/tags/embedded/index.xml" rel="self" type="application/rss+xml" />
     <item>
+      <title>嵌入式 AI 编程测试：ESP32C3 LSM6DSR LIS3MDLTR</title>
+      <link>https://yplam.com/posts/machinelearning/ai-coding-for-embedded/</link>
+      <pubDate>Sat, 13 Sep 2025 00:00:00 +0000</pubDate>
+      <guid>https://yplam.com/posts/machinelearning/ai-coding-for-embedded/</guid>
+      <description>&lt;p&gt;最近买了个 LSM6DSR + LIS3MDLTR 模块准备玩玩九轴IMU，店家提供了个简单的库文件以及英飞凌的例程，因为他的库文件写得不怎么样，以及需要移植到 ESP32，所以决定试试让 AI 根据数据手册编以及官方范例写库文件以及测试例程。其中有个难点就是 LIS3MDLTR 是通过 LSM6DSR 的 Sensor Hub 功能接入。&lt;/p&gt;</description>
+    </item>
+    <item>
       <title>RV1106 开发笔记</title>
-      <link>https://yplam.com/post/embedded/rv1106-dev/</link>
+      <link>https://yplam.com/posts/embedded/rv1106-dev/</link>
       <pubDate>Sat, 26 Aug 2023 00:00:00 +0000</pubDate>
-      <guid>https://yplam.com/post/embedded/rv1106-dev/</guid>
+      <guid>https://yplam.com/posts/embedded/rv1106-dev/</guid>
       <description>&lt;p&gt;记录关于 RV1106 烧录、开发环境配置、SDK与Rust绑定相关内容。&lt;/p&gt;</description>
     </item>
     <item>
       <title>基于 Docker 的 EFR32MG21 Zigbee/Matter 固件打包</title>
-      <link>https://yplam.com/post/embedded/efr32mg21-firmware/</link>
+      <link>https://yplam.com/posts/embedded/efr32mg21-firmware/</link>
       <pubDate>Sat, 15 Jul 2023 00:00:00 +0000</pubDate>
-      <guid>https://yplam.com/post/embedded/efr32mg21-firmware/</guid>
+      <guid>https://yplam.com/posts/embedded/efr32mg21-firmware/</guid>
       <description>&lt;p&gt;基于 Docker 环境实现 EFR32MG21 官方 Bootloader， Zigbee 协调器与 Matter 固件编译打包与烧录。&lt;/p&gt;</description>
     </item>
     <item>
       <title>基于 Rust 实现 ESP32 HomeAssistant MQTT CO2 传感器</title>
-      <link>https://yplam.com/post/embedded/esp32-rust-mqtt-homeassistant/</link>
+      <link>https://yplam.com/posts/embedded/esp32-rust-mqtt-homeassistant/</link>
       <pubDate>Sun, 02 Oct 2022 00:00:00 +0000</pubDate>
-      <guid>https://yplam.com/post/embedded/esp32-rust-mqtt-homeassistant/</guid>
+      <guid>https://yplam.com/posts/embedded/esp32-rust-mqtt-homeassistant/</guid>
       <description>&lt;p&gt;最近发现 ESP32 相对于其他品牌单片机而言对 Rust 的支持还算完善，特别是对 std 的支持，使得很多对嵌入式而言相对高阶的库可以非常简单地使用。&lt;/p&gt;</description>
     </item>
     <item>
       <title>iMX6ULL 运行 OpenWRT</title>
-      <link>https://yplam.com/post/embedded/imx6ull-openwrt/</link>
+      <link>https://yplam.com/posts/embedded/imx6ull-openwrt/</link>
       <pubDate>Sat, 25 Dec 2021 00:00:00 +0000</pubDate>
-      <guid>https://yplam.com/post/embedded/imx6ull-openwrt/</guid>
+      <guid>https://yplam.com/posts/embedded/imx6ull-openwrt/</guid>
       <description>&lt;p&gt;本笔记并不是一个完整的关于 OpenWRT 移植的笔记，只作为个人备忘用。同时亦分享出来给需要的朋友作为参考。水平有限，如果有出错地方请反馈 yplam(at)yplam.com&lt;/p&gt;</description>
     </item>
     <item>
       <title>iMX6ULL SD卡系统制作与启动</title>
-      <link>https://yplam.com/post/embedded/imx6ull-boot-sd-card/</link>
+      <link>https://yplam.com/posts/embedded/imx6ull-boot-sd-card/</link>
       <pubDate>Sun, 19 Dec 2021 00:00:00 +0000</pubDate>
-      <guid>https://yplam.com/post/embedded/imx6ull-boot-sd-card/</guid>
+      <guid>https://yplam.com/posts/embedded/imx6ull-boot-sd-card/</guid>
       <description>&lt;p&gt;鉴于之前玩的 MT7688A 已经停产并且模块断货，最近把目光投向一款新芯片：iMX6ULL，因为其起点价格在接受范围，最低配置的核心板价格在百元以内，128M+128M 足够跑我的OpenThread网关，通用芯片该有的功能都有，按功能来算的话比 MT7688A 性价比还高。&lt;/p&gt;</description>
     </item>
     <item>
       <title>iMX6ULL 内核编译</title>
-      <link>https://yplam.com/post/embedded/imx6ull-kernel-compile/</link>
+      <link>https://yplam.com/posts/embedded/imx6ull-kernel-compile/</link>
       <pubDate>Sat, 18 Dec 2021 00:00:00 +0000</pubDate>
-      <guid>https://yplam.com/post/embedded/imx6ull-kernel-compile/</guid>
+      <guid>https://yplam.com/posts/embedded/imx6ull-kernel-compile/</guid>
       <description>&lt;p&gt;最近想在 iMX6ULL 上运行 OpenWRT，第一步准备将内核版本升到 4.14，按着官方说明操作一通，顺便在此记录一下&lt;/p&gt;</description>
     </item>
     <item>
       <title>树莓派 OpenThread 边界路由器配置</title>
-      <link>https://yplam.com/post/embedded/raspberry-pi-openthread/</link>
+      <link>https://yplam.com/posts/embedded/raspberry-pi-openthread/</link>
       <pubDate>Sat, 27 Mar 2021 00:00:00 +0000</pubDate>
-      <guid>https://yplam.com/post/embedded/raspberry-pi-openthread/</guid>
+      <guid>https://yplam.com/posts/embedded/raspberry-pi-openthread/</guid>
       <description>&lt;p&gt;OpenThread 边界路由器的作用是作为 Thread 网络与其他基于IP的网络（如WIFI、以太网）的桥梁。有了边界路由器的存在才让 Thread 网络中的设备成了跟手机、电脑等对等的一员（是的，基于IP就是那么自信）。&lt;/p&gt;</description>
     </item>
     <item>
       <title>基于 OpenWRT 与 MT7688 DIY 4G WIFI 路由器</title>
-      <link>https://yplam.com/post/embedded/openwrt-mt7688-4g/</link>
+      <link>https://yplam.com/posts/embedded/openwrt-mt7688-4g/</link>
       <pubDate>Sun, 02 Aug 2020 00:00:00 +0000</pubDate>
-      <guid>https://yplam.com/post/embedded/openwrt-mt7688-4g/</guid>
-      <description>&lt;p&gt;最近经常要到一些没有有线网络的地方，虽然手机可以共享WIFI出来，但总不能24小时开着，刚好手上空闲着一块 EC20 4G 模块，&#xA;于是淘宝弄了块最便宜的 MT7688 4G 路由板回来，DIY 自己的 4G WIFI共享路由器。&lt;/p&gt;</description>
+      <guid>https://yplam.com/posts/embedded/openwrt-mt7688-4g/</guid>
+      <description>&lt;p&gt;最近经常要到一些没有有线网络的地方，虽然手机可以共享WIFI出来，但总不能24小时开着，刚好手上空闲着一块 EC20 4G 模块，
+于是淘宝弄了块最便宜的 MT7688 4G 路由板回来，DIY 自己的 4G WIFI共享路由器。&lt;/p&gt;</description>
     </item>
     <item>
       <title>SX1280 LoraRanging 功能测试</title>
-      <link>https://yplam.com/post/embedded/lora-ranging-test/</link>
+      <link>https://yplam.com/posts/embedded/lora-ranging-test/</link>
       <pubDate>Wed, 19 Dec 2018 00:00:00 +0000</pubDate>
-      <guid>https://yplam.com/post/embedded/lora-ranging-test/</guid>
-      <description>&lt;p&gt;之前用现成的Lora串口模块感觉挺顺手，最近偶尔看到带 LoraRanging 功能的 SX1280，于是买了两个模块回来测试一下。&lt;/p&gt;&#xA;&lt;p&gt;源码地址 &lt;a href=&#34;https://github.com/yplam/LoraRangingTest&#34;&gt;https://github.com/yplam/LoraRangingTest&lt;/a&gt;&lt;/p&gt;</description>
+      <guid>https://yplam.com/posts/embedded/lora-ranging-test/</guid>
+      <description>&lt;p&gt;之前用现成的Lora串口模块感觉挺顺手，最近偶尔看到带 LoraRanging 功能的 SX1280，于是买了两个模块回来测试一下。&lt;/p&gt;
+&lt;p&gt;源码地址 &lt;a href=&#34;https://github.com/yplam/LoraRangingTest&#34;&gt;https://github.com/yplam/LoraRangingTest&lt;/a&gt;&lt;/p&gt;</description>
     </item>
     <item>
       <title>Configuring 6lbr for Ubuntu and SensorTag CC2650</title>
-      <link>https://yplam.com/post/embedded/configuring-6lbr-ubuntu-sensortag-cc2650/</link>
+      <link>https://yplam.com/posts/embedded/configuring-6lbr-ubuntu-sensortag-cc2650/</link>
       <pubDate>Tue, 23 Feb 2016 00:00:00 +0000</pubDate>
-      <guid>https://yplam.com/post/embedded/configuring-6lbr-ubuntu-sensortag-cc2650/</guid>
+      <guid>https://yplam.com/posts/embedded/configuring-6lbr-ubuntu-sensortag-cc2650/</guid>
       <description>&lt;p&gt;This post show you how to configure Ubuntu as 6LoWPAN router and bridge 6LoWPAN devices to the IPv4/IPv6 Internet.&lt;/p&gt;</description>
     </item>
   </channel>

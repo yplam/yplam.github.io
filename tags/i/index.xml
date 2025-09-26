@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
   <channel>
-    <title>I on YP.Lam</title>
+    <title>I on YPLAM</title>
     <link>https://yplam.com/tags/i/</link>
-    <description>Recent content in I on YP.Lam</description>
-    <generator>Hugo</generator>
+    <description>Recent content in I on YPLAM</description>
+    <generator>Hugo -- 0.148.2</generator>
     <language>zh-cn</language>
     <lastBuildDate>Sat, 01 Jan 2011 00:00:00 +0000</lastBuildDate>
     <atom:link href="https://yplam.com/tags/i/index.xml" rel="self" type="application/rss+xml" />
@@ -13,7 +13,9 @@
       <link>https://yplam.com/about/</link>
       <pubDate>Sat, 01 Jan 2011 00:00:00 +0000</pubDate>
       <guid>https://yplam.com/about/</guid>
-      <description>YPLam 是一名后端工程师，也是一名骑行爱好者，目前就职于广州一家物联网行业公司。&#xA;欢迎与我交流：yplam#yplam.com</description>
+      <description>&lt;p&gt;&lt;img alt=&#34;yplam&#34; loading=&#34;lazy&#34; src=&#34;https://yplam.com/assets/yplam.jpg&#34;&gt;&lt;/p&gt;
+&lt;p&gt;YPLam 是一名后端工程师，也是一名骑行爱好者，目前就职于广州一家物联网行业公司。&lt;/p&gt;
+&lt;p&gt;欢迎与我交流：yplam#yplam.com&lt;/p&gt;</description>
     </item>
   </channel>
 </rss>

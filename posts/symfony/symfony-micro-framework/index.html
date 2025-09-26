@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>Symfony2 太“重”了？试试 Symfony2 微框架 | YPLAM</title>
+<meta name="keywords" content="PHP, Symfony">
+<meta name="description" content="Symfony2 是一个全功能的框架，因此有些开发人员会以它太“重”了（而不是太“难”了）为理由而拒绝使用。在开发环境下，一个简单的Symfony页面大概需要花费 70ms，而prod环境下大概需要30ms（以上是个人在一个Web App上实践后数据）。虽然相对其提供的功能而言，这是一个可观的数据，但对于一个简单的REST API请求而言，这也许真的太“重”了。">
+<meta name="author" content="">
+<link rel="canonical" href="https://yplam.com/posts/symfony/symfony-micro-framework/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.8a2a5b863c538395920b4f077c6697be31878d530618647d78daca2883f21ff1.css" integrity="sha256-iipbhjxTg5WSC08HfGaXvjGHjVMGGGR9eNrKKIPyH/E=" rel="preload stylesheet" as="style">
+<link rel="icon" href="https://yplam.com/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://yplam.com/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://yplam.com/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://yplam.com/apple-touch-icon.png">
+<link rel="mask-icon" href="https://yplam.com/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="zh-cn" href="https://yplam.com/posts/symfony/symfony-micro-framework/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --code-block-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript>
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-960JLZS3KY"></script>
+      <script>
+        var doNotTrack = false;
+        if ( false ) {
+          var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
+          var doNotTrack = (dnt == "1" || dnt == "yes");
+        }
+        if (!doNotTrack) {
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-960JLZS3KY');
+        }
+      </script><meta property="og:url" content="https://yplam.com/posts/symfony/symfony-micro-framework/">
+  <meta property="og:site_name" content="YPLAM">
+  <meta property="og:title" content="Symfony2 太“重”了？试试 Symfony2 微框架">
+  <meta property="og:description" content="Symfony2 是一个全功能的框架，因此有些开发人员会以它太“重”了（而不是太“难”了）为理由而拒绝使用。在开发环境下，一个简单的Symfony页面大概需要花费 70ms，而prod环境下大概需要30ms（以上是个人在一个Web App上实践后数据）。虽然相对其提供的功能而言，这是一个可观的数据，但对于一个简单的REST API请求而言，这也许真的太“重”了。">
+  <meta property="og:locale" content="zh-cn">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2015-11-19T00:00:00+00:00">
+    <meta property="article:modified_time" content="2015-11-19T00:00:00+00:00">
+    <meta property="article:tag" content="PHP">
+    <meta property="article:tag" content="Symfony">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Symfony2 太“重”了？试试 Symfony2 微框架">
+<meta name="twitter:description" content="Symfony2 是一个全功能的框架，因此有些开发人员会以它太“重”了（而不是太“难”了）为理由而拒绝使用。在开发环境下，一个简单的Symfony页面大概需要花费 70ms，而prod环境下大概需要30ms（以上是个人在一个Web App上实践后数据）。虽然相对其提供的功能而言，这是一个可观的数据，但对于一个简单的REST API请求而言，这也许真的太“重”了。">
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Posts",
+      "item": "https://yplam.com/posts/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "Symfony2 太“重”了？试试 Symfony2 微框架",
+      "item": "https://yplam.com/posts/symfony/symfony-micro-framework/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Symfony2 太“重”了？试试 Symfony2 微框架",
+  "name": "Symfony2 太“重”了？试试 Symfony2 微框架",
+  "description": "Symfony2 是一个全功能的框架，因此有些开发人员会以它太“重”了（而不是太“难”了）为理由而拒绝使用。在开发环境下，一个简单的Symfony页面大概需要花费 70ms，而prod环境下大概需要30ms（以上是个人在一个Web App上实践后数据）。虽然相对其提供的功能而言，这是一个可观的数据，但对于一个简单的REST API请求而言，这也许真的太“重”了。\n",
+  "keywords": [
+    "PHP", "Symfony"
+  ],
+  "articleBody": "Symfony2 是一个全功能的框架，因此有些开发人员会以它太“重”了（而不是太“难”了）为理由而拒绝使用。在开发环境下，一个简单的Symfony页面大概需要花费 70ms，而prod环境下大概需要30ms（以上是个人在一个Web App上实践后数据）。虽然相对其提供的功能而言，这是一个可观的数据，但对于一个简单的REST API请求而言，这也许真的太“重”了。\nSymfony 2.8 引入了微内核的功能，用来创建简单，甚至是单文件的Symfony 应用。\n下面是一个简单的例子：\n// app/MicroKernel.php use Symfony\\Bundle\\FrameworkBundle\\Kernel\\MicroKernelTrait; use Symfony\\Component\\Config\\Loader\\LoaderInterface; use Symfony\\Component\\DependencyInjection\\ContainerBuilder; use Symfony\\Component\\HttpFoundation\\Response; use Symfony\\Component\\HttpKernel\\Kernel; use Symfony\\Component\\Routing\\RouteCollectionBuilder; class MicroKernel extends Kernel { use MicroKernelTrait; public function registerBundles() { return array(new Symfony\\Bundle\\FrameworkBundle\\FrameworkBundle()); } protected function configureRoutes(RouteCollectionBuilder $routes) { $routes-\u003eadd('/', 'kernel:indexAction', 'index'); } protected function configureContainer(ContainerBuilder $c, LoaderInterface $loader) { $c-\u003eloadFromExtension('framework', ['secret' =\u003e '12345']); } public function indexAction() { return new Response('Hello World'); } } MicroKernel类主要实现配置 bundle、配置路由、路由响应的功能；只需要简单几行代码就完成一个Symfony应用。当然，MicroKernel实际上不会提升Symfony的运行性能，它只不过是改变了Symfony配置路由与bundle的方式，但是这样的改变使得你的应用只使用Symfony最基本的功能，禁用了大量的特性，因此可以带来性能的提升：\n![全框架与微框架]({{ site.url }}/assets/2015/symfony_micro.jpg “全框架与微框架”)\n显然，这样做带来一个非常大的灵活性，你可以在Symfony的基础上开发你的应用，避免通常微框架所带来的限制，当你的应用越来越复杂的时候，你可以逐渐的将需要用到的Symfony特性加进去。\n譬如，下面的例子就是在上面的基础上添加了Twig模板、Web调试工具栏的支持，依然可以写在一个文件里。\n// app/MicroKernel.php class MicroKernel extends Kernel { use MicroKernelTrait; public function registerBundles() { $bundles = array( new Symfony\\Bundle\\FrameworkBundle\\FrameworkBundle(), new Symfony\\Bundle\\TwigBundle\\TwigBundle(), ); if (in_array($this-\u003egetEnvironment(), array('dev', 'test'), true)) { $bundles[] = new Symfony\\Bundle\\WebProfilerBundle\\WebProfilerBundle(); } return $bundles; } protected function configureRoutes(RouteCollectionBuilder $routes) { $routes-\u003emount('/_wdt', $routes-\u003eimport('@WebProfilerBundle/Resources/config/routing/wdt.xml')); $routes-\u003emount('/_profiler', $routes-\u003eimport('@WebProfilerBundle/Resources/config/routing/profiler.xml')); $routes-\u003eadd('/', 'kernel:indexAction', 'index'); } protected function configureContainer(ContainerBuilder $c, LoaderInterface $loader) { // load bundles' configuration $c-\u003eloadFromExtension('framework', [ 'secret' =\u003e '12345', 'profiler' =\u003e null, 'templating' =\u003e ['engines' =\u003e ['twig']], ]); $c-\u003eloadFromExtension('web_profiler', ['toolbar' =\u003e true]); // add configuration parameters $c-\u003esetParameter('mail_sender', 'user@example.com'); // register services $c-\u003eregister('app.markdown', 'AppBundle\\\\Service\\\\Parser\\\\Markdown'); } public function indexAction() { return $this-\u003econtainer-\u003eget('templating')-\u003erenderResponse('index.html.twig'); } } 单文件应用可能会导致代码显得混乱，下面是一个可以在真实场景中使用的例子，包括单个service.yml、config.yml配置，路由使用 annotations 注释：\n// app/MicroKernel.php // ... class MicroKernel extends Kernel { use MicroKernelTrait; public function registerBundles() { return array( new Sensio\\Bundle\\FrameworkExtraBundle\\SensioFrameworkExtraBundle(), new Symfony\\Bundle\\FrameworkBundle\\FrameworkBundle(), new Symfony\\Bundle\\TwigBundle\\TwigBundle(), new AppBundle\\AppBundle(), ); } protected function configureRoutes(RouteCollectionBuilder $routes) { $routes-\u003emount('/', $routes-\u003eimport('@AppBundle/Controller', 'annotation')); } protected function configureContainer(ContainerBuilder $c, LoaderInterface $loader) { $loader-\u003eload(__DIR__.'/config/config_'.$this-\u003egetEnvironment().'.yml'); $loader-\u003eload(__DIR__.'/config/services.yml'); } } 当然，不要忘记在入口文件中使用MicroKernel :)\n// web/app.php use Symfony\\Component\\HttpFoundation\\Request; $loader = require __DIR__.'/../app/autoload.php'; require_once __DIR__.'/../app/MicroKernel.php'; $app = new MicroKernel('prod', false); $app-\u003eloadClassCache(); $app-\u003ehandle(Request::createFromGlobals())-\u003esend(); Symfony2引入微内核，还会带来另外一个便利，通常，对于后台、内容编辑、内容提交的页面，我们需要全功能的支持，然而对于一些只需要简单的JSON API接口，我们可以添加多一个使用微内核的入口文件，提高接口的响应速度，减少资源消耗。\n",
+  "wordCount" : "246",
+  "inLanguage": "zh-cn",
+  "datePublished": "2015-11-19T00:00:00Z",
+  "dateModified": "2015-11-19T00:00:00Z",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://yplam.com/posts/symfony/symfony-micro-framework/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "YPLAM",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://yplam.com/favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <div class="logo-switches">
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="https://yplam.com/" title="YPLAM">
+                    <span>HOME</span>
+
+                </a>
+            </li>
+            <li>
+                <a href="https://yplam.com/about/" title="关于YPLam">
+                    <span>ABOUT</span>
+
+                </a>
+            </li>
+            <li>
+                <a href="https://github.com/yplam" title="GITHUB">
+                    <span>GITHUB</span>
+
+                </a>
+            </li>
+            <li>
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title entry-hint-parent">
+      Symfony2 太“重”了？试试 Symfony2 微框架
+    </h1>
+    <div class="post-meta"><span title='2015-11-19 00:00:00 +0000 UTC'>2015-11-19</span>
+
+</div>
+  </header> 
+  <div class="post-content"><p>Symfony2 是一个全功能的框架，因此有些开发人员会以它太“重”了（而不是太“难”了）为理由而拒绝使用。在开发环境下，一个简单的Symfony页面大概需要花费 70ms，而prod环境下大概需要30ms（以上是个人在一个Web App上实践后数据）。虽然相对其提供的功能而言，这是一个可观的数据，但对于一个简单的REST API请求而言，这也许真的太“重”了。</p>
+<p>Symfony 2.8 引入了微内核的功能，用来创建简单，甚至是单文件的Symfony 应用。</p>
+<p>下面是一个简单的例子：</p>
+<pre tabindex="0"><code>
+// app/MicroKernel.php
+use Symfony\Bundle\FrameworkBundle\Kernel\MicroKernelTrait;
+use Symfony\Component\Config\Loader\LoaderInterface;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Kernel;
+use Symfony\Component\Routing\RouteCollectionBuilder;
+
+class MicroKernel extends Kernel
+{
+    use MicroKernelTrait;
+
+    public function registerBundles()
+    {
+        return array(new Symfony\Bundle\FrameworkBundle\FrameworkBundle());
+    }
+
+    protected function configureRoutes(RouteCollectionBuilder $routes)
+    {
+        $routes-&gt;add(&#39;/&#39;, &#39;kernel:indexAction&#39;, &#39;index&#39;);
+    }
+
+    protected function configureContainer(ContainerBuilder $c, LoaderInterface $loader)
+    {
+        $c-&gt;loadFromExtension(&#39;framework&#39;, [&#39;secret&#39; =&gt; &#39;12345&#39;]);
+    }
+
+    public function indexAction()
+    {
+        return new Response(&#39;Hello World&#39;);
+    }
+}
+</code></pre><p>MicroKernel类主要实现配置 bundle、配置路由、路由响应的功能；只需要简单几行代码就完成一个Symfony应用。当然，MicroKernel实际上不会提升Symfony的运行性能，它只不过是改变了Symfony配置路由与bundle的方式，但是这样的改变使得你的应用只使用Symfony最基本的功能，禁用了大量的特性，因此可以带来性能的提升：</p>
+<p>![全框架与微框架]({{ site.url }}/assets/2015/symfony_micro.jpg &ldquo;全框架与微框架&rdquo;)</p>
+<p>显然，这样做带来一个非常大的灵活性，你可以在Symfony的基础上开发你的应用，避免通常微框架所带来的限制，当你的应用越来越复杂的时候，你可以逐渐的将需要用到的Symfony特性加进去。</p>
+<p>譬如，下面的例子就是在上面的基础上添加了Twig模板、Web调试工具栏的支持，依然可以写在一个文件里。</p>
+<pre tabindex="0"><code>
+// app/MicroKernel.php
+
+class MicroKernel extends Kernel
+{
+    use MicroKernelTrait;
+
+    public function registerBundles()
+    {
+        $bundles = array(
+            new Symfony\Bundle\FrameworkBundle\FrameworkBundle(),
+            new Symfony\Bundle\TwigBundle\TwigBundle(),
+        );
+
+        if (in_array($this-&gt;getEnvironment(), array(&#39;dev&#39;, &#39;test&#39;), true)) {
+            $bundles[] = new Symfony\Bundle\WebProfilerBundle\WebProfilerBundle();
+        }
+
+        return $bundles;
+    }
+
+    protected function configureRoutes(RouteCollectionBuilder $routes)
+    {
+        $routes-&gt;mount(&#39;/_wdt&#39;, $routes-&gt;import(&#39;@WebProfilerBundle/Resources/config/routing/wdt.xml&#39;));
+        $routes-&gt;mount(&#39;/_profiler&#39;, $routes-&gt;import(&#39;@WebProfilerBundle/Resources/config/routing/profiler.xml&#39;));
+
+        $routes-&gt;add(&#39;/&#39;, &#39;kernel:indexAction&#39;, &#39;index&#39;);
+    }
+
+    protected function configureContainer(ContainerBuilder $c, LoaderInterface $loader)
+    {
+        // load bundles&#39; configuration
+        $c-&gt;loadFromExtension(&#39;framework&#39;, [
+            &#39;secret&#39; =&gt; &#39;12345&#39;,
+            &#39;profiler&#39; =&gt; null,
+            &#39;templating&#39; =&gt; [&#39;engines&#39; =&gt; [&#39;twig&#39;]],
+        ]);
+
+        $c-&gt;loadFromExtension(&#39;web_profiler&#39;, [&#39;toolbar&#39; =&gt; true]);
+
+        // add configuration parameters
+        $c-&gt;setParameter(&#39;mail_sender&#39;, &#39;user@example.com&#39;);
+
+        // register services
+        $c-&gt;register(&#39;app.markdown&#39;, &#39;AppBundle\\Service\\Parser\\Markdown&#39;);
+    }
+
+    public function indexAction()
+    {
+        return $this-&gt;container-&gt;get(&#39;templating&#39;)-&gt;renderResponse(&#39;index.html.twig&#39;);
+    }
+}
+</code></pre><p>单文件应用可能会导致代码显得混乱，下面是一个可以在真实场景中使用的例子，包括单个service.yml、config.yml配置，路由使用 annotations 注释：</p>
+<pre tabindex="0"><code>
+// app/MicroKernel.php
+
+// ...
+
+class MicroKernel extends Kernel
+{
+    use MicroKernelTrait;
+
+    public function registerBundles()
+    {
+        return array(
+            new Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle(),
+            new Symfony\Bundle\FrameworkBundle\FrameworkBundle(),
+            new Symfony\Bundle\TwigBundle\TwigBundle(),
+            new AppBundle\AppBundle(),
+        );
+    }
+
+    protected function configureRoutes(RouteCollectionBuilder $routes)
+    {
+        $routes-&gt;mount(&#39;/&#39;, $routes-&gt;import(&#39;@AppBundle/Controller&#39;, &#39;annotation&#39;));
+    }
+
+    protected function configureContainer(ContainerBuilder $c, LoaderInterface $loader)
+    {
+        $loader-&gt;load(__DIR__.&#39;/config/config_&#39;.$this-&gt;getEnvironment().&#39;.yml&#39;);
+        $loader-&gt;load(__DIR__.&#39;/config/services.yml&#39;);
+    }
+}
+</code></pre><p>当然，不要忘记在入口文件中使用MicroKernel :)</p>
+<pre tabindex="0"><code>// web/app.php
+use Symfony\Component\HttpFoundation\Request;
+
+$loader = require __DIR__.&#39;/../app/autoload.php&#39;;
+require_once __DIR__.&#39;/../app/MicroKernel.php&#39;;
+
+$app = new MicroKernel(&#39;prod&#39;, false);
+$app-&gt;loadClassCache();
+
+$app-&gt;handle(Request::createFromGlobals())-&gt;send();
+</code></pre><p>Symfony2引入微内核，还会带来另外一个便利，通常，对于后台、内容编辑、内容提交的页面，我们需要全功能的支持，然而对于一些只需要简单的JSON API接口，我们可以添加多一个使用微内核的入口文件，提高接口的响应速度，减少资源消耗。</p>
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+      <li><a href="https://yplam.com/tags/php/">PHP</a></li>
+      <li><a href="https://yplam.com/tags/symfony/">Symfony</a></li>
+    </ul>
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+        <span>&copy; 2025 <a href="https://yplam.com/">YPLAM</a></span> · 
+
+    <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+        CC BY-SA 4.0
+    </a>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>

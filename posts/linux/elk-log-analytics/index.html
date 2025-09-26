@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>ELK日志分析入门 | YPLAM</title>
+<meta name="keywords" content="ELK">
+<meta name="description" content="ELK Stack 由 Elastic.co 公司名下的 Elasticsearch、Logstash、Kibana 三个开源软件的组成，用于日志的快速搜索和分析。">
+<meta name="author" content="">
+<link rel="canonical" href="https://yplam.com/posts/linux/elk-log-analytics/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.8a2a5b863c538395920b4f077c6697be31878d530618647d78daca2883f21ff1.css" integrity="sha256-iipbhjxTg5WSC08HfGaXvjGHjVMGGGR9eNrKKIPyH/E=" rel="preload stylesheet" as="style">
+<link rel="icon" href="https://yplam.com/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://yplam.com/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://yplam.com/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://yplam.com/apple-touch-icon.png">
+<link rel="mask-icon" href="https://yplam.com/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="zh-cn" href="https://yplam.com/posts/linux/elk-log-analytics/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --code-block-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript>
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-960JLZS3KY"></script>
+      <script>
+        var doNotTrack = false;
+        if ( false ) {
+          var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
+          var doNotTrack = (dnt == "1" || dnt == "yes");
+        }
+        if (!doNotTrack) {
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-960JLZS3KY');
+        }
+      </script><meta property="og:url" content="https://yplam.com/posts/linux/elk-log-analytics/">
+  <meta property="og:site_name" content="YPLAM">
+  <meta property="og:title" content="ELK日志分析入门">
+  <meta property="og:description" content="ELK Stack 由 Elastic.co 公司名下的 Elasticsearch、Logstash、Kibana 三个开源软件的组成，用于日志的快速搜索和分析。">
+  <meta property="og:locale" content="zh-cn">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2016-09-09T00:00:00+00:00">
+    <meta property="article:modified_time" content="2016-09-09T00:00:00+00:00">
+    <meta property="article:tag" content="ELK">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="ELK日志分析入门">
+<meta name="twitter:description" content="ELK Stack 由 Elastic.co 公司名下的 Elasticsearch、Logstash、Kibana 三个开源软件的组成，用于日志的快速搜索和分析。">
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Posts",
+      "item": "https://yplam.com/posts/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "ELK日志分析入门",
+      "item": "https://yplam.com/posts/linux/elk-log-analytics/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "ELK日志分析入门",
+  "name": "ELK日志分析入门",
+  "description": "ELK Stack 由 Elastic.co 公司名下的 Elasticsearch、Logstash、Kibana 三个开源软件的组成，用于日志的快速搜索和分析。\n",
+  "keywords": [
+    "ELK"
+  ],
+  "articleBody": "ELK Stack 由 Elastic.co 公司名下的 Elasticsearch、Logstash、Kibana 三个开源软件的组成，用于日志的快速搜索和分析。\n![ELK stack]({{ site.url }}/assets/2016/elk.png “ELK stack”)\n本文整理了 ELK 的相关基础知识，并且结合最近对nginx日志分析的一个需求进行记录。\nELK 简介 ELK Stack 是 Elasticsearch、Logstash、Kibana 三个开源软件的组合。在实时数据检索和分析场合，三者通常是配合共用，而且又都先后归于 Elastic.co 公司名下，故有此简称。\nELK Stack 在最近两年迅速崛起，成为机器数据分析，或者说实时日志处理领域，开源界的第一选择。和传统的日志处理方案相比，ELK Stack 具有如下几个优点：\n处理方式灵活。Elasticsearch 是实时全文索引，不需要像 storm 那样预先编程才能使用； 配置简易上手。Elasticsearch 全部采用 JSON 接口，Logstash 是 Ruby DSL 设计，都是目前业界最通用的配置语法设计； 检索性能高效。虽然每次查询都是实时计算，但是优秀的设计和实现基本可以达到全天数据查询的秒级响应； 集群线性扩展。不管是 Elasticsearch 集群还是 Logstash 集群都是可以线性扩展的； 前端操作炫丽。Kibana 界面上，只需要点击鼠标，就可以完成搜索、聚合功能，生成炫丽的仪表板。 摘自 ELKstack 中文指南\n使用ELK的原因 公司的资讯网站运行在一个相对老旧的CMS上，虽然有记录nginx访问日志，但通常是用于数据后分析上，对服务器突发的CPU、带宽暴涨，缺乏快速的分析响应。使用ELK后可以很直观的在Kibana面板 上看到关于网站访问的实时数据，并且可以针对重点需求设置特定面板，通过快速查看实时日志分析各种服务器资源波动原因。\nELK 安装 ELK的安装相对简单，只需要安装好java，然后添加官方源就可以使用系统自带的包管理工具安装。\n详细安装过程可以参考下面两个链接 ubuntu, Centos\nLogstash Logstash 可以看作是一个ETL工具，负责对日志的抽取、转换、加载，在ELK栈中，Logstash 负责监听日志文件，从日志文件中抽取有用数据，拆分，转换，然后保存到 Elasticsearch。Logstash 除了可以监听日志文件以外， 还可以跟filebeat等工具配合使用，将多个服务器的日志集合到一起，再中转存储。Logstash 会将日志按天来生成 Type，添加到索引中。\ninput { beats { host =\u003e \"1.2.3.4\" port =\u003e 5044 ssl =\u003e false codec =\u003e json } } filter { mutate { convert =\u003e [\"status\", \"integer\"] } mutate { remove_field =\u003e [\"@version\"] } } output { elasticsearch { hosts =\u003e [\"1.2.3.4:9200\"] index =\u003e \"abc-log\" document_type =\u003e \"%{+YYYY.MM.dd}\" workers =\u003e 1 flush_size =\u003e 200 idle_flush_time =\u003e 5 } } Elasticsearch 在Logstash发送日志信息过来之前，Elasticsearch 需要先创建好索引mapping。\n{ \"mappings\": { \"_default_\": { \"dynamic_templates\": [ { \"notanalyzed\": { \"mapping\": { \"index\": \"not_analyzed\", \"type\": \"string\" }, \"match\": \"*\", \"match_mapping_type\": \"string\" } } ], \"properties\": { \"agent\": { \"type\": \"string\" }, \"clientip\": { \"index\": \"not_analyzed\", \"type\": \"string\" }, \"host\": { \"index\": \"not_analyzed\", \"type\": \"string\" }, \"http_host\": { \"index\": \"not_analyzed\", \"type\": \"string\" }, \"http_referer\": { \"index\": \"not_analyzed\", \"type\": \"string\" }, \"path\": { \"index\": \"not_analyzed\", \"type\": \"string\" }, \"request\": { \"type\": \"string\" }, \"responsetime\": { \"type\": \"double\" }, \"size\": { \"type\": \"long\" }, \"status\": { \"type\": \"long\" } } } } } Kibana Kibana 不需要太多的配置，只需要访问到 Elasticsearch，并且发现相关的索引。\nKibana 按照 搜索 -\u003e 可视化 -\u003e 面板 的流程，将你需要看到的信息逐步构建出来。\n使用phantomjs定期发送Kibana报告 下面是使用 phantomjs 发送Kibana报告的测试代码。其原理是使用 phantomjs 模拟浏览器访问 Kibana，然后对访问内容进行截图，然后将生成的截图通过 http post的方式调用 sendcloud 接口发送邮件。（发送邮件的调用有点繁琐，因为找不到很好的读取本地文件的方式，而 phantomjs webpage 模块的 renderBuffer 实际上又无法使用）\nvar page = require('webpage').create(); var fs = require('fs'); var url = \"***\"; page.settings.userName = \"***\"; // http auth page.settings.password = \"***\"; page.viewportSize = { width: 1280, height: 900 }; page.open(url, function(status) { if (status !== 'success') { console.log('Unable to load the address!'); phantom.exit(1); } else { window.setTimeout(function () { page.render('abc.png'); var rawFile = new XMLHttpRequest(); rawFile.open(\"GET\", 'file://****abc.png', false); rawFile.responseType = \"blob\"; rawFile.onload = function () { var formPost = new FormData(); var apiUser = '***'; var apiKey = '***'; var currentDate = new Date(); formPost.append('apiUser', apiUser); formPost.append('apiKey', apiKey); formPost.append('from', '***'); formPost.append('to', '***'); formPost.append('subject', '***数据日报 - '+currentDate.toString()); formPost.append('html', '***数据日报此数据由程序自动生成，如果需要调整相关指标，请反馈给产品经理。\n'); formPost.append('useAddressList', true); formPost.append('attachments', rawFile.response, 'abc.png'); formPost.append('embeddedImage', rawFile.response, 'abc.png'); formPost.append('embeddedCid', \"abc.png\"); var xhr = new XMLHttpRequest(); xhr.open('POST', 'http://api.sendcloud.net/apiv2/mail/send', true); xhr.send(formPost); xhr.onload = function (e) { if (xhr.readyState === 4) { if (xhr.status === 200) { console.log(xhr.responseText); } else { console.error(xhr.statusText); } } }; xhr.onerror = function (e) { console.error(xhr.statusText); }; }; rawFile.send(null); window.setTimeout(function(){ phantom.exit(); }, 5000); }, 20000); } }); 将上面内容保存为js文件，然后用下面命令调用\nphantomjs --web-security=false --local-to-remote-url-access=true ***.js 参考资料 The Complete Guide to the ELK Stack ELKstack 中文指南 ",
+  "wordCount" : "423",
+  "inLanguage": "zh-cn",
+  "datePublished": "2016-09-09T00:00:00Z",
+  "dateModified": "2016-09-09T00:00:00Z",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://yplam.com/posts/linux/elk-log-analytics/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "YPLAM",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://yplam.com/favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <div class="logo-switches">
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="https://yplam.com/" title="YPLAM">
+                    <span>HOME</span>
+
+                </a>
+            </li>
+            <li>
+                <a href="https://yplam.com/about/" title="关于YPLam">
+                    <span>ABOUT</span>
+
+                </a>
+            </li>
+            <li>
+                <a href="https://github.com/yplam" title="GITHUB">
+                    <span>GITHUB</span>
+
+                </a>
+            </li>
+            <li>
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title entry-hint-parent">
+      ELK日志分析入门
+    </h1>
+    <div class="post-meta"><span title='2016-09-09 00:00:00 +0000 UTC'>2016-09-09</span>
+
+</div>
+  </header> 
+  <div class="post-content"><p>ELK Stack 由 Elastic.co 公司名下的 Elasticsearch、Logstash、Kibana 三个开源软件的组成，用于日志的快速搜索和分析。</p>
+<p>![ELK stack]({{ site.url }}/assets/2016/elk.png &ldquo;ELK stack&rdquo;)</p>
+<p>本文整理了 ELK 的相关基础知识，并且结合最近对nginx日志分析的一个需求进行记录。</p>
+<h2 id="elk-简介">ELK 简介<a hidden class="anchor" aria-hidden="true" href="#elk-简介">#</a></h2>
+<p>ELK Stack 是 Elasticsearch、Logstash、Kibana 三个开源软件的组合。在实时数据检索和分析场合，三者通常是配合共用，而且又都先后归于 Elastic.co 公司名下，故有此简称。</p>
+<p>ELK Stack 在最近两年迅速崛起，成为机器数据分析，或者说实时日志处理领域，开源界的第一选择。和传统的日志处理方案相比，ELK Stack 具有如下几个优点：</p>
+<ul>
+<li>处理方式灵活。Elasticsearch 是实时全文索引，不需要像 storm 那样预先编程才能使用；</li>
+<li>配置简易上手。Elasticsearch 全部采用 JSON 接口，Logstash 是 Ruby DSL 设计，都是目前业界最通用的配置语法设计；</li>
+<li>检索性能高效。虽然每次查询都是实时计算，但是优秀的设计和实现基本可以达到全天数据查询的秒级响应；</li>
+<li>集群线性扩展。不管是 Elasticsearch 集群还是 Logstash 集群都是可以线性扩展的；</li>
+<li>前端操作炫丽。Kibana 界面上，只需要点击鼠标，就可以完成搜索、聚合功能，生成炫丽的仪表板。</li>
+</ul>
+<p>摘自 <a href="http://kibana.logstash.es/content/">ELKstack 中文指南</a></p>
+<h2 id="使用elk的原因">使用ELK的原因<a hidden class="anchor" aria-hidden="true" href="#使用elk的原因">#</a></h2>
+<p>公司的资讯网站运行在一个相对老旧的CMS上，虽然有记录nginx访问日志，但通常是用于数据后分析上，对服务器突发的CPU、带宽暴涨，缺乏快速的分析响应。使用ELK后可以很直观的在Kibana面板
+上看到关于网站访问的实时数据，并且可以针对重点需求设置特定面板，通过快速查看实时日志分析各种服务器资源波动原因。</p>
+<h2 id="elk-安装">ELK 安装<a hidden class="anchor" aria-hidden="true" href="#elk-安装">#</a></h2>
+<p>ELK的安装相对简单，只需要安装好java，然后添加官方源就可以使用系统自带的包管理工具安装。</p>
+<p>详细安装过程可以参考下面两个链接 <a href="https://www.digitalocean.com/community/tutorials/how-to-install-elasticsearch-logstash-and-kibana-elk-stack-on-ubuntu-14-04">ubuntu</a>, <a href="https://developers.redhat.com/blog/2016/06/07/how-to-install-elastic-stack-elk-on-red-hat-enterprise-linux-rhel/">Centos</a></p>
+<h2 id="logstash">Logstash<a hidden class="anchor" aria-hidden="true" href="#logstash">#</a></h2>
+<p>Logstash 可以看作是一个ETL工具，负责对日志的抽取、转换、加载，在ELK栈中，Logstash 负责监听日志文件，从日志文件中抽取有用数据，拆分，转换，然后保存到 Elasticsearch。Logstash 除了可以监听日志文件以外，
+还可以跟filebeat等工具配合使用，将多个服务器的日志集合到一起，再中转存储。Logstash 会将日志按天来生成 Type，添加到索引中。</p>
+<pre tabindex="0"><code>input {
+    beats {
+		host =&gt; &#34;1.2.3.4&#34;
+        port =&gt; 5044
+        ssl =&gt; false
+        codec =&gt; json
+    }
+} 
+filter { 
+    mutate { 
+        convert =&gt; [&#34;status&#34;, &#34;integer&#34;] 
+    } 
+    mutate { 
+        remove_field =&gt; [&#34;@version&#34;] 
+    } 
+}
+output { 
+    elasticsearch { 
+        hosts =&gt; [&#34;1.2.3.4:9200&#34;] 
+        index =&gt; &#34;abc-log&#34; 
+        document_type =&gt; &#34;%{+YYYY.MM.dd}&#34; 
+        workers =&gt; 1 
+        flush_size =&gt; 200 
+        idle_flush_time =&gt; 5 
+    } 
+}
+</code></pre><h2 id="elasticsearch">Elasticsearch<a hidden class="anchor" aria-hidden="true" href="#elasticsearch">#</a></h2>
+<p>在Logstash发送日志信息过来之前，Elasticsearch 需要先创建好索引mapping。</p>
+<pre tabindex="0"><code>{
+  &#34;mappings&#34;: {
+    &#34;_default_&#34;: {
+      &#34;dynamic_templates&#34;: [
+        {
+          &#34;notanalyzed&#34;: {
+            &#34;mapping&#34;: {
+              &#34;index&#34;: &#34;not_analyzed&#34;,
+              &#34;type&#34;: &#34;string&#34;
+            },
+            &#34;match&#34;: &#34;*&#34;,
+            &#34;match_mapping_type&#34;: &#34;string&#34;
+          }
+        }
+      ],
+      &#34;properties&#34;: {
+        &#34;agent&#34;: {
+          &#34;type&#34;: &#34;string&#34;
+        },
+        &#34;clientip&#34;: {
+          &#34;index&#34;: &#34;not_analyzed&#34;,
+          &#34;type&#34;: &#34;string&#34;
+        },
+        &#34;host&#34;: {
+          &#34;index&#34;: &#34;not_analyzed&#34;,
+          &#34;type&#34;: &#34;string&#34;
+        },
+        &#34;http_host&#34;: {
+          &#34;index&#34;: &#34;not_analyzed&#34;,
+          &#34;type&#34;: &#34;string&#34;
+        },
+        &#34;http_referer&#34;: {
+          &#34;index&#34;: &#34;not_analyzed&#34;,
+          &#34;type&#34;: &#34;string&#34;
+        },
+        &#34;path&#34;: {
+          &#34;index&#34;: &#34;not_analyzed&#34;,
+          &#34;type&#34;: &#34;string&#34;
+        },
+        &#34;request&#34;: {
+          &#34;type&#34;: &#34;string&#34;
+        },
+        &#34;responsetime&#34;: {
+          &#34;type&#34;: &#34;double&#34;
+        },
+        &#34;size&#34;: {
+          &#34;type&#34;: &#34;long&#34;
+        },
+        &#34;status&#34;: {
+          &#34;type&#34;: &#34;long&#34;
+        }
+      }
+    }
+  }
+}
+</code></pre><h2 id="kibana">Kibana<a hidden class="anchor" aria-hidden="true" href="#kibana">#</a></h2>
+<p>Kibana 不需要太多的配置，只需要访问到 Elasticsearch，并且发现相关的索引。</p>
+<p>Kibana 按照 搜索 -&gt; 可视化 -&gt; 面板 的流程，将你需要看到的信息逐步构建出来。</p>
+<h2 id="使用phantomjs定期发送kibana报告">使用phantomjs定期发送Kibana报告<a hidden class="anchor" aria-hidden="true" href="#使用phantomjs定期发送kibana报告">#</a></h2>
+<p>下面是使用 phantomjs 发送Kibana报告的测试代码。其原理是使用 phantomjs 模拟浏览器访问 Kibana，然后对访问内容进行截图，然后将生成的截图通过 http post的方式调用 sendcloud 接口发送邮件。（发送邮件的调用有点繁琐，因为找不到很好的读取本地文件的方式，而 phantomjs webpage 模块的 renderBuffer 实际上又无法使用）</p>
+<pre tabindex="0"><code>
+var page = require(&#39;webpage&#39;).create();
+var fs = require(&#39;fs&#39;);
+var url = &#34;***&#34;;
+page.settings.userName = &#34;***&#34;; // http auth
+page.settings.password = &#34;***&#34;;
+page.viewportSize = { width: 1280, height: 900 };
+page.open(url, function(status) {
+  if (status !== &#39;success&#39;) {
+    console.log(&#39;Unable to load the address!&#39;);
+    phantom.exit(1);
+  } else {
+    window.setTimeout(function () {
+        page.render(&#39;abc.png&#39;);
+        var rawFile = new XMLHttpRequest();
+        rawFile.open(&#34;GET&#34;, &#39;file://****abc.png&#39;, false);
+        rawFile.responseType = &#34;blob&#34;;
+        rawFile.onload = function () {
+          var formPost = new FormData();
+          var apiUser = &#39;***&#39;; 
+          var apiKey = &#39;***&#39;;
+          var currentDate = new Date();
+          formPost.append(&#39;apiUser&#39;, apiUser);
+          formPost.append(&#39;apiKey&#39;, apiKey);
+          formPost.append(&#39;from&#39;, &#39;***&#39;);
+          formPost.append(&#39;to&#39;, &#39;***&#39;);
+          formPost.append(&#39;subject&#39;, &#39;***数据日报 - &#39;+currentDate.toString());
+          formPost.append(&#39;html&#39;, &#39;&lt;h1&gt;***数据日报&lt;/h1&gt;&lt;p&gt;此数据由程序自动生成，如果需要调整相关指标，请反馈给产品经理。&lt;/p&gt;&lt;p&gt;&lt;img src=&#34;cid:abc.png&#34;/&gt;&lt;/p&gt;&#39;);
+          formPost.append(&#39;useAddressList&#39;, true);
+          formPost.append(&#39;attachments&#39;, rawFile.response, &#39;abc.png&#39;);
+          formPost.append(&#39;embeddedImage&#39;, rawFile.response, &#39;abc.png&#39;);
+          formPost.append(&#39;embeddedCid&#39;, &#34;abc.png&#34;);
+          var xhr = new XMLHttpRequest();
+          xhr.open(&#39;POST&#39;, &#39;http://api.sendcloud.net/apiv2/mail/send&#39;, true);
+          xhr.send(formPost);
+          xhr.onload = function (e) {
+            if (xhr.readyState === 4) {
+              if (xhr.status === 200) {
+                console.log(xhr.responseText);
+              } else {
+                console.error(xhr.statusText);
+              }
+            }
+          };
+          xhr.onerror = function (e) {
+            console.error(xhr.statusText);
+          };
+        };
+        rawFile.send(null);
+
+        
+        window.setTimeout(function(){
+            phantom.exit();
+        }, 5000);
+    }, 20000);
+  }
+});
+</code></pre><p>将上面内容保存为js文件，然后用下面命令调用</p>
+<pre tabindex="0"><code>
+phantomjs --web-security=false --local-to-remote-url-access=true ***.js
+</code></pre><h3 id="参考资料">参考资料<a hidden class="anchor" aria-hidden="true" href="#参考资料">#</a></h3>
+<ul>
+<li><a href="http://logz.io/learn/complete-guide-elk-stack/">The Complete Guide to the ELK Stack</a></li>
+<li><a href="http://kibana.logstash.es/content/">ELKstack 中文指南</a></li>
+</ul>
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+      <li><a href="https://yplam.com/tags/elk/">ELK</a></li>
+    </ul>
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+        <span>&copy; 2025 <a href="https://yplam.com/">YPLAM</a></span> · 
+
+    <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+        CC BY-SA 4.0
+    </a>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>

@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>服务器SSD以及SSD RAID性能测试 | YPLAM</title>
+<meta name="keywords" content="Linux">
+<meta name="description" content="最近拿到几块Intel的企业级SSD准备搭建新的服务器，下面分享一些这段时间的测试数据。
+测试主要在DELL R610、阿里云4核非IO优化SSD服务器环境下进行，测试工具为sysbench。
+测试过程主要是使用sysbench命令分别对 SATA、SAS、SSD盘进行测试，其中测试重点在于SSD性能对比。">
+<meta name="author" content="">
+<link rel="canonical" href="https://yplam.com/posts/linux/ssd-raid-performance/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.8a2a5b863c538395920b4f077c6697be31878d530618647d78daca2883f21ff1.css" integrity="sha256-iipbhjxTg5WSC08HfGaXvjGHjVMGGGR9eNrKKIPyH/E=" rel="preload stylesheet" as="style">
+<link rel="icon" href="https://yplam.com/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://yplam.com/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://yplam.com/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://yplam.com/apple-touch-icon.png">
+<link rel="mask-icon" href="https://yplam.com/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="zh-cn" href="https://yplam.com/posts/linux/ssd-raid-performance/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --code-block-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript>
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-960JLZS3KY"></script>
+      <script>
+        var doNotTrack = false;
+        if ( false ) {
+          var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
+          var doNotTrack = (dnt == "1" || dnt == "yes");
+        }
+        if (!doNotTrack) {
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-960JLZS3KY');
+        }
+      </script><meta property="og:url" content="https://yplam.com/posts/linux/ssd-raid-performance/">
+  <meta property="og:site_name" content="YPLAM">
+  <meta property="og:title" content="服务器SSD以及SSD RAID性能测试">
+  <meta property="og:description" content="最近拿到几块Intel的企业级SSD准备搭建新的服务器，下面分享一些这段时间的测试数据。
+测试主要在DELL R610、阿里云4核非IO优化SSD服务器环境下进行，测试工具为sysbench。
+测试过程主要是使用sysbench命令分别对 SATA、SAS、SSD盘进行测试，其中测试重点在于SSD性能对比。">
+  <meta property="og:locale" content="zh-cn">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2015-08-15T00:00:00+00:00">
+    <meta property="article:modified_time" content="2015-08-15T00:00:00+00:00">
+    <meta property="article:tag" content="Linux">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="服务器SSD以及SSD RAID性能测试">
+<meta name="twitter:description" content="最近拿到几块Intel的企业级SSD准备搭建新的服务器，下面分享一些这段时间的测试数据。
+测试主要在DELL R610、阿里云4核非IO优化SSD服务器环境下进行，测试工具为sysbench。
+测试过程主要是使用sysbench命令分别对 SATA、SAS、SSD盘进行测试，其中测试重点在于SSD性能对比。">
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Posts",
+      "item": "https://yplam.com/posts/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "服务器SSD以及SSD RAID性能测试",
+      "item": "https://yplam.com/posts/linux/ssd-raid-performance/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "服务器SSD以及SSD RAID性能测试",
+  "name": "服务器SSD以及SSD RAID性能测试",
+  "description": "最近拿到几块Intel的企业级SSD准备搭建新的服务器，下面分享一些这段时间的测试数据。\n测试主要在DELL R610、阿里云4核非IO优化SSD服务器环境下进行，测试工具为sysbench。\n测试过程主要是使用sysbench命令分别对 SATA、SAS、SSD盘进行测试，其中测试重点在于SSD性能对比。\n",
+  "keywords": [
+    "Linux"
+  ],
+  "articleBody": "最近拿到几块Intel的企业级SSD准备搭建新的服务器，下面分享一些这段时间的测试数据。\n测试主要在DELL R610、阿里云4核非IO优化SSD服务器环境下进行，测试工具为sysbench。\n测试过程主要是使用sysbench命令分别对 SATA、SAS、SSD盘进行测试，其中测试重点在于SSD性能对比。\n结果\n对比显示，RAID0与RAID10的SSD性能最好，当中，家用SSD比商用的也快不少。\nSSD搭建RAID1后性能有部分损失，但不大，162/199；\nSSD组RAID5后性能有明显损失，73/199；\n测试主要命令：\nsysbench --test=fileio --file-total-size=2G prepare sysbench --test=fileio --file-total-size=2G --file-test-mode=rndrw --init-rng=on --max-time=300 --max-requests=0 run sysbench --test=fileio --file-total-size=2G cleanup 下面为测试数据：\n普通sata硬盘\nOperations performed: 148200 Read, 98800 Write, 316059 Other = 563059 Total Read 2.2614Gb Written 1.5076Gb Total transferred 3.7689Gb (12.862Mb/sec) 823.17 Requests/sec executed Test execution summary: total time: 300.0585s total number of events: 247000 total time taken by event execution: 2.2265 per-request statistics: min: 0.01ms avg: 0.01ms max: 0.15ms approx. 95 percentile: 0.01ms Threads fairness: events (avg/stddev): 247000.0000/0.00 execution time (avg/stddev): 2.2265/0.00 SAS盘RAID5\nOperations performed: 213600 Read, 142400 Write, 455562 Other = 811562 Total Read 3.2593Gb Written 2.1729Gb Total transferred 5.4321Gb (18.523Mb/sec) 1185.46 Requests/sec executed Test execution summary: total time: 300.3062s total number of events: 356000 total time taken by event execution: 3.6042 per-request statistics: min: 0.00ms avg: 0.01ms max: 0.74ms approx. 95 percentile: 0.01ms Threads fairness: events (avg/stddev): 356000.0000/0.00 execution time (avg/stddev): 3.6042/0.00 阿里云SSD，非IO优化\nOperations performed: 253860 Read, 169240 Write, 541558 Other = 964658 Total Read 3.8736Gb Written 2.5824Gb Total transferred 6.456Gb (22.036Mb/sec) 1410.33 Requests/sec executed Test execution summary: total time: 300.0010s total number of events: 423100 total time taken by event execution: 3.2958 per-request statistics: min: 0.00ms avg: 0.01ms max: 11.76ms approx. 95 percentile: 0.01ms Threads fairness: events (avg/stddev): 423100.0000/0.00 execution time (avg/stddev): 3.2958/0.00 金士顿普通SSD，RAID0\nOperations performed: 3112380 Read, 2074920 Write, 6639620 Other = 11826920 Total Read 47.491Gb Written 31.661Gb Total transferred 79.152Gb (270.17Mb/sec) 17290.98 Requests/sec executed Test execution summary: total time: 300.0004s total number of events: 5187300 total time taken by event execution: 42.7006 per-request statistics: min: 0.00ms avg: 0.01ms max: 0.12ms approx. 95 percentile: 0.01ms Threads fairness: events (avg/stddev): 5187300.0000/0.00 execution time (avg/stddev): 42.7006/0.00 INTEL企业级SSD，RAID0\nOperations performed: 2292180 Read, 1528120 Write, 4889859 Other = 8710159 Total Read 34.976Gb Written 23.317Gb Total transferred 58.293Gb (198.97Mb/sec) 12734.30 Requests/sec executed Test execution summary: total time: 300.0007s total number of events: 3820300 total time taken by event execution: 16.8218 per-request statistics: min: 0.00ms avg: 0.00ms max: 0.21ms approx. 95 percentile: 0.01ms Threads fairness: events (avg/stddev): 3820300.0000/0.00 execution time (avg/stddev): 16.8218/0.00 INTEL企业级SSD RAID10, 4盘\nOperations performed: 2323620 Read, 1549080 Write, 4956949 Other = 8829649 Total Read 35.456Gb Written 23.637Gb Total transferred 59.093Gb (201.7Mb/sec) 12908.99 Requests/sec executed Test execution summary: total time: 300.0003s total number of events: 3872700 total time taken by event execution: 18.8378 per-request statistics: min: 0.00ms avg: 0.00ms max: 7.08ms approx. 95 percentile: 0.01ms Threads fairness: events (avg/stddev): 3872700.0000/0.00 execution time (avg/stddev): 18.8378/0.00 INTEL企业级SSD，RAID1\nOperations performed: 1868760 Read, 1245840 Write, 3986627 Other = 7101227 Total Read 28.515Gb Written 19.01Gb Total transferred 47.525Gb (162.22Mb/sec) 10381.99 Requests/sec executed Test execution summary: total time: 300.0002s total number of events: 3114600 total time taken by event execution: 14.2077 per-request statistics: min: 0.00ms avg: 0.00ms max: 0.58ms approx. 95 percentile: 0.01ms Threads fairness: events (avg/stddev): 3114600.0000/0.00 execution time (avg/stddev): 14.2077/0.00 INTEL企业级SSD，RAID5,3盘\nOperations performed: 844500 Read, 563000 Write, 1801541 Other = 3209041 Total Read 12.886Gb Written 8.5907Gb Total transferred 21.477Gb (73.307Mb/sec) 4691.66 Requests/sec executed Test execution summary: total time: 300.0006s total number of events: 1407500 total time taken by event execution: 7.8239 per-request statistics: min: 0.00ms avg: 0.01ms max: 0.13ms approx. 95 percentile: 0.01ms Threads fairness: events (avg/stddev): 1407500.0000/0.00 execution time (avg/stddev): 7.8239/0.00 ",
+  "wordCount" : "525",
+  "inLanguage": "zh-cn",
+  "datePublished": "2015-08-15T00:00:00Z",
+  "dateModified": "2015-08-15T00:00:00Z",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://yplam.com/posts/linux/ssd-raid-performance/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "YPLAM",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://yplam.com/favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <div class="logo-switches">
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="https://yplam.com/" title="YPLAM">
+                    <span>HOME</span>
+
+                </a>
+            </li>
+            <li>
+                <a href="https://yplam.com/about/" title="关于YPLam">
+                    <span>ABOUT</span>
+
+                </a>
+            </li>
+            <li>
+                <a href="https://github.com/yplam" title="GITHUB">
+                    <span>GITHUB</span>
+
+                </a>
+            </li>
+            <li>
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title entry-hint-parent">
+      服务器SSD以及SSD RAID性能测试
+    </h1>
+    <div class="post-meta"><span title='2015-08-15 00:00:00 +0000 UTC'>2015-08-15</span>
+
+</div>
+  </header> 
+  <div class="post-content"><p>最近拿到几块Intel的企业级SSD准备搭建新的服务器，下面分享一些这段时间的测试数据。</p>
+<p>测试主要在DELL R610、阿里云4核非IO优化SSD服务器环境下进行，测试工具为sysbench。</p>
+<p>测试过程主要是使用sysbench命令分别对 SATA、SAS、SSD盘进行测试，其中测试重点在于SSD性能对比。</p>
+<p><strong>结果</strong></p>
+<p>对比显示，RAID0与RAID10的SSD性能最好，当中，家用SSD比商用的也快不少。</p>
+<p>SSD搭建RAID1后性能有部分损失，但不大，162/199；</p>
+<p>SSD组RAID5后性能有明显损失，73/199；</p>
+<p>测试主要命令：</p>
+<pre tabindex="0"><code>
+sysbench --test=fileio --file-total-size=2G prepare
+
+sysbench --test=fileio --file-total-size=2G --file-test-mode=rndrw --init-rng=on --max-time=300 --max-requests=0 run
+
+sysbench --test=fileio --file-total-size=2G cleanup
+</code></pre><p>下面为测试数据：</p>
+<p><strong>普通sata硬盘</strong></p>
+<pre tabindex="0"><code>
+Operations performed: 148200 Read, 98800 Write, 316059 Other = 563059 Total
+Read 2.2614Gb Written 1.5076Gb Total transferred 3.7689Gb (12.862Mb/sec)
+823.17 Requests/sec executed
+
+Test execution summary:
+total time: 300.0585s
+total number of events: 247000
+total time taken by event execution: 2.2265
+per-request statistics:
+min: 0.01ms
+avg: 0.01ms
+max: 0.15ms
+approx. 95 percentile: 0.01ms
+
+Threads fairness:
+events (avg/stddev): 247000.0000/0.00
+execution time (avg/stddev): 2.2265/0.00
+</code></pre><p><strong>SAS盘RAID5</strong></p>
+<pre tabindex="0"><code>Operations performed: 213600 Read, 142400 Write, 455562 Other = 811562 Total
+Read 3.2593Gb Written 2.1729Gb Total transferred 5.4321Gb (18.523Mb/sec)
+1185.46 Requests/sec executed
+
+Test execution summary:
+total time: 300.3062s
+total number of events: 356000
+total time taken by event execution: 3.6042
+per-request statistics:
+min: 0.00ms
+avg: 0.01ms
+max: 0.74ms
+approx. 95 percentile: 0.01ms
+
+Threads fairness:
+events (avg/stddev): 356000.0000/0.00
+execution time (avg/stddev): 3.6042/0.00
+</code></pre><p><strong>阿里云SSD，非IO优化</strong></p>
+<pre tabindex="0"><code>Operations performed: 253860 Read, 169240 Write, 541558 Other = 964658 Total
+Read 3.8736Gb Written 2.5824Gb Total transferred 6.456Gb (22.036Mb/sec)
+1410.33 Requests/sec executed
+
+Test execution summary:
+total time: 300.0010s
+total number of events: 423100
+total time taken by event execution: 3.2958
+per-request statistics:
+min: 0.00ms
+avg: 0.01ms
+max: 11.76ms
+approx. 95 percentile: 0.01ms
+
+Threads fairness:
+events (avg/stddev): 423100.0000/0.00
+execution time (avg/stddev): 3.2958/0.00
+</code></pre><p><strong>金士顿普通SSD，RAID0</strong></p>
+<pre tabindex="0"><code>
+Operations performed: 3112380 Read, 2074920 Write, 6639620 Other = 11826920 Total
+Read 47.491Gb Written 31.661Gb Total transferred 79.152Gb (270.17Mb/sec)
+17290.98 Requests/sec executed
+
+Test execution summary:
+total time: 300.0004s
+total number of events: 5187300
+total time taken by event execution: 42.7006
+per-request statistics:
+min: 0.00ms
+avg: 0.01ms
+max: 0.12ms
+approx. 95 percentile: 0.01ms
+
+Threads fairness:
+events (avg/stddev): 5187300.0000/0.00
+execution time (avg/stddev): 42.7006/0.00
+</code></pre><p><strong>INTEL企业级SSD，RAID0</strong></p>
+<pre tabindex="0"><code>Operations performed: 2292180 Read, 1528120 Write, 4889859 Other = 8710159 Total
+Read 34.976Gb Written 23.317Gb Total transferred 58.293Gb (198.97Mb/sec)
+12734.30 Requests/sec executed
+
+Test execution summary:
+total time: 300.0007s
+total number of events: 3820300
+total time taken by event execution: 16.8218
+per-request statistics:
+min: 0.00ms
+avg: 0.00ms
+max: 0.21ms
+approx. 95 percentile: 0.01ms
+
+Threads fairness:
+events (avg/stddev): 3820300.0000/0.00
+execution time (avg/stddev): 16.8218/0.00
+</code></pre><p><strong>INTEL企业级SSD RAID10, 4盘</strong></p>
+<pre tabindex="0"><code>Operations performed: 2323620 Read, 1549080 Write, 4956949 Other = 8829649 Total
+Read 35.456Gb Written 23.637Gb Total transferred 59.093Gb (201.7Mb/sec)
+12908.99 Requests/sec executed
+
+Test execution summary:
+total time: 300.0003s
+total number of events: 3872700
+total time taken by event execution: 18.8378
+per-request statistics:
+min: 0.00ms
+avg: 0.00ms
+max: 7.08ms
+approx. 95 percentile: 0.01ms
+
+Threads fairness:
+events (avg/stddev): 3872700.0000/0.00
+execution time (avg/stddev): 18.8378/0.00
+</code></pre><p><strong>INTEL企业级SSD，RAID1</strong></p>
+<pre tabindex="0"><code>Operations performed: 1868760 Read, 1245840 Write, 3986627 Other = 7101227 Total
+Read 28.515Gb Written 19.01Gb Total transferred 47.525Gb (162.22Mb/sec)
+10381.99 Requests/sec executed
+
+Test execution summary:
+total time: 300.0002s
+total number of events: 3114600
+total time taken by event execution: 14.2077
+per-request statistics:
+min: 0.00ms
+avg: 0.00ms
+max: 0.58ms
+approx. 95 percentile: 0.01ms
+
+Threads fairness:
+events (avg/stddev): 3114600.0000/0.00
+execution time (avg/stddev): 14.2077/0.00
+</code></pre><p><strong>INTEL企业级SSD，RAID5,3盘</strong></p>
+<pre tabindex="0"><code>Operations performed: 844500 Read, 563000 Write, 1801541 Other = 3209041 Total
+Read 12.886Gb Written 8.5907Gb Total transferred 21.477Gb (73.307Mb/sec)
+4691.66 Requests/sec executed
+
+Test execution summary:
+total time: 300.0006s
+total number of events: 1407500
+total time taken by event execution: 7.8239
+per-request statistics:
+min: 0.00ms
+avg: 0.01ms
+max: 0.13ms
+approx. 95 percentile: 0.01ms
+
+Threads fairness:
+events (avg/stddev): 1407500.0000/0.00
+execution time (avg/stddev): 7.8239/0.00
+</code></pre>
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+      <li><a href="https://yplam.com/tags/linux/">Linux</a></li>
+    </ul>
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+        <span>&copy; 2025 <a href="https://yplam.com/">YPLAM</a></span> · 
+
+    <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+        CC BY-SA 4.0
+    </a>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>

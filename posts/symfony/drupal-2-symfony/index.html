@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>如何将一个Drupal网站转到Symfony | YPLAM</title>
+<meta name="keywords" content="PHP, Symfony, Drupal">
+<meta name="description" content="最近尝试将自己的一些Drupal网站转移到Symfony（这个个人博客就是其中之一），下面分享一些转移过程的心得，主要包括Drupal基本功能在Symfony上的实现。">
+<meta name="author" content="">
+<link rel="canonical" href="https://yplam.com/posts/symfony/drupal-2-symfony/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.8a2a5b863c538395920b4f077c6697be31878d530618647d78daca2883f21ff1.css" integrity="sha256-iipbhjxTg5WSC08HfGaXvjGHjVMGGGR9eNrKKIPyH/E=" rel="preload stylesheet" as="style">
+<link rel="icon" href="https://yplam.com/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://yplam.com/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://yplam.com/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://yplam.com/apple-touch-icon.png">
+<link rel="mask-icon" href="https://yplam.com/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="zh-cn" href="https://yplam.com/posts/symfony/drupal-2-symfony/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --code-block-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript>
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-960JLZS3KY"></script>
+      <script>
+        var doNotTrack = false;
+        if ( false ) {
+          var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
+          var doNotTrack = (dnt == "1" || dnt == "yes");
+        }
+        if (!doNotTrack) {
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-960JLZS3KY');
+        }
+      </script><meta property="og:url" content="https://yplam.com/posts/symfony/drupal-2-symfony/">
+  <meta property="og:site_name" content="YPLAM">
+  <meta property="og:title" content="如何将一个Drupal网站转到Symfony">
+  <meta property="og:description" content="最近尝试将自己的一些Drupal网站转移到Symfony（这个个人博客就是其中之一），下面分享一些转移过程的心得，主要包括Drupal基本功能在Symfony上的实现。">
+  <meta property="og:locale" content="zh-cn">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2015-08-11T00:00:00+00:00">
+    <meta property="article:modified_time" content="2015-08-11T00:00:00+00:00">
+    <meta property="article:tag" content="PHP">
+    <meta property="article:tag" content="Symfony">
+    <meta property="article:tag" content="Drupal">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="如何将一个Drupal网站转到Symfony">
+<meta name="twitter:description" content="最近尝试将自己的一些Drupal网站转移到Symfony（这个个人博客就是其中之一），下面分享一些转移过程的心得，主要包括Drupal基本功能在Symfony上的实现。">
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Posts",
+      "item": "https://yplam.com/posts/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "如何将一个Drupal网站转到Symfony",
+      "item": "https://yplam.com/posts/symfony/drupal-2-symfony/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "如何将一个Drupal网站转到Symfony",
+  "name": "如何将一个Drupal网站转到Symfony",
+  "description": "最近尝试将自己的一些Drupal网站转移到Symfony（这个个人博客就是其中之一），下面分享一些转移过程的心得，主要包括Drupal基本功能在Symfony上的实现。\n",
+  "keywords": [
+    "PHP", "Symfony", "Drupal"
+  ],
+  "articleBody": "最近尝试将自己的一些Drupal网站转移到Symfony（这个个人博客就是其中之一），下面分享一些转移过程的心得，主要包括Drupal基本功能在Symfony上的实现。\n用户管理\nFOSUserBundle提供用户登录、注册、找回密码等基本功能，并且提供个可选的Group功能，将用户分组，按组设定权限。\n权限管理\n对于常规路径的权限（类似Drupal的HookMenu），Symfony 可以在security中根据角色权限配置，结合FOSUserBundle的分组功能可以容易搞掂。 对于某个特定内容的CRUD权限，Symfony可以用Voter的方式来设定 管理后台\n使用SonataAdminBundle，只需要简单的编写一个服务，就可以完成常规的CRUD后台，对于特定需求，可以通过extend CRUD Controller的方式完成，而针对非CRUD类的管理后台，可以使用自定义页面。\nHook钩子\nDrupal中钩子可以说是最基础的功能，而Symfony中可以很方便的用Event来实现。\n数据迁移\n对于简单型网站（如这个博客），可以使用 node_export 模块导出XML文件，然后在Symfony下写个Command导入内容。\n用户或者内容结构较为复杂的网站，可以直接写Command，通过分析数据库结构用SQL语句导入内容。\n由于Symfony与Drupal的密码加密方式不一致，我们可以使用自己的PasswordEncoder服务，覆盖 isPasswordValid 方法，对旧密码加密方式做兼容。\n对path的兼容比较麻烦，在此的处理方式是使用一个controller专门做旧内容的跳转。当然，也可以通过监听 NotFoundHttpException 事件来进行处理跳转\n比Drupal更好用的功能\n首先，最明显的就是网站速度变快了，并且Symfony可以有多种方式来管理缓存，优化性能，而Drupal针对登录用户的缓存功能相对较弱。\n针对开发者而言，网站deploy变得非常简单，使用capifony以及doctrine migrations，一条命令可以搞掂。\n网站模板不在是一件痛苦的事情，使用twig基本上可以完美的将一个html模板重现；而Drupal，可能70%以上的时间需要花在模板上。\n更新：现在网站已迁移到github。\n",
+  "wordCount" : "30",
+  "inLanguage": "zh-cn",
+  "datePublished": "2015-08-11T00:00:00Z",
+  "dateModified": "2015-08-11T00:00:00Z",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://yplam.com/posts/symfony/drupal-2-symfony/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "YPLAM",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://yplam.com/favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <div class="logo-switches">
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="https://yplam.com/" title="YPLAM">
+                    <span>HOME</span>
+
+                </a>
+            </li>
+            <li>
+                <a href="https://yplam.com/about/" title="关于YPLam">
+                    <span>ABOUT</span>
+
+                </a>
+            </li>
+            <li>
+                <a href="https://github.com/yplam" title="GITHUB">
+                    <span>GITHUB</span>
+
+                </a>
+            </li>
+            <li>
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title entry-hint-parent">
+      如何将一个Drupal网站转到Symfony
+    </h1>
+    <div class="post-meta"><span title='2015-08-11 00:00:00 +0000 UTC'>2015-08-11</span>
+
+</div>
+  </header> 
+  <div class="post-content"><p>最近尝试将自己的一些Drupal网站转移到Symfony（这个个人博客就是其中之一），下面分享一些转移过程的心得，主要包括Drupal基本功能在Symfony上的实现。</p>
+<p><strong>用户管理</strong></p>
+<p>FOSUserBundle提供用户登录、注册、找回密码等基本功能，并且提供个可选的Group功能，将用户分组，按组设定权限。</p>
+<p><strong>权限管理</strong></p>
+<ul>
+<li>对于常规路径的权限（类似Drupal的HookMenu），Symfony 可以在security中根据角色权限配置，结合FOSUserBundle的分组功能可以容易搞掂。</li>
+<li>对于某个特定内容的CRUD权限，Symfony可以用<a href="http://symfony.com/doc/current/cookbook/security/voters_data_permission.html">Voter</a>的方式来设定</li>
+</ul>
+<p><strong>管理后台</strong></p>
+<p>使用SonataAdminBundle，只需要简单的编写一个服务，就可以完成常规的CRUD后台，对于特定需求，可以通过extend CRUD Controller的方式完成，而针对非CRUD类的管理后台，可以<a href="http://yplam.com/post/69">使用自定义页面</a>。</p>
+<p><strong>Hook钩子</strong></p>
+<p>Drupal中钩子可以说是最基础的功能，而Symfony中可以很方便的用Event来实现。</p>
+<p><strong>数据迁移</strong></p>
+<ul>
+<li>
+<p>对于简单型网站（如这个博客），可以使用 <a href="https://www.drupal.org/project/node_export">node_export</a> 模块导出XML文件，然后在Symfony下写个Command导入内容。</p>
+</li>
+<li>
+<p>用户或者内容结构较为复杂的网站，可以直接写Command，通过分析数据库结构用SQL语句导入内容。</p>
+</li>
+<li>
+<p>由于Symfony与Drupal的密码加密方式不一致，我们可以使用自己的PasswordEncoder服务，覆盖 isPasswordValid 方法，对旧密码加密方式做兼容。</p>
+</li>
+<li>
+<p>对path的兼容比较麻烦，在此的处理方式是使用一个controller专门做旧内容的跳转。当然，也可以通过监听 NotFoundHttpException 事件来进行处理跳转</p>
+</li>
+</ul>
+<p><strong>比Drupal更好用的功能</strong></p>
+<p>首先，最明显的就是网站速度变快了，并且Symfony可以有多种方式来管理缓存，优化性能，而Drupal针对登录用户的缓存功能相对较弱。</p>
+<p>针对开发者而言，网站deploy变得非常简单，使用capifony以及doctrine migrations，一条命令可以搞掂。</p>
+<p>网站模板不在是一件痛苦的事情，使用twig基本上可以完美的将一个html模板重现；而Drupal，可能70%以上的时间需要花在模板上。</p>
+<p>更新：现在网站已迁移到github。</p>
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+      <li><a href="https://yplam.com/tags/php/">PHP</a></li>
+      <li><a href="https://yplam.com/tags/symfony/">Symfony</a></li>
+      <li><a href="https://yplam.com/tags/drupal/">Drupal</a></li>
+    </ul>
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+        <span>&copy; 2025 <a href="https://yplam.com/">YPLAM</a></span> · 
+
+    <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+        CC BY-SA 4.0
+    </a>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>

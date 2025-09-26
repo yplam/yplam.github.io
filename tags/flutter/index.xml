@@ -1,18 +1,25 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
   <channel>
-    <title>Flutter on YP.Lam</title>
+    <title>Flutter on YPLAM</title>
     <link>https://yplam.com/tags/flutter/</link>
-    <description>Recent content in Flutter on YP.Lam</description>
-    <generator>Hugo</generator>
+    <description>Recent content in Flutter on YPLAM</description>
+    <generator>Hugo -- 0.148.2</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Wed, 01 May 2024 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sat, 14 Dec 2024 00:00:00 +0000</lastBuildDate>
     <atom:link href="https://yplam.com/tags/flutter/index.xml" rel="self" type="application/rss+xml" />
     <item>
+      <title>Flutter &#43; Rust 跨平台应用开发</title>
+      <link>https://yplam.com/posts/rust/flutter-rust/</link>
+      <pubDate>Sat, 14 Dec 2024 00:00:00 +0000</pubDate>
+      <guid>https://yplam.com/posts/rust/flutter-rust/</guid>
+      <description>&lt;p&gt;针对常规的网络应用型APP，Flutter + Go 可以很好的兼顾性能与开发效率，而对于某些需要极致控制内存占用，需要与C库进行高效交互的程序，Flutter + Rust 则是另一个可选项。&lt;/p&gt;</description>
+    </item>
+    <item>
       <title>Flutter &#43; Go 跨平台应用开发</title>
-      <link>https://yplam.com/post/go/flutter-go-mobile/</link>
+      <link>https://yplam.com/posts/go/flutter-go-mobile/</link>
       <pubDate>Wed, 01 May 2024 00:00:00 +0000</pubDate>
-      <guid>https://yplam.com/post/go/flutter-go-mobile/</guid>
+      <guid>https://yplam.com/posts/go/flutter-go-mobile/</guid>
       <description>&lt;p&gt;Flutter 是由 Google 开发的开源 UI 软件开发工具包，用于构建跨平台的高性能应用程序。通过一套代码库，开发者可以同时为 iOS、Android、Web 和桌面平台创建原生应用。通常情况下，Dart 代码会通过 MethodChannel 的方式与各平台原生代码进行交互，而原生代码通常也是根据不同平台由 Java，Swift，C++ 等语言编写。除此以外，一些与平台相关性不大，但使用 Dart 语言实现困难的跨平台代码，则适合使用 Rust 或者 Go 等编程语言实现，本文章记录 Flutter + Go 实现跨平台应用开发。&lt;/p&gt;</description>
     </item>
   </channel>

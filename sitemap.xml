@@ -2,349 +2,671 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>https://yplam.com/tags/flux/</loc>
-    <lastmod>2025-02-09T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://yplam.com/post/machinelearning/flux-lora-training/</loc>
-    <lastmod>2025-02-09T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://yplam.com/tags/lora/</loc>
-    <lastmod>2025-02-09T00:00:00+00:00</lastmod>
+    <loc>https://yplam.com/tags/embedded/</loc>
+    <lastmod>2025-09-13T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
   </url><url>
     <loc>https://yplam.com/tags/machinelearning/</loc>
-    <lastmod>2025-02-09T00:00:00+00:00</lastmod>
+    <lastmod>2025-09-13T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
   </url><url>
-    <loc>https://yplam.com/post/</loc>
-    <lastmod>2025-02-09T00:00:00+00:00</lastmod>
+    <loc>https://yplam.com/posts/</loc>
+    <lastmod>2025-09-13T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
   </url><url>
     <loc>https://yplam.com/tags/</loc>
-    <lastmod>2025-02-09T00:00:00+00:00</lastmod>
+    <lastmod>2025-09-13T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
   </url><url>
     <loc>https://yplam.com/</loc>
-    <lastmod>2025-02-09T00:00:00+00:00</lastmod>
+    <lastmod>2025-09-13T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
   </url><url>
-    <loc>https://yplam.com/post/machinelearning/recommender-system/</loc>
+    <loc>https://yplam.com/posts/machinelearning/ai-coding-for-embedded/</loc>
+    <lastmod>2025-09-13T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url><url>
+    <loc>https://yplam.com/tags/flux/</loc>
+    <lastmod>2025-08-23T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url><url>
+    <loc>https://yplam.com/posts/machinelearning/flux-kontext-lora-training/</loc>
+    <lastmod>2025-08-23T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url><url>
+    <loc>https://yplam.com/tags/kontext/</loc>
+    <lastmod>2025-08-23T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url><url>
+    <loc>https://yplam.com/tags/lora/</loc>
+    <lastmod>2025-08-23T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url><url>
+    <loc>https://yplam.com/tags/go/</loc>
+    <lastmod>2025-05-10T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url><url>
+    <loc>https://yplam.com/tags/react/</loc>
+    <lastmod>2025-05-10T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url><url>
+    <loc>https://yplam.com/posts/tech/tech-stack-for-full-stack-2025/</loc>
+    <lastmod>2025-05-10T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url><url>
+    <loc>https://yplam.com/posts/machinelearning/cursor/</loc>
+    <lastmod>2025-03-19T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url><url>
+    <loc>https://yplam.com/posts/machinelearning/ai-pair-programmer/</loc>
+    <lastmod>2025-03-18T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url><url>
+    <loc>https://yplam.com/posts/machinelearning/flux-lora-training/</loc>
+    <lastmod>2025-02-09T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url><url>
+    <loc>https://yplam.com/tags/flutter/</loc>
+    <lastmod>2024-12-14T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url><url>
+    <loc>https://yplam.com/posts/rust/flutter-rust/</loc>
+    <lastmod>2024-12-14T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url><url>
+    <loc>https://yplam.com/tags/rust/</loc>
+    <lastmod>2024-12-14T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url><url>
+    <loc>https://yplam.com/posts/machinelearning/recommender-system/</loc>
     <lastmod>2024-10-19T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
   </url><url>
     <loc>https://yplam.com/tags/jlink/</loc>
     <lastmod>2024-07-27T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
   </url><url>
-    <loc>https://yplam.com/post/embedded/jlink-remote-frp/</loc>
+    <loc>https://yplam.com/posts/embedded/jlink-remote-frp/</loc>
     <lastmod>2024-07-27T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
   </url><url>
-    <loc>https://yplam.com/tags/flutter/</loc>
+    <loc>https://yplam.com/posts/go/flutter-go-mobile/</loc>
     <lastmod>2024-05-01T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
   </url><url>
-    <loc>https://yplam.com/post/go/flutter-go-mobile/</loc>
-    <lastmod>2024-05-01T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://yplam.com/tags/go/</loc>
-    <lastmod>2024-05-01T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://yplam.com/post/go/go-plugin/</loc>
+    <loc>https://yplam.com/posts/go/go-plugin/</loc>
     <lastmod>2023-12-17T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
   </url><url>
-    <loc>https://yplam.com/post/machinelearning/stable-diffusion/</loc>
+    <loc>https://yplam.com/posts/machinelearning/stable-diffusion/</loc>
     <lastmod>2023-12-09T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
   </url><url>
-    <loc>https://yplam.com/post/machinelearning/pytorch-multiple-gpus-error/</loc>
+    <loc>https://yplam.com/posts/machinelearning/pytorch-multiple-gpus-error/</loc>
     <lastmod>2023-12-02T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
   </url><url>
-    <loc>https://yplam.com/tags/embedded/</loc>
-    <lastmod>2023-08-26T00:00:00+00:00</lastmod>
+    <loc>https://yplam.com/tags/asynq/</loc>
+    <lastmod>2023-09-09T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url><url>
+    <loc>https://yplam.com/tags/emqx/</loc>
+    <lastmod>2023-09-09T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url><url>
+    <loc>https://yplam.com/tags/influxdb/</loc>
+    <lastmod>2023-09-09T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url><url>
+    <loc>https://yplam.com/tags/iot/</loc>
+    <lastmod>2023-09-09T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url><url>
+    <loc>https://yplam.com/tags/kafka/</loc>
+    <lastmod>2023-09-09T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url><url>
+    <loc>https://yplam.com/tags/postgresql/</loc>
+    <lastmod>2023-09-09T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url><url>
+    <loc>https://yplam.com/tags/redis/</loc>
+    <lastmod>2023-09-09T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url><url>
+    <loc>https://yplam.com/posts/iot/million-throughput-iot-architecture-design/</loc>
+    <lastmod>2023-09-09T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
   </url><url>
     <loc>https://yplam.com/tags/linux/</loc>
     <lastmod>2023-08-26T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
   </url><url>
     <loc>https://yplam.com/tags/rockchip/</loc>
     <lastmod>2023-08-26T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
   </url><url>
     <loc>https://yplam.com/tags/rv1106/</loc>
     <lastmod>2023-08-26T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
   </url><url>
-    <loc>https://yplam.com/post/embedded/rv1106-dev/</loc>
+    <loc>https://yplam.com/posts/embedded/rv1106-dev/</loc>
     <lastmod>2023-08-26T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
   </url><url>
     <loc>https://yplam.com/tags/efr32/</loc>
     <lastmod>2023-07-15T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
   </url><url>
     <loc>https://yplam.com/tags/homeassistant/</loc>
     <lastmod>2023-07-15T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
   </url><url>
-    <loc>https://yplam.com/post/embedded/efr32mg21-firmware/</loc>
+    <loc>https://yplam.com/posts/embedded/efr32mg21-firmware/</loc>
     <lastmod>2023-07-15T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url><url>
+    <loc>https://yplam.com/tags/openwrt/</loc>
+    <lastmod>2023-07-08T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url><url>
+    <loc>https://yplam.com/posts/linux/p212/</loc>
+    <lastmod>2023-07-08T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
   </url><url>
     <loc>https://yplam.com/tags/av/</loc>
     <lastmod>2023-06-10T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
   </url><url>
     <loc>https://yplam.com/tags/ffmpeg/</loc>
     <lastmod>2023-06-10T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
   </url><url>
-    <loc>https://yplam.com/post/av/ffmpeg-hls-fmp4/</loc>
+    <loc>https://yplam.com/posts/av/ffmpeg-hls-fmp4/</loc>
     <lastmod>2023-06-10T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
   </url><url>
-    <loc>https://yplam.com/tags/rust/</loc>
+    <loc>https://yplam.com/posts/rust/patch-crates-io-multipile-version/</loc>
     <lastmod>2023-06-03T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
   </url><url>
-    <loc>https://yplam.com/post/rust/patch-crates-io-multipile-version/</loc>
-    <lastmod>2023-06-03T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://yplam.com/post/av/live555-rtsp-stream/</loc>
+    <loc>https://yplam.com/posts/av/live555-rtsp-stream/</loc>
     <lastmod>2023-05-13T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
   </url><url>
     <loc>https://yplam.com/tags/rtsp/</loc>
     <lastmod>2023-05-13T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
   </url><url>
     <loc>https://yplam.com/tags/esp32/</loc>
     <lastmod>2022-10-02T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
   </url><url>
-    <loc>https://yplam.com/post/embedded/esp32-rust-mqtt-homeassistant/</loc>
+    <loc>https://yplam.com/posts/embedded/esp32-rust-mqtt-homeassistant/</loc>
     <lastmod>2022-10-02T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
   </url><url>
     <loc>https://yplam.com/tags/kubernetes/</loc>
     <lastmod>2022-05-02T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
   </url><url>
-    <loc>https://yplam.com/post/k8s/k8s-n1/</loc>
+    <loc>https://yplam.com/posts/k8s/k8s-n1/</loc>
     <lastmod>2022-05-02T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
   </url><url>
     <loc>https://yplam.com/tags/imx6ull/</loc>
     <lastmod>2021-12-25T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
   </url><url>
-    <loc>https://yplam.com/post/embedded/imx6ull-openwrt/</loc>
+    <loc>https://yplam.com/posts/embedded/imx6ull-openwrt/</loc>
     <lastmod>2021-12-25T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
   </url><url>
-    <loc>https://yplam.com/tags/openwrt/</loc>
-    <lastmod>2021-12-25T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://yplam.com/post/embedded/imx6ull-boot-sd-card/</loc>
+    <loc>https://yplam.com/posts/embedded/imx6ull-boot-sd-card/</loc>
     <lastmod>2021-12-19T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
   </url><url>
-    <loc>https://yplam.com/post/embedded/imx6ull-kernel-compile/</loc>
+    <loc>https://yplam.com/posts/embedded/imx6ull-kernel-compile/</loc>
     <lastmod>2021-12-18T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
   </url><url>
     <loc>https://yplam.com/tags/openthread/</loc>
     <lastmod>2021-03-27T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
   </url><url>
-    <loc>https://yplam.com/post/embedded/raspberry-pi-openthread/</loc>
+    <loc>https://yplam.com/posts/embedded/raspberry-pi-openthread/</loc>
     <lastmod>2021-03-27T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
   </url><url>
-    <loc>https://yplam.com/post/embedded/openwrt-mt7688-4g/</loc>
+    <loc>https://yplam.com/posts/embedded/openwrt-mt7688-4g/</loc>
     <lastmod>2020-08-02T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
   </url><url>
     <loc>https://yplam.com/tags/php/</loc>
     <lastmod>2020-03-29T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
   </url><url>
     <loc>https://yplam.com/tags/symfony/</loc>
     <lastmod>2020-03-29T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
   </url><url>
-    <loc>https://yplam.com/post/symfony/symfony-the-new-way/</loc>
+    <loc>https://yplam.com/posts/symfony/symfony-the-new-way/</loc>
     <lastmod>2020-03-29T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
   </url><url>
     <loc>https://yplam.com/tags/tensorflow/</loc>
     <lastmod>2019-12-03T15:32:35+08:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
   </url><url>
-    <loc>https://yplam.com/post/machinelearning/tensorflow-serving-nsfw/</loc>
+    <loc>https://yplam.com/posts/machinelearning/tensorflow-serving-nsfw/</loc>
     <lastmod>2019-12-03T15:32:35+08:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
   </url><url>
     <loc>https://yplam.com/tags/c&#43;&#43;/</loc>
     <lastmod>2019-04-06T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
   </url><url>
-    <loc>https://yplam.com/post/chromium/chromium-image-decode-error/</loc>
+    <loc>https://yplam.com/posts/chromium/chromium-image-decode-error/</loc>
     <lastmod>2019-04-06T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
   </url><url>
     <loc>https://yplam.com/tags/chromium/</loc>
     <lastmod>2019-04-06T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
   </url><url>
-    <loc>https://yplam.com/post/chromium/chromium-cpp/</loc>
+    <loc>https://yplam.com/posts/chromium/chromium-cpp/</loc>
     <lastmod>2019-03-23T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
   </url><url>
     <loc>https://yplam.com/tags/chromium/</loc>
     <lastmod>2019-03-09T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
   </url><url>
-    <loc>https://yplam.com/post/chromium/chromium-src-browser-ui-views/</loc>
+    <loc>https://yplam.com/posts/chromium/chromium-src-browser-ui-views/</loc>
     <lastmod>2019-03-09T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
   </url><url>
-    <loc>https://yplam.com/post/chromium/chromium-src-chrome-browser-themes/</loc>
+    <loc>https://yplam.com/posts/chromium/chromium-src-chrome-browser-themes/</loc>
     <lastmod>2019-03-02T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
   </url><url>
-    <loc>https://yplam.com/post/chromium/chromium-build-debug/</loc>
+    <loc>https://yplam.com/posts/chromium/chromium-build-debug/</loc>
     <lastmod>2019-02-23T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
   </url><url>
     <loc>https://yplam.com/tags/mbed/</loc>
     <lastmod>2018-12-19T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
   </url><url>
-    <loc>https://yplam.com/post/embedded/lora-ranging-test/</loc>
+    <loc>https://yplam.com/posts/embedded/lora-ranging-test/</loc>
     <lastmod>2018-12-19T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
   </url><url>
-    <loc>https://yplam.com/post/embedded/mbed-custom-bootloader/</loc>
+    <loc>https://yplam.com/posts/embedded/mbed-custom-bootloader/</loc>
     <lastmod>2018-11-10T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
   </url><url>
     <loc>https://yplam.com/tags/predictionio/</loc>
     <lastmod>2018-06-13T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
   </url><url>
-    <loc>https://yplam.com/post/machinelearning/predictionio-universal-recommender/</loc>
+    <loc>https://yplam.com/posts/machinelearning/predictionio-universal-recommender/</loc>
     <lastmod>2018-06-13T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
   </url><url>
-    <loc>https://yplam.com/post/machinelearning/predictionio/</loc>
+    <loc>https://yplam.com/posts/machinelearning/predictionio/</loc>
     <lastmod>2018-04-28T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
   </url><url>
-    <loc>https://yplam.com/post/symfony/hello-symfony-4/</loc>
+    <loc>https://yplam.com/posts/symfony/hello-symfony-4/</loc>
     <lastmod>2017-12-01T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
   </url><url>
-    <loc>https://yplam.com/post/machinelearning/tensorflow-object-detection-note/</loc>
+    <loc>https://yplam.com/posts/machinelearning/tensorflow-object-detection-note/</loc>
     <lastmod>2017-10-21T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
   </url><url>
-    <loc>https://yplam.com/post/machinelearning/netflix-prize/</loc>
+    <loc>https://yplam.com/posts/machinelearning/netflix-prize/</loc>
     <lastmod>2017-08-01T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
   </url><url>
-    <loc>https://yplam.com/post/machinelearning/hands-on-machine-learning-scikit-learn--tensorflow/</loc>
+    <loc>https://yplam.com/posts/machinelearning/hands-on-machine-learning-scikit-learn--tensorflow/</loc>
     <lastmod>2017-04-16T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
   </url><url>
     <loc>https://yplam.com/tags/ros/</loc>
     <lastmod>2017-03-25T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
   </url><url>
-    <loc>https://yplam.com/post/embedded/edison-ros-indigo-step-by-step/</loc>
+    <loc>https://yplam.com/posts/embedded/edison-ros-indigo-step-by-step/</loc>
     <lastmod>2017-03-25T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
   </url><url>
-    <loc>https://yplam.com/post/embedded/edison-ros-install/</loc>
+    <loc>https://yplam.com/posts/embedded/edison-ros-install/</loc>
     <lastmod>2017-03-19T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
   </url><url>
-    <loc>https://yplam.com/post/machinelearning/machine-learning-predicting-customer-behavior/</loc>
+    <loc>https://yplam.com/posts/machinelearning/machine-learning-predicting-customer-behavior/</loc>
     <lastmod>2017-02-19T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
   </url><url>
     <loc>https://yplam.com/tags/userprofiling/</loc>
     <lastmod>2017-02-11T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
   </url><url>
-    <loc>https://yplam.com/post/machinelearning/user-profile-learning-notes/</loc>
+    <loc>https://yplam.com/posts/machinelearning/user-profile-learning-notes/</loc>
     <lastmod>2017-02-11T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
   </url><url>
-    <loc>https://yplam.com/post/machinelearning/aws-cuda-tensorflow/</loc>
+    <loc>https://yplam.com/posts/machinelearning/aws-cuda-tensorflow/</loc>
     <lastmod>2016-12-12T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
   </url><url>
-    <loc>https://yplam.com/post/machinelearning/machine-learning-notes/</loc>
+    <loc>https://yplam.com/posts/machinelearning/machine-learning-notes/</loc>
     <lastmod>2016-12-01T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
   </url><url>
     <loc>https://yplam.com/tags/html5/</loc>
     <lastmod>2016-09-11T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
   </url><url>
     <loc>https://yplam.com/tags/javascript/</loc>
     <lastmod>2016-09-11T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
   </url><url>
-    <loc>https://yplam.com/post/javascript/localstorage-cross-page-comm/</loc>
+    <loc>https://yplam.com/posts/javascript/localstorage-cross-page-comm/</loc>
     <lastmod>2016-09-11T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
   </url><url>
     <loc>https://yplam.com/tags/elk/</loc>
     <lastmod>2016-09-09T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
   </url><url>
-    <loc>https://yplam.com/post/linux/elk-log-analytics/</loc>
+    <loc>https://yplam.com/posts/linux/elk-log-analytics/</loc>
     <lastmod>2016-09-09T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
   </url><url>
-    <loc>https://yplam.com/post/symfony/symfony-performance/</loc>
+    <loc>https://yplam.com/posts/symfony/symfony-performance/</loc>
     <lastmod>2016-05-27T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
   </url><url>
-    <loc>https://yplam.com/post/embedded/configuring-6lbr-ubuntu-sensortag-cc2650/</loc>
+    <loc>https://yplam.com/posts/embedded/configuring-6lbr-ubuntu-sensortag-cc2650/</loc>
     <lastmod>2016-02-23T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
   </url><url>
-    <loc>https://yplam.com/post/symfony/symfony-micro-framework/</loc>
+    <loc>https://yplam.com/posts/symfony/symfony-micro-framework/</loc>
     <lastmod>2015-11-19T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
   </url><url>
-    <loc>https://yplam.com/post/symfony/symfony-github-jenkins/</loc>
+    <loc>https://yplam.com/posts/symfony/symfony-github-jenkins/</loc>
     <lastmod>2015-11-16T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
   </url><url>
     <loc>https://yplam.com/tags/nginx/</loc>
     <lastmod>2015-10-29T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
   </url><url>
-    <loc>https://yplam.com/post/linux/nginx-http-auth/</loc>
+    <loc>https://yplam.com/posts/linux/nginx-http-auth/</loc>
     <lastmod>2015-10-29T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
   </url><url>
-    <loc>https://yplam.com/post/linux/debian-mul-redis/</loc>
+    <loc>https://yplam.com/posts/linux/debian-mul-redis/</loc>
     <lastmod>2015-10-28T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://yplam.com/tags/redis/</loc>
-    <lastmod>2015-10-28T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
   </url><url>
     <loc>https://yplam.com/tags/aws/</loc>
     <lastmod>2015-08-27T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
   </url><url>
-    <loc>https://yplam.com/post/linux/nginx-aws-proxy/</loc>
+    <loc>https://yplam.com/posts/linux/nginx-aws-proxy/</loc>
     <lastmod>2015-08-27T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
   </url><url>
     <loc>https://yplam.com/tags/apache/</loc>
     <lastmod>2015-08-25T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
   </url><url>
-    <loc>https://yplam.com/post/linux/apache-htaccess-performance/</loc>
+    <loc>https://yplam.com/posts/linux/apache-htaccess-performance/</loc>
     <lastmod>2015-08-25T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
   </url><url>
-    <loc>https://yplam.com/post/linux/ssd-raid-performance/</loc>
+    <loc>https://yplam.com/posts/linux/ssd-raid-performance/</loc>
     <lastmod>2015-08-15T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
   </url><url>
-    <loc>https://yplam.com/post/linux/nginx-https/</loc>
+    <loc>https://yplam.com/posts/linux/nginx-https/</loc>
     <lastmod>2015-08-12T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
   </url><url>
     <loc>https://yplam.com/tags/drupal/</loc>
     <lastmod>2015-08-11T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
   </url><url>
-    <loc>https://yplam.com/post/symfony/drupal-2-symfony/</loc>
+    <loc>https://yplam.com/posts/symfony/drupal-2-symfony/</loc>
     <lastmod>2015-08-11T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
   </url><url>
-    <loc>https://yplam.com/post/symfony/sonata-admin-custom-page/</loc>
+    <loc>https://yplam.com/posts/symfony/sonata-admin-custom-page/</loc>
     <lastmod>2015-07-14T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
   </url><url>
-    <loc>https://yplam.com/post/symfony/symfony-twig-block/</loc>
+    <loc>https://yplam.com/posts/symfony/symfony-twig-block/</loc>
     <lastmod>2015-06-03T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
   </url><url>
-    <loc>https://yplam.com/post/symfony/symfony-hot-bundles/</loc>
+    <loc>https://yplam.com/posts/symfony/symfony-hot-bundles/</loc>
     <lastmod>2015-01-26T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
   </url><url>
-    <loc>https://yplam.com/post/php/php-isset-empty/</loc>
+    <loc>https://yplam.com/posts/php/php-isset-empty/</loc>
     <lastmod>2014-12-02T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
   </url><url>
     <loc>https://yplam.com/tags/discuz/</loc>
     <lastmod>2014-11-26T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
   </url><url>
-    <loc>https://yplam.com/post/php/discuz-api/</loc>
+    <loc>https://yplam.com/posts/php/discuz-api/</loc>
     <lastmod>2014-11-26T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
   </url><url>
-    <loc>https://yplam.com/post/php/drupal-services-and-dependency-injection/</loc>
+    <loc>https://yplam.com/posts/php/drupal-services-and-dependency-injection/</loc>
     <lastmod>2014-08-28T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
   </url><url>
-    <loc>https://yplam.com/post/php/drupal-special-topic/</loc>
+    <loc>https://yplam.com/posts/php/drupal-special-topic/</loc>
     <lastmod>2014-06-18T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
   </url><url>
-    <loc>https://yplam.com/post/php/drupal-wechat/</loc>
+    <loc>https://yplam.com/posts/php/drupal-wechat/</loc>
     <lastmod>2014-04-23T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
   </url><url>
-    <loc>https://yplam.com/post/symfony/doctrine-resolve-target-entity/</loc>
+    <loc>https://yplam.com/posts/symfony/doctrine-resolve-target-entity/</loc>
     <lastmod>2013-06-21T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
   </url><url>
-    <loc>https://yplam.com/post/symfony/symfony-fosuserbundle/</loc>
+    <loc>https://yplam.com/posts/symfony/symfony-fosuserbundle/</loc>
     <lastmod>2013-06-20T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
   </url><url>
-    <loc>https://yplam.com/post/symfony/symfony-service-container/</loc>
+    <loc>https://yplam.com/posts/symfony/symfony-service-container/</loc>
     <lastmod>2013-06-18T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
   </url><url>
-    <loc>https://yplam.com/post/symfony/dependency-injection-container/</loc>
+    <loc>https://yplam.com/posts/symfony/dependency-injection-container/</loc>
     <lastmod>2013-06-17T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
   </url><url>
-    <loc>https://yplam.com/post/symfony/dependency-injection/</loc>
+    <loc>https://yplam.com/posts/symfony/dependency-injection/</loc>
     <lastmod>2013-06-16T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
   </url><url>
-    <loc>https://yplam.com/post/symfony/symfony-bootstrap/</loc>
+    <loc>https://yplam.com/posts/symfony/symfony-bootstrap/</loc>
     <lastmod>2013-06-06T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
   </url><url>
-    <loc>https://yplam.com/post/symfony/symfony-capifony/</loc>
+    <loc>https://yplam.com/posts/symfony/symfony-capifony/</loc>
     <lastmod>2013-05-21T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
   </url><url>
-    <loc>https://yplam.com/post/linux/linux-command-collection/</loc>
+    <loc>https://yplam.com/posts/linux/linux-command-collection/</loc>
     <lastmod>2012-02-19T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
   </url><url>
-    <loc>https://yplam.com/post/linux/centos-php-fpm-52/</loc>
+    <loc>https://yplam.com/posts/linux/centos-php-fpm-52/</loc>
     <lastmod>2011-02-15T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
   </url><url>
     <loc>https://yplam.com/tags/i/</loc>
     <lastmod>2011-01-01T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
   </url><url>
     <loc>https://yplam.com/about/</loc>
     <lastmod>2011-01-01T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url><url>
+    <loc>https://yplam.com/authors/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url><url>
+    <loc>https://yplam.com/categories/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url><url>
+    <loc>https://yplam.com/series/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
   </url>
 </urlset>

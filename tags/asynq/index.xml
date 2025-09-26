@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>Asynq on YPLAM</title>
+    <link>https://yplam.com/tags/asynq/</link>
+    <description>Recent content in Asynq on YPLAM</description>
+    <generator>Hugo -- 0.148.2</generator>
+    <language>zh-cn</language>
+    <lastBuildDate>Sat, 09 Sep 2023 00:00:00 +0000</lastBuildDate>
+    <atom:link href="https://yplam.com/tags/asynq/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>物联网平台后端架构设计与性能验证</title>
+      <link>https://yplam.com/posts/iot/million-throughput-iot-architecture-design/</link>
+      <pubDate>Sat, 09 Sep 2023 00:00:00 +0000</pubDate>
+      <guid>https://yplam.com/posts/iot/million-throughput-iot-architecture-design/</guid>
+      <description>&lt;p&gt;本文探讨物联网平台后端组件选择，架构设计与性能验证。&lt;/p&gt;
+&lt;h2 id=&#34;组件&#34;&gt;组件&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;EMQX 集群 MQTT 设备接入，通常设备均通过类似 &amp;lt;设备型号&amp;gt;/&amp;lt;设备ID&amp;gt; 的预定义主题前缀收发消息&lt;/li&gt;
+&lt;li&gt;MQTT 协议接入层，根据 &amp;lt;设备型号&amp;gt; 前缀消费 EMQX 消息，并且根据对应的物模型规则将 MQTT 消息转换为系统物模型消息，然后转发到消息上行 Kafka 消息队列；同时通过消费 Kafka 中的下行物模型指令，根据设备型号对应的物模型规则转换为 MQTT 消息，并发送到 EMQX 集群&lt;/li&gt;
+&lt;li&gt;Kafka 设备上行消息由规则引擎消费，先保存到时序数据库 InfluxDB，更新 PostgreSQL 中设备状态存储，发送到实时状态 Kafka 消息队列（供API层订阅），然后根据场景规则的触发器判断并触发场景任务，场景任务执行通过 Asynq + Redis 支持&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;组件性能验证&#34;&gt;组件性能验证&lt;/h2&gt;
+&lt;h3 id=&#34;emqx-性能测试&#34;&gt;EMQX 性能测试&lt;/h3&gt;
+&lt;p&gt;EMQX 性能测试对测试客户端性能要求较高，并且由于客户端端口分配问题，每个网卡支持的客户端数量不能大于可分配端口数，因此使用阿里云ECS增加虚拟网卡的方式进行测试，在此使用 4 网卡，每网卡 50000 客户端连接的方式模拟。&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>

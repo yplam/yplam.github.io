@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>PredictionIO Universal Recommender 笔记 | YPLAM</title>
+<meta name="keywords" content="MachineLearning, PredictionIO">
+<meta name="description" content="Universal Recommender (UR) 是 ActionML 公司基于 PredictionIO 开发的协同过滤引擎，使用 Correlated Cross-Occurrence (CCO) 算法，可以应用与个性化推荐、物品相关推荐、购物车推荐、基于业务逻辑的推荐等。">
+<meta name="author" content="">
+<link rel="canonical" href="https://yplam.com/posts/machinelearning/predictionio-universal-recommender/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.8a2a5b863c538395920b4f077c6697be31878d530618647d78daca2883f21ff1.css" integrity="sha256-iipbhjxTg5WSC08HfGaXvjGHjVMGGGR9eNrKKIPyH/E=" rel="preload stylesheet" as="style">
+<link rel="icon" href="https://yplam.com/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://yplam.com/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://yplam.com/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://yplam.com/apple-touch-icon.png">
+<link rel="mask-icon" href="https://yplam.com/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="zh-cn" href="https://yplam.com/posts/machinelearning/predictionio-universal-recommender/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --code-block-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript>
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-960JLZS3KY"></script>
+      <script>
+        var doNotTrack = false;
+        if ( false ) {
+          var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
+          var doNotTrack = (dnt == "1" || dnt == "yes");
+        }
+        if (!doNotTrack) {
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-960JLZS3KY');
+        }
+      </script><meta property="og:url" content="https://yplam.com/posts/machinelearning/predictionio-universal-recommender/">
+  <meta property="og:site_name" content="YPLAM">
+  <meta property="og:title" content="PredictionIO Universal Recommender 笔记">
+  <meta property="og:description" content="Universal Recommender (UR) 是 ActionML 公司基于 PredictionIO 开发的协同过滤引擎，使用 Correlated Cross-Occurrence (CCO) 算法，可以应用与个性化推荐、物品相关推荐、购物车推荐、基于业务逻辑的推荐等。">
+  <meta property="og:locale" content="zh-cn">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2018-06-13T00:00:00+00:00">
+    <meta property="article:modified_time" content="2018-06-13T00:00:00+00:00">
+    <meta property="article:tag" content="MachineLearning">
+    <meta property="article:tag" content="PredictionIO">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="PredictionIO Universal Recommender 笔记">
+<meta name="twitter:description" content="Universal Recommender (UR) 是 ActionML 公司基于 PredictionIO 开发的协同过滤引擎，使用 Correlated Cross-Occurrence (CCO) 算法，可以应用与个性化推荐、物品相关推荐、购物车推荐、基于业务逻辑的推荐等。">
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Posts",
+      "item": "https://yplam.com/posts/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "PredictionIO Universal Recommender 笔记",
+      "item": "https://yplam.com/posts/machinelearning/predictionio-universal-recommender/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "PredictionIO Universal Recommender 笔记",
+  "name": "PredictionIO Universal Recommender 笔记",
+  "description": "Universal Recommender (UR) 是 ActionML 公司基于 PredictionIO 开发的协同过滤引擎，使用 Correlated Cross-Occurrence (CCO) 算法，可以应用与个性化推荐、物品相关推荐、购物车推荐、基于业务逻辑的推荐等。\n",
+  "keywords": [
+    "MachineLearning", "PredictionIO"
+  ],
+  "articleBody": "Universal Recommender (UR) 是 ActionML 公司基于 PredictionIO 开发的协同过滤引擎，使用 Correlated Cross-Occurrence (CCO) 算法，可以应用与个性化推荐、物品相关推荐、购物车推荐、基于业务逻辑的推荐等。\nCOO算法是协同过滤算法的一种，然而一般的协同过滤只能针对单一行为，CCO算法可以计算交叉行为下的协同关联。例如：它不仅可以通过用户的浏览行为来告诉你 “浏览了内容A的人可能会浏览内容B” ,它还能结合用户的浏览行为和用户的广告点击行为来告诉你 “点击了广告A的人可能会浏览内容F”。关于COO的详细介绍可参考下面文章：基于 CCO 的协同过滤推荐，Multi-domain predictive AI or how to make one thing predict another。\nPredictionIO 与 UR 安装\n参考 PredictionIO 与 UR 的官方文档安装，需要注意的是 UR 需要使用 Elasticsearch 来保存结果，现时（PredictionIO 0.12.1）默认支持的 Elasticsearch 版本为 5.。最简单的方式就是下载tar包然后解压到 PredictionIO 的 vonders/elasticsearch-5..* 目录，然后在pio-env.sh文件进行配置。\n配置完成后可以在 ur 的目录下运行以下命令进行测试：\n./examples/integration-test 此命令会使用 examples/handmade-engine.json 的配置，data/sample-handmade-data.txt 中的数据，导入数据，build模型，deploy模型，使用预设数据进行测试并且与预设结果进行对比。\nDASE实现\nDataSource 只接受 user-item 类型，事件类型可以有多种，如测试数据中的 purchase、view、category-pref，其中第一个为主事件，其余为次要事件。可以使用 $set 请求定义 item 属性。DataSource 读取事件日志，按事件名聚合事件；读取 item 信息，并且将 Properties 信息附加到 item 上；然后返回事件、Item相关的RDD。\nPreparator 根据 minEventsPerUser 的配置过滤掉主事件过少的用户，然后过滤掉没有主事件的用户以及其次要事件。因为 UR 算法需要用到 mahout，Preparator 需要将事件 RDD 转换为 org.apache.mahout.sparkbindings.indexeddataset.IndexedDatasetSpark 供算法使用。IndexedDatasetSpark 包含 userID 的 BiDictionary，itemID 的 BiDictionary 以及 经过 BiDictionary key转换的 user-item 矩阵。\nServing 与 RecommendationEngine 分别为用户请求的响应处理以及引擎的构造描述，较常规没有太多特殊内容。\nURAlgorithm 根据 URAlgorithmParams 配置训练模型，保存，然后做预测。train 过程计算主事件矩阵与自身以及个次要事件的 Log Likelihood Ratio（LLR） 矩阵，然后保存到 ElasticSearch。predict 过程将用户的输入转换为对 ElasticSearch 的搜索请求，此为模型核心。\n模型参数保存：历遍各 LLR 矩阵中的每一行，按降序排序每行的 releate_item，并且构造成 (itemID, Map(actionName -\u003e JArray(vector[releate_item]))) ，然后通过 groupAll 操作，将每个 item 的事件内容与属性内容集合到一起，每个条目均得到类似以下格式内容：\n(Ipad-retina,Map(defaultRank -\u003e JDouble(3.0), expires -\u003e JString(2018-06-15T17:09:41.677740+00:00), countries -\u003e JArray(List(JString(United States), JString(Estados Unidos Mexicanos))), date -\u003e JString(2018-06-13T17:09:41.677740+00:00), category-pref -\u003e JArray(List(JString(tablets))), categories -\u003e JArray(List(JString(Tablets), JString(Electronics), JString(Apple))), available -\u003e JString(2018-06-11T17:09:41.677740+00:00), purchase -\u003e JArray(List(JString(Iphone 6), JString(Iphone 4))), popRank -\u003e JDouble(2.0), view -\u003e JArray(List(JString(Soap))))) 然后创建 Elasticsearch 表索引，最后将 RDD 保存到 Elasticsearch，我们可以先看看数据在 Elasticsearch 中的存在方式，这样会更加清晰：\nGET /urindex_1529048147127/_search { \"_index\": \"urindex_1529048147127\", \"_type\": \"items\", \"_id\": \"Iphone 4\", \"_score\": 1, \"_source\": { \"defaultRank\": 5, \"expires\": \"2018-06-18T10:45:41.677+08:00\", \"countries\": [ \"United States\", \"Canada\", \"Estados Unidos Mexicanos\" ], \"id\": \"Iphone 4\", \"date\": \"2018-06-16T10:45:41.677+08:00\", \"category-pref\": [ \"tablets\" ], \"categories\": [ \"Phones\", \"Electronics\", \"Apple\" ], \"available\": \"2018-06-14T10:45:41.677+08:00\", \"purchase\": [ \"Ipad-retina\", \"Iphone 6\" ], \"popRank\": 4, \"view\": [ \"Soap\", \"Tablets\" ] } } 很明显这是一个基于产品的推荐系统，主事件为 purchase ，所以直观的解释就是 “购买了 Iphone 4 的用户还购买了 Ipad-retina，Iphone 6；购买了 Iphone 4 的用户浏览了 Soap，Tablets；Iphone 4 属于 Phones，Electronics，Apple 分类……”\nUR 模型的 predict 过程实际就是根据查询输入以及用户的历史事件（从Event Storage中查出），构造 ES 的 json query。\n模型定义查询结构如下：\ncase class Query( user: Option[String] = None, // must be a user or item id userBias: Option[Float] = None, // default: whatever is in algorithm params or 1 item: Option[String] = None, // must be a user or item id itemBias: Option[Float] = None, // default: whatever is in algorithm params or 1 itemSet: Option[List[String]] = None, // item-set query, shpping cart for instance. itemSetBias: Option[Float] = None, // default: whatever is in algorithm params or 1 fields: Option[List[Field]] = None, // default: whatever is in algorithm params or None currentDate: Option[String] = None, // if used will override dateRange filter, currentDate must lie between the item's // expireDateName value and availableDateName value, all are ISO 8601 dates dateRange: Option[DateRange] = None, // optional before and after filter applied to a date field blacklistItems: Option[List[String]] = None, // default: whatever is in algorithm params or None returnSelf: Option[Boolean] = None, // means for an item query should the item itself be returned, defaults // to what is in the algorithm params or false num: Option[Int] = None, // default: whatever is in algorithm params, which itself has a default--probably 20 from: Option[Int] = None, // paginate from this position return \"num\" eventNames: Option[List[String]], // names used to ID all user actions withRanks: Option[Boolean] = None) // Add to ItemScore rank fields values, default false extends Serializable 然后转换为类似下面的请求：\n{ \"size\": 20 \"query\": { \"bool\": { \"should\": [ { \"terms\": { \"rate\": [\"0\", \"67\", \"4\"] } }, { \"terms\": { \"buy\": [\"0\", \"32\"], \"boost\": 2 } }, { // categorical boosts \"terms\": { \"category\": [\"cat1\"], \"boost\": 1.05 } } ], \"must\": [ // categorical filters { \"terms\": { \"category\": [\"cat1\"], \"boost\": 0 } }, { \"must_not\": [//blacklisted items { \"ids\": { \"values\": [\"items-id1\", \"item-id2\", ...] } }, { \"constant_score\": {// date in query must fall between the expire and available dates of an item \"filter\": { \"range\": { \"availabledate\": { \"lte\": \"2015-08-30T12:24:41-07:00\" } } }, \"boost\": 0 } }, { \"constant_score\": {// date range filter in query must be between these item property values \"filter\": { \"range\" : { \"expiredate\" : { \"gte\": \"2015-08-15T11:28:45.114-07:00\" \"lt\": \"2015-08-20T11:28:45.114-07:00\" } } }, \"boost\": 0 } }, { \"constant_score\": { // this orders popular items for backfill \"filter\": { \"match_all\": {} }, \"boost\": 0.000001 // must have as least a small number to be boostable } } } } } Universal Recommender 虽然原理比较简单，不过它巧妙地利用 Elasticsearch 将业务规则整合进来的方式确实可以给人带来启发。\n以上仅为个人总结笔记，能力所限可能有比较多错误，欢迎交流指正 yplam(at)yplam.com\n",
+  "wordCount" : "662",
+  "inLanguage": "zh-cn",
+  "datePublished": "2018-06-13T00:00:00Z",
+  "dateModified": "2018-06-13T00:00:00Z",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://yplam.com/posts/machinelearning/predictionio-universal-recommender/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "YPLAM",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://yplam.com/favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <div class="logo-switches">
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="https://yplam.com/" title="YPLAM">
+                    <span>HOME</span>
+
+                </a>
+            </li>
+            <li>
+                <a href="https://yplam.com/about/" title="关于YPLam">
+                    <span>ABOUT</span>
+
+                </a>
+            </li>
+            <li>
+                <a href="https://github.com/yplam" title="GITHUB">
+                    <span>GITHUB</span>
+
+                </a>
+            </li>
+            <li>
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title entry-hint-parent">
+      PredictionIO Universal Recommender 笔记
+    </h1>
+    <div class="post-meta"><span title='2018-06-13 00:00:00 +0000 UTC'>2018-06-13</span>
+
+</div>
+  </header> 
+  <div class="post-content"><p>Universal Recommender (UR) 是 ActionML 公司基于 PredictionIO 开发的协同过滤引擎，使用 Correlated Cross-Occurrence (CCO) 算法，可以应用与个性化推荐、物品相关推荐、购物车推荐、基于业务逻辑的推荐等。</p>
+<p>COO算法是协同过滤算法的一种，然而一般的协同过滤只能针对单一行为，CCO算法可以计算交叉行为下的协同关联。例如：它不仅可以通过用户的浏览行为来告诉你 “浏览了内容A的人可能会浏览内容B” ,它还能结合用户的浏览行为和用户的广告点击行为来告诉你 “点击了广告A的人可能会浏览内容F”。关于COO的详细介绍可参考下面文章：<a href="http://hejunhao.me/archives/1083">基于 CCO 的协同过滤推荐</a>，<a href="https://developer.ibm.com/dwblog/2017/mahout-spark-correlated-cross-occurences/">Multi-domain predictive AI or how to make one thing predict another</a>。</p>
+<p><strong>PredictionIO 与 UR 安装</strong></p>
+<p>参考 PredictionIO 与 UR 的官方文档安装，需要注意的是 UR 需要使用 Elasticsearch 来保存结果，现时（PredictionIO 0.12.1）默认支持的 Elasticsearch 版本为 5.<em>。最简单的方式就是下载tar包然后解压到 PredictionIO 的 vonders/elasticsearch-5.</em>.* 目录，然后在pio-env.sh文件进行配置。</p>
+<p>配置完成后可以在 ur 的目录下运行以下命令进行测试：</p>
+<pre tabindex="0"><code>./examples/integration-test
+</code></pre><p>此命令会使用 examples/handmade-engine.json 的配置，data/sample-handmade-data.txt 中的数据，导入数据，build模型，deploy模型，使用预设数据进行测试并且与预设结果进行对比。</p>
+<p><strong>DASE实现</strong></p>
+<p>DataSource 只接受 user-item 类型，事件类型可以有多种，如测试数据中的 purchase、view、category-pref，其中第一个为主事件，其余为次要事件。可以使用 $set 请求定义 item 属性。DataSource 读取事件日志，按事件名聚合事件；读取 item 信息，并且将 Properties 信息附加到 item 上；然后返回事件、Item相关的RDD。</p>
+<p>Preparator 根据 minEventsPerUser 的配置过滤掉主事件过少的用户，然后过滤掉没有主事件的用户以及其次要事件。因为 UR 算法需要用到 mahout，Preparator 需要将事件 RDD 转换为 org.apache.mahout.sparkbindings.indexeddataset.IndexedDatasetSpark 供算法使用。IndexedDatasetSpark 包含 userID 的 BiDictionary，itemID 的 BiDictionary 以及 经过 BiDictionary key转换的 user-item 矩阵。</p>
+<p>Serving 与 RecommendationEngine 分别为用户请求的响应处理以及引擎的构造描述，较常规没有太多特殊内容。</p>
+<p>URAlgorithm 根据 URAlgorithmParams 配置训练模型，保存，然后做预测。train 过程计算主事件矩阵与自身以及个次要事件的 Log Likelihood Ratio（LLR） 矩阵，然后保存到 ElasticSearch。predict 过程将用户的输入转换为对 ElasticSearch 的搜索请求，此为模型核心。</p>
+<p>模型参数保存：历遍各 LLR 矩阵中的每一行，按降序排序每行的 releate_item，并且构造成 (itemID, Map(actionName -&gt; JArray(vector[releate_item]))) ，然后通过 groupAll 操作，将每个 item 的事件内容与属性内容集合到一起，每个条目均得到类似以下格式内容：</p>
+<pre tabindex="0"><code>(Ipad-retina,Map(defaultRank -&gt; JDouble(3.0), expires -&gt; JString(2018-06-15T17:09:41.677740+00:00), countries -&gt; JArray(List(JString(United States), JString(Estados Unidos Mexicanos))), date -&gt; JString(2018-06-13T17:09:41.677740+00:00), category-pref -&gt; JArray(List(JString(tablets))), categories -&gt; JArray(List(JString(Tablets), JString(Electronics), JString(Apple))), available -&gt; JString(2018-06-11T17:09:41.677740+00:00), purchase -&gt; JArray(List(JString(Iphone 6), JString(Iphone 4))), popRank -&gt; JDouble(2.0), view -&gt; JArray(List(JString(Soap)))))
+</code></pre><p>然后创建 Elasticsearch 表索引，最后将 RDD 保存到 Elasticsearch，我们可以先看看数据在 Elasticsearch 中的存在方式，这样会更加清晰：</p>
+<pre tabindex="0"><code>GET /urindex_1529048147127/_search
+</code></pre><pre tabindex="0"><code>  {
+    &#34;_index&#34;: &#34;urindex_1529048147127&#34;,
+    &#34;_type&#34;: &#34;items&#34;,
+    &#34;_id&#34;: &#34;Iphone 4&#34;,
+    &#34;_score&#34;: 1,
+    &#34;_source&#34;: {
+      &#34;defaultRank&#34;: 5,
+      &#34;expires&#34;: &#34;2018-06-18T10:45:41.677+08:00&#34;,
+      &#34;countries&#34;: [
+        &#34;United States&#34;,
+        &#34;Canada&#34;,
+        &#34;Estados Unidos Mexicanos&#34;
+      ],
+      &#34;id&#34;: &#34;Iphone 4&#34;,
+      &#34;date&#34;: &#34;2018-06-16T10:45:41.677+08:00&#34;,
+      &#34;category-pref&#34;: [
+        &#34;tablets&#34;
+      ],
+      &#34;categories&#34;: [
+        &#34;Phones&#34;,
+        &#34;Electronics&#34;,
+        &#34;Apple&#34;
+      ],
+      &#34;available&#34;: &#34;2018-06-14T10:45:41.677+08:00&#34;,
+      &#34;purchase&#34;: [
+        &#34;Ipad-retina&#34;,
+        &#34;Iphone 6&#34;
+      ],
+      &#34;popRank&#34;: 4,
+      &#34;view&#34;: [
+        &#34;Soap&#34;,
+        &#34;Tablets&#34;
+      ]
+    }
+  }
+</code></pre><p>很明显这是一个基于产品的推荐系统，主事件为 purchase ，所以直观的解释就是 “购买了 Iphone 4 的用户还购买了 Ipad-retina，Iphone 6；购买了 Iphone 4 的用户浏览了 Soap，Tablets；Iphone 4 属于 Phones，Electronics，Apple 分类……”</p>
+<p>UR 模型的 predict 过程实际就是根据查询输入以及用户的历史事件（从Event Storage中查出），构造 ES 的 json query。</p>
+<p>模型定义查询结构如下：</p>
+<pre tabindex="0"><code>
+case class Query(
+  user: Option[String] = None, // must be a user or item id
+  userBias: Option[Float] = None, // default: whatever is in algorithm params or 1
+  item: Option[String] = None, // must be a user or item id
+  itemBias: Option[Float] = None, // default: whatever is in algorithm params or 1
+  itemSet: Option[List[String]] = None, // item-set query, shpping cart for instance.
+  itemSetBias: Option[Float] = None, // default: whatever is in algorithm params or 1
+  fields: Option[List[Field]] = None, // default: whatever is in algorithm params or None
+  currentDate: Option[String] = None, // if used will override dateRange filter, currentDate must lie between the item&#39;s
+  // expireDateName value and availableDateName value, all are ISO 8601 dates
+  dateRange: Option[DateRange] = None, // optional before and after filter applied to a date field
+  blacklistItems: Option[List[String]] = None, // default: whatever is in algorithm params or None
+  returnSelf: Option[Boolean] = None, // means for an item query should the item itself be returned, defaults
+  // to what is in the algorithm params or false
+  num: Option[Int] = None, // default: whatever is in algorithm params, which itself has a default--probably 20
+  from: Option[Int] = None, // paginate from this position return &#34;num&#34;
+  eventNames: Option[List[String]], // names used to ID all user actions
+  withRanks: Option[Boolean] = None) // Add to ItemScore rank fields values, default false
+    extends Serializable
+    
+</code></pre><p>然后转换为类似下面的请求：</p>
+<pre tabindex="0"><code>  {
+    &#34;size&#34;: 20
+    &#34;query&#34;: {
+      &#34;bool&#34;: {
+        &#34;should&#34;: [
+          {
+            &#34;terms&#34;: {
+              &#34;rate&#34;: [&#34;0&#34;, &#34;67&#34;, &#34;4&#34;]
+            }
+          },
+          {
+            &#34;terms&#34;: {
+              &#34;buy&#34;: [&#34;0&#34;, &#34;32&#34;],
+              &#34;boost&#34;: 2
+            }
+          },
+          { // categorical boosts
+            &#34;terms&#34;: {
+              &#34;category&#34;: [&#34;cat1&#34;],
+              &#34;boost&#34;: 1.05
+            }
+          }
+        ],
+        &#34;must&#34;: [ // categorical filters
+          {
+            &#34;terms&#34;: {
+              &#34;category&#34;: [&#34;cat1&#34;],
+              &#34;boost&#34;: 0
+            }
+          },
+         {
+        &#34;must_not&#34;: [//blacklisted items
+          {
+            &#34;ids&#34;: {
+              &#34;values&#34;: [&#34;items-id1&#34;, &#34;item-id2&#34;, ...]
+            }
+          },
+         {
+           &#34;constant_score&#34;: {// date in query must fall between the expire and available dates of an item
+             &#34;filter&#34;: {
+               &#34;range&#34;: {
+                 &#34;availabledate&#34;: {
+                   &#34;lte&#34;: &#34;2015-08-30T12:24:41-07:00&#34;
+                 }
+               }
+             },
+             &#34;boost&#34;: 0
+           }
+         },
+         {
+           &#34;constant_score&#34;: {// date range filter in query must be between these item property values
+             &#34;filter&#34;: {
+               &#34;range&#34; : {
+                 &#34;expiredate&#34; : {
+                   &#34;gte&#34;: &#34;2015-08-15T11:28:45.114-07:00&#34;
+                   &#34;lt&#34;: &#34;2015-08-20T11:28:45.114-07:00&#34;
+                 }
+               }
+             }, &#34;boost&#34;: 0
+           }
+         },
+         {
+           &#34;constant_score&#34;: { // this orders popular items for backfill
+              &#34;filter&#34;: {
+                 &#34;match_all&#34;: {}
+              },
+              &#34;boost&#34;: 0.000001 // must have as least a small number to be boostable
+           }
+        }
+      }
+    }
+  }
+</code></pre><p>Universal Recommender 虽然原理比较简单，不过它巧妙地利用 Elasticsearch 将业务规则整合进来的方式确实可以给人带来启发。</p>
+<p>以上仅为个人总结笔记，能力所限可能有比较多错误，欢迎交流指正 yplam(at)yplam.com</p>
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+      <li><a href="https://yplam.com/tags/machinelearning/">MachineLearning</a></li>
+      <li><a href="https://yplam.com/tags/predictionio/">PredictionIO</a></li>
+    </ul>
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+        <span>&copy; 2025 <a href="https://yplam.com/">YPLAM</a></span> · 
+
+    <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+        CC BY-SA 4.0
+    </a>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>

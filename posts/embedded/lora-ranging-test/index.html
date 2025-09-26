@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>SX1280 LoraRanging 功能测试 | YPLAM</title>
+<meta name="keywords" content="Embedded, Mbed">
+<meta name="description" content="之前用现成的Lora串口模块感觉挺顺手，最近偶尔看到带 LoraRanging 功能的 SX1280，于是买了两个模块回来测试一下。
+源码地址 https://github.com/yplam/LoraRangingTest">
+<meta name="author" content="">
+<link rel="canonical" href="https://yplam.com/posts/embedded/lora-ranging-test/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.8a2a5b863c538395920b4f077c6697be31878d530618647d78daca2883f21ff1.css" integrity="sha256-iipbhjxTg5WSC08HfGaXvjGHjVMGGGR9eNrKKIPyH/E=" rel="preload stylesheet" as="style">
+<link rel="icon" href="https://yplam.com/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://yplam.com/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://yplam.com/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://yplam.com/apple-touch-icon.png">
+<link rel="mask-icon" href="https://yplam.com/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="zh-cn" href="https://yplam.com/posts/embedded/lora-ranging-test/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --code-block-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript>
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-960JLZS3KY"></script>
+      <script>
+        var doNotTrack = false;
+        if ( false ) {
+          var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
+          var doNotTrack = (dnt == "1" || dnt == "yes");
+        }
+        if (!doNotTrack) {
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-960JLZS3KY');
+        }
+      </script><meta property="og:url" content="https://yplam.com/posts/embedded/lora-ranging-test/">
+  <meta property="og:site_name" content="YPLAM">
+  <meta property="og:title" content="SX1280 LoraRanging 功能测试">
+  <meta property="og:description" content="之前用现成的Lora串口模块感觉挺顺手，最近偶尔看到带 LoraRanging 功能的 SX1280，于是买了两个模块回来测试一下。
+源码地址 https://github.com/yplam/LoraRangingTest">
+  <meta property="og:locale" content="zh-cn">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2018-12-19T00:00:00+00:00">
+    <meta property="article:modified_time" content="2018-12-19T00:00:00+00:00">
+    <meta property="article:tag" content="Embedded">
+    <meta property="article:tag" content="Mbed">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="SX1280 LoraRanging 功能测试">
+<meta name="twitter:description" content="之前用现成的Lora串口模块感觉挺顺手，最近偶尔看到带 LoraRanging 功能的 SX1280，于是买了两个模块回来测试一下。
+源码地址 https://github.com/yplam/LoraRangingTest">
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Posts",
+      "item": "https://yplam.com/posts/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "SX1280 LoraRanging 功能测试",
+      "item": "https://yplam.com/posts/embedded/lora-ranging-test/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "SX1280 LoraRanging 功能测试",
+  "name": "SX1280 LoraRanging 功能测试",
+  "description": "之前用现成的Lora串口模块感觉挺顺手，最近偶尔看到带 LoraRanging 功能的 SX1280，于是买了两个模块回来测试一下。\n源码地址 https://github.com/yplam/LoraRangingTest\n",
+  "keywords": [
+    "Embedded", "Mbed"
+  ],
+  "articleBody": "之前用现成的Lora串口模块感觉挺顺手，最近偶尔看到带 LoraRanging 功能的 SX1280，于是买了两个模块回来测试一下。\n源码地址 https://github.com/yplam/LoraRangingTest\n基于 mbed 与 STM32 Nucleo-64 开发板；主机为 NUCLEO_F411RE，从机为 NUCLEO_L476RG。\n硬件为两个 Morpho 转接板，板载一个高抑制比的LDO，使用 SPI 接口通讯；\n![硬件]({{ site.url }}/assets/2019/LoraRangingTest.jpg “硬件”)\n![电路图]({{ site.url }}/assets/2019/Schematic.png “电路图”)\n编译 先配置好 mbed 命令行工具以及git，然后运行\ngit clone https://github.com/yplam/LoraRangingTest.git mbed deploy mbed compile -m NUCLEO_F411RE -t gcc_arm mbed compile -m NUCLEO_L476RG -t gcc_arm 主机固件: ./BUILD/NUCLEO_F411RE/GCC_ARM/LoraRangingTest.hex\n从机固件: ./BUILD/NUCLEO_L476RG/GCC_ARM/LoraRangingTest.hex\nmbed_app.json 引脚配置：\n{ \"config\": { \"trace-level\": { \"help\": \"Options are TRACE_LEVEL_ERROR,TRACE_LEVEL_WARN,TRACE_LEVEL_INFO,TRACE_LEVEL_DEBUG\", \"macro_name\": \"MBED_TRACE_MAX_LEVEL\", \"value\": \"TRACE_LEVEL_INFO\" } }, \"target_overrides\": { \"*\": { \"target.features_add\": [\"COMMON_PAL\"], \"mbed-trace.enable\": true, \"platform.stdio-convert-newlines\": true }, \"NUCLEO_F411RE\": { \"platform.default-serial-baud-rate\": 115200, \"target.OUTPUT_EXT\": \"hex\", \"target.macros\": [ \"LORA_MOSI=PA_7\", \"LORA_MISO=PA_6\", \"LORA_SCLK=PA_5\", \"LORA_NSS=PA_4\", \"LORA_BUSY=PC_8\", \"LORA_DIO1=PC_6\", \"LORA_RST=PA_12\", \"APP_HAS_LCD=1\", \"LCD_MOSI=PC_3\", \"LCD_MISO=PC_2\", \"LCD_SCLK=PB_10\", \"LCD_NSS=PB_12\", \"LCD_RESET=PC_10\", \"LCD_DC=PC_11\", \"APP_LED1=PC_9\", \"APP_LED2=PC_5\", \"APP_ENTITY_MODE=MASTER\" ] }, \"NUCLEO_L476RG\": { \"platform.default-serial-baud-rate\": 115200, \"target.OUTPUT_EXT\": \"hex\", \"target.macros\": [ \"LORA_MOSI=PA_7\", \"LORA_MISO=PA_6\", \"LORA_SCLK=PA_5\", \"LORA_NSS=PA_4\", \"LORA_BUSY=PC_8\", \"LORA_DIO1=PC_6\", \"LORA_RST=PA_12\", \"APP_LED1=PB_13\", \"APP_LED2=PC_5\", \"APP_ENTITY_MODE=SLAVE\" ] } } } 测试效果 周边走了一圈，板载PCB天线，SF7， BW800，发现最大距离也就100米多点（有点树阻挡），并且都有几米的范围波动，距离到100米时差不多在80到120之间\n本来想着如果能有1km左右测距距离的话还可以试试用来做低功耗牛羊耳标，但现在这种距离跟精度感觉真没什么地方可以用\n",
+  "wordCount" : "133",
+  "inLanguage": "zh-cn",
+  "datePublished": "2018-12-19T00:00:00Z",
+  "dateModified": "2018-12-19T00:00:00Z",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://yplam.com/posts/embedded/lora-ranging-test/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "YPLAM",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://yplam.com/favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <div class="logo-switches">
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="https://yplam.com/" title="YPLAM">
+                    <span>HOME</span>
+
+                </a>
+            </li>
+            <li>
+                <a href="https://yplam.com/about/" title="关于YPLam">
+                    <span>ABOUT</span>
+
+                </a>
+            </li>
+            <li>
+                <a href="https://github.com/yplam" title="GITHUB">
+                    <span>GITHUB</span>
+
+                </a>
+            </li>
+            <li>
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title entry-hint-parent">
+      SX1280 LoraRanging 功能测试
+    </h1>
+    <div class="post-meta"><span title='2018-12-19 00:00:00 +0000 UTC'>2018-12-19</span>
+
+</div>
+  </header> 
+  <div class="post-content"><p>之前用现成的Lora串口模块感觉挺顺手，最近偶尔看到带 LoraRanging 功能的 SX1280，于是买了两个模块回来测试一下。</p>
+<p>源码地址 <a href="https://github.com/yplam/LoraRangingTest">https://github.com/yplam/LoraRangingTest</a></p>
+<p>基于 mbed 与 STM32 Nucleo-64 开发板；主机为 NUCLEO_F411RE，从机为 NUCLEO_L476RG。</p>
+<p>硬件为两个 Morpho 转接板，板载一个高抑制比的LDO，使用 SPI 接口通讯；</p>
+<p>![硬件]({{ site.url }}/assets/2019/LoraRangingTest.jpg &ldquo;硬件&rdquo;)</p>
+<p>![电路图]({{ site.url }}/assets/2019/Schematic.png &ldquo;电路图&rdquo;)</p>
+<h2 id="编译">编译<a hidden class="anchor" aria-hidden="true" href="#编译">#</a></h2>
+<p>先配置好 mbed 命令行工具以及git，然后运行</p>
+<pre tabindex="0"><code>git clone https://github.com/yplam/LoraRangingTest.git
+mbed deploy
+mbed compile -m NUCLEO_F411RE -t gcc_arm
+mbed compile -m NUCLEO_L476RG -t gcc_arm
+</code></pre><p>主机固件: ./BUILD/NUCLEO_F411RE/GCC_ARM/LoraRangingTest.hex</p>
+<p>从机固件: ./BUILD/NUCLEO_L476RG/GCC_ARM/LoraRangingTest.hex</p>
+<p>mbed_app.json 引脚配置：</p>
+<pre tabindex="0"><code>{
+  &#34;config&#34;: {
+    &#34;trace-level&#34;: {
+      &#34;help&#34;: &#34;Options are TRACE_LEVEL_ERROR,TRACE_LEVEL_WARN,TRACE_LEVEL_INFO,TRACE_LEVEL_DEBUG&#34;,
+      &#34;macro_name&#34;: &#34;MBED_TRACE_MAX_LEVEL&#34;,
+      &#34;value&#34;: &#34;TRACE_LEVEL_INFO&#34;
+    }
+  },
+  &#34;target_overrides&#34;: {
+    &#34;*&#34;: {
+      &#34;target.features_add&#34;: [&#34;COMMON_PAL&#34;],
+      &#34;mbed-trace.enable&#34;: true,
+      &#34;platform.stdio-convert-newlines&#34;: true
+    },
+    &#34;NUCLEO_F411RE&#34;: {
+      &#34;platform.default-serial-baud-rate&#34;: 115200,
+      &#34;target.OUTPUT_EXT&#34;: &#34;hex&#34;,
+      &#34;target.macros&#34;: [
+        &#34;LORA_MOSI=PA_7&#34;,
+        &#34;LORA_MISO=PA_6&#34;,
+        &#34;LORA_SCLK=PA_5&#34;,
+        &#34;LORA_NSS=PA_4&#34;,
+        &#34;LORA_BUSY=PC_8&#34;,
+        &#34;LORA_DIO1=PC_6&#34;,
+        &#34;LORA_RST=PA_12&#34;,
+
+        &#34;APP_HAS_LCD=1&#34;,
+        &#34;LCD_MOSI=PC_3&#34;,
+        &#34;LCD_MISO=PC_2&#34;,
+        &#34;LCD_SCLK=PB_10&#34;,
+        &#34;LCD_NSS=PB_12&#34;,
+        &#34;LCD_RESET=PC_10&#34;,
+        &#34;LCD_DC=PC_11&#34;,
+
+        &#34;APP_LED1=PC_9&#34;,
+        &#34;APP_LED2=PC_5&#34;,
+        &#34;APP_ENTITY_MODE=MASTER&#34;
+      ]
+    },
+    &#34;NUCLEO_L476RG&#34;: {
+      &#34;platform.default-serial-baud-rate&#34;: 115200,
+      &#34;target.OUTPUT_EXT&#34;: &#34;hex&#34;,
+      &#34;target.macros&#34;: [
+        &#34;LORA_MOSI=PA_7&#34;,
+        &#34;LORA_MISO=PA_6&#34;,
+        &#34;LORA_SCLK=PA_5&#34;,
+        &#34;LORA_NSS=PA_4&#34;,
+        &#34;LORA_BUSY=PC_8&#34;,
+        &#34;LORA_DIO1=PC_6&#34;,
+        &#34;LORA_RST=PA_12&#34;,
+        &#34;APP_LED1=PB_13&#34;,
+        &#34;APP_LED2=PC_5&#34;,
+        &#34;APP_ENTITY_MODE=SLAVE&#34;
+      ]
+    }
+  }
+}
+</code></pre><h2 id="测试效果">测试效果<a hidden class="anchor" aria-hidden="true" href="#测试效果">#</a></h2>
+<p>周边走了一圈，板载PCB天线，SF7， BW800，发现最大距离也就100米多点（有点树阻挡），并且都有几米的范围波动，距离到100米时差不多在80到120之间</p>
+<p>本来想着如果能有1km左右测距距离的话还可以试试用来做低功耗牛羊耳标，但现在这种距离跟精度感觉真没什么地方可以用</p>
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+      <li><a href="https://yplam.com/tags/embedded/">Embedded</a></li>
+      <li><a href="https://yplam.com/tags/mbed/">Mbed</a></li>
+    </ul>
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+        <span>&copy; 2025 <a href="https://yplam.com/">YPLAM</a></span> · 
+
+    <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+        CC BY-SA 4.0
+    </a>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>

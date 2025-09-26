@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>AWS TensorFlow 安装与测试 | YPLAM</title>
+<meta name="keywords" content="MachineLearning">
+<meta name="description" content="最近迷上了机器学习，花了不少时间学习相关的基础内容；虽然数学跟不上，也不妨碍跟风玩玩各位大牛的开源成果。
+本文记录了购买AWS GPU服务器，安装cuda、 TensorFlow，运行 Neural Style 测试的过程。">
+<meta name="author" content="">
+<link rel="canonical" href="https://yplam.com/posts/machinelearning/aws-cuda-tensorflow/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.8a2a5b863c538395920b4f077c6697be31878d530618647d78daca2883f21ff1.css" integrity="sha256-iipbhjxTg5WSC08HfGaXvjGHjVMGGGR9eNrKKIPyH/E=" rel="preload stylesheet" as="style">
+<link rel="icon" href="https://yplam.com/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://yplam.com/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://yplam.com/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://yplam.com/apple-touch-icon.png">
+<link rel="mask-icon" href="https://yplam.com/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="zh-cn" href="https://yplam.com/posts/machinelearning/aws-cuda-tensorflow/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --code-block-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript>
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-960JLZS3KY"></script>
+      <script>
+        var doNotTrack = false;
+        if ( false ) {
+          var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
+          var doNotTrack = (dnt == "1" || dnt == "yes");
+        }
+        if (!doNotTrack) {
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-960JLZS3KY');
+        }
+      </script><meta property="og:url" content="https://yplam.com/posts/machinelearning/aws-cuda-tensorflow/">
+  <meta property="og:site_name" content="YPLAM">
+  <meta property="og:title" content="AWS TensorFlow 安装与测试">
+  <meta property="og:description" content="最近迷上了机器学习，花了不少时间学习相关的基础内容；虽然数学跟不上，也不妨碍跟风玩玩各位大牛的开源成果。 本文记录了购买AWS GPU服务器，安装cuda、 TensorFlow，运行 Neural Style 测试的过程。">
+  <meta property="og:locale" content="zh-cn">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2016-12-12T00:00:00+00:00">
+    <meta property="article:modified_time" content="2016-12-12T00:00:00+00:00">
+    <meta property="article:tag" content="MachineLearning">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="AWS TensorFlow 安装与测试">
+<meta name="twitter:description" content="最近迷上了机器学习，花了不少时间学习相关的基础内容；虽然数学跟不上，也不妨碍跟风玩玩各位大牛的开源成果。
+本文记录了购买AWS GPU服务器，安装cuda、 TensorFlow，运行 Neural Style 测试的过程。">
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Posts",
+      "item": "https://yplam.com/posts/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "AWS TensorFlow 安装与测试",
+      "item": "https://yplam.com/posts/machinelearning/aws-cuda-tensorflow/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "AWS TensorFlow 安装与测试",
+  "name": "AWS TensorFlow 安装与测试",
+  "description": "最近迷上了机器学习，花了不少时间学习相关的基础内容；虽然数学跟不上，也不妨碍跟风玩玩各位大牛的开源成果。 本文记录了购买AWS GPU服务器，安装cuda、 TensorFlow，运行 Neural Style 测试的过程。\n",
+  "keywords": [
+    "MachineLearning"
+  ],
+  "articleBody": "最近迷上了机器学习，花了不少时间学习相关的基础内容；虽然数学跟不上，也不妨碍跟风玩玩各位大牛的开源成果。 本文记录了购买AWS GPU服务器，安装cuda、 TensorFlow，运行 Neural Style 测试的过程。\nupdate: 2018-05-17，本文内容可能已不适合，请参考末尾命令行日志做修改。\n购买AWS EC2 p2.xlarge 购买p2.xlarge实例（1 NVIDIA K80 GPU， 4核CPU，61G内存，$0.9/小时），空间需要10G以上，建议20G，因为nvidia与cuda包的安装都需要不少的空间（按下面的安装方法，使用的空间接近10G）。 选择 aws 提供的 ubuntu 16.04，跟需求配置安装。\n安装后建议设置一下locale，不然下面的步骤中可能会报错。\nexport LC_ALL=\"en_US.UTF-8\" export LC_CTYPE=\"en_US.UTF-8\" sudo dpkg-reconfigure locales 安装Nvidia显卡驱动 首先，检查一下服务器中是否真的存在Nvidia显卡：\n$ lspci | grep -i nvidia 直接使用ubuntu官方提供的Nvidia显卡驱动，目前版本是367：\napt-cache search nvidia sudo apt-get install nvidia-367 nvidia-modprobe 检测驱动是否正常安装：\nnvidia-smi 正常情况下会输出：\n+-----------------------------------------------------------------------------+ | NVIDIA-SMI 367.57 Driver Version: 367.57 | |-------------------------------+----------------------+----------------------+ | GPU Name Persistence-M| Bus-Id Disp.A | Volatile Uncorr. ECC | | Fan Temp Perf Pwr:Usage/Cap| Memory-Usage | GPU-Util Compute M. | |===============================+======================+======================| | 0 Tesla K80 Off | 0000:00:1E.0 Off | 0 | | N/A 29C P0 74W / 149W | 0MiB / 11439MiB | 99% Default | +-------------------------------+----------------------+----------------------+ +-----------------------------------------------------------------------------+ | Processes: GPU Memory | | GPU PID Type Process name Usage | |=============================================================================| | No running processes found | +-----------------------------------------------------------------------------+ 安装cuda cuDNN 到官网下载最新版本的cuda，以及对应的cudnn，安装：\nwget http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64/cuda-repo-ubuntu1604_8.0.44-1_amd64.deb sudo dpkg -i cuda-repo-ubuntu1604_8.0.44-1_amd64.deb sudo apt-get update sudo apt-get install cuda 下载与安装cuDNN（需要到官方注册登录后才能得到下载地址）\ntar xvzf cudnn-8.0-linux-x64-v5.1.tgz sudo cp -P cuda/include/cudnn.h /usr/local/cuda/include sudo cp -P cuda/lib64/libcudnn* /usr/local/cuda/lib64 sudo chmod a+r /usr/local/cuda/include/cudnn.h /usr/local/cuda/lib64/libcudnn* 安装TensorFlow sudo apt-get install python-pip python-dev sudo pip install --upgrade pip sudo pip install tensorflow-gpu 测试Neural Style sudo apt-get install libatlas-base-dev sudo pip install numpy scipy pillow git clone https://github.com/anishathalye/neural-style.git cd neural-style wget http://www.vlfeat.org/matconvnet/models/beta16/imagenet-vgg-verydeep-19.mat python neural_style.py --content examples/1-content.jpg --styles examples/1-style.jpg --output 1.jpg 完成。\n跑一次 Neural Style 大概需要7分钟。\n测试后记得讲实例停掉，然后制作image，留作下次测试用，讲运行中的实例删除，毕竟$0.9/小时也不便宜（image保存在EBS中，也会消耗小量的费用）。\n玩了一天5个小时，消耗4.5刀，虽然不算便宜，但相比动辄两三万的深度学习工作站，平时玩玩的话还算可以。\n成果：\nupdate: 2018-05-17,新版安装流程\nexport LC_ALL=\"en_US.UTF-8\" export LC_CTYPE=\"en_US.UTF-8\" sudo dpkg-reconfigure locales lspci | grep -i nvidia sudo apt-get update sudo apt-cache search nvidia wget http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64/cuda-repo-ubuntu1604_9.0.176-1_amd64.deb sudo dpkg -i cuda-repo-ubuntu1604_9.0.176-1_amd64.deb sudo apt-key adv --fetch-keys http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64/7fa2af80.pub sudo apt-get update sudo apt-get install cuda-9-0 wget \"https://developer.download.nvidia.com/compute/machine-learning/cudnn/secure/v7.0.5/prod/9.0_20171129/Ubuntu16_04-x64/libcudnn7_7.0.5.15-1%2Bcuda9.0_amd64.deb?*** dpkg -i libcudnn7_7.0.5.15-1+cuda9.0_amd64.deb sudo dpkg -i libcudnn7_7.0.5.15-1+cuda9.0_amd64.deb nvidia-smi sudo apt-get install python-pip python-dev sudo pip install --upgrade pip sudo pip install tensorflow-gpu sudo pip install scikit-image ",
+  "wordCount" : "283",
+  "inLanguage": "zh-cn",
+  "datePublished": "2016-12-12T00:00:00Z",
+  "dateModified": "2016-12-12T00:00:00Z",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://yplam.com/posts/machinelearning/aws-cuda-tensorflow/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "YPLAM",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://yplam.com/favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <div class="logo-switches">
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="https://yplam.com/" title="YPLAM">
+                    <span>HOME</span>
+
+                </a>
+            </li>
+            <li>
+                <a href="https://yplam.com/about/" title="关于YPLam">
+                    <span>ABOUT</span>
+
+                </a>
+            </li>
+            <li>
+                <a href="https://github.com/yplam" title="GITHUB">
+                    <span>GITHUB</span>
+
+                </a>
+            </li>
+            <li>
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title entry-hint-parent">
+      AWS TensorFlow 安装与测试
+    </h1>
+    <div class="post-meta"><span title='2016-12-12 00:00:00 +0000 UTC'>2016-12-12</span>
+
+</div>
+  </header> 
+  <div class="post-content"><p>最近迷上了机器学习，花了不少时间学习相关的基础内容；虽然数学跟不上，也不妨碍跟风玩玩各位大牛的开源成果。
+本文记录了购买AWS GPU服务器，安装cuda、 TensorFlow，运行 Neural Style 测试的过程。</p>
+<p>update: 2018-05-17，本文内容可能已不适合，请参考末尾命令行日志做修改。</p>
+<h3 id="购买aws-ec2-p2xlarge">购买AWS EC2 p2.xlarge<a hidden class="anchor" aria-hidden="true" href="#购买aws-ec2-p2xlarge">#</a></h3>
+<p>购买p2.xlarge实例（1 NVIDIA K80 GPU， 4核CPU，61G内存，$0.9/小时），空间需要10G以上，建议20G，因为nvidia与cuda包的安装都需要不少的空间（按下面的安装方法，使用的空间接近10G）。
+选择 aws 提供的 ubuntu 16.04，跟需求配置安装。</p>
+<p>安装后建议设置一下locale，不然下面的步骤中可能会报错。</p>
+<pre tabindex="0"><code>export LC_ALL=&#34;en_US.UTF-8&#34;
+export LC_CTYPE=&#34;en_US.UTF-8&#34;
+sudo dpkg-reconfigure locales
+</code></pre><h3 id="安装nvidia显卡驱动">安装Nvidia显卡驱动<a hidden class="anchor" aria-hidden="true" href="#安装nvidia显卡驱动">#</a></h3>
+<p>首先，检查一下服务器中是否真的存在Nvidia显卡：</p>
+<pre tabindex="0"><code>$ lspci | grep -i nvidia
+</code></pre><p>直接使用ubuntu官方提供的Nvidia显卡驱动，目前版本是367：</p>
+<pre tabindex="0"><code>apt-cache search nvidia
+sudo apt-get install nvidia-367 nvidia-modprobe
+</code></pre><p>检测驱动是否正常安装：</p>
+<pre tabindex="0"><code>nvidia-smi
+</code></pre><p>正常情况下会输出：</p>
+<pre tabindex="0"><code>
++-----------------------------------------------------------------------------+
+| NVIDIA-SMI 367.57                 Driver Version: 367.57                    |
+|-------------------------------+----------------------+----------------------+
+| GPU  Name        Persistence-M| Bus-Id        Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp  Perf  Pwr:Usage/Cap|         Memory-Usage | GPU-Util  Compute M. |
+|===============================+======================+======================|
+|   0  Tesla K80           Off  | 0000:00:1E.0     Off |                    0 |
+| N/A   29C    P0    74W / 149W |      0MiB / 11439MiB |     99%      Default |
++-------------------------------+----------------------+----------------------+
+                                                                               
++-----------------------------------------------------------------------------+
+| Processes:                                                       GPU Memory |
+|  GPU       PID  Type  Process name                               Usage      |
+|=============================================================================|
+|  No running processes found                                                 |
++-----------------------------------------------------------------------------+
+</code></pre><h3 id="安装cuda-cudnn">安装cuda cuDNN<a hidden class="anchor" aria-hidden="true" href="#安装cuda-cudnn">#</a></h3>
+<p>到<a href="https://developer.nvidia.com/cuda-downloads">官网</a>下载最新版本的cuda，以及对应的cudnn，安装：</p>
+<pre tabindex="0"><code>wget http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64/cuda-repo-ubuntu1604_8.0.44-1_amd64.deb
+
+sudo dpkg -i cuda-repo-ubuntu1604_8.0.44-1_amd64.deb
+sudo apt-get update
+sudo apt-get install cuda
+</code></pre><p>下载与安装cuDNN（需要到官方注册登录后才能得到下载地址）</p>
+<pre tabindex="0"><code>tar xvzf cudnn-8.0-linux-x64-v5.1.tgz
+sudo cp -P cuda/include/cudnn.h /usr/local/cuda/include
+sudo cp -P cuda/lib64/libcudnn* /usr/local/cuda/lib64
+sudo chmod a+r /usr/local/cuda/include/cudnn.h /usr/local/cuda/lib64/libcudnn*
+</code></pre><h3 id="安装tensorflow">安装TensorFlow<a hidden class="anchor" aria-hidden="true" href="#安装tensorflow">#</a></h3>
+<pre tabindex="0"><code>sudo apt-get install python-pip python-dev
+sudo pip install --upgrade pip
+
+sudo pip install tensorflow-gpu
+</code></pre><h3 id="测试neural-style">测试Neural Style<a hidden class="anchor" aria-hidden="true" href="#测试neural-style">#</a></h3>
+<pre tabindex="0"><code>sudo apt-get install libatlas-base-dev
+sudo pip install numpy scipy pillow
+
+git clone https://github.com/anishathalye/neural-style.git
+cd neural-style
+wget http://www.vlfeat.org/matconvnet/models/beta16/imagenet-vgg-verydeep-19.mat
+
+python neural_style.py --content examples/1-content.jpg --styles examples/1-style.jpg --output 1.jpg
+</code></pre><p>完成。</p>
+<p>跑一次 Neural Style 大概需要7分钟。</p>
+<p>测试后记得讲实例停掉，然后制作image，留作下次测试用，讲运行中的实例删除，毕竟$0.9/小时也不便宜（image保存在EBS中，也会消耗小量的费用）。</p>
+<p>玩了一天5个小时，消耗4.5刀，虽然不算便宜，但相比动辄两三万的深度学习工作站，平时玩玩的话还算可以。</p>
+<p>成果：</p>
+<p><img alt="input" loading="lazy" src="/assets/2016/in.jpeg" title="input"></p>
+<p><img alt="output" loading="lazy" src="/assets/2016/out.jpg" title="output"></p>
+<p>update: 2018-05-17,新版安装流程</p>
+<pre tabindex="0"><code>
+export LC_ALL=&#34;en_US.UTF-8&#34;
+export LC_CTYPE=&#34;en_US.UTF-8&#34;
+sudo dpkg-reconfigure locales
+lspci | grep -i nvidia
+sudo apt-get update
+sudo apt-cache search nvidia
+wget http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64/cuda-repo-ubuntu1604_9.0.176-1_amd64.deb
+sudo dpkg -i cuda-repo-ubuntu1604_9.0.176-1_amd64.deb 
+sudo apt-key adv --fetch-keys http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64/7fa2af80.pub
+sudo apt-get update
+sudo apt-get install cuda-9-0
+wget &#34;https://developer.download.nvidia.com/compute/machine-learning/cudnn/secure/v7.0.5/prod/9.0_20171129/Ubuntu16_04-x64/libcudnn7_7.0.5.15-1%2Bcuda9.0_amd64.deb?***
+dpkg -i libcudnn7_7.0.5.15-1+cuda9.0_amd64.deb 
+sudo dpkg -i libcudnn7_7.0.5.15-1+cuda9.0_amd64.deb 
+nvidia-smi
+sudo apt-get install python-pip python-dev
+sudo pip install --upgrade pip
+sudo pip install tensorflow-gpu
+sudo pip install scikit-image
+</code></pre>
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+      <li><a href="https://yplam.com/tags/machinelearning/">MachineLearning</a></li>
+    </ul>
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+        <span>&copy; 2025 <a href="https://yplam.com/">YPLAM</a></span> · 
+
+    <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+        CC BY-SA 4.0
+    </a>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>

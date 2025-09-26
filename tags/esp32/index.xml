@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
   <channel>
-    <title>Esp32 on YP.Lam</title>
+    <title>Esp32 on YPLAM</title>
     <link>https://yplam.com/tags/esp32/</link>
-    <description>Recent content in Esp32 on YP.Lam</description>
-    <generator>Hugo</generator>
+    <description>Recent content in Esp32 on YPLAM</description>
+    <generator>Hugo -- 0.148.2</generator>
     <language>zh-cn</language>
     <lastBuildDate>Sun, 02 Oct 2022 00:00:00 +0000</lastBuildDate>
     <atom:link href="https://yplam.com/tags/esp32/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>基于 Rust 实现 ESP32 HomeAssistant MQTT CO2 传感器</title>
-      <link>https://yplam.com/post/embedded/esp32-rust-mqtt-homeassistant/</link>
+      <link>https://yplam.com/posts/embedded/esp32-rust-mqtt-homeassistant/</link>
       <pubDate>Sun, 02 Oct 2022 00:00:00 +0000</pubDate>
-      <guid>https://yplam.com/post/embedded/esp32-rust-mqtt-homeassistant/</guid>
+      <guid>https://yplam.com/posts/embedded/esp32-rust-mqtt-homeassistant/</guid>
       <description>&lt;p&gt;最近发现 ESP32 相对于其他品牌单片机而言对 Rust 的支持还算完善，特别是对 std 的支持，使得很多对嵌入式而言相对高阶的库可以非常简单地使用。&lt;/p&gt;</description>
     </item>
   </channel>

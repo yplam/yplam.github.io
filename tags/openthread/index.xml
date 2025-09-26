@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
   <channel>
-    <title>OpenThread on YP.Lam</title>
+    <title>OpenThread on YPLAM</title>
     <link>https://yplam.com/tags/openthread/</link>
-    <description>Recent content in OpenThread on YP.Lam</description>
-    <generator>Hugo</generator>
+    <description>Recent content in OpenThread on YPLAM</description>
+    <generator>Hugo -- 0.148.2</generator>
     <language>zh-cn</language>
     <lastBuildDate>Sat, 27 Mar 2021 00:00:00 +0000</lastBuildDate>
     <atom:link href="https://yplam.com/tags/openthread/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>树莓派 OpenThread 边界路由器配置</title>
-      <link>https://yplam.com/post/embedded/raspberry-pi-openthread/</link>
+      <link>https://yplam.com/posts/embedded/raspberry-pi-openthread/</link>
       <pubDate>Sat, 27 Mar 2021 00:00:00 +0000</pubDate>
-      <guid>https://yplam.com/post/embedded/raspberry-pi-openthread/</guid>
+      <guid>https://yplam.com/posts/embedded/raspberry-pi-openthread/</guid>
       <description>&lt;p&gt;OpenThread 边界路由器的作用是作为 Thread 网络与其他基于IP的网络（如WIFI、以太网）的桥梁。有了边界路由器的存在才让 Thread 网络中的设备成了跟手机、电脑等对等的一员（是的，基于IP就是那么自信）。&lt;/p&gt;</description>
     </item>
   </channel>

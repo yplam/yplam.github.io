@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>Chromium 源码阅读：Could not decode image bug 跟踪 | YPLAM</title>
+<meta name="keywords" content="Chromium,, C&#43;&#43;">
+<meta name="description" content="偶尔有收到用户关于 &ldquo;Could not decode image: ***&rdquo; 的反馈，并且最近频率有增加的趋势，解开
+Theme 文件除了图片有点大以外看不出其他问题，所以决定花点时间跟踪一下 Chromium 源码。">
+<meta name="author" content="">
+<link rel="canonical" href="https://yplam.com/posts/chromium/chromium-image-decode-error/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.8a2a5b863c538395920b4f077c6697be31878d530618647d78daca2883f21ff1.css" integrity="sha256-iipbhjxTg5WSC08HfGaXvjGHjVMGGGR9eNrKKIPyH/E=" rel="preload stylesheet" as="style">
+<link rel="icon" href="https://yplam.com/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://yplam.com/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://yplam.com/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://yplam.com/apple-touch-icon.png">
+<link rel="mask-icon" href="https://yplam.com/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="zh-cn" href="https://yplam.com/posts/chromium/chromium-image-decode-error/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --code-block-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript>
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-960JLZS3KY"></script>
+      <script>
+        var doNotTrack = false;
+        if ( false ) {
+          var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
+          var doNotTrack = (dnt == "1" || dnt == "yes");
+        }
+        if (!doNotTrack) {
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-960JLZS3KY');
+        }
+      </script><meta property="og:url" content="https://yplam.com/posts/chromium/chromium-image-decode-error/">
+  <meta property="og:site_name" content="YPLAM">
+  <meta property="og:title" content="Chromium 源码阅读：Could not decode image bug 跟踪">
+  <meta property="og:description" content="偶尔有收到用户关于 “Could not decode image: ***” 的反馈，并且最近频率有增加的趋势，解开 Theme 文件除了图片有点大以外看不出其他问题，所以决定花点时间跟踪一下 Chromium 源码。">
+  <meta property="og:locale" content="zh-cn">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2019-04-06T00:00:00+00:00">
+    <meta property="article:modified_time" content="2019-04-06T00:00:00+00:00">
+    <meta property="article:tag" content="Chromium,">
+    <meta property="article:tag" content="C&#43;&#43;">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Chromium 源码阅读：Could not decode image bug 跟踪">
+<meta name="twitter:description" content="偶尔有收到用户关于 &ldquo;Could not decode image: ***&rdquo; 的反馈，并且最近频率有增加的趋势，解开
+Theme 文件除了图片有点大以外看不出其他问题，所以决定花点时间跟踪一下 Chromium 源码。">
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Posts",
+      "item": "https://yplam.com/posts/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "Chromium 源码阅读：Could not decode image bug 跟踪",
+      "item": "https://yplam.com/posts/chromium/chromium-image-decode-error/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Chromium 源码阅读：Could not decode image bug 跟踪",
+  "name": "Chromium 源码阅读：Could not decode image bug 跟踪",
+  "description": "偶尔有收到用户关于 \u0026ldquo;Could not decode image: ***\u0026rdquo; 的反馈，并且最近频率有增加的趋势，解开 Theme 文件除了图片有点大以外看不出其他问题，所以决定花点时间跟踪一下 Chromium 源码。\n",
+  "keywords": [
+    "Chromium,", "C++"
+  ],
+  "articleBody": "偶尔有收到用户关于 “Could not decode image: ***” 的反馈，并且最近频率有增加的趋势，解开 Theme 文件除了图片有点大以外看不出其他问题，所以决定花点时间跟踪一下 Chromium 源码。\n本来以为是一个非常简单的问题，只需要找到报错信息，然后打印 backtrace，再断点跟踪一下。然而由于 Chromium 多线程的特性，以及 crx 文件的安装是在 sandbox 中进行的，断点到出错信息，得到的是下面 的 backtrace：\n#0 0x0000555557b3e373 in extensions::SandboxedUnpacker::ImageSanitizationDone(std::__Cr::unique_ptr",
+  "wordCount" : "950",
+  "inLanguage": "zh-cn",
+  "datePublished": "2019-04-06T00:00:00Z",
+  "dateModified": "2019-04-06T00:00:00Z",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://yplam.com/posts/chromium/chromium-image-decode-error/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "YPLAM",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://yplam.com/favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <div class="logo-switches">
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="https://yplam.com/" title="YPLAM">
+                    <span>HOME</span>
+
+                </a>
+            </li>
+            <li>
+                <a href="https://yplam.com/about/" title="关于YPLam">
+                    <span>ABOUT</span>
+
+                </a>
+            </li>
+            <li>
+                <a href="https://github.com/yplam" title="GITHUB">
+                    <span>GITHUB</span>
+
+                </a>
+            </li>
+            <li>
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title entry-hint-parent">
+      Chromium 源码阅读：Could not decode image bug 跟踪
+    </h1>
+    <div class="post-meta"><span title='2019-04-06 00:00:00 +0000 UTC'>2019-04-06</span>
+
+</div>
+  </header> 
+  <div class="post-content"><p>偶尔有收到用户关于 &ldquo;Could not decode image: ***&rdquo; 的反馈，并且最近频率有增加的趋势，解开
+Theme 文件除了图片有点大以外看不出其他问题，所以决定花点时间跟踪一下 Chromium 源码。</p>
+<p>本来以为是一个非常简单的问题，只需要找到报错信息，然后打印 backtrace，再断点跟踪一下。然而由于
+Chromium 多线程的特性，以及 crx 文件的安装是在 sandbox 中进行的，断点到出错信息，得到的是下面
+的 backtrace：</p>
+<pre tabindex="0"><code>#0  0x0000555557b3e373 in extensions::SandboxedUnpacker::ImageSanitizationDone(std::__Cr::unique_ptr&lt;base::DictionaryValue, std::__Cr::default_delete&lt;base::DictionaryValue&gt; &gt;, extensions::ImageSanitizer::Status, base::FilePath const&amp;) (this=0x2f1d9794c020, manifest=..., status=extensions::ImageSanitizer::Status::kDecodingError, file_path_for_error=...) at ../../extensions/browser/sandboxed_unpacker.cc:548
+#1  0x0000555557b430f9 in base::internal::FunctorTraits&lt;void (extensions::SandboxedUnpacker::*)(std::__Cr::unique_ptr&lt;base::DictionaryValue, std::__Cr::default_delete&lt;base::DictionaryValue&gt; &gt;, extensions::ImageSanitizer::Status, base::FilePath const&amp;), void&gt;::Invoke&lt;void (extensions::SandboxedUnpacker::*)(std::__Cr::unique_ptr&lt;base::DictionaryValue, std::__Cr::default_delete&lt;base::DictionaryValue&gt; &gt;, extensions::ImageSanitizer::Status, base::FilePath const&amp;), scoped_refptr&lt;extensions::SandboxedUnpacker&gt;, std::__Cr::unique_ptr&lt;base::DictionaryValue, std::__Cr::default_delete&lt;base::DictionaryValue&gt; &gt;, extensions::ImageSanitizer::Status, base::FilePath const&amp;&gt;(void (extensions::SandboxedUnpacker::*)(std::__Cr::unique_ptr&lt;base::DictionaryValue, std::__Cr::default_delete&lt;base::DictionaryValue&gt; &gt;, extensions::ImageSanitizer::Status, base::FilePath const&amp;), scoped_refptr&lt;extensions::SandboxedUnpacker&gt;&amp;&amp;, std::__Cr::unique_ptr&lt;base::DictionaryValue, std::__Cr::default_delete&lt;base::DictionaryValue&gt; &gt;&amp;&amp;, extensions::ImageSanitizer::Status&amp;&amp;, base::FilePath const&amp;) (method=
+    (void (extensions::SandboxedUnpacker::*)(extensions::SandboxedUnpacker * const, std::__Cr::unique_ptr&lt;base::DictionaryValue, std::__Cr::default_delete&lt;base::DictionaryValue&gt; &gt;, extensions::ImageSanitizer::Status, const base::FilePath &amp;)) 0x555557b3e340 &lt;extensions::SandboxedUnpacker::ImageSanitizationDone(std::__Cr::unique_ptr&lt;base::DictionaryValue, std::__Cr::default_delete&lt;base::DictionaryValue&gt; &gt;, extensions::ImageSanitizer::Status, base::FilePath const&amp;)&gt;, receiver_ptr=..., args=..., args=@0x7fffbb8afb14: extensions::ImageSanitizer::Status::kDecodingError, args=...) at ../../base/bind_internal.h:499
+#2  0x0000555557b43020 in base::internal::InvokeHelper&lt;false, void&gt;::MakeItSo&lt;void (extensions::SandboxedUnpacker::*)(std::__Cr::unique_ptr&lt;base::DictionaryValue, std::__Cr::default_delete&lt;base::DictionaryValue&gt; &gt;, extensions::ImageSanitizer::Status, base::FilePath const&amp;), scoped_refptr&lt;extensions::SandboxedUnpacker&gt;, std::__Cr::unique_ptr&lt;base::DictionaryValue, std::__Cr::default_delete&lt;base::DictionaryValue&gt; &gt;, extensions::ImageSanitizer::Status, base::FilePath const&amp;&gt;(void (extensions::SandboxedUnpacker::*&amp;&amp;)(std::__Cr::unique_ptr&lt;base::DictionaryValue, std::__Cr::default_delete&lt;base::DictionaryValue&gt; &gt;, extensions::ImageSanitizer::Status, base::FilePath const&amp;), scoped_refptr&lt;extensions::SandboxedUnpacker&gt;&amp;&amp;, std::__Cr::unique_ptr&lt;base::DictionaryValue, std::__Cr::default_delete&lt;base::DictionaryValue&gt; &gt;&amp;&amp;, extensions::ImageSanitizer::Status&amp;&amp;, base::FilePath const&amp;) (functor=
+    @0x2f1d9880ebc0: (void (extensions::SandboxedUnpacker::*)(extensions::SandboxedUnpacker * const, std::__Cr::unique_ptr&lt;base::DictionaryValue, std::__Cr::default_delete&lt;base::DictionaryValue&gt; &gt;, extensions::ImageSanitizer::Status, const base::FilePath &amp;)) 0x555557b3e340 &lt;extensions::SandboxedUnpacker::ImageSanitizationDone(std::__Cr::unique_ptr&lt;base::DictionaryValue, std::__Cr::default_delete&lt;base::DictionaryValue&gt; &gt;, extensions::ImageSanitizer::Status, base::FilePath const&amp;)&gt;, args=..., args=..., args=@0x7fffbb8afb14: extensions::ImageSanitizer::Status::kDecodingError, args=...)
+    at ../../base/bind_internal.h:599
+#3  0x0000555557b42f7d in base::internal::Invoker&lt;base::internal::BindState&lt;void (extensions::SandboxedUnpacker::*)(std::__Cr::unique_ptr&lt;base::DictionaryValue, std::__Cr::default_delete&lt;base::DictionaryValue&gt; &gt;, extensions::ImageSanitizer::Status, base::FilePath const&amp;), scoped_refptr&lt;extensions::SandboxedUnpacker&gt;, std::__Cr::unique_ptr&lt;base::DictionaryValue, std::__Cr::default_delete&lt;base::DictionaryValue&gt; &gt; &gt;, void (extensions::ImageSanitizer::Status, base::FilePath const&amp;)&gt;::RunImpl&lt;void (extensions::SandboxedUnpacker::*)(std::__Cr::unique_ptr&lt;base::DictionaryValue, std::__Cr::default_delete&lt;base::DictionaryValue&gt; &gt;, extensions::ImageSanitizer::Status, base::FilePath const&amp;), std::__Cr::tuple&lt;scoped_refptr&lt;extensions::SandboxedUnpacker&gt;, std::__Cr::unique_ptr&lt;base::DictionaryValue, std::__Cr::default_delete&lt;base::DictionaryValue&gt; &gt; &gt;, 0ul, 1ul&gt;(void (extensions::SandboxedUnpacker::*&amp;&amp;)(std::__Cr::unique_ptr&lt;base::DictionaryValue, std::__Cr::default_delete&lt;base::DictionaryValue&gt; &gt;, extensions::ImageSanitizer::Status, base::FilePath const&amp;), std::__Cr::tuple&lt;scoped_refptr&lt;extensions::SandboxedUnpacker&gt;, std::__Cr::unique_ptr&lt;base::DictionaryValue, std::__Cr::default_delete&lt;base::DictionaryValue&gt; &gt; &gt;&amp;&amp;, std::__Cr::integer_sequence&lt;unsigned long, 0ul, 1ul&gt;, extensions::ImageSanitizer::Status&amp;&amp;, base::FilePath const&amp;) (functor=
+    @0x2f1d9880ebc0: (void (extensions::SandboxedUnpacker::*)(extensions::SandboxedUnpacker * const, std::__Cr::unique_ptr&lt;base::DictionaryValue, std::__Cr::default_delete&lt;base::DictionaryValue&gt; &gt;, extensions::ImageSanitizer::Status, const base::FilePath &amp;)) 0x555557b3e340 &lt;extensions::SandboxedUnpacker::ImageSanitizationDone(std::__Cr::unique_ptr&lt;base::DictionaryValue, std::__Cr::default_delete&lt;base::DictionaryValue&gt; &gt;, extensions::ImageSanitizer::Status, base::FilePath const&amp;)&gt;, bound=..., unbound_args=@0x7fffbb8afb14: extensions::ImageSanitizer::Status::kDecodingError, unbound_args=...)
+    at ../../base/bind_internal.h:672
+#4  0x0000555557b42e5d in base::internal::Invoker&lt;base::internal::BindState&lt;void (extensions::SandboxedUnpacker::*)(std::__Cr::unique_ptr&lt;base::DictionaryValue, std::__Cr::default_delete&lt;base::DictionaryValue&gt; &gt;, extensions::ImageSanitizer::Status, base::FilePath const&amp;), scoped_refptr&lt;extensions::SandboxedUnpacker&gt;, std::__Cr::unique_ptr&lt;base::DictionaryValue, std::__Cr::default_delete&lt;base::DictionaryValue&gt; &gt; &gt;, void (extensions::ImageSanitizer::Status, base::FilePath const&amp;)&gt;::RunOnce(base::internal::BindStateBase*, extensions::ImageSanitizer::Status, base::FilePath const&amp;)
+    (base=0x2f1d9880eba0, unbound_args=extensions::ImageSanitizer::Status::kDecodingError, unbound_args=...) at ../../base/bind_internal.h:641
+#5  0x0000555557345787 in base::OnceCallback&lt;void (unsigned int, std::__Cr::basic_string&lt;char, std::__Cr::char_traits&lt;char&gt;, std::__Cr::allocator&lt;char&gt; &gt; const&amp;)&gt;::Run(unsigned int, std::__Cr::basic_string&lt;char, std::__Cr::char_traits&lt;char&gt;, std::__Cr::allocator&lt;char&gt; &gt; const&amp;) &amp;&amp; (this=0x2f1d982f0418, args=4, args=...) at ../../base/callback.h:97
+#6  0x0000555557b11de2 in extensions::ImageSanitizer::ReportError(extensions::ImageSanitizer::Status, base::FilePath const&amp;)
+    (this=0x2f1d982f03e0, status=extensions::ImageSanitizer::Status::kDecodingError, path=...) at ../../extensions/browser/image_sanitizer.cc:219
+#7  0x0000555557b1203a in extensions::ImageSanitizer::ImageDecoded(base::FilePath const&amp;, SkBitmap const&amp;) (this=0x2f1d982f03e0, image_path=..., decoded_image=...)
+    at ../../extensions/browser/image_sanitizer.cc:157
+#8  0x0000555557326b0c in base::internal::FunctorTraits&lt;void (OAuth2TokenService::RequestImpl::*)(GoogleServiceAuthError const&amp;, OAuth2AccessTokenConsumer::TokenResponse const&amp;), void&gt;::Invoke&lt;void (OAuth2TokenService::RequestImpl::*)(GoogleServiceAuthError const&amp;, OAuth2AccessTokenConsumer::TokenResponse const&amp;), base::WeakPtr&lt;OAuth2TokenService::RequestImpl&gt;, GoogleServiceAuthError, OAuth2AccessTokenConsumer::TokenResponse&gt;(void (OAuth2TokenService::RequestImpl::*)(GoogleServiceAuthError const&amp;, OAuth2AccessTokenConsumer::TokenResponse const&amp;), base::WeakPtr&lt;OAuth2TokenService::RequestImpl&gt;&amp;&amp;, GoogleServiceAuthError&amp;&amp;, OAuth2AccessTokenConsumer::TokenResponse&amp;&amp;) (method=
+    (void (OAuth2TokenService::RequestImpl::*)(OAuth2TokenService::RequestImpl * const, const GoogleServiceAuthError &amp;, const OAuth2AccessTokenConsumer::TokenResponse &amp;)) 0x555557b11fe0 &lt;extensions::ImageSanitizer::ImageDecoded(base::FilePath const&amp;, SkBitmap const&amp;)&gt;, receiver_ptr=..., args=..., args=...) at ../../base/bind_internal.h:499
+</code></pre><p>除了知道报错是在 extensions::SandboxedUnpacker::ImageSanitizationDone 以外，其他都是一些
+复杂的函数指针。</p>
+<p>参考 Chromium 关于<a href="https://chromium.googlesource.com/chromium/src/&#43;/master/docs/threading_and_tasks.md">线程与任务</a>
+，<a href="https://chromium.googlesource.com/chromium/src/&#43;/master/docs/callback.md">回调</a>
+的文档。扩展安装属于发送到线程上的序列化任务，底层通过偏函数，并且由于使用 mojo，使得对调用流程的跟踪
+异常麻烦。</p>
+<p>最终只能通过阅读源码 + dump 的方式反推整个流程如下：</p>
+<ul>
+<li>DownloadItemImpl::OnDownloadCompleting 下载完成</li>
+<li>DownloadFileImpl::RenameAndAnnotate 重命名，然后回调</li>
+<li>DownloadItemImpl::OnDownloadRenamedToFinalName 下载完成并且完成重命名</li>
+<li>ChromeDownloadManagerDelegate::ShouldOpenDownload 检查到是 crx</li>
+<li>download_crx_util::OpenChromeExtension 打开 crx</li>
+<li>CrxInstaller::InstallCrx 安装 crx</li>
+<li>extensions::CrxInstaller::InstallCrxFile</li>
+<li>SandboxedUnpacker::StartWithCrx</li>
+<li>SandboxedUnpacker::Unzip</li>
+<li>SandboxedUnpacker::Unpack</li>
+<li>SandboxedUnpacker::ReadManifestDone</li>
+<li>ImageSanitizer::CreateAndStart</li>
+<li>ImageSanitizer::Start</li>
+<li>ImageSanitizer::ImageFileRead</li>
+<li>data_decoder::ImageDecoderImpl::DecodeImage</li>
+</ul>
+<p><strong>结果：</strong></p>
+<p>由于 extensions/browser/image_sanitizer.cc 中定义 const int kMaxImageCanvas = 4096 * 4096。
+并且该值限制了所有 extension 中图片的大小，当图片大小</p>
+<pre tabindex="0"><code>x*y*4+(skia::mojom::Bitmap::Data_) &gt; 4096 * 4096
+</code></pre><p>时就会报错，然而由于现在 2k 甚至 4k 显示器的使用越来越多，当其使用一张全屏图作为主题背景时就会超出
+此限制值。</p>
+<p>ps:跟 Chromium 的开发人员反馈了一下，然而对方认为只是简单的增大 kMaxImageCanvas 并不合适，可能
+需要分场景考虑，所以估计此问题短时间内不会解决。</p>
+<p><strong>技巧：</strong></p>
+<p>因为 Chromium 源码分层比较清晰，查找调用时只在模块内部查找可以提高效率。</p>
+<p>如果源码中有调用 mojo 定义的服务，可以先查看 mojo 定义文件如：services/data_decoder/public/mojom/image_decoder.mojom
+然后查看生成的接口定义 gen/services/data_decoder/public/mojom/image_decoder.mojom.h，
+然后查找 include 了 image_decoder.mojom.h 的文件，一般可以找到该 mojo 服务的实现。</p>
+<p>##一些 backtrace</p>
+<p>由于 Chromium 多线程特性，在 gdb 中跟踪流程变得比较困难，下面是一些断点的 backtrace。</p>
+<p><strong>extensions::CrxInstaller::InstallCrxFile</strong></p>
+<pre tabindex="0"><code>#0  0x000055555a367bcd in extensions::CrxInstaller::InstallCrxFile(extensions::CRXFileInfo const&amp;) (this=0x164ebed6d5a0, source_file=...) at ../../chrome/browser/extensions/crx_installer.cc:180
+#1  0x000055555a367b6a in extensions::CrxInstaller::InstallCrx(base::FilePath const&amp;) (this=0x164ebed6d5a0, source_file=...) at ../../chrome/browser/extensions/crx_installer.cc:176
+#2  0x00005555590ae5f6 in download_crx_util::OpenChromeExtension(Profile*, download::DownloadItem const&amp;) (profile=0x164ebcaae020, download_item=...)
+    at ../../chrome/browser/download/download_crx_util.cc:117
+#3  0x0000555558d483ba in ChromeDownloadManagerDelegate::ShouldOpenDownload(download::DownloadItem*, base::RepeatingCallback&lt;void (bool)&gt; const&amp;) (this=0x164ebf98cde0, item=0x164ebecf3e20, callback=...)
+    at ../../chrome/browser/download/chrome_download_manager_delegate.cc:561
+#4  0x00007ffff2c33102 in content::DownloadManagerImpl::ShouldOpenDownload(download::DownloadItemImpl*, base::RepeatingCallback&lt;void (bool)&gt; const&amp;) (this=0x164ebcafc020, item=0x164ebecf3e20, callback=...)
+    at ../../content/browser/download/download_manager_impl.cc:468
+#5  0x00007fffea0adad7 in download::DownloadItemImpl::OnDownloadRenamedToFinalName(download::DownloadInterruptReason, base::FilePath const&amp;)
+    (this=0x164ebecf3e20, reason=download::DOWNLOAD_INTERRUPT_REASON_NONE, full_path=...) at ../../components/download/internal/common/download_item_impl.cc:1788
+#6  0x00007fffea0b9b8c in base::internal::FunctorTraits&lt;void (download::DownloadItemImpl::*)(download::DownloadInterruptReason, base::FilePath const&amp;), void&gt;::Invoke&lt;void (download::DownloadItemImpl::*)(download::DownloadInterruptReason, base::FilePath const&amp;), base::WeakPtr&lt;download::DownloadItemImpl&gt; const&amp;, download::DownloadInterruptReason, base::FilePath const&amp;&gt;(void (download::DownloadItemImpl::*)(download::DownloadInterruptReason, base::FilePath const&amp;), base::WeakPtr&lt;download::DownloadItemImpl&gt; const&amp;, download::DownloadInterruptReason&amp;&amp;, base::FilePath const&amp;) (method=
+    (void (download::DownloadItemImpl::*)(download::DownloadItemImpl * const, download::DownloadInterruptReason, const base::FilePath &amp;)) 0x7fffea0ad520 &lt;download::DownloadItemImpl::OnDownloadRenamedToFinalName(download::DownloadInterruptReason, base::FilePath const&amp;)&gt;, receiver_ptr=..., args=@0x7fffffffb574: download::DOWNLOAD_INTERRUPT_REASON_NONE, args=...) at ../../base/bind_internal.h:499
+#7  0x00007fffea0b9ad4 in base::internal::InvokeHelper&lt;true, void&gt;::MakeItSo&lt;void (download::DownloadItemImpl::* const&amp;)(download::DownloadInterruptReason, base::FilePath const&amp;), base::WeakPtr&lt;download::DownloadItemImpl&gt; const&amp;, download::DownloadInterruptReason, base::FilePath const&amp;&gt;(void (download::DownloadItemImpl::* const&amp;)(download::DownloadInterruptReason, base::FilePath const&amp;), base::WeakPtr&lt;download::DownloadItemImpl&gt; const&amp;, download::DownloadInterruptReason&amp;&amp;, base::FilePath const&amp;) (functor=
+    @0x164ec0be71c0: (void (download::DownloadItemImpl::*)(download::DownloadItemImpl * const, download::DownloadInterruptReason, const base::FilePath &amp;)) 0x7fffea0ad520 &lt;download::DownloadItemImpl::OnDownloadRenamedToFinalName(download::DownloadInterruptReason, base::FilePath const&amp;)&gt;, weak_ptr=..., args=@0x7fffffffb574: download::DOWNLOAD_INTERRUPT_REASON_NONE, args=...) at ../../base/bind_internal.h:619
+#8  0x00007fffea0b9a2c in base::internal::Invoker&lt;base::internal::BindState&lt;void (download::DownloadItemImpl::*)(download::DownloadInterruptReason, base::FilePath const&amp;), base::WeakPtr&lt;download::DownloadItemImpl&gt; &gt;, void (download::DownloadInterruptReason, base::FilePath const&amp;)&gt;::RunImpl&lt;void (download::DownloadItemImpl::* const&amp;)(download::DownloadInterruptReason, base::FilePath const&amp;), std::__Cr::tuple&lt;base::WeakPtr&lt;download::DownloadItemImpl&gt; &gt; const&amp;, 0ul&gt;(void (download::DownloadItemImpl::* const&amp;)(download::DownloadInterruptReason, base::FilePath const&amp;), std::__Cr::tuple&lt;base::WeakPtr&lt;download::DownloadItemImpl&gt; &gt; const&amp;, std::__Cr::integer_sequence&lt;unsigned long, 0ul&gt;, download::DownloadInterruptReason&amp;&amp;, base::FilePath const&amp;) (functor=
+    @0x164ec0be71c0: (void (download::DownloadItemImpl::*)(download::DownloadItemImpl * const, download::DownloadInterruptReason, const base::FilePath &amp;)) 0x7fffea0ad520 &lt;download::DownloadItemImpl::OnDownloadRenamedToFinalName(download::DownloadInterruptReason, base::FilePath const&amp;)&gt;, bound=..., unbound_args=@0x7fffffffb574: download::DOWNLOAD_INTERRUPT_REASON_NONE, unbound_args=...)
+    at ../../base/bind_internal.h:672
+</code></pre><p><strong>extensions::SandboxedUnpacker::ReadManifestDone</strong></p>
+<pre tabindex="0"><code>#0  0x0000555557b3d20d in extensions::SandboxedUnpacker::ReadManifestDone(base::Optional&lt;base::Value&gt;, base::Optional&lt;std::__Cr::basic_string&lt;char, std::__Cr::char_traits&lt;char&gt;, std::__Cr::allocator&lt;char&gt; &gt; &gt; const&amp;) (this=0x29624dac2820, manifest=..., error=...) at ../../extensions/browser/sandboxed_unpacker.cc:437
+#1  0x0000555557b429b7 in base::internal::FunctorTraits&lt;void (extensions::SandboxedUnpacker::*)(base::Optional&lt;base::Value&gt;, base::Optional&lt;std::__Cr::basic_string&lt;char, std::__Cr::char_traits&lt;char&gt;, std::__Cr::allocator&lt;char&gt; &gt; &gt; const&amp;), void&gt;::Invoke&lt;void (extensions::SandboxedUnpacker::*)(base::Optional&lt;base::Value&gt;, base::Optional&lt;std::__Cr::basic_string&lt;char, std::__Cr::char_traits&lt;char&gt;, std::__Cr::allocator&lt;char&gt; &gt; &gt; const&amp;), scoped_refptr&lt;extensions::SandboxedUnpacker&gt;, base::Optional&lt;base::Value&gt;, base::Optional&lt;std::__Cr::basic_string&lt;char, std::__Cr::char_traits&lt;char&gt;, std::__Cr::allocator&lt;char&gt; &gt; &gt; const&amp;&gt;(void (extensions::SandboxedUnpacker::*)(base::Optional&lt;base::Value&gt;, base::Optional&lt;std::__Cr::basic_string&lt;char, std::__Cr::char_traits&lt;char&gt;, std::__Cr::allocator&lt;char&gt; &gt; &gt; const&amp;), scoped_refptr&lt;extensions::SandboxedUnpacker&gt;&amp;&amp;, base::Optional&lt;base::Value&gt;&amp;&amp;, base::Optional&lt;std::__Cr::basic_string&lt;char, std::__Cr::char_traits&lt;char&gt;, std::__Cr::allocator&lt;char&gt; &gt; &gt; const&amp;) (method=
+    (void (extensions::SandboxedUnpacker::*)(extensions::SandboxedUnpacker * const, base::Optional&lt;base::Value&gt;, const base::Optional&lt;std::__Cr::basic_string&lt;char&gt; &gt; &amp;)) 0x555557b3d1e0 &lt;extensions::SandboxedUnpacker::ReadManifestDone(base::Optional&lt;base::Value&gt;, base::Optional&lt;std::__Cr::basic_string&lt;char, std::__Cr::char_traits&lt;char&gt;, std::__Cr::allocator&lt;char&gt; &gt; &gt; const&amp;)&gt;, receiver_ptr=..., args=..., args=...) at ../../base/bind_internal.h:499
+#2  0x0000555557b428eb in base::internal::InvokeHelper&lt;false, void&gt;::MakeItSo&lt;void (extensions::SandboxedUnpacker::*)(base::Optional&lt;base::Value&gt;, base::Optional&lt;std::__Cr::basic_string&lt;char, std::__Cr::char_traits&lt;char&gt;, std::__Cr::allocator&lt;char&gt; &gt; &gt; const&amp;), scoped_refptr&lt;extensions::SandboxedUnpacker&gt;, base::Optional&lt;base::Value&gt;, base::Optional&lt;std::__Cr::basic_string&lt;char, std::__Cr::char_traits&lt;char&gt;, std::__Cr::allocator&lt;char&gt; &gt; &gt; const&amp;&gt;(void (extensions::SandboxedUnpacker::*&amp;&amp;)(base::Optional&lt;base::Value&gt;, base::Optional&lt;std::__Cr::basic_string&lt;char, std::__Cr::char_traits&lt;char&gt;, std::__Cr::allocator&lt;char&gt; &gt; &gt; const&amp;), scoped_refptr&lt;extensions::SandboxedUnpacker&gt;&amp;&amp;, base::Optional&lt;base::Value&gt;&amp;&amp;, base::Optional&lt;std::__Cr::basic_string&lt;char, std::__Cr::char_traits&lt;char&gt;, std::__Cr::allocator&lt;char&gt; &gt; &gt; const&amp;) (functor=
+    @0x29624e775dd0: (void (extensions::SandboxedUnpacker::*)(extensions::SandboxedUnpacker * const, base::Optional&lt;base::Value&gt;, const base::Optional&lt;std::__Cr::basic_string&lt;char&gt; &gt; &amp;)) 0x555557b3d1e0 &lt;extensions::SandboxedUnpacker::ReadManifestDone(base::Optional&lt;base::Value&gt;, base::Optional&lt;std::__Cr::basic_string&lt;char, std::__Cr::char_traits&lt;char&gt;, std::__Cr::allocator&lt;char&gt; &gt; &gt; const&amp;)&gt;, args=..., args=..., args=...) at ../../base/bind_internal.h:599
+#3  0x0000555557b4285c in base::internal::Invoker&lt;base::internal::BindState&lt;void (extensions::SandboxedUnpacker::*)(base::Optional&lt;base::Value&gt;, base::Optional&lt;std::__Cr::basic_string&lt;char, std::__Cr::char_traits&lt;char&gt;, std::__Cr::allocator&lt;char&gt; &gt; &gt; const&amp;), scoped_refptr&lt;extensions::SandboxedUnpacker&gt; &gt;, void (base::Optional&lt;base::Value&gt;, base::Optional&lt;std::__Cr::basic_string&lt;char, std::__Cr::char_traits&lt;char&gt;, std::__Cr::allocator&lt;char&gt; &gt; &gt; const&amp;)&gt;::RunImpl&lt;void (extensions::SandboxedUnpacker::*)(base::Optional&lt;base::Value&gt;, base::Optional&lt;std::__Cr::basic_string&lt;char, std::__Cr::char_traits&lt;char&gt;, std::__Cr::allocator&lt;char&gt; &gt; &gt; const&amp;), std::__Cr::tuple&lt;scoped_refptr&lt;extensions::SandboxedUnpacker&gt; &gt;, 0ul&gt;(void (extensions::SandboxedUnpacker::*&amp;&amp;)(base::Optional&lt;base::Value&gt;, base::Optional&lt;std::__Cr::basic_string&lt;char, std::__Cr::char_traits&lt;char&gt;, std::__Cr::allocator&lt;char&gt; &gt; &gt; const&amp;), std::__Cr::tuple&lt;scoped_refptr&lt;extensions::SandboxedUnpacker&gt; &gt;&amp;&amp;, std::__Cr::integer_sequence&lt;unsigned long, 0ul&gt;, base::Optional&lt;base::Value&gt;&amp;&amp;, base::Optional&lt;std::__Cr::basic_string&lt;char, std::__Cr::char_traits&lt;char&gt;, std::__Cr::allocator&lt;char&gt; &gt; &gt; const&amp;) (functor=
+    @0x29624e775dd0: (void (extensions::SandboxedUnpacker::*)(extensions::SandboxedUnpacker * const, base::Optional&lt;base::Value&gt;, const base::Optional&lt;std::__Cr::basic_string&lt;char&gt; &gt; &amp;)) 0x555557b3d1e0 &lt;extensions::SandboxedUnpacker::ReadManifestDone(base::Optional&lt;base::Value&gt;, base::Optional&lt;std::__Cr::basic_string&lt;char, std::__Cr::char_traits&lt;char&gt;, std::__Cr::allocator&lt;char&gt; &gt; &gt; const&amp;)&gt;, bound=..., unbound_args=..., unbound_args=...) at ../../base/bind_internal.h:672
+#4  0x0000555557b427de in base::internal::Invoker&lt;base::internal::BindState&lt;void (extensions::SandboxedUnpacker::*)(base::Optional&lt;base::Value&gt;, base::Optional&lt;std::__Cr::basic_string&lt;char, std::__Cr::char_traits&lt;char&gt;, std::__Cr::allocator&lt;char&gt; &gt; &gt; const&amp;), scoped_refptr&lt;extensions::SandboxedUnpacker&gt; &gt;, void (base::Optional&lt;base::Value&gt;, base::Optional&lt;std::__Cr::basic_string&lt;char, std::__Cr::char_traits&lt;char&gt;, std::__Cr::allocator&lt;char&gt; &gt; &gt; const&amp;)&gt;::RunOnce(base::internal::BindStateBase*, base::Optional&lt;base::Value&gt;&amp;&amp;, base::Optional&lt;std::__Cr::basic_string&lt;char, std::__Cr::char_traits&lt;char&gt;, std::__Cr::allocator&lt;char&gt; &gt; &gt; const&amp;) (base=0x29624e775db0, unbound_args=..., unbound_args=...) at ../../base/bind_internal.h:641
+#5  0x0000555557758b38 in base::OnceCallback&lt;void (mojo::InlinedStructPtr&lt;media::mojom::CdmPromiseResult&gt;, std::__Cr::basic_string&lt;char, std::__Cr::char_traits&lt;char&gt;, std::__Cr::allocator&lt;char&gt; &gt; const&amp;)&gt;::Run(mojo::InlinedStructPtr&lt;media::mojom::CdmPromiseResult&gt;, std::__Cr::basic_string&lt;char, std::__Cr::char_traits&lt;char&gt;, std::__Cr::allocator&lt;char&gt; &gt; const&amp;) &amp;&amp; (this=0x29624ea9d348, args=..., args=...)
+    at ../../base/callback.h:97
+#6  0x0000555557b9a041 in data_decoder::mojom::JsonParser_Parse_ForwardToCallback::Accept(mojo::Message*) (this=0x29624ea9d340, message=0x7fffbb0af7d0)
+    at gen/services/data_decoder/public/mojom/json_parser.mojom.cc:194
+#7  0x00007ffff7b7fb9d in mojo::InterfaceEndpointClient::HandleValidatedMessage(mojo::Message*) (this=0x29624f2fe560, message=0x7fffbb0af7d0)
+    at ../../mojo/public/cpp/bindings/lib/interface_endpoint_client.cc:428
+#8  0x00007ffff7b7f631 in mojo::InterfaceEndpointClient::HandleIncomingMessageThunk::Accept(mojo::Message*) (this=0x29624f2fe590, message=0x7fffbb0af7d0)
+    at ../../mojo/public/cpp/bindings/lib/interface_endpoint_client.cc:133
+#9  0x00007ffff7b7e39b in mojo::FilterChain::Accept(mojo::Message*) (this=0x29624f2fe5a0, message=0x7fffbb0af7d0) at ../../mojo/public/cpp/bindings/lib/filter_chain.cc:40
+</code></pre>
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+      <li><a href="https://yplam.com/tags/chromium/">Chromium,</a></li>
+      <li><a href="https://yplam.com/tags/c&#43;&#43;/">C&#43;&#43;</a></li>
+    </ul>
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+        <span>&copy; 2025 <a href="https://yplam.com/">YPLAM</a></span> · 
+
+    <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+        CC BY-SA 4.0
+    </a>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>

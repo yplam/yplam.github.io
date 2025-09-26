@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>Configuring 6lbr for Ubuntu and SensorTag CC2650 | YPLAM</title>
+<meta name="keywords" content="Embedded">
+<meta name="description" content="This post show you how to configure Ubuntu as 6LoWPAN router and bridge 6LoWPAN devices to the IPv4/IPv6 Internet.">
+<meta name="author" content="">
+<link rel="canonical" href="https://yplam.com/posts/embedded/configuring-6lbr-ubuntu-sensortag-cc2650/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.8a2a5b863c538395920b4f077c6697be31878d530618647d78daca2883f21ff1.css" integrity="sha256-iipbhjxTg5WSC08HfGaXvjGHjVMGGGR9eNrKKIPyH/E=" rel="preload stylesheet" as="style">
+<link rel="icon" href="https://yplam.com/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://yplam.com/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://yplam.com/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://yplam.com/apple-touch-icon.png">
+<link rel="mask-icon" href="https://yplam.com/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="zh-cn" href="https://yplam.com/posts/embedded/configuring-6lbr-ubuntu-sensortag-cc2650/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --code-block-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript>
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-960JLZS3KY"></script>
+      <script>
+        var doNotTrack = false;
+        if ( false ) {
+          var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
+          var doNotTrack = (dnt == "1" || dnt == "yes");
+        }
+        if (!doNotTrack) {
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-960JLZS3KY');
+        }
+      </script><meta property="og:url" content="https://yplam.com/posts/embedded/configuring-6lbr-ubuntu-sensortag-cc2650/">
+  <meta property="og:site_name" content="YPLAM">
+  <meta property="og:title" content="Configuring 6lbr for Ubuntu and SensorTag CC2650">
+  <meta property="og:description" content="This post show you how to configure Ubuntu as 6LoWPAN router and bridge 6LoWPAN devices to the IPv4/IPv6 Internet.">
+  <meta property="og:locale" content="zh-cn">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2016-02-23T00:00:00+00:00">
+    <meta property="article:modified_time" content="2016-02-23T00:00:00+00:00">
+    <meta property="article:tag" content="Embedded">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Configuring 6lbr for Ubuntu and SensorTag CC2650">
+<meta name="twitter:description" content="This post show you how to configure Ubuntu as 6LoWPAN router and bridge 6LoWPAN devices to the IPv4/IPv6 Internet.">
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Posts",
+      "item": "https://yplam.com/posts/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "Configuring 6lbr for Ubuntu and SensorTag CC2650",
+      "item": "https://yplam.com/posts/embedded/configuring-6lbr-ubuntu-sensortag-cc2650/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Configuring 6lbr for Ubuntu and SensorTag CC2650",
+  "name": "Configuring 6lbr for Ubuntu and SensorTag CC2650",
+  "description": "This post show you how to configure Ubuntu as 6LoWPAN router and bridge 6LoWPAN devices to the IPv4/IPv6 Internet.\n",
+  "keywords": [
+    "Embedded"
+  ],
+  "articleBody": "This post show you how to configure Ubuntu as 6LoWPAN router and bridge 6LoWPAN devices to the IPv4/IPv6 Internet.\nSlip-radio\nBecause I do not have a CC2531 Dongle around, I use a SensorTag CC2650 with DevPack as Slip-radio.\nFirst, change dir to contiki/examples/ipv6/slip-radio, run command:\nmake TARGET=srf06-cc26xx BOARD=sensortag/cc2650 Then flash slip-radio.bin to SensorTag using uniflash.\nYou need to validate that slip radio is running:\nsudo minicom -s Config minicom to use /dev/ttyACM0 with 115200 8N1. Your will see message like this after resetting SensorTag:\nStarting Contiki-3.x-2102-g9f1376d With DriverLib v0.44336 TI CC2650 SensorTag Net: slipnet MAC: nullmac RDC: ContikiMAC, Channel Check Interval: 16 ticks RF: Channel 25 Slip Radio started... 1) Edge Router\nFollow the instructions on the following link to compile and install the 6lbr router: https://github.com/cetic/6lbr/wiki/Other-Linux-Software-Configuration\nEdit /etc/6lbr/6lbr.conf as follow:\nMODE=ROUTER RAW_ETH=0 DEV_TAP=tap0 BRIDGE=1 CREATE_BRIDGE=6LBR DEV_BRIDGE=eth0 ETH_JOIN_BRIDGE=0 DEV_RADIO=/dev/ttyACM0 BAUDRATE=115200 More about configure options: https://github.com/cetic/6lbr/wiki/6LBR-Configuration-file\nStart 6lbr:\nsudo service 6lbr start Config 6LBR to access WSN network:\nsudo route -A inet6 add aaaa::/64 gw bbbb::100 Now open http://[bbbb::100] in your browser and you can access the embedded web server.\n2) Use Smart Bridge to access localhost MQTT Server\nEdit /etc/6lbr/6lbr.conf as follow:\nMODE=ROUTER RAW_ETH=0 DEV_TAP=tap0 BRIDGE=1 CREATE_BRIDGE=6LBR DEV_BRIDGE=eth0 ETH_JOIN_BRIDGE=0 DEV_RADIO=/dev/ttyACM0 BAUDRATE=115200 Add /etc/6lbr/ifup.d/60dev\n#!/bin/bash . $CETIC_6LBR_CONF . $1/6lbr-functions config_default MODE_6LBR=$2 DEV=$3 OS=`uname` ip -6 address add 2001:db8:2::2/64 dev tap0 sysctl -w net.ipv4.conf.all.forwarding=1 sysctl -w net.ipv6.conf.all.forwarding=1 Add /etc/6lbr/ifdown.d/60dev\n#!/bin/bash . $CETIC_6LBR_CONF . $1/6lbr-functions config_default MODE_6LBR=$2 DEV=$3 OS=`uname` sysctl -w net.ipv4.conf.all.forwarding=0 sysctl -w net.ipv6.conf.all.forwarding=0 You alse need to run:\nchmod +x /etc/6lbr/ifup.d/60dev chmod +x /etc/6lbr/ifdown.d/60dev Install and configure radvd:\ninterface tap0 { AdvSendAdvert on; AdvManagedFlag off; #stateless autoconfiguration AdvOtherConfigFlag on; #clients get extra parameters via DHCPv6 MaxRtrAdvInterval 10; #resend RA @ random times, max 10sec delay prefix 2001:db8:2::/64 #announce prefix to clients { AdvOnLink on; AdvAutonomous on; AdvRouterAddr on; }; RDNSS 2001:db8:2::2 { }; }; Start 6lbr and radvd, you can access router machine var 2001:db8:2::2 from a WSN node. And your WSN node will get an ipv6 address like 2001:db8:2:::::**** from radvd.\n3) MQTT over IPV4 WAN\nI only have IPV4 WAN access, and have a mosquitto server running on my Linode server. So I need a NAT64 tool to bridge ipv6 to ipv4 network.\nAfter trying jool with no luck, I decided to use 6tunnel to forward ipv6 traffic.\nsudo apt-get install 6tunnel 6tunnel -6 1883 your.mqtt.server.ip 1883 That’s all!\nSee also:\nhttp://processors.wiki.ti.com/index.php/Contiki-6LOWPAN-BBB\n",
+  "wordCount" : "393",
+  "inLanguage": "zh-cn",
+  "datePublished": "2016-02-23T00:00:00Z",
+  "dateModified": "2016-02-23T00:00:00Z",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://yplam.com/posts/embedded/configuring-6lbr-ubuntu-sensortag-cc2650/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "YPLAM",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://yplam.com/favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <div class="logo-switches">
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="https://yplam.com/" title="YPLAM">
+                    <span>HOME</span>
+
+                </a>
+            </li>
+            <li>
+                <a href="https://yplam.com/about/" title="关于YPLam">
+                    <span>ABOUT</span>
+
+                </a>
+            </li>
+            <li>
+                <a href="https://github.com/yplam" title="GITHUB">
+                    <span>GITHUB</span>
+
+                </a>
+            </li>
+            <li>
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title entry-hint-parent">
+      Configuring 6lbr for Ubuntu and SensorTag CC2650
+    </h1>
+    <div class="post-meta"><span title='2016-02-23 00:00:00 +0000 UTC'>2016-02-23</span>
+
+</div>
+  </header> 
+  <div class="post-content"><p>This post show you how to configure Ubuntu as 6LoWPAN router and bridge 6LoWPAN devices to the IPv4/IPv6 Internet.</p>
+<p><strong>Slip-radio</strong></p>
+<p>Because I do not have a CC2531 Dongle around, I use a SensorTag CC2650 with DevPack as Slip-radio.</p>
+<p>First, change dir to contiki/examples/ipv6/slip-radio, run command:</p>
+<pre tabindex="0"><code>make TARGET=srf06-cc26xx BOARD=sensortag/cc2650
+</code></pre><p>Then flash slip-radio.bin to SensorTag using uniflash.</p>
+<p>You need to validate that slip radio is running:</p>
+<pre tabindex="0"><code>sudo minicom -s
+</code></pre><p>Config minicom to use /dev/ttyACM0 with 115200 8N1. Your will see message like this after resetting SensorTag:</p>
+<pre tabindex="0"><code>Starting Contiki-3.x-2102-g9f1376d
+With DriverLib v0.44336                                                   
+TI CC2650 SensorTag                                                       
+ Net: slipnet                                                                
+ MAC: nullmac                                                                
+ RDC: ContikiMAC, Channel Check Interval: 16 ticks                           
+ RF: Channel 25                                                              
+Slip Radio started...
+</code></pre><p><strong>1) Edge Router</strong></p>
+<p>Follow the instructions on the following link to compile and install the 6lbr router: <a href="https://github.com/cetic/6lbr/wiki/Other-Linux-Software-Configuration">https://github.com/cetic/6lbr/wiki/Other-Linux-Software-Configuration</a></p>
+<p>Edit /etc/6lbr/6lbr.conf as follow:</p>
+<pre tabindex="0"><code>MODE=ROUTER
+RAW_ETH=0
+DEV_TAP=tap0
+
+BRIDGE=1
+CREATE_BRIDGE=6LBR
+DEV_BRIDGE=eth0
+ETH_JOIN_BRIDGE=0
+
+DEV_RADIO=/dev/ttyACM0
+BAUDRATE=115200
+</code></pre><p>More about configure options: <a href="https://github.com/cetic/6lbr/wiki/6LBR-Configuration-file">https://github.com/cetic/6lbr/wiki/6LBR-Configuration-file</a></p>
+<p>Start 6lbr:</p>
+<pre tabindex="0"><code>sudo service 6lbr start
+</code></pre><p>Config 6LBR to access WSN network:</p>
+<pre tabindex="0"><code>sudo route -A inet6 add aaaa::/64 gw bbbb::100
+</code></pre><p>Now open <a href="http://[bbbb::100]/">http://[bbbb::100]</a> in your browser and you can access the embedded web server.</p>
+<p><strong>2) Use Smart Bridge to access localhost MQTT Server</strong></p>
+<p>Edit /etc/6lbr/6lbr.conf as follow:</p>
+<pre tabindex="0"><code>MODE=ROUTER
+RAW_ETH=0
+DEV_TAP=tap0
+
+BRIDGE=1
+CREATE_BRIDGE=6LBR
+DEV_BRIDGE=eth0
+ETH_JOIN_BRIDGE=0
+
+DEV_RADIO=/dev/ttyACM0
+BAUDRATE=115200
+</code></pre><p>Add /etc/6lbr/ifup.d/60dev</p>
+<pre tabindex="0"><code>#!/bin/bash
+. $CETIC_6LBR_CONF
+. $1/6lbr-functions
+config_default
+MODE_6LBR=$2
+DEV=$3
+OS=`uname`
+
+ip -6 address add 2001:db8:2::2/64 dev tap0
+sysctl -w net.ipv4.conf.all.forwarding=1
+sysctl -w net.ipv6.conf.all.forwarding=1
+</code></pre><p>Add /etc/6lbr/ifdown.d/60dev</p>
+<pre tabindex="0"><code>#!/bin/bash
+. $CETIC_6LBR_CONF
+. $1/6lbr-functions
+config_default
+MODE_6LBR=$2
+DEV=$3
+OS=`uname`
+sysctl -w net.ipv4.conf.all.forwarding=0
+sysctl -w net.ipv6.conf.all.forwarding=0
+</code></pre><p>You alse need to run:</p>
+<pre tabindex="0"><code>chmod +x /etc/6lbr/ifup.d/60dev
+chmod +x /etc/6lbr/ifdown.d/60dev
+</code></pre><p>Install and configure radvd:</p>
+<pre tabindex="0"><code>interface tap0
+{
+   AdvSendAdvert on;
+   AdvManagedFlag off;     #stateless autoconfiguration
+   AdvOtherConfigFlag on;  #clients get extra parameters via DHCPv6
+   MaxRtrAdvInterval 10;   #resend RA @ random times, max 10sec delay
+   prefix 2001:db8:2::/64  #announce prefix to clients
+   {
+       AdvOnLink on;
+       AdvAutonomous on;
+       AdvRouterAddr on;
+   };
+   RDNSS 2001:db8:2::2
+   {
+   };
+};
+</code></pre><p>Start 6lbr and radvd, you can access router machine var 2001:db8:2::2 from a WSN node. And your WSN node will get an ipv6 address like 2001:db8:2:<strong><strong>:</strong></strong>:<strong><strong>:</strong></strong>:**** from radvd.</p>
+<p><strong>3) MQTT over IPV4 WAN</strong></p>
+<p>I only have IPV4 WAN access, and have a mosquitto server running on my Linode server. So I need a NAT64 tool to bridge ipv6 to ipv4 network.</p>
+<p>After trying jool with no luck, I decided to use 6tunnel to forward ipv6 traffic.</p>
+<pre tabindex="0"><code>sudo apt-get install 6tunnel
+6tunnel -6 1883 your.mqtt.server.ip 1883
+</code></pre><p>That&rsquo;s all!</p>
+<p>See also:</p>
+<p><a href="http://processors.wiki.ti.com/index.php/Contiki-6LOWPAN-BBB">http://processors.wiki.ti.com/index.php/Contiki-6LOWPAN-BBB</a></p>
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+      <li><a href="https://yplam.com/tags/embedded/">Embedded</a></li>
+    </ul>
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+        <span>&copy; 2025 <a href="https://yplam.com/">YPLAM</a></span> · 
+
+    <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+        CC BY-SA 4.0
+    </a>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>

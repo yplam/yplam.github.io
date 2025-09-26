@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>配置 Nginx Http 认证以及 IP 访问策略 | YPLAM</title>
+<meta name="keywords" content="Linux, Nginx">
+<meta name="description" content="网络世界充满漏洞，同样，网络世界充满着寻找漏洞的人。为Web服务器的后台路径添加HTTP AUTH认证，是防范漏洞被探测到的一个简单有有效的方法。">
+<meta name="author" content="">
+<link rel="canonical" href="https://yplam.com/posts/linux/nginx-http-auth/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.8a2a5b863c538395920b4f077c6697be31878d530618647d78daca2883f21ff1.css" integrity="sha256-iipbhjxTg5WSC08HfGaXvjGHjVMGGGR9eNrKKIPyH/E=" rel="preload stylesheet" as="style">
+<link rel="icon" href="https://yplam.com/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://yplam.com/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://yplam.com/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://yplam.com/apple-touch-icon.png">
+<link rel="mask-icon" href="https://yplam.com/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="zh-cn" href="https://yplam.com/posts/linux/nginx-http-auth/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --code-block-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript>
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-960JLZS3KY"></script>
+      <script>
+        var doNotTrack = false;
+        if ( false ) {
+          var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
+          var doNotTrack = (dnt == "1" || dnt == "yes");
+        }
+        if (!doNotTrack) {
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-960JLZS3KY');
+        }
+      </script><meta property="og:url" content="https://yplam.com/posts/linux/nginx-http-auth/">
+  <meta property="og:site_name" content="YPLAM">
+  <meta property="og:title" content="配置 Nginx Http 认证以及 IP 访问策略">
+  <meta property="og:description" content="网络世界充满漏洞，同样，网络世界充满着寻找漏洞的人。为Web服务器的后台路径添加HTTP AUTH认证，是防范漏洞被探测到的一个简单有有效的方法。">
+  <meta property="og:locale" content="zh-cn">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2015-10-29T00:00:00+00:00">
+    <meta property="article:modified_time" content="2015-10-29T00:00:00+00:00">
+    <meta property="article:tag" content="Linux">
+    <meta property="article:tag" content="Nginx">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="配置 Nginx Http 认证以及 IP 访问策略">
+<meta name="twitter:description" content="网络世界充满漏洞，同样，网络世界充满着寻找漏洞的人。为Web服务器的后台路径添加HTTP AUTH认证，是防范漏洞被探测到的一个简单有有效的方法。">
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Posts",
+      "item": "https://yplam.com/posts/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "配置 Nginx Http 认证以及 IP 访问策略",
+      "item": "https://yplam.com/posts/linux/nginx-http-auth/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "配置 Nginx Http 认证以及 IP 访问策略",
+  "name": "配置 Nginx Http 认证以及 IP 访问策略",
+  "description": "网络世界充满漏洞，同样，网络世界充满着寻找漏洞的人。为Web服务器的后台路径添加HTTP AUTH认证，是防范漏洞被探测到的一个简单有有效的方法。\n",
+  "keywords": [
+    "Linux", "Nginx"
+  ],
+  "articleBody": "网络世界充满漏洞，同样，网络世界充满着寻找漏洞的人。为Web服务器的后台路径添加HTTP AUTH认证，是防范漏洞被探测到的一个简单有有效的方法。\n不妨打开你网站的404日志，其中肯定不乏一堆对后台路径的试探性探测，这其中有一些是用来确定你网站使用的是哪种系统，而更多的是直接对各种已知系统漏洞的扫描。\n一个比较有效阻止这种扫描的方法是在Web服务器的层面上添加HTTP认证。\n首先，安装htpasswd工具\nsudo apt-get install apache2-utils 然后生成用户名密码：\nsudo htpasswd -c /etc/nginx/.htpasswd myuser 最后，为需要进行保护的路径添加认证\nlocation location ~ /admin(/.*) { ... auth_basic \"Restricted\"; auth_basic_user_file /etc/nginx/.htpasswd; ... } 这样，用户在访问admin路径下的内容时都会多一层HTTP认证。\n然而，我们可以对上面的配置做一点人性化的修改。譬如，针对公司用户而言，IP地址是固定的，我们可以将该地址设为可信，这样就免除了公司内部人员认证的麻烦：\nlocation location ~ /admin(/.*) { ... satisfy any; include allow-ips.conf; deny all; auth_basic \"Restricted\"; auth_basic_user_file /etc/nginx/.htpasswd; ... } allow-ips.conf 配置免除HTTP认证的IP地址，内容如：\nallow 119.147.176.159; ",
+  "wordCount" : "52",
+  "inLanguage": "zh-cn",
+  "datePublished": "2015-10-29T00:00:00Z",
+  "dateModified": "2015-10-29T00:00:00Z",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://yplam.com/posts/linux/nginx-http-auth/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "YPLAM",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://yplam.com/favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <div class="logo-switches">
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="https://yplam.com/" title="YPLAM">
+                    <span>HOME</span>
+
+                </a>
+            </li>
+            <li>
+                <a href="https://yplam.com/about/" title="关于YPLam">
+                    <span>ABOUT</span>
+
+                </a>
+            </li>
+            <li>
+                <a href="https://github.com/yplam" title="GITHUB">
+                    <span>GITHUB</span>
+
+                </a>
+            </li>
+            <li>
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title entry-hint-parent">
+      配置 Nginx Http 认证以及 IP 访问策略
+    </h1>
+    <div class="post-meta"><span title='2015-10-29 00:00:00 +0000 UTC'>2015-10-29</span>
+
+</div>
+  </header> 
+  <div class="post-content"><p>网络世界充满漏洞，同样，网络世界充满着寻找漏洞的人。为Web服务器的后台路径添加HTTP AUTH认证，是防范漏洞被探测到的一个简单有有效的方法。</p>
+<p>不妨打开你网站的404日志，其中肯定不乏一堆对后台路径的试探性探测，这其中有一些是用来确定你网站使用的是哪种系统，而更多的是直接对各种已知系统漏洞的扫描。</p>
+<p>一个比较有效阻止这种扫描的方法是在Web服务器的层面上添加HTTP认证。</p>
+<p>首先，安装htpasswd工具</p>
+<pre tabindex="0"><code>sudo apt-get install apache2-utils
+</code></pre><p>然后生成用户名密码：</p>
+<pre tabindex="0"><code>sudo htpasswd -c /etc/nginx/.htpasswd myuser
+</code></pre><p>最后，为需要进行保护的路径添加认证</p>
+<pre tabindex="0"><code>location location ~ /admin(/.*)  {
+      ...
+      auth_basic &#34;Restricted&#34;;                                
+      auth_basic_user_file /etc/nginx/.htpasswd; 
+      ...
+  }
+</code></pre><p>这样，用户在访问admin路径下的内容时都会多一层HTTP认证。</p>
+<p>然而，我们可以对上面的配置做一点人性化的修改。譬如，针对公司用户而言，IP地址是固定的，我们可以将该地址设为可信，这样就免除了公司内部人员认证的麻烦：</p>
+<pre tabindex="0"><code>location location ~ /admin(/.*)  {
+      ...
+      satisfy any;
+      include allow-ips.conf;
+      deny  all;
+
+      auth_basic &#34;Restricted&#34;;                                
+      auth_basic_user_file /etc/nginx/.htpasswd; 
+      ...
+  }
+</code></pre><p>allow-ips.conf 配置免除HTTP认证的IP地址，内容如：</p>
+<pre tabindex="0"><code>allow 119.147.176.159;
+</code></pre>
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+      <li><a href="https://yplam.com/tags/linux/">Linux</a></li>
+      <li><a href="https://yplam.com/tags/nginx/">Nginx</a></li>
+    </ul>
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+        <span>&copy; 2025 <a href="https://yplam.com/">YPLAM</a></span> · 
+
+    <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+        CC BY-SA 4.0
+    </a>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>

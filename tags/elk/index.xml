@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
   <channel>
-    <title>ELK on YP.Lam</title>
+    <title>ELK on YPLAM</title>
     <link>https://yplam.com/tags/elk/</link>
-    <description>Recent content in ELK on YP.Lam</description>
-    <generator>Hugo</generator>
+    <description>Recent content in ELK on YPLAM</description>
+    <generator>Hugo -- 0.148.2</generator>
     <language>zh-cn</language>
     <lastBuildDate>Fri, 09 Sep 2016 00:00:00 +0000</lastBuildDate>
     <atom:link href="https://yplam.com/tags/elk/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>ELK日志分析入门</title>
-      <link>https://yplam.com/post/linux/elk-log-analytics/</link>
+      <link>https://yplam.com/posts/linux/elk-log-analytics/</link>
       <pubDate>Fri, 09 Sep 2016 00:00:00 +0000</pubDate>
-      <guid>https://yplam.com/post/linux/elk-log-analytics/</guid>
+      <guid>https://yplam.com/posts/linux/elk-log-analytics/</guid>
       <description>&lt;p&gt;ELK Stack 由 Elastic.co 公司名下的 Elasticsearch、Logstash、Kibana 三个开源软件的组成，用于日志的快速搜索和分析。&lt;/p&gt;</description>
     </item>
   </channel>

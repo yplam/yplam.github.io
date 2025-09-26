@@ -1,25 +1,25 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
   <channel>
-    <title>PredictionIO on YP.Lam</title>
+    <title>PredictionIO on YPLAM</title>
     <link>https://yplam.com/tags/predictionio/</link>
-    <description>Recent content in PredictionIO on YP.Lam</description>
-    <generator>Hugo</generator>
+    <description>Recent content in PredictionIO on YPLAM</description>
+    <generator>Hugo -- 0.148.2</generator>
     <language>zh-cn</language>
     <lastBuildDate>Wed, 13 Jun 2018 00:00:00 +0000</lastBuildDate>
     <atom:link href="https://yplam.com/tags/predictionio/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>PredictionIO Universal Recommender 笔记</title>
-      <link>https://yplam.com/post/machinelearning/predictionio-universal-recommender/</link>
+      <link>https://yplam.com/posts/machinelearning/predictionio-universal-recommender/</link>
       <pubDate>Wed, 13 Jun 2018 00:00:00 +0000</pubDate>
-      <guid>https://yplam.com/post/machinelearning/predictionio-universal-recommender/</guid>
+      <guid>https://yplam.com/posts/machinelearning/predictionio-universal-recommender/</guid>
       <description>&lt;p&gt;Universal Recommender (UR) 是 ActionML 公司基于 PredictionIO 开发的协同过滤引擎，使用 Correlated Cross-Occurrence (CCO) 算法，可以应用与个性化推荐、物品相关推荐、购物车推荐、基于业务逻辑的推荐等。&lt;/p&gt;</description>
     </item>
     <item>
       <title>PredictionIO实现论坛广告贴过滤</title>
-      <link>https://yplam.com/post/machinelearning/predictionio/</link>
+      <link>https://yplam.com/posts/machinelearning/predictionio/</link>
       <pubDate>Sat, 28 Apr 2018 00:00:00 +0000</pubDate>
-      <guid>https://yplam.com/post/machinelearning/predictionio/</guid>
+      <guid>https://yplam.com/posts/machinelearning/predictionio/</guid>
       <description>&lt;p&gt;关注 Apache PredictionIO 已有一段时间，最近需要做一个过滤论坛广告贴的功能，调研了一番市面上提供文本检测的API服务，发现靠谱的公司都比较贵，并且准确率不高（一个可能性是他们使用的训练数据集是互联网上的通用信息，而我们是一个垂直行业论坛，攻击来源也可能是固定的那么若干个），于是尝试自己实现个文本分类器来过滤广告。&lt;/p&gt;</description>
     </item>
   </channel>

@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>Flux Lora 训练笔记 | YPLAM</title>
+<meta name="keywords" content="MachineLearning, Flux, Lora">
+<meta name="description" content="本文记录使用 sd-scripts 与 RTX4090 训练 Flux Lora 流程。">
+<meta name="author" content="">
+<link rel="canonical" href="https://yplam.com/posts/machinelearning/flux-lora-training/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.8a2a5b863c538395920b4f077c6697be31878d530618647d78daca2883f21ff1.css" integrity="sha256-iipbhjxTg5WSC08HfGaXvjGHjVMGGGR9eNrKKIPyH/E=" rel="preload stylesheet" as="style">
+<link rel="icon" href="https://yplam.com/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://yplam.com/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://yplam.com/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://yplam.com/apple-touch-icon.png">
+<link rel="mask-icon" href="https://yplam.com/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="zh-cn" href="https://yplam.com/posts/machinelearning/flux-lora-training/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --code-block-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript>
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-960JLZS3KY"></script>
+      <script>
+        var doNotTrack = false;
+        if ( false ) {
+          var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
+          var doNotTrack = (dnt == "1" || dnt == "yes");
+        }
+        if (!doNotTrack) {
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-960JLZS3KY');
+        }
+      </script><meta property="og:url" content="https://yplam.com/posts/machinelearning/flux-lora-training/">
+  <meta property="og:site_name" content="YPLAM">
+  <meta property="og:title" content="Flux Lora 训练笔记">
+  <meta property="og:description" content="本文记录使用 sd-scripts 与 RTX4090 训练 Flux Lora 流程。">
+  <meta property="og:locale" content="zh-cn">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2025-02-09T00:00:00+00:00">
+    <meta property="article:modified_time" content="2025-02-09T00:00:00+00:00">
+    <meta property="article:tag" content="MachineLearning">
+    <meta property="article:tag" content="Flux">
+    <meta property="article:tag" content="Lora">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Flux Lora 训练笔记">
+<meta name="twitter:description" content="本文记录使用 sd-scripts 与 RTX4090 训练 Flux Lora 流程。">
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Posts",
+      "item": "https://yplam.com/posts/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "Flux Lora 训练笔记",
+      "item": "https://yplam.com/posts/machinelearning/flux-lora-training/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Flux Lora 训练笔记",
+  "name": "Flux Lora 训练笔记",
+  "description": "本文记录使用 sd-scripts 与 RTX4090 训练 Flux Lora 流程。\n",
+  "keywords": [
+    "MachineLearning", "Flux", "Lora"
+  ],
+  "articleBody": "本文记录使用 sd-scripts 与 RTX4090 训练 Flux Lora 流程。\n工具配置 使用著名的 sd-scripts 脚本进行训练，现时需要 sd3 分支支持，使用以下命令：\ngit clone https://github.com/kohya-ss/sd-scripts.git cd sd-scripts git checkout sd3 python3.10 -m venv venv source venv/bin/activate pip install -i https://mirrors.aliyun.com/pypi/simple --extra-index-url https://download.pytorch.org/whl/cu124 --default-timeout=100 -r requirements.txt # 未兼容新版 torch 2.6 pip install -i https://mirrors.aliyun.com/pypi/simple --extra-index-url https://download.pytorch.org/whl/cu124 --default-timeout=100 triton torch==2.4.0 torchvision==0.19.0 配置 accelerate\naccelerate config 启用 numa efficiency, 并且选择 bf16，生成的 ~/.cache/huggingface/accelerate/default_config.yaml 内容\ncompute_environment: LOCAL_MACHINE debug: false distributed_type: 'NO' downcast_bf16: 'no' enable_cpu_affinity: true gpu_ids: all machine_rank: 0 main_training_function: main mixed_precision: bf16 num_machines: 1 num_processes: 1 rdzv_backend: static same_network: true tpu_env: [] tpu_use_cluster: false tpu_use_sudo: false use_cpu: false 数据集准备 准备若干 jpg、png 图片，以及同名但后缀为 .txt 的图片内容描述文件，建议使用脚本通过 ChatGPT 4o api 生成，然后配置 dataset.toml\n[[datasets]] enable_bucket = false resolution = [320, 320] bucket_reso_steps = 64 max_bucket_reso = 320 min_bucket_reso = 128 bucket_no_upscale = true batch_size = 1 random_crop = false shuffle_caption = false [[datasets.subsets]] image_dir = \"/home/yplam/AI/sd-scripts/data/dataset\" num_repeats = 1 caption_extension = \".txt\" 训练 需要注意的是训练前需下载对应的模型权重、clip、ae 等，通常如果有用 ComfyUI 等工具则在 models 下可以找到。\n以下参数针对 RTX4090 显卡训练 fp8 lora，显示 VRAM 占用为16GB多\naccelerate launch --mixed_precision bf16 --num_cpu_threads_per_process 1 flux_train_network.py \\ --pretrained_model_name_or_path /home/yplam/AI/sd-scripts/flux1-dev2pro.safetensors \\ --clip_l /home/yplam/AI/ComfyUI-Docker/models/clip/clip_l.safetensors \\ --ae /home/yplam/AI/ComfyUI-Docker/models/vae/ae.safetensors \\ --t5xxl /home/yplam/AI/ComfyUI-Docker/models/clip/t5xxl_fp16.safetensors \\ --dataset_config /home/yplam/AI/sd-scripts/data/dataset.toml \\ --cache_latents_to_disk \\ --save_model_as safetensors \\ --sdpa \\ --persistent_data_loader_workers \\ --max_data_loader_n_workers 2 \\ --seed 42 \\ --gradient_checkpointing \\ --mixed_precision bf16 \\ --save_precision bf16 \\ --network_module networks.lora_flux \\ --network_dim 16 \\ --network_alpha 8 \\ --optimizer_type adamw8bit \\ --learning_rate 5e-5 \\ --lr_scheduler constant_with_warmup \\ --lr_warmup_steps 20 \\ --cache_text_encoder_outputs \\ --cache_text_encoder_outputs_to_disk \\ --fp8_base \\ --max_train_epochs 100 \\ --save_every_n_epochs 10 \\ --output_dir /home/yplam/AI/sd-scripts/data/output \\ --output_name mylora \\ --timestep_sampling shift \\ --discrete_flow_shift 3.1582 \\ --model_prediction_type raw \\ --guidance_scale 1.0 ",
+  "wordCount" : "256",
+  "inLanguage": "zh-cn",
+  "datePublished": "2025-02-09T00:00:00Z",
+  "dateModified": "2025-02-09T00:00:00Z",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://yplam.com/posts/machinelearning/flux-lora-training/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "YPLAM",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://yplam.com/favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <div class="logo-switches">
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="https://yplam.com/" title="YPLAM">
+                    <span>HOME</span>
+
+                </a>
+            </li>
+            <li>
+                <a href="https://yplam.com/about/" title="关于YPLam">
+                    <span>ABOUT</span>
+
+                </a>
+            </li>
+            <li>
+                <a href="https://github.com/yplam" title="GITHUB">
+                    <span>GITHUB</span>
+
+                </a>
+            </li>
+            <li>
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title entry-hint-parent">
+      Flux Lora 训练笔记
+    </h1>
+    <div class="post-meta"><span title='2025-02-09 00:00:00 +0000 UTC'>2025-02-09</span>
+
+</div>
+  </header> 
+  <div class="post-content"><p>本文记录使用 sd-scripts 与 RTX4090 训练 Flux Lora 流程。</p>
+<h2 id="工具配置">工具配置<a hidden class="anchor" aria-hidden="true" href="#工具配置">#</a></h2>
+<p>使用著名的 sd-scripts 脚本进行训练，现时需要 sd3 分支支持，使用以下命令：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">git clone https://github.com/kohya-ss/sd-scripts.git
+</span></span><span class="line"><span class="cl"><span class="nb">cd</span> sd-scripts
+</span></span><span class="line"><span class="cl">git checkout sd3
+</span></span><span class="line"><span class="cl">python3.10 -m venv venv
+</span></span><span class="line"><span class="cl"><span class="nb">source</span> venv/bin/activate
+</span></span><span class="line"><span class="cl">pip install -i https://mirrors.aliyun.com/pypi/simple --extra-index-url https://download.pytorch.org/whl/cu124 --default-timeout<span class="o">=</span><span class="m">100</span> -r requirements.txt
+</span></span><span class="line"><span class="cl"><span class="c1"># 未兼容新版 torch 2.6</span>
+</span></span><span class="line"><span class="cl">pip install -i https://mirrors.aliyun.com/pypi/simple --extra-index-url https://download.pytorch.org/whl/cu124 --default-timeout<span class="o">=</span><span class="m">100</span> triton <span class="nv">torch</span><span class="o">==</span>2.4.0 <span class="nv">torchvision</span><span class="o">==</span>0.19.0
+</span></span></code></pre></div><p>配置 accelerate</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">accelerate config
+</span></span></code></pre></div><p>启用 numa efficiency, 并且选择 bf16，生成的 ~/.cache/huggingface/accelerate/default_config.yaml 内容</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="nt">compute_environment</span><span class="p">:</span><span class="w"> </span><span class="l">LOCAL_MACHINE</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">debug</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">distributed_type</span><span class="p">:</span><span class="w"> </span><span class="s1">&#39;NO&#39;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">downcast_bf16</span><span class="p">:</span><span class="w"> </span><span class="s1">&#39;no&#39;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">enable_cpu_affinity</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">gpu_ids</span><span class="p">:</span><span class="w"> </span><span class="l">all</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">machine_rank</span><span class="p">:</span><span class="w"> </span><span class="m">0</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">main_training_function</span><span class="p">:</span><span class="w"> </span><span class="l">main</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">mixed_precision</span><span class="p">:</span><span class="w"> </span><span class="l">bf16</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">num_machines</span><span class="p">:</span><span class="w"> </span><span class="m">1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">num_processes</span><span class="p">:</span><span class="w"> </span><span class="m">1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">rdzv_backend</span><span class="p">:</span><span class="w"> </span><span class="l">static</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">same_network</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">tpu_env</span><span class="p">:</span><span class="w"> </span><span class="p">[]</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">tpu_use_cluster</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">tpu_use_sudo</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">use_cpu</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="w">
+</span></span></span></code></pre></div><h2 id="数据集准备">数据集准备<a hidden class="anchor" aria-hidden="true" href="#数据集准备">#</a></h2>
+<p>准备若干 jpg、png 图片，以及同名但后缀为 .txt 的图片内容描述文件，建议使用脚本通过 ChatGPT 4o api 生成，然后配置 dataset.toml</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-toml" data-lang="toml"><span class="line"><span class="cl"><span class="p">[[</span><span class="nx">datasets</span><span class="p">]]</span>
+</span></span><span class="line"><span class="cl"><span class="nx">enable_bucket</span> <span class="p">=</span> <span class="kc">false</span>
+</span></span><span class="line"><span class="cl"><span class="nx">resolution</span> <span class="p">=</span> <span class="p">[</span><span class="mi">320</span><span class="p">,</span> <span class="mi">320</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="nx">bucket_reso_steps</span> <span class="p">=</span> <span class="mi">64</span>
+</span></span><span class="line"><span class="cl"><span class="nx">max_bucket_reso</span> <span class="p">=</span> <span class="mi">320</span>
+</span></span><span class="line"><span class="cl"><span class="nx">min_bucket_reso</span> <span class="p">=</span> <span class="mi">128</span>
+</span></span><span class="line"><span class="cl"><span class="nx">bucket_no_upscale</span> <span class="p">=</span> <span class="kc">true</span>
+</span></span><span class="line"><span class="cl"><span class="nx">batch_size</span> <span class="p">=</span> <span class="mi">1</span>
+</span></span><span class="line"><span class="cl"><span class="nx">random_crop</span> <span class="p">=</span> <span class="kc">false</span>
+</span></span><span class="line"><span class="cl"><span class="nx">shuffle_caption</span> <span class="p">=</span> <span class="kc">false</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="p">[[</span><span class="nx">datasets</span><span class="p">.</span><span class="nx">subsets</span><span class="p">]]</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">image_dir</span> <span class="p">=</span> <span class="s2">&#34;/home/yplam/AI/sd-scripts/data/dataset&#34;</span> 
+</span></span><span class="line"><span class="cl">  <span class="nx">num_repeats</span> <span class="p">=</span> <span class="mi">1</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">caption_extension</span> <span class="p">=</span> <span class="s2">&#34;.txt&#34;</span>
+</span></span></code></pre></div><h2 id="训练">训练<a hidden class="anchor" aria-hidden="true" href="#训练">#</a></h2>
+<p>需要注意的是训练前需下载对应的模型权重、clip、ae 等，通常如果有用 ComfyUI 等工具则在 models 下可以找到。</p>
+<p>以下参数针对 RTX4090 显卡训练 fp8 lora，显示 VRAM 占用为16GB多</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">accelerate launch --mixed_precision bf16 --num_cpu_threads_per_process <span class="m">1</span> flux_train_network.py <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>  --pretrained_model_name_or_path /home/yplam/AI/sd-scripts/flux1-dev2pro.safetensors <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>  --clip_l /home/yplam/AI/ComfyUI-Docker/models/clip/clip_l.safetensors <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>  --ae /home/yplam/AI/ComfyUI-Docker/models/vae/ae.safetensors <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>  --t5xxl /home/yplam/AI/ComfyUI-Docker/models/clip/t5xxl_fp16.safetensors <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>  --dataset_config /home/yplam/AI/sd-scripts/data/dataset.toml <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>  --cache_latents_to_disk <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>  --save_model_as safetensors <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>  --sdpa <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>  --persistent_data_loader_workers <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>  --max_data_loader_n_workers <span class="m">2</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>  --seed <span class="m">42</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>  --gradient_checkpointing <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>  --mixed_precision bf16 <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>  --save_precision bf16 <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>  --network_module networks.lora_flux <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>  --network_dim <span class="m">16</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>  --network_alpha <span class="m">8</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>  --optimizer_type adamw8bit <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>  --learning_rate 5e-5 <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>  --lr_scheduler constant_with_warmup <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>  --lr_warmup_steps <span class="m">20</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>  --cache_text_encoder_outputs <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>  --cache_text_encoder_outputs_to_disk <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>  --fp8_base <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>  --max_train_epochs <span class="m">100</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>  --save_every_n_epochs <span class="m">10</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>  --output_dir /home/yplam/AI/sd-scripts/data/output <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>  --output_name mylora <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>  --timestep_sampling <span class="nb">shift</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>  --discrete_flow_shift 3.1582 <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>  --model_prediction_type raw <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>  --guidance_scale 1.0
+</span></span></code></pre></div>
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+      <li><a href="https://yplam.com/tags/machinelearning/">MachineLearning</a></li>
+      <li><a href="https://yplam.com/tags/flux/">Flux</a></li>
+      <li><a href="https://yplam.com/tags/lora/">Lora</a></li>
+    </ul>
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+        <span>&copy; 2025 <a href="https://yplam.com/">YPLAM</a></span> · 
+
+    <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+        CC BY-SA 4.0
+    </a>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>

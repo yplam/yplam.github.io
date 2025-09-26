@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>Tensorflow Serving Nsfw | YPLAM</title>
+<meta name="keywords" content="MachineLearning, Tensorflow">
+<meta name="description" content="两年多前曾经在服务器上部署了个 Tensorflow 模型，由于 Tensorflow serving 刚公布不久，并且还没阅读相关文档，所以当时就粗暴的用 Flask 写了个接口就放到线上跑了两年。
+最近又需要在服务器上部署些模型，决定用回比较官方的方式，研究一下 Tensorflow serving。">
+<meta name="author" content="">
+<link rel="canonical" href="https://yplam.com/posts/machinelearning/tensorflow-serving-nsfw/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.8a2a5b863c538395920b4f077c6697be31878d530618647d78daca2883f21ff1.css" integrity="sha256-iipbhjxTg5WSC08HfGaXvjGHjVMGGGR9eNrKKIPyH/E=" rel="preload stylesheet" as="style">
+<link rel="icon" href="https://yplam.com/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://yplam.com/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://yplam.com/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://yplam.com/apple-touch-icon.png">
+<link rel="mask-icon" href="https://yplam.com/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="zh-cn" href="https://yplam.com/posts/machinelearning/tensorflow-serving-nsfw/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --code-block-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript>
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-960JLZS3KY"></script>
+      <script>
+        var doNotTrack = false;
+        if ( false ) {
+          var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
+          var doNotTrack = (dnt == "1" || dnt == "yes");
+        }
+        if (!doNotTrack) {
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-960JLZS3KY');
+        }
+      </script><meta property="og:url" content="https://yplam.com/posts/machinelearning/tensorflow-serving-nsfw/">
+  <meta property="og:site_name" content="YPLAM">
+  <meta property="og:title" content="Tensorflow Serving Nsfw">
+  <meta property="og:description" content="两年多前曾经在服务器上部署了个 Tensorflow 模型，由于 Tensorflow serving 刚公布不久，并且还没阅读相关文档，所以当时就粗暴的用 Flask 写了个接口就放到线上跑了两年。
+最近又需要在服务器上部署些模型，决定用回比较官方的方式，研究一下 Tensorflow serving。">
+  <meta property="og:locale" content="zh-cn">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2019-12-03T15:32:35+08:00">
+    <meta property="article:modified_time" content="2019-12-03T15:32:35+08:00">
+    <meta property="article:tag" content="MachineLearning">
+    <meta property="article:tag" content="Tensorflow">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Tensorflow Serving Nsfw">
+<meta name="twitter:description" content="两年多前曾经在服务器上部署了个 Tensorflow 模型，由于 Tensorflow serving 刚公布不久，并且还没阅读相关文档，所以当时就粗暴的用 Flask 写了个接口就放到线上跑了两年。
+最近又需要在服务器上部署些模型，决定用回比较官方的方式，研究一下 Tensorflow serving。">
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Posts",
+      "item": "https://yplam.com/posts/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "Tensorflow Serving Nsfw",
+      "item": "https://yplam.com/posts/machinelearning/tensorflow-serving-nsfw/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Tensorflow Serving Nsfw",
+  "name": "Tensorflow Serving Nsfw",
+  "description": "两年多前曾经在服务器上部署了个 Tensorflow 模型，由于 Tensorflow serving 刚公布不久，并且还没阅读相关文档，所以当时就粗暴的用 Flask 写了个接口就放到线上跑了两年。\n最近又需要在服务器上部署些模型，决定用回比较官方的方式，研究一下 Tensorflow serving。\n",
+  "keywords": [
+    "MachineLearning", "Tensorflow"
+  ],
+  "articleBody": "两年多前曾经在服务器上部署了个 Tensorflow 模型，由于 Tensorflow serving 刚公布不久，并且还没阅读相关文档，所以当时就粗暴的用 Flask 写了个接口就放到线上跑了两年。\n最近又需要在服务器上部署些模型，决定用回比较官方的方式，研究一下 Tensorflow serving。\n安装 使用 docker compose 安装，需要注意的是，由于 Tensorflow 的接口不断在变化，Tensorflow serving 的版本需要与模型训练、模型导出的版本一致，否则可能会出现某些操作符不存在的错误。\ndocker-compose.yml\nversion: '3.7' services: tensorflow_serving: build: context: ./bin/TensorflowServing ports: [\"127.0.0.1:8501:8501\"] volumes: - ./models:/models environment: - MODEL_NAME=nsfw bin/TensorflowServing/Dockerfile，虽然是默认镜像，但习惯加个 Dockerfile\nFROM tensorflow/serving:1.12.0 测试 在此测试的是 tensorflow-open_nsfw 模型，此模型提供模型导出以及数据请求格式生成相关的脚本，适合用来快速测试。\n用 virtualenv 安装 tensorflow 1.12 版本，以及 numpy==1.16.1 ，然后运行下面命令导出模型：\npython tools/export_savedmodel.py -i base64_jpeg -v 1 -m data/open_nsfw-weights.npy nsfw 使用以下命令查看模型输入输出格式：\nsaved_model_cli show --dir nsfw/1 --all 结果如下，输入是一个 base64 encode 的 jpeg 图片字符串：\nMetaGraphDef with tag-set: 'serve' contains the following SignatureDefs: signature_def['serving_default']: The given SavedModel SignatureDef contains the following input(s): inputs['inputs'] tensor_info: dtype: DT_STRING shape: (-1) name: input:0 The given SavedModel SignatureDef contains the following output(s): outputs['outputs'] tensor_info: dtype: DT_FLOAT shape: (-1, 2) name: predictions:0 Method name is: tensorflow/serving/predict 将导出的模型放到 docker compose 工作目录下的 models 下，然后启动 docker ：\ndocker-compose up --build 拿一张需要测试的jpeg图片，运行下面命令：\npython tools/create_predict_request.py -i base64_jpeg -l tensorflow -t tf-serving test.jpg \u003e test.txt test.txt 中会生成用于请求 Tensorflow serving 的格式，大概如下：\n{\"instances\": [\"_9j_4AAQSkZ......UUCP__Z\"]} 需要注意的是这里的base64 encode图片需要为urlsafe格式，如果客户端为PHP的话需要对encode的字符串做替换处理。\n然后测试一下：\ncurl -d '@test.txt' -X POST http://localhost:8501/v1/models/nsfw:predict 会返回类似下面结果：\n{ \"predictions\": [[0.337196, 0.662804] ] } 结果中第一个代表 sfw，第二个代表 nsfw，因此模型判断此图片包含不良内容。\n",
+  "wordCount" : "168",
+  "inLanguage": "zh-cn",
+  "datePublished": "2019-12-03T15:32:35+08:00",
+  "dateModified": "2019-12-03T15:32:35+08:00",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://yplam.com/posts/machinelearning/tensorflow-serving-nsfw/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "YPLAM",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://yplam.com/favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <div class="logo-switches">
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="https://yplam.com/" title="YPLAM">
+                    <span>HOME</span>
+
+                </a>
+            </li>
+            <li>
+                <a href="https://yplam.com/about/" title="关于YPLam">
+                    <span>ABOUT</span>
+
+                </a>
+            </li>
+            <li>
+                <a href="https://github.com/yplam" title="GITHUB">
+                    <span>GITHUB</span>
+
+                </a>
+            </li>
+            <li>
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title entry-hint-parent">
+      Tensorflow Serving Nsfw
+    </h1>
+    <div class="post-meta"><span title='2019-12-03 15:32:35 +0800 CST'>2019-12-03</span>
+
+</div>
+  </header> 
+  <div class="post-content"><p>两年多前曾经在服务器上部署了个 Tensorflow 模型，由于 Tensorflow serving 刚公布不久，并且还没阅读相关文档，所以当时就粗暴的用 Flask 写了个接口就放到线上跑了两年。</p>
+<p>最近又需要在服务器上部署些模型，决定用回比较官方的方式，研究一下 Tensorflow serving。</p>
+<h3 id="安装">安装<a hidden class="anchor" aria-hidden="true" href="#安装">#</a></h3>
+<p>使用 docker compose 安装，需要注意的是，由于 Tensorflow 的接口不断在变化，Tensorflow serving 的版本需要与模型训练、模型导出的版本一致，否则可能会出现某些操作符不存在的错误。</p>
+<p>docker-compose.yml</p>
+<pre tabindex="0"><code>version: &#39;3.7&#39;
+services:
+  tensorflow_serving:
+    build:
+      context: ./bin/TensorflowServing
+    ports: [&#34;127.0.0.1:8501:8501&#34;]
+    volumes:
+      - ./models:/models
+    environment:
+      - MODEL_NAME=nsfw
+</code></pre><p>bin/TensorflowServing/Dockerfile，虽然是默认镜像，但习惯加个 Dockerfile</p>
+<pre tabindex="0"><code>FROM tensorflow/serving:1.12.0
+</code></pre><h3 id="测试">测试<a hidden class="anchor" aria-hidden="true" href="#测试">#</a></h3>
+<p>在此测试的是 <a href="https://github.com/mdietrichstein/tensorflow-open_nsfw">tensorflow-open_nsfw</a> 模型，此模型提供模型导出以及数据请求格式生成相关的脚本，适合用来快速测试。</p>
+<p>用 virtualenv 安装 tensorflow 1.12 版本，以及 numpy==1.16.1 ，然后运行下面命令导出模型：</p>
+<pre tabindex="0"><code>python tools/export_savedmodel.py -i base64_jpeg -v 1 -m data/open_nsfw-weights.npy nsfw
+</code></pre><p>使用以下命令查看模型输入输出格式：</p>
+<pre tabindex="0"><code>saved_model_cli show --dir nsfw/1 --all
+</code></pre><p>结果如下，输入是一个 base64 encode 的 jpeg 图片字符串：</p>
+<pre tabindex="0"><code>
+MetaGraphDef with tag-set: &#39;serve&#39; contains the following SignatureDefs:
+
+signature_def[&#39;serving_default&#39;]:
+  The given SavedModel SignatureDef contains the following input(s):
+    inputs[&#39;inputs&#39;] tensor_info:
+        dtype: DT_STRING
+        shape: (-1)
+        name: input:0
+  The given SavedModel SignatureDef contains the following output(s):
+    outputs[&#39;outputs&#39;] tensor_info:
+        dtype: DT_FLOAT
+        shape: (-1, 2)
+        name: predictions:0
+  Method name is: tensorflow/serving/predict
+</code></pre><p>将导出的模型放到 docker compose 工作目录下的 models 下，然后启动 docker ：</p>
+<pre tabindex="0"><code>docker-compose up --build
+</code></pre><p>拿一张需要测试的jpeg图片，运行下面命令：</p>
+<pre tabindex="0"><code>python tools/create_predict_request.py -i base64_jpeg -l tensorflow -t tf-serving test.jpg &gt; test.txt
+</code></pre><p>test.txt 中会生成用于请求 Tensorflow serving 的格式，大概如下：</p>
+<pre tabindex="0"><code>{&#34;instances&#34;: [&#34;_9j_4AAQSkZ......UUCP__Z&#34;]}
+</code></pre><p>需要注意的是这里的base64 encode图片需要为urlsafe格式，如果客户端为PHP的话需要对encode的字符串做替换处理。</p>
+<p>然后测试一下：</p>
+<pre tabindex="0"><code>curl -d &#39;@test.txt&#39; -X POST http://localhost:8501/v1/models/nsfw:predict
+</code></pre><p>会返回类似下面结果：</p>
+<pre tabindex="0"><code>{
+    &#34;predictions&#34;: [[0.337196, 0.662804]
+    ]
+}
+</code></pre><p>结果中第一个代表 sfw，第二个代表 nsfw，因此模型判断此图片包含不良内容。</p>
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+      <li><a href="https://yplam.com/tags/machinelearning/">MachineLearning</a></li>
+      <li><a href="https://yplam.com/tags/tensorflow/">Tensorflow</a></li>
+    </ul>
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+        <span>&copy; 2025 <a href="https://yplam.com/">YPLAM</a></span> · 
+
+    <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+        CC BY-SA 4.0
+    </a>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>

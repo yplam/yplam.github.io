@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>iMX6ULL SD卡系统制作与启动 | YPLAM</title>
+<meta name="keywords" content="iMX6ULL, Linux, Embedded">
+<meta name="description" content="鉴于之前玩的 MT7688A 已经停产并且模块断货，最近把目光投向一款新芯片：iMX6ULL，因为其起点价格在接受范围，最低配置的核心板价格在百元以内，128M&#43;128M 足够跑我的OpenThread网关，通用芯片该有的功能都有，按功能来算的话比 MT7688A 性价比还高。">
+<meta name="author" content="">
+<link rel="canonical" href="https://yplam.com/posts/embedded/imx6ull-boot-sd-card/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.8a2a5b863c538395920b4f077c6697be31878d530618647d78daca2883f21ff1.css" integrity="sha256-iipbhjxTg5WSC08HfGaXvjGHjVMGGGR9eNrKKIPyH/E=" rel="preload stylesheet" as="style">
+<link rel="icon" href="https://yplam.com/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://yplam.com/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://yplam.com/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://yplam.com/apple-touch-icon.png">
+<link rel="mask-icon" href="https://yplam.com/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="zh-cn" href="https://yplam.com/posts/embedded/imx6ull-boot-sd-card/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --code-block-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript>
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-960JLZS3KY"></script>
+      <script>
+        var doNotTrack = false;
+        if ( false ) {
+          var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
+          var doNotTrack = (dnt == "1" || dnt == "yes");
+        }
+        if (!doNotTrack) {
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-960JLZS3KY');
+        }
+      </script><meta property="og:url" content="https://yplam.com/posts/embedded/imx6ull-boot-sd-card/">
+  <meta property="og:site_name" content="YPLAM">
+  <meta property="og:title" content="iMX6ULL SD卡系统制作与启动">
+  <meta property="og:description" content="鉴于之前玩的 MT7688A 已经停产并且模块断货，最近把目光投向一款新芯片：iMX6ULL，因为其起点价格在接受范围，最低配置的核心板价格在百元以内，128M&#43;128M 足够跑我的OpenThread网关，通用芯片该有的功能都有，按功能来算的话比 MT7688A 性价比还高。">
+  <meta property="og:locale" content="zh-cn">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2021-12-19T00:00:00+00:00">
+    <meta property="article:modified_time" content="2021-12-19T00:00:00+00:00">
+    <meta property="article:tag" content="IMX6ULL">
+    <meta property="article:tag" content="Linux">
+    <meta property="article:tag" content="Embedded">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="iMX6ULL SD卡系统制作与启动">
+<meta name="twitter:description" content="鉴于之前玩的 MT7688A 已经停产并且模块断货，最近把目光投向一款新芯片：iMX6ULL，因为其起点价格在接受范围，最低配置的核心板价格在百元以内，128M&#43;128M 足够跑我的OpenThread网关，通用芯片该有的功能都有，按功能来算的话比 MT7688A 性价比还高。">
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Posts",
+      "item": "https://yplam.com/posts/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "iMX6ULL SD卡系统制作与启动",
+      "item": "https://yplam.com/posts/embedded/imx6ull-boot-sd-card/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "iMX6ULL SD卡系统制作与启动",
+  "name": "iMX6ULL SD卡系统制作与启动",
+  "description": "鉴于之前玩的 MT7688A 已经停产并且模块断货，最近把目光投向一款新芯片：iMX6ULL，因为其起点价格在接受范围，最低配置的核心板价格在百元以内，128M+128M 足够跑我的OpenThread网关，通用芯片该有的功能都有，按功能来算的话比 MT7688A 性价比还高。\n",
+  "keywords": [
+    "iMX6ULL", "Linux", "Embedded"
+  ],
+  "articleBody": "鉴于之前玩的 MT7688A 已经停产并且模块断货，最近把目光投向一款新芯片：iMX6ULL，因为其起点价格在接受范围，最低配置的核心板价格在百元以内，128M+128M 足够跑我的OpenThread网关，通用芯片该有的功能都有，按功能来算的话比 MT7688A 性价比还高。\n拿到开发板，目标是跑 OpenWRT + OpenThread 网关，MQTT/MQTT-SN 或者 LWM2M 服务，把手上一堆传感器、控制器接上，不依赖外部服务运行。\n原装系统运行在 nand 上，不方便折腾，于是准备用 SD 卡启动的方式，修改起来很简单，热风枪把一个配置电阻换个位置。\n由于还不熟悉此板卡 uboot，内核的编译，暂时先用着随板带的固件。\n写入uboot uboot 固件使用 uboot-myimx6ek140-6y-256m-nand.imx，imx 文件格式在这里有个比较详细的介绍：https://www.cnblogs.com/Lioker/p/13219519.html。芯片启动时内部 ROM 程序会按 imx 文件格式从 SD 卡的 0x400 地址加载相关配置，并且启动。\n所以我们要以以下命令将 uboot 写入sd卡：\nsudo dd if=uboot-myimx6ek140-6y-256m-nand.imx of=/dev/sdx bs=1k seek=1 conv=fsync 上面的命令含义是以 1k 的块大小写入，并且跳过第一个块（第一个块一般为分区表）；详细解说可以参考 i.MX_Linux_User’s_Guide.pdf 4.3 章节以及上面关于 imx 格式的文章。\n顺便吐槽一下国内某些卖开发板的，文档就只是一堆关于软件使用，脚本运行，却完全不涉及这么操作的原理\nSD卡分区，烧写文件 如果平时用的是 Linux 系统，SD 卡的分区就简单一点，分两个区，一个 fat32 格式用来放内核文件以及设备树（不确定为何要 fat32，看自带的 uboot 是已经支持 ext4 ），一个选一个你喜欢的格式，用来放根目录；可以按官方推荐的分区方式：\n前面 10MB 空出来，因为要留给 uboot 10MB 开始，分 500MB 格式化成 FAT32 用来存放内核与设备树文件 后面一个 ext3/ext4 用来做根文件 通过 fdisk 与 mkfs 指令完成，参考官方文档（需要注意sdx需要与你sd卡对应）：\n$ sudo fdisk /dev/sdx Type the following parameters (each followed by ): p [lists the current partitions] d [to delete existing partitions. Repeat this until no unnecessary partitions are reported by the 'p' command to start fresh.] n [create a new partition] p [create a primary partition - use for both partitions] 1 [the first partition] 20480 [starting at offset sector] 1024000 [size for the first partition to be used for the boot images] p [to check the partitions] np2 1228800 [starting at offset sector, which leaves enough space for the kernel, the bootloader and its configuration data] [using the default value will create a partition that extends to the last sector of the media] p [to check the partitions] w [this writes the partition table to the media and fdisk exits] 格式化：\nsudo mkfs.fat -F32 -v -n \"BOOT\" /dev/sdx1 sudo mkfs.ext4 -F -L \"rootfs\" /dev/sdx2 然后将内核文件、dtb、rootfs分别拷贝过去。\nuboot 启动 将 SD 卡换过去，加电，如无以外 uboot 应该是可以起来，内核起不来（如果内核也能起来的话可以uboot启动的时候按一下键盘暂停内核启动）\n在 uboot 终端运行 printenv 命令，查看厂家预定义的一些参数根据自己的需要进行修改。\n譬如在我的开发板上运行下面的指令就可以从 SD 卡启动：\nfatload mmc 0:1 ${kernel_addr_r} zimage-myimx6a7 fatload mmc 0:1 ${fdt_addr_r} myimx6ek140-6y-256m-nand.dtb setenv bootargs console=${console},${baudrate} root=/dev/mmcblk0p2 bootz ${kernel_addr_r} - ${fdt_addr_r} 上面指令依次从 SD 卡的第一个分区加载 zimage-myimx6a7 内核文件到内核启动的内存地址，myimx6ek140-6y-256m-nand.dtb 设备树文件到设备树内存地址，然后设置 bootargs （传递给内核的启动参数），然后启动。\n参数化一下：\nsetenv my_load_ker fatload mmc 0:1 ${kernel_addr_r} zimage-myimx6a7 setenv my_load_dtb fatload mmc 0:1 ${fdt_addr_r} myimx6ek140-6y-256m-nand.dtb setenv my_bootz bootz ${kernel_addr_r} - ${fdt_addr_r} setenv bootargs console=${console},${baudrate} root=/dev/mmcblk0p2 saveenv 然后就可以用此单行指令启动：\nrun my_load_ker; run my_load_dtb; run my_bootz 更进一步：\nsetenv bootcmd_my \"run my_load_ker; run my_load_dtb; run my_bootz\" setenv my_env_flag set saveenv 或者直接改掉原开发板的 bootcmd\nsetenv bootcmd \"run my_load_ker; run my_load_dtb; run my_bootz\" saveenv 重启，可以直接从SD卡启动\n参考：\nhttps://blog.csdn.net/wofeile880_jian/article/details/64444029 i.MX_Linux_User’s_Guide.pdf ",
+  "wordCount" : "333",
+  "inLanguage": "zh-cn",
+  "datePublished": "2021-12-19T00:00:00Z",
+  "dateModified": "2021-12-19T00:00:00Z",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://yplam.com/posts/embedded/imx6ull-boot-sd-card/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "YPLAM",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://yplam.com/favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <div class="logo-switches">
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="https://yplam.com/" title="YPLAM">
+                    <span>HOME</span>
+
+                </a>
+            </li>
+            <li>
+                <a href="https://yplam.com/about/" title="关于YPLam">
+                    <span>ABOUT</span>
+
+                </a>
+            </li>
+            <li>
+                <a href="https://github.com/yplam" title="GITHUB">
+                    <span>GITHUB</span>
+
+                </a>
+            </li>
+            <li>
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title entry-hint-parent">
+      iMX6ULL SD卡系统制作与启动
+    </h1>
+    <div class="post-meta"><span title='2021-12-19 00:00:00 +0000 UTC'>2021-12-19</span>
+
+</div>
+  </header> 
+  <div class="post-content"><p>鉴于之前玩的 MT7688A 已经停产并且模块断货，最近把目光投向一款新芯片：iMX6ULL，因为其起点价格在接受范围，最低配置的核心板价格在百元以内，128M+128M 足够跑我的OpenThread网关，通用芯片该有的功能都有，按功能来算的话比 MT7688A 性价比还高。</p>
+<p>拿到开发板，目标是跑 OpenWRT + OpenThread 网关，MQTT/MQTT-SN 或者 LWM2M 服务，把手上一堆传感器、控制器接上，不依赖外部服务运行。</p>
+<p>原装系统运行在 nand 上，不方便折腾，于是准备用 SD 卡启动的方式，修改起来很简单，热风枪把一个配置电阻换个位置。</p>
+<p>由于还不熟悉此板卡 uboot，内核的编译，暂时先用着随板带的固件。</p>
+<h2 id="写入uboot">写入uboot<a hidden class="anchor" aria-hidden="true" href="#写入uboot">#</a></h2>
+<p>uboot 固件使用 uboot-myimx6ek140-6y-256m-nand.imx，imx 文件格式在这里有个比较详细的介绍：<a href="https://www.cnblogs.com/Lioker/p/13219519.html">https://www.cnblogs.com/Lioker/p/13219519.html</a>。芯片启动时内部 ROM 程序会按 imx 文件格式从 SD 卡的 0x400 地址加载相关配置，并且启动。</p>
+<p>所以我们要以以下命令将 uboot 写入sd卡：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">sudo dd <span class="k">if</span><span class="o">=</span>uboot-myimx6ek140-6y-256m-nand.imx <span class="nv">of</span><span class="o">=</span>/dev/sdx <span class="nv">bs</span><span class="o">=</span>1k <span class="nv">seek</span><span class="o">=</span><span class="m">1</span> <span class="nv">conv</span><span class="o">=</span>fsync
+</span></span></code></pre></div><p>上面的命令含义是以 1k 的块大小写入，并且跳过第一个块（第一个块一般为分区表）；详细解说可以参考 i.MX_Linux_User&rsquo;s_Guide.pdf 4.3 章节以及上面关于 imx 格式的文章。</p>
+<p>顺便吐槽一下国内某些卖开发板的，文档就只是一堆关于软件使用，脚本运行，却完全不涉及这么操作的原理</p>
+<h2 id="sd卡分区烧写文件">SD卡分区，烧写文件<a hidden class="anchor" aria-hidden="true" href="#sd卡分区烧写文件">#</a></h2>
+<p>如果平时用的是 Linux 系统，SD 卡的分区就简单一点，分两个区，一个 fat32 格式用来放内核文件以及设备树（不确定为何要 fat32，看自带的 uboot 是已经支持 ext4 ），一个选一个你喜欢的格式，用来放根目录；可以按官方推荐的分区方式：</p>
+<ul>
+<li>前面 10MB 空出来，因为要留给 uboot</li>
+<li>10MB 开始，分 500MB 格式化成 FAT32 用来存放内核与设备树文件</li>
+<li>后面一个 ext3/ext4 用来做根文件</li>
+</ul>
+<p>通过 fdisk 与 mkfs 指令完成，参考官方文档（需要注意sdx需要与你sd卡对应）：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">$ sudo fdisk /dev/sdx
+</span></span><span class="line"><span class="cl">Type the following parameters <span class="o">(</span>each followed by &lt;ENTER&gt;<span class="o">)</span>:
+</span></span><span class="line"><span class="cl">p <span class="o">[</span>lists the current partitions<span class="o">]</span>
+</span></span><span class="line"><span class="cl">d <span class="o">[</span>to delete existing partitions. Repeat this <span class="k">until</span> no unnecessary partitions
+</span></span><span class="line"><span class="cl">are reported by the <span class="s1">&#39;p&#39;</span> <span class="nb">command</span> to start fresh.<span class="o">]</span>
+</span></span><span class="line"><span class="cl">n <span class="o">[</span>create a new partition<span class="o">]</span>
+</span></span><span class="line"><span class="cl">p <span class="o">[</span>create a primary partition - use <span class="k">for</span> both partitions<span class="o">]</span>
+</span></span><span class="line"><span class="cl"><span class="m">1</span> <span class="o">[</span>the first partition<span class="o">]</span>
+</span></span><span class="line"><span class="cl"><span class="m">20480</span> <span class="o">[</span>starting at offset sector<span class="o">]</span>
+</span></span><span class="line"><span class="cl"><span class="m">1024000</span> <span class="o">[</span>size <span class="k">for</span> the first partition to be used <span class="k">for</span> the boot images<span class="o">]</span>
+</span></span><span class="line"><span class="cl">p <span class="o">[</span>to check the partitions<span class="o">]</span>
+</span></span><span class="line"><span class="cl">np2
+</span></span><span class="line"><span class="cl"><span class="m">1228800</span> <span class="o">[</span>starting at offset sector, which leaves enough space <span class="k">for</span> the kernel,
+</span></span><span class="line"><span class="cl">the bootloader and its configuration data<span class="o">]</span>
+</span></span><span class="line"><span class="cl">&lt;enter&gt; <span class="o">[</span>using the default value will create a partition that extends to
+</span></span><span class="line"><span class="cl">the last sector of the media<span class="o">]</span>
+</span></span><span class="line"><span class="cl">p <span class="o">[</span>to check the partitions<span class="o">]</span>
+</span></span><span class="line"><span class="cl">w <span class="o">[</span>this writes the partition table to the media and fdisk exits<span class="o">]</span>
+</span></span></code></pre></div><p>格式化：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">sudo mkfs.fat -F32 -v -n <span class="s2">&#34;BOOT&#34;</span> /dev/sdx1
+</span></span><span class="line"><span class="cl">sudo mkfs.ext4 -F -L <span class="s2">&#34;rootfs&#34;</span> /dev/sdx2
+</span></span></code></pre></div><p>然后将内核文件、dtb、rootfs分别拷贝过去。</p>
+<h2 id="uboot-启动">uboot 启动<a hidden class="anchor" aria-hidden="true" href="#uboot-启动">#</a></h2>
+<p>将 SD 卡换过去，加电，如无以外 uboot 应该是可以起来，内核起不来（如果内核也能起来的话可以uboot启动的时候按一下键盘暂停内核启动）</p>
+<p>在 uboot 终端运行 printenv 命令，查看厂家预定义的一些参数根据自己的需要进行修改。</p>
+<p>譬如在我的开发板上运行下面的指令就可以从 SD 卡启动：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">fatload mmc 0:1 <span class="si">${</span><span class="nv">kernel_addr_r</span><span class="si">}</span> zimage-myimx6a7
+</span></span><span class="line"><span class="cl">fatload mmc 0:1 <span class="si">${</span><span class="nv">fdt_addr_r</span><span class="si">}</span> myimx6ek140-6y-256m-nand.dtb
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">setenv bootargs <span class="nv">console</span><span class="o">=</span><span class="si">${</span><span class="nv">console</span><span class="si">}</span>,<span class="si">${</span><span class="nv">baudrate</span><span class="si">}</span> <span class="nv">root</span><span class="o">=</span>/dev/mmcblk0p2
+</span></span><span class="line"><span class="cl">bootz <span class="si">${</span><span class="nv">kernel_addr_r</span><span class="si">}</span> - <span class="si">${</span><span class="nv">fdt_addr_r</span><span class="si">}</span>
+</span></span></code></pre></div><p>上面指令依次从 SD 卡的第一个分区加载 zimage-myimx6a7 内核文件到内核启动的内存地址，myimx6ek140-6y-256m-nand.dtb 设备树文件到设备树内存地址，然后设置 bootargs （传递给内核的启动参数），然后启动。</p>
+<p>参数化一下：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">setenv my_load_ker fatload mmc 0:1 <span class="si">${</span><span class="nv">kernel_addr_r</span><span class="si">}</span> zimage-myimx6a7
+</span></span><span class="line"><span class="cl">setenv my_load_dtb fatload mmc 0:1 <span class="si">${</span><span class="nv">fdt_addr_r</span><span class="si">}</span> myimx6ek140-6y-256m-nand.dtb
+</span></span><span class="line"><span class="cl">setenv my_bootz bootz <span class="si">${</span><span class="nv">kernel_addr_r</span><span class="si">}</span> - <span class="si">${</span><span class="nv">fdt_addr_r</span><span class="si">}</span>
+</span></span><span class="line"><span class="cl">setenv bootargs <span class="nv">console</span><span class="o">=</span><span class="si">${</span><span class="nv">console</span><span class="si">}</span>,<span class="si">${</span><span class="nv">baudrate</span><span class="si">}</span> <span class="nv">root</span><span class="o">=</span>/dev/mmcblk0p2
+</span></span><span class="line"><span class="cl">saveenv
+</span></span></code></pre></div><p>然后就可以用此单行指令启动：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">run my_load_ker<span class="p">;</span> run my_load_dtb<span class="p">;</span> run my_bootz
+</span></span></code></pre></div><p>更进一步：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">setenv bootcmd_my <span class="s2">&#34;run my_load_ker; run my_load_dtb; run my_bootz&#34;</span>
+</span></span><span class="line"><span class="cl">setenv my_env_flag <span class="nb">set</span>
+</span></span><span class="line"><span class="cl">saveenv
+</span></span></code></pre></div><p>或者直接改掉原开发板的 bootcmd</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">setenv bootcmd <span class="s2">&#34;run my_load_ker; run my_load_dtb; run my_bootz&#34;</span>
+</span></span><span class="line"><span class="cl">saveenv
+</span></span></code></pre></div><p>重启，可以直接从SD卡启动</p>
+<p>参考：</p>
+<ul>
+<li><a href="https://blog.csdn.net/wofeile880_jian/article/details/64444029">https://blog.csdn.net/wofeile880_jian/article/details/64444029</a></li>
+<li>i.MX_Linux_User&rsquo;s_Guide.pdf</li>
+</ul>
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+      <li><a href="https://yplam.com/tags/imx6ull/">IMX6ULL</a></li>
+      <li><a href="https://yplam.com/tags/linux/">Linux</a></li>
+      <li><a href="https://yplam.com/tags/embedded/">Embedded</a></li>
+    </ul>
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+        <span>&copy; 2025 <a href="https://yplam.com/">YPLAM</a></span> · 
+
+    <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+        CC BY-SA 4.0
+    </a>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>

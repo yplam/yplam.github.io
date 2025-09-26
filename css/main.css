@@ -1,0 +1,294 @@
+/* Reset and base styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  line-height: 1.6;
+  color: rgb(85, 85, 85);
+  background-color: rgb(247, 247, 247);
+}
+
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: white;
+  min-height: 100vh;
+}
+
+/* Navigation */
+.nav {
+  text-align: right;
+  margin-bottom: 40px;
+}
+
+.nav-link {
+  color: #999;
+  text-decoration: none;
+  font-size: 14px;
+  transition: color 0.2s ease;
+}
+
+.nav-link:hover {
+  color: rgb(114, 192, 44);
+}
+
+.nav-separator {
+  color: #999;
+  margin: 0 8px;
+}
+
+/* Main content */
+.main {
+  width: 100%;
+}
+
+/* Homepage styles */
+.home-header {
+  text-align: center;
+  margin-bottom: 50px;
+}
+
+.home-title {
+  font-size: 48px;
+  font-weight: 300;
+  color: rgb(85, 85, 85);
+  margin-bottom: 10px;
+  letter-spacing: 2px;
+}
+
+.home-divider {
+  width: 100%;
+  height: 1px;
+  background-color: rgb(114, 192, 44);
+  margin: 20px 0;
+  border: none;
+  border-top: 1px dotted rgb(114, 192, 44);
+}
+
+.home-tagline {
+  font-size: 16px;
+  color: rgb(85, 85, 85);
+  font-weight: 300;
+}
+
+/* Post list styles */
+.post-list {
+  list-style: none;
+}
+
+.post-item {
+  margin-bottom: 30px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #eee;
+}
+
+.post-item:last-child {
+  border-bottom: none;
+}
+
+.post-title {
+  font-size: 20px;
+  font-weight: 500;
+  margin-bottom: 8px;
+}
+
+.post-title a {
+  color: rgb(114, 192, 44);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.post-title a:hover {
+  color: rgb(85, 120, 30);
+}
+
+.post-meta {
+  font-size: 14px;
+  color: #999;
+  margin-bottom: 10px;
+}
+
+.post-meta .category {
+  color: rgb(114, 192, 44);
+  font-weight: 500;
+}
+
+.post-meta .separator {
+  margin: 0 5px;
+}
+
+.post-excerpt {
+  font-size: 14px;
+  color: rgb(85, 85, 85);
+  line-height: 1.5;
+}
+
+/* Single post styles */
+.post-header {
+  margin-bottom: 30px;
+}
+
+.post-meta-single {
+  font-size: 14px;
+  color: #999;
+  margin-bottom: 20px;
+}
+
+.post-meta-single .category {
+  color: rgb(114, 192, 44);
+  font-weight: 500;
+}
+
+.post-meta-single .separator {
+  margin: 0 5px;
+}
+
+.post-title-single {
+  font-size: 32px;
+  font-weight: 500;
+  color: rgb(85, 85, 85);
+  margin-bottom: 20px;
+  line-height: 1.2;
+}
+
+.post-content {
+  font-size: 16px;
+  line-height: 1.7;
+  color: rgb(85, 85, 85);
+}
+
+.post-content h1,
+.post-content h2,
+.post-content h3,
+.post-content h4,
+.post-content h5,
+.post-content h6 {
+  margin: 30px 0 15px 0;
+  font-weight: 600;
+  color: rgb(85, 85, 85);
+}
+
+.post-content h1 {
+  font-size: 24px;
+}
+
+.post-content h2 {
+  font-size: 20px;
+}
+
+.post-content h3 {
+  font-size: 18px;
+}
+
+.post-content p {
+  margin-bottom: 15px;
+}
+
+.post-content ul,
+.post-content ol {
+  margin: 15px 0;
+  padding-left: 30px;
+}
+
+.post-content li {
+  margin-bottom: 5px;
+}
+
+.post-content blockquote {
+  margin: 20px 0;
+  padding: 15px 20px;
+  background-color: #f8f9fa;
+  border-left: 4px solid #2d5a27;
+  font-style: italic;
+}
+
+.post-content code {
+  background-color: #f1f3f4;
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  font-size: 14px;
+}
+
+.post-content pre {
+  background-color: #2d3748;
+  color: #e2e8f0;
+  padding: 20px;
+  border-radius: 8px;
+  overflow-x: auto;
+  margin: 20px 0;
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.post-content pre code {
+  background-color: transparent;
+  padding: 0;
+  color: inherit;
+  font-size: inherit;
+}
+
+.post-content img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 4px;
+  margin: 20px 0;
+}
+
+.post-content table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0;
+}
+
+.post-content th,
+.post-content td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+.post-content th {
+  background-color: #f8f9fa;
+  font-weight: 600;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .container {
+    padding: 15px;
+  }
+  
+  .home-title {
+    font-size: 36px;
+  }
+  
+  .post-title-single {
+    font-size: 28px;
+  }
+  
+  .nav {
+    text-align: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .home-title {
+    font-size: 28px;
+  }
+  
+  .post-title-single {
+    font-size: 24px;
+  }
+  
+  .post-content pre {
+    padding: 15px;
+    font-size: 12px;
+  }
+}

@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>30个最常用的Symfony组件 | YPLAM</title>
+<meta name="keywords" content="PHP, Symfony">
+<meta name="description" content="在Symfony官网上有个投票，让用户选出工作中最有用的组件，下面是评选结果：">
+<meta name="author" content="">
+<link rel="canonical" href="https://yplam.com/posts/symfony/symfony-hot-bundles/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.8a2a5b863c538395920b4f077c6697be31878d530618647d78daca2883f21ff1.css" integrity="sha256-iipbhjxTg5WSC08HfGaXvjGHjVMGGGR9eNrKKIPyH/E=" rel="preload stylesheet" as="style">
+<link rel="icon" href="https://yplam.com/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://yplam.com/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://yplam.com/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://yplam.com/apple-touch-icon.png">
+<link rel="mask-icon" href="https://yplam.com/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="zh-cn" href="https://yplam.com/posts/symfony/symfony-hot-bundles/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --code-block-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript>
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-960JLZS3KY"></script>
+      <script>
+        var doNotTrack = false;
+        if ( false ) {
+          var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
+          var doNotTrack = (dnt == "1" || dnt == "yes");
+        }
+        if (!doNotTrack) {
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-960JLZS3KY');
+        }
+      </script><meta property="og:url" content="https://yplam.com/posts/symfony/symfony-hot-bundles/">
+  <meta property="og:site_name" content="YPLAM">
+  <meta property="og:title" content="30个最常用的Symfony组件">
+  <meta property="og:description" content="在Symfony官网上有个投票，让用户选出工作中最有用的组件，下面是评选结果：">
+  <meta property="og:locale" content="zh-cn">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2015-01-26T00:00:00+00:00">
+    <meta property="article:modified_time" content="2015-01-26T00:00:00+00:00">
+    <meta property="article:tag" content="PHP">
+    <meta property="article:tag" content="Symfony">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="30个最常用的Symfony组件">
+<meta name="twitter:description" content="在Symfony官网上有个投票，让用户选出工作中最有用的组件，下面是评选结果：">
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Posts",
+      "item": "https://yplam.com/posts/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "30个最常用的Symfony组件",
+      "item": "https://yplam.com/posts/symfony/symfony-hot-bundles/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "30个最常用的Symfony组件",
+  "name": "30个最常用的Symfony组件",
+  "description": "在Symfony官网上有个投票，让用户选出工作中最有用的组件，下面是评选结果：\n",
+  "keywords": [
+    "PHP", "Symfony"
+  ],
+  "articleBody": "在Symfony官网上有个投票，让用户选出工作中最有用的组件，下面是评选结果：\nFOSUserBundle (60%) 提供用户注册、管理相关的功能，推荐！ FOSRestBundle (30%) Restful Api，推荐！ KnpMenuBundle (25%) 菜单功能，推荐！ StofDoctrineExtensionsBundle (25%) 提供一堆有用的的Doctrine扩展，推荐！ JMSSerializerBundle (24%) 序列化支持，可以与FOSRestBundle一起使用 SonataAdminBundle (24%) 非常好用的一个管理后台组件，极力推荐！ FOSJsRoutingBundle (23%) 将路由信息开放给前端 LiipImagineBundle (22%) 类似Drupal中的Imagecache功能，为图片提供自动的缩放切割功能，推荐！ KnpPaginatorBundle (16%) 提供分页功能，推荐！ NelmioApiDocBundle (11%) 在代码注释中提供文档，可以在线阅读 FOSElasticaBundle (11%) 整合 ElasticSearch HWIOAuthBundle (11%) 提供OAuth登陆功能，国内的新浪、qq等都有提供，并且容易扩展，极力推荐！ VichUploaderBundle (10%) 自动帮你上传文件 RaulFraileLadyBugBundle (9%) 输出调试信息，替代var_dump，类似Drupal的dsm KnpSnappyBundle (8%) 生成pdf或者图片 DoctrineFixturesBundle (8%) Doctrine2 Data Fixtures library. into Symfony so that you can load data fixtures programmatically into the Doctrine ORM or ODM. WhiteOctoberPagerFantaBundle (8%) 分页相关功能 DoctrineMigrationsBundle (8%) 提供Doctrine升级数据库相关的功能 MopaBootstrapBundle (7%) Bootstrap模板相关 JMSSecurityExtraBundle (6%) 扩展Symfony的Securety DoctrineBundle (5%) Doctrine AvalancheImagineBundle (5%) 类Imagecache功能，已经不维护 JMSDiExtraBundle (5%) 扩展Symfony的依赖注入 GenemuFormBundle (4%) 提供一些常用的表单 KnpGaufretteBundle (4%) 文件管理 SncRedisBundle (4%) Redis LexikFormFilterBundle (3%) This Symfony2 bundle aims to provide classes to build a form filter and then build a doctrine query from this form filter. JMSI18nRoutingBundle (3%) This bundle allows you to create i18n routes. LiuggioExcelBundle (3%) This bundle permits you to create, modify and read excel objects. JMSTranslationBundle (3%) This bundle puts the Symfony Translation Component on steroids. 总结：\n作为一名从Drupal转过来的Symfony新手，感觉这个投票结果还是挺熟悉的。其中前10名中有9个组件曾经在自己的项目中用过（除了FOSJsRoutingBundle，可能是因为自己做的都是中规中矩的网站）。\n其中，FOSUserBundle + HWIOAuthBundle + SonataAdminBundle 基本上是项目开展时的标配，提供用户与后台\nKnpMenuBundle、 LiipImagineBundle、 KnpPaginatorBundle、StofDoctrineExtensionsBundle 基本上也是必备模块\n配置好上面这些模块，会发现：咦？一个熟悉的Drupal基础框架就出来了，有了用户、后台、pager、imagecache、菜单，下面就可以完全按你的想法去开发，Cool！\nPS：其实这些功能Drupal基本上都是已经自带有，但虽然使用Drupal可能可以在一两天内搭出一个满足你90%需求的网站（当然，不包括主题），但剩下的10%会成为你漫长的折磨 :)\n",
+  "wordCount" : "173",
+  "inLanguage": "zh-cn",
+  "datePublished": "2015-01-26T00:00:00Z",
+  "dateModified": "2015-01-26T00:00:00Z",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://yplam.com/posts/symfony/symfony-hot-bundles/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "YPLAM",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://yplam.com/favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <div class="logo-switches">
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="https://yplam.com/" title="YPLAM">
+                    <span>HOME</span>
+
+                </a>
+            </li>
+            <li>
+                <a href="https://yplam.com/about/" title="关于YPLam">
+                    <span>ABOUT</span>
+
+                </a>
+            </li>
+            <li>
+                <a href="https://github.com/yplam" title="GITHUB">
+                    <span>GITHUB</span>
+
+                </a>
+            </li>
+            <li>
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title entry-hint-parent">
+      30个最常用的Symfony组件
+    </h1>
+    <div class="post-meta"><span title='2015-01-26 00:00:00 +0000 UTC'>2015-01-26</span>
+
+</div>
+  </header> 
+  <div class="post-content"><p>在Symfony官网上有个投票，让用户选出工作中最有用的组件，下面是评选结果：</p>
+<ol>
+<li><a href="https://github.com/FriendsOfSymfony/FOSUserBundle">FOSUserBundle</a> (60%) 提供用户注册、管理相关的功能，推荐！</li>
+<li><a href="https://github.com/FriendsOfSymfony/FOSRestBundle">FOSRestBundle</a> (30%) Restful Api，推荐！</li>
+<li><a href="https://github.com/KnpLabs/KnpMenuBundle">KnpMenuBundle</a> (25%) 菜单功能，推荐！</li>
+<li><a href="https://github.com/stof/StofDoctrineExtensionsBundle">StofDoctrineExtensionsBundle</a> (25%) 提供一堆有用的的Doctrine扩展，推荐！</li>
+<li><a href="https://github.com/schmittjoh/JMSSerializerBundle">JMSSerializerBundle</a> (24%) 序列化支持，可以与FOSRestBundle一起使用</li>
+<li><a href="https://github.com/sonata-project/SonataAdminBundle">SonataAdminBundle</a> (24%) 非常好用的一个管理后台组件，极力推荐！</li>
+<li><a href="https://github.com/FriendsOfSymfony/FOSJsRoutingBundle">FOSJsRoutingBundle</a> (23%) 将路由信息开放给前端</li>
+<li><a href="https://github.com/liip/LiipImagineBundle">LiipImagineBundle</a> (22%) 类似Drupal中的Imagecache功能，为图片提供自动的缩放切割功能，推荐！</li>
+<li><a href="https://github.com/KnpLabs/KnpPaginatorBundle">KnpPaginatorBundle</a> (16%) 提供分页功能，推荐！</li>
+<li><a href="https://github.com/nelmio/NelmioApiDocBundle">NelmioApiDocBundle</a> (11%) 在代码注释中提供文档，可以在线阅读</li>
+<li><a href="https://github.com/FriendsOfSymfony/FOSElasticaBundle">FOSElasticaBundle</a> (11%) 整合  ElasticSearch</li>
+<li><a href="https://github.com/hwi/HWIOAuthBundle">HWIOAuthBundle</a> (11%) 提供OAuth登陆功能，国内的新浪、qq等都有提供，并且容易扩展，极力推荐！</li>
+<li><a href="https://github.com/dustin10/VichUploaderBundle">VichUploaderBundle</a> (10%) 自动帮你上传文件</li>
+<li><a href="https://github.com/raulfraile/LadybugBundle">RaulFraileLadyBugBundle</a> (9%) 输出调试信息，替代var_dump，类似Drupal的dsm</li>
+<li><a href="https://github.com/KnpLabs/KnpSnappyBundle">KnpSnappyBundle</a> (8%) 生成pdf或者图片</li>
+<li><a href="https://github.com/doctrine/DoctrineFixturesBundle">DoctrineFixturesBundle</a> (8%) Doctrine2 Data Fixtures library. into Symfony so that you can load data fixtures programmatically into the Doctrine ORM or ODM.</li>
+<li><a href="https://github.com/whiteoctober/WhiteOctoberPagerfantaBundle">WhiteOctoberPagerFantaBundle</a> (8%) 分页相关功能</li>
+<li><a href="https://github.com/doctrine/DoctrineMigrationsBundle">DoctrineMigrationsBundle</a> (8%) 提供Doctrine升级数据库相关的功能</li>
+<li><a href="https://github.com/phiamo/MopaBootstrapBundle">MopaBootstrapBundle</a> (7%) Bootstrap模板相关</li>
+<li><a href="https://github.com/schmittjoh/JMSSecurityExtraBundle">JMSSecurityExtraBundle</a> (6%) 扩展Symfony的Securety</li>
+<li><a href="https://github.com/doctrine/DoctrineBundle">DoctrineBundle</a> (5%) Doctrine</li>
+<li><a href="https://github.com/avalanche123/AvalancheImagineBundle">AvalancheImagineBundle</a> (5%) 类Imagecache功能，已经不维护</li>
+<li><a href="https://github.com/schmittjoh/JMSDiExtraBundle">JMSDiExtraBundle</a> (5%) 扩展Symfony的依赖注入</li>
+<li><a href="https://github.com/genemu/GenemuFormBundle">GenemuFormBundle</a> (4%) 提供一些常用的表单</li>
+<li><a href="https://github.com/KnpLabs/KnpGaufretteBundle">KnpGaufretteBundle</a> (4%) 文件管理</li>
+<li><a href="https://github.com/snc/SncRedisBundle">SncRedisBundle</a> (4%) Redis</li>
+<li><a href="https://github.com/lexik/LexikFormFilterBundle">LexikFormFilterBundle</a> (3%) This Symfony2 bundle aims to provide classes to build a form filter and then build a doctrine query from this form filter.</li>
+<li><a href="https://github.com/schmittjoh/JMSI18nRoutingBundle">JMSI18nRoutingBundle</a> (3%) This bundle allows you to create i18n routes.</li>
+<li><a href="https://github.com/liuggio/ExcelBundle">LiuggioExcelBundle</a> (3%) This bundle permits you to create, modify and read excel objects.</li>
+<li><a href="https://github.com/schmittjoh/JMSTranslationBundle">JMSTranslationBundle</a> (3%) This bundle puts the Symfony Translation Component on steroids.</li>
+</ol>
+<p><strong>总结：</strong></p>
+<p>作为一名从Drupal转过来的Symfony新手，感觉这个投票结果还是挺熟悉的。其中前10名中有9个组件曾经在自己的项目中用过（除了FOSJsRoutingBundle，可能是因为自己做的都是中规中矩的网站）。</p>
+<p>其中，FOSUserBundle + HWIOAuthBundle + SonataAdminBundle 基本上是项目开展时的标配，提供用户与后台</p>
+<p>KnpMenuBundle、 LiipImagineBundle、 KnpPaginatorBundle、StofDoctrineExtensionsBundle 基本上也是必备模块</p>
+<p>配置好上面这些模块，会发现：咦？一个熟悉的Drupal基础框架就出来了，有了用户、后台、pager、imagecache、菜单，下面就可以完全按你的想法去开发，Cool！</p>
+<p>PS：其实这些功能Drupal基本上都是已经自带有，但虽然使用Drupal可能可以在一两天内搭出一个满足你90%需求的网站（当然，不包括主题），但剩下的10%会成为你漫长的折磨 :)</p>
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+      <li><a href="https://yplam.com/tags/php/">PHP</a></li>
+      <li><a href="https://yplam.com/tags/symfony/">Symfony</a></li>
+    </ul>
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+        <span>&copy; 2025 <a href="https://yplam.com/">YPLAM</a></span> · 
+
+    <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+        CC BY-SA 4.0
+    </a>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>

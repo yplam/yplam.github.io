@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>Flux Kontext Lora 训练笔记 | YPLAM</title>
+<meta name="keywords" content="MachineLearning, Flux, Kontext, Lora">
+<meta name="description" content="本文记录使用 musubi-tuner 与 RTX4090 训练 Flux Kontext 人物换脸 Lora 流程。与之前 Flux Lora 训练 不同， Flux Kontext Lora 需要增加多一张参考图片，训练脚本框架也从 sd-scripts 换成了 musubi-tuner。">
+<meta name="author" content="">
+<link rel="canonical" href="https://yplam.com/posts/machinelearning/flux-kontext-lora-training/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.8a2a5b863c538395920b4f077c6697be31878d530618647d78daca2883f21ff1.css" integrity="sha256-iipbhjxTg5WSC08HfGaXvjGHjVMGGGR9eNrKKIPyH/E=" rel="preload stylesheet" as="style">
+<link rel="icon" href="https://yplam.com/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://yplam.com/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://yplam.com/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://yplam.com/apple-touch-icon.png">
+<link rel="mask-icon" href="https://yplam.com/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="zh-cn" href="https://yplam.com/posts/machinelearning/flux-kontext-lora-training/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --code-block-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript>
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-960JLZS3KY"></script>
+      <script>
+        var doNotTrack = false;
+        if ( false ) {
+          var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
+          var doNotTrack = (dnt == "1" || dnt == "yes");
+        }
+        if (!doNotTrack) {
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-960JLZS3KY');
+        }
+      </script><meta property="og:url" content="https://yplam.com/posts/machinelearning/flux-kontext-lora-training/">
+  <meta property="og:site_name" content="YPLAM">
+  <meta property="og:title" content="Flux Kontext Lora 训练笔记">
+  <meta property="og:description" content="本文记录使用 musubi-tuner 与 RTX4090 训练 Flux Kontext 人物换脸 Lora 流程。与之前 Flux Lora 训练 不同， Flux Kontext Lora 需要增加多一张参考图片，训练脚本框架也从 sd-scripts 换成了 musubi-tuner。">
+  <meta property="og:locale" content="zh-cn">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2025-08-23T00:00:00+00:00">
+    <meta property="article:modified_time" content="2025-08-23T00:00:00+00:00">
+    <meta property="article:tag" content="MachineLearning">
+    <meta property="article:tag" content="Flux">
+    <meta property="article:tag" content="Kontext">
+    <meta property="article:tag" content="Lora">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Flux Kontext Lora 训练笔记">
+<meta name="twitter:description" content="本文记录使用 musubi-tuner 与 RTX4090 训练 Flux Kontext 人物换脸 Lora 流程。与之前 Flux Lora 训练 不同， Flux Kontext Lora 需要增加多一张参考图片，训练脚本框架也从 sd-scripts 换成了 musubi-tuner。">
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Posts",
+      "item": "https://yplam.com/posts/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "Flux Kontext Lora 训练笔记",
+      "item": "https://yplam.com/posts/machinelearning/flux-kontext-lora-training/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Flux Kontext Lora 训练笔记",
+  "name": "Flux Kontext Lora 训练笔记",
+  "description": "本文记录使用 musubi-tuner 与 RTX4090 训练 Flux Kontext 人物换脸 Lora 流程。与之前 Flux Lora 训练 不同， Flux Kontext Lora 需要增加多一张参考图片，训练脚本框架也从 sd-scripts 换成了 musubi-tuner。\n",
+  "keywords": [
+    "MachineLearning", "Flux", "Kontext", "Lora"
+  ],
+  "articleBody": "本文记录使用 musubi-tuner 与 RTX4090 训练 Flux Kontext 人物换脸 Lora 流程。与之前 Flux Lora 训练 不同， Flux Kontext Lora 需要增加多一张参考图片，训练脚本框架也从 sd-scripts 换成了 musubi-tuner。\n工具配置 因为是同一个作者，因此 musubi-tuner 的安装配置与 sd-scripts 类似，使用以下命令：\ngit clone https://github.com/kohya-ss/musubi-tuner.git cd musubi-tuner python3.10 -m venv venv source venv/bin/activate pip install -i https://mirrors.aliyun.com/pypi/simple --extra-index-url https://download.pytorch.org/whl/cu124 --default-timeout=100 -r requirements.txt 配置 accelerate\naccelerate config 启用 numa efficiency, 并且选择 bf16，生成的 ~/.cache/huggingface/accelerate/default_config.yaml 内容\ncompute_environment: LOCAL_MACHINE debug: false distributed_type: 'NO' downcast_bf16: 'no' enable_cpu_affinity: true gpu_ids: all machine_rank: 0 main_training_function: main mixed_precision: bf16 num_machines: 1 num_processes: 1 rdzv_backend: static same_network: true tpu_env: [] tpu_use_cluster: false tpu_use_sudo: false use_cpu: false 数据集准备 dataset.toml 与 Flux Lora 类似， 但由于 Flux Kontext 需要增加多一张参考图片，因此使用 metadata.jsonl 打 label。\n[general] resolution = [1024, 1024] batch_size = 1 enable_bucket = true bucket_no_upscale = false [[datasets]] image_jsonl_file = \"/data/musubi-tuner/data/kontext_face_restoration/dataset_base/metadata.jsonl\" cache_directory = \"/data/musubi-tuner/data/kontext_face_restoration/cache/dataset_base\" num_repeats = 2 flux_kontext_no_resize_control = false [[datasets]] image_jsonl_file = \"/data/musubi-tuner/data/kontext_face_restoration/dataset_style/metadata.jsonl\" cache_directory = \"/data/musubi-tuner/data/kontext_face_restoration/cache/dataset_style\" num_repeats = 2 flux_kontext_no_resize_control = false metadata.jsonl 内容如下：\n{\"image_path\": \"/data/musubi-tuner/data/kontext_face_restoration/dataset_base/14_end.png\", \"control_path\": \"/data/musubi-tuner/data/kontext_face_restoration/dataset_base/14_start.png\", \"caption\": \"face restoration\"} 其中 image_path 为目标图片，即换脸后的图片，control_path 为参考图片，即换脸工作流的输入图片，caption 为图片描述。\n针对我们的换脸模型，control_path 就是把人脸 A 叠加在人物 B 上的图片，而 image_path 就是人物 A 的换脸后的自然图片。\n为了增加模型稳定性与泛化能力，可以增加不同风格间的换脸数据集，或者人脸朝向角度稍微不同的数据集。\n训练 musubi_tuner 增加了数据预处理过程。\npython src/musubi_tuner/flux_kontext_cache_latents.py --vae /data/models/FLUX.1-Kontext-dev/ae.safetensors --dataset_config /data/musubi-tuner/data/kontext_face_restoration/dataset.toml python src/musubi_tuner/flux_kontext_cache_text_encoder_outputs.py --text_encoder1 /data/models/flux_text_encoders/t5xxl_fp16.safetensors --text_encoder2 /data/models/flux_text_encoders/clip_l.safetensors --batch_size 2 --dataset_config /data/musubi-tuner/data/kontext_face_restoration/dataset.toml accelerate launch --mixed_precision bf16 --num_cpu_threads_per_process 4 src/musubi_tuner/flux_kontext_train_network.py --config_file /data/musubi-tuner/data/kontext_face_restoration/config.toml 在此使用的 config.toml 内容如下：\ndit = \"/data/models/FLUX.1-Kontext-dev/flux1-kontext-dev.safetensors\" vae = \"/data/models/FLUX.1-Kontext-dev/ae.safetensors\" text_encoder1 = \"/data/models/flux_text_encoders/t5xxl_fp16.safetensors\" text_encoder2 = \"/data/models/flux_text_encoders/clip_l.safetensors\" dataset_config = \"/data/musubi-tuner/data/kontext_face_restoration/dataset.toml\" output_dir = \"/data/musubi-tuner/data/kontext_face_restoration/output\" output_name = \"face_restoration\" save_model_as = \"safetensors\" sdpa = true mixed_precision = \"bf16\" save_precision = \"bf16\" timestep_sampling = \"flux_shift\" weighting_scheme = \"none\" optimizer_type = \"adamw8bit\" learning_rate = 0.0002 gradient_checkpointing = true max_data_loader_n_workers = 2 persistent_data_loader_workers = true network_module = \"networks.lora_flux\" network_dim = 64 network_alpha = 32 max_train_epochs = 100 save_every_n_epochs = 20 seed = 9527 fp8_base = true fp8_scaled = true ",
+  "wordCount" : "279",
+  "inLanguage": "zh-cn",
+  "datePublished": "2025-08-23T00:00:00Z",
+  "dateModified": "2025-08-23T00:00:00Z",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://yplam.com/posts/machinelearning/flux-kontext-lora-training/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "YPLAM",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://yplam.com/favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <div class="logo-switches">
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="https://yplam.com/" title="YPLAM">
+                    <span>HOME</span>
+
+                </a>
+            </li>
+            <li>
+                <a href="https://yplam.com/about/" title="关于YPLam">
+                    <span>ABOUT</span>
+
+                </a>
+            </li>
+            <li>
+                <a href="https://github.com/yplam" title="GITHUB">
+                    <span>GITHUB</span>
+
+                </a>
+            </li>
+            <li>
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title entry-hint-parent">
+      Flux Kontext Lora 训练笔记
+    </h1>
+    <div class="post-meta"><span title='2025-08-23 00:00:00 +0000 UTC'>2025-08-23</span>
+
+</div>
+  </header> 
+  <div class="post-content"><p>本文记录使用 musubi-tuner 与 RTX4090 训练 Flux Kontext 人物换脸 Lora 流程。与之前 <a href="/posts/machinelearning/flux-lora-training/">Flux Lora 训练</a> 不同， Flux Kontext Lora 需要增加多一张参考图片，训练脚本框架也从 sd-scripts 换成了 musubi-tuner。</p>
+<h2 id="工具配置">工具配置<a hidden class="anchor" aria-hidden="true" href="#工具配置">#</a></h2>
+<p>因为是同一个作者，因此 musubi-tuner 的安装配置与 sd-scripts 类似，使用以下命令：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">git clone https://github.com/kohya-ss/musubi-tuner.git
+</span></span><span class="line"><span class="cl"><span class="nb">cd</span> musubi-tuner
+</span></span><span class="line"><span class="cl">python3.10 -m venv venv
+</span></span><span class="line"><span class="cl"><span class="nb">source</span> venv/bin/activate
+</span></span><span class="line"><span class="cl">pip install -i https://mirrors.aliyun.com/pypi/simple --extra-index-url https://download.pytorch.org/whl/cu124 --default-timeout<span class="o">=</span><span class="m">100</span> -r requirements.txt
+</span></span></code></pre></div><p>配置 accelerate</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">accelerate config
+</span></span></code></pre></div><p>启用 numa efficiency, 并且选择 bf16，生成的 ~/.cache/huggingface/accelerate/default_config.yaml 内容</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="nt">compute_environment</span><span class="p">:</span><span class="w"> </span><span class="l">LOCAL_MACHINE</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">debug</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">distributed_type</span><span class="p">:</span><span class="w"> </span><span class="s1">&#39;NO&#39;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">downcast_bf16</span><span class="p">:</span><span class="w"> </span><span class="s1">&#39;no&#39;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">enable_cpu_affinity</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">gpu_ids</span><span class="p">:</span><span class="w"> </span><span class="l">all</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">machine_rank</span><span class="p">:</span><span class="w"> </span><span class="m">0</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">main_training_function</span><span class="p">:</span><span class="w"> </span><span class="l">main</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">mixed_precision</span><span class="p">:</span><span class="w"> </span><span class="l">bf16</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">num_machines</span><span class="p">:</span><span class="w"> </span><span class="m">1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">num_processes</span><span class="p">:</span><span class="w"> </span><span class="m">1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">rdzv_backend</span><span class="p">:</span><span class="w"> </span><span class="l">static</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">same_network</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">tpu_env</span><span class="p">:</span><span class="w"> </span><span class="p">[]</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">tpu_use_cluster</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">tpu_use_sudo</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">use_cpu</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="w">
+</span></span></span></code></pre></div><h2 id="数据集准备">数据集准备<a hidden class="anchor" aria-hidden="true" href="#数据集准备">#</a></h2>
+<p>dataset.toml 与 Flux Lora 类似， 但由于 Flux Kontext 需要增加多一张参考图片，因此使用 metadata.jsonl 打 label。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-toml" data-lang="toml"><span class="line"><span class="cl"><span class="p">[</span><span class="nx">general</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="nx">resolution</span> <span class="p">=</span> <span class="p">[</span><span class="mi">1024</span><span class="p">,</span> <span class="mi">1024</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="nx">batch_size</span> <span class="p">=</span> <span class="mi">1</span>
+</span></span><span class="line"><span class="cl"><span class="nx">enable_bucket</span> <span class="p">=</span> <span class="kc">true</span>
+</span></span><span class="line"><span class="cl"><span class="nx">bucket_no_upscale</span> <span class="p">=</span> <span class="kc">false</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="p">[[</span><span class="nx">datasets</span><span class="p">]]</span>
+</span></span><span class="line"><span class="cl"><span class="nx">image_jsonl_file</span> <span class="p">=</span> <span class="s2">&#34;/data/musubi-tuner/data/kontext_face_restoration/dataset_base/metadata.jsonl&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="nx">cache_directory</span> <span class="p">=</span> <span class="s2">&#34;/data/musubi-tuner/data/kontext_face_restoration/cache/dataset_base&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="nx">num_repeats</span> <span class="p">=</span> <span class="mi">2</span>
+</span></span><span class="line"><span class="cl"><span class="nx">flux_kontext_no_resize_control</span> <span class="p">=</span> <span class="kc">false</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="p">[[</span><span class="nx">datasets</span><span class="p">]]</span>
+</span></span><span class="line"><span class="cl"><span class="nx">image_jsonl_file</span> <span class="p">=</span> <span class="s2">&#34;/data/musubi-tuner/data/kontext_face_restoration/dataset_style/metadata.jsonl&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="nx">cache_directory</span> <span class="p">=</span> <span class="s2">&#34;/data/musubi-tuner/data/kontext_face_restoration/cache/dataset_style&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="nx">num_repeats</span> <span class="p">=</span> <span class="mi">2</span>
+</span></span><span class="line"><span class="cl"><span class="nx">flux_kontext_no_resize_control</span> <span class="p">=</span> <span class="kc">false</span>
+</span></span></code></pre></div><p>metadata.jsonl 内容如下：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="line"><span class="cl"><span class="p">{</span><span class="nt">&#34;image_path&#34;</span><span class="p">:</span> <span class="s2">&#34;/data/musubi-tuner/data/kontext_face_restoration/dataset_base/14_end.png&#34;</span><span class="p">,</span> <span class="nt">&#34;control_path&#34;</span><span class="p">:</span> <span class="s2">&#34;/data/musubi-tuner/data/kontext_face_restoration/dataset_base/14_start.png&#34;</span><span class="p">,</span> <span class="nt">&#34;caption&#34;</span><span class="p">:</span> <span class="s2">&#34;face restoration&#34;</span><span class="p">}</span>
+</span></span></code></pre></div><p>其中 image_path 为目标图片，即换脸后的图片，control_path 为参考图片，即换脸工作流的输入图片，caption 为图片描述。</p>
+<p>针对我们的换脸模型，control_path 就是把人脸 A 叠加在人物 B 上的图片，而 image_path 就是人物 A 的换脸后的自然图片。</p>
+<p>为了增加模型稳定性与泛化能力，可以增加不同风格间的换脸数据集，或者人脸朝向角度稍微不同的数据集。</p>
+<h2 id="训练">训练<a hidden class="anchor" aria-hidden="true" href="#训练">#</a></h2>
+<p>musubi_tuner 增加了数据预处理过程。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">python src/musubi_tuner/flux_kontext_cache_latents.py --vae /data/models/FLUX.1-Kontext-dev/ae.safetensors --dataset_config /data/musubi-tuner/data/kontext_face_restoration/dataset.toml
+</span></span><span class="line"><span class="cl">python src/musubi_tuner/flux_kontext_cache_text_encoder_outputs.py --text_encoder1 /data/models/flux_text_encoders/t5xxl_fp16.safetensors --text_encoder2 /data/models/flux_text_encoders/clip_l.safetensors --batch_size <span class="m">2</span> --dataset_config /data/musubi-tuner/data/kontext_face_restoration/dataset.toml
+</span></span><span class="line"><span class="cl">accelerate launch --mixed_precision bf16 --num_cpu_threads_per_process <span class="m">4</span> src/musubi_tuner/flux_kontext_train_network.py --config_file /data/musubi-tuner/data/kontext_face_restoration/config.toml
+</span></span></code></pre></div><p>在此使用的 config.toml 内容如下：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-toml" data-lang="toml"><span class="line"><span class="cl"><span class="nx">dit</span> <span class="p">=</span> <span class="s2">&#34;/data/models/FLUX.1-Kontext-dev/flux1-kontext-dev.safetensors&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="nx">vae</span> <span class="p">=</span> <span class="s2">&#34;/data/models/FLUX.1-Kontext-dev/ae.safetensors&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="nx">text_encoder1</span> <span class="p">=</span> <span class="s2">&#34;/data/models/flux_text_encoders/t5xxl_fp16.safetensors&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="nx">text_encoder2</span> <span class="p">=</span> <span class="s2">&#34;/data/models/flux_text_encoders/clip_l.safetensors&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="nx">dataset_config</span> <span class="p">=</span> <span class="s2">&#34;/data/musubi-tuner/data/kontext_face_restoration/dataset.toml&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="nx">output_dir</span> <span class="p">=</span> <span class="s2">&#34;/data/musubi-tuner/data/kontext_face_restoration/output&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="nx">output_name</span> <span class="p">=</span> <span class="s2">&#34;face_restoration&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="nx">save_model_as</span> <span class="p">=</span> <span class="s2">&#34;safetensors&#34;</span> 
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nx">sdpa</span> <span class="p">=</span> <span class="kc">true</span>
+</span></span><span class="line"><span class="cl"><span class="nx">mixed_precision</span> <span class="p">=</span> <span class="s2">&#34;bf16&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="nx">save_precision</span> <span class="p">=</span> <span class="s2">&#34;bf16&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="nx">timestep_sampling</span> <span class="p">=</span> <span class="s2">&#34;flux_shift&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="nx">weighting_scheme</span> <span class="p">=</span> <span class="s2">&#34;none&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="nx">optimizer_type</span> <span class="p">=</span> <span class="s2">&#34;adamw8bit&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="nx">learning_rate</span> <span class="p">=</span> <span class="mf">0.0002</span>
+</span></span><span class="line"><span class="cl"><span class="nx">gradient_checkpointing</span> <span class="p">=</span> <span class="kc">true</span>
+</span></span><span class="line"><span class="cl"><span class="nx">max_data_loader_n_workers</span> <span class="p">=</span> <span class="mi">2</span>
+</span></span><span class="line"><span class="cl"><span class="nx">persistent_data_loader_workers</span> <span class="p">=</span> <span class="kc">true</span>
+</span></span><span class="line"><span class="cl"><span class="nx">network_module</span> <span class="p">=</span> <span class="s2">&#34;networks.lora_flux&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="nx">network_dim</span> <span class="p">=</span> <span class="mi">64</span>
+</span></span><span class="line"><span class="cl"><span class="nx">network_alpha</span> <span class="p">=</span> <span class="mi">32</span>
+</span></span><span class="line"><span class="cl"><span class="nx">max_train_epochs</span> <span class="p">=</span> <span class="mi">100</span>
+</span></span><span class="line"><span class="cl"><span class="nx">save_every_n_epochs</span> <span class="p">=</span> <span class="mi">20</span>
+</span></span><span class="line"><span class="cl"><span class="nx">seed</span> <span class="p">=</span> <span class="mi">9527</span>
+</span></span><span class="line"><span class="cl"><span class="nx">fp8_base</span> <span class="p">=</span> <span class="kc">true</span>
+</span></span><span class="line"><span class="cl"><span class="nx">fp8_scaled</span> <span class="p">=</span> <span class="kc">true</span>
+</span></span></code></pre></div>
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+      <li><a href="https://yplam.com/tags/machinelearning/">MachineLearning</a></li>
+      <li><a href="https://yplam.com/tags/flux/">Flux</a></li>
+      <li><a href="https://yplam.com/tags/kontext/">Kontext</a></li>
+      <li><a href="https://yplam.com/tags/lora/">Lora</a></li>
+    </ul>
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+        <span>&copy; 2025 <a href="https://yplam.com/">YPLAM</a></span> · 
+
+    <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+        CC BY-SA 4.0
+    </a>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>

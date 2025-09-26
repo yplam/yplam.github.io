@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>嵌入式 AI 编程测试：ESP32C3 LSM6DSR LIS3MDLTR | YPLAM</title>
+<meta name="keywords" content="MachineLearning, Embedded">
+<meta name="description" content="最近买了个 LSM6DSR &#43; LIS3MDLTR 模块准备玩玩九轴IMU，店家提供了个简单的库文件以及英飞凌的例程，因为他的库文件写得不怎么样，以及需要移植到 ESP32，所以决定试试让 AI 根据数据手册编以及官方范例写库文件以及测试例程。其中有个难点就是 LIS3MDLTR 是通过 LSM6DSR 的 Sensor Hub 功能接入。">
+<meta name="author" content="">
+<link rel="canonical" href="https://yplam.com/posts/machinelearning/ai-coding-for-embedded/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.8a2a5b863c538395920b4f077c6697be31878d530618647d78daca2883f21ff1.css" integrity="sha256-iipbhjxTg5WSC08HfGaXvjGHjVMGGGR9eNrKKIPyH/E=" rel="preload stylesheet" as="style">
+<link rel="icon" href="https://yplam.com/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://yplam.com/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://yplam.com/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://yplam.com/apple-touch-icon.png">
+<link rel="mask-icon" href="https://yplam.com/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="zh-cn" href="https://yplam.com/posts/machinelearning/ai-coding-for-embedded/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --code-block-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript>
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-960JLZS3KY"></script>
+      <script>
+        var doNotTrack = false;
+        if ( false ) {
+          var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
+          var doNotTrack = (dnt == "1" || dnt == "yes");
+        }
+        if (!doNotTrack) {
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-960JLZS3KY');
+        }
+      </script><meta property="og:url" content="https://yplam.com/posts/machinelearning/ai-coding-for-embedded/">
+  <meta property="og:site_name" content="YPLAM">
+  <meta property="og:title" content="嵌入式 AI 编程测试：ESP32C3 LSM6DSR LIS3MDLTR">
+  <meta property="og:description" content="最近买了个 LSM6DSR &#43; LIS3MDLTR 模块准备玩玩九轴IMU，店家提供了个简单的库文件以及英飞凌的例程，因为他的库文件写得不怎么样，以及需要移植到 ESP32，所以决定试试让 AI 根据数据手册编以及官方范例写库文件以及测试例程。其中有个难点就是 LIS3MDLTR 是通过 LSM6DSR 的 Sensor Hub 功能接入。">
+  <meta property="og:locale" content="zh-cn">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2025-09-13T00:00:00+00:00">
+    <meta property="article:modified_time" content="2025-09-13T00:00:00+00:00">
+    <meta property="article:tag" content="MachineLearning">
+    <meta property="article:tag" content="Embedded">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="嵌入式 AI 编程测试：ESP32C3 LSM6DSR LIS3MDLTR">
+<meta name="twitter:description" content="最近买了个 LSM6DSR &#43; LIS3MDLTR 模块准备玩玩九轴IMU，店家提供了个简单的库文件以及英飞凌的例程，因为他的库文件写得不怎么样，以及需要移植到 ESP32，所以决定试试让 AI 根据数据手册编以及官方范例写库文件以及测试例程。其中有个难点就是 LIS3MDLTR 是通过 LSM6DSR 的 Sensor Hub 功能接入。">
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Posts",
+      "item": "https://yplam.com/posts/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "嵌入式 AI 编程测试：ESP32C3 LSM6DSR LIS3MDLTR",
+      "item": "https://yplam.com/posts/machinelearning/ai-coding-for-embedded/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "嵌入式 AI 编程测试：ESP32C3 LSM6DSR LIS3MDLTR",
+  "name": "嵌入式 AI 编程测试：ESP32C3 LSM6DSR LIS3MDLTR",
+  "description": "最近买了个 LSM6DSR + LIS3MDLTR 模块准备玩玩九轴IMU，店家提供了个简单的库文件以及英飞凌的例程，因为他的库文件写得不怎么样，以及需要移植到 ESP32，所以决定试试让 AI 根据数据手册编以及官方范例写库文件以及测试例程。其中有个难点就是 LIS3MDLTR 是通过 LSM6DSR 的 Sensor Hub 功能接入。\n",
+  "keywords": [
+    "MachineLearning", "Embedded"
+  ],
+  "articleBody": "最近买了个 LSM6DSR + LIS3MDLTR 模块准备玩玩九轴IMU，店家提供了个简单的库文件以及英飞凌的例程，因为他的库文件写得不怎么样，以及需要移植到 ESP32，所以决定试试让 AI 根据数据手册编以及官方范例写库文件以及测试例程。其中有个难点就是 LIS3MDLTR 是通过 LSM6DSR 的 Sensor Hub 功能接入。\n测试方法：使用统一的项目模板，统一的提示词，让 AI Agent 完成代码。如果出错则把错误信息反馈到 AI，让 AI 尝试修复。\n硬件 硬件比较简单，ESP32-C3 通过 SPI 连接 LSM6DSR，而模块上 LSM6DSR 通过 I2C 连接 LIS3MDLTR，运行在 SensorHub 模式。\nESP32-C3 \u003c-\u003e LSM6DSR (SPI2):\nSCLK: GPIO8 MISO (SDO): GPIO9 MOSI (SDA/SDI): GPIO10 CS: GPIO4 VDD / VDDIO: 3.3V GND: GND 项目模板 template 项目，包含几个从 idf sdk 拷贝的范例项目，ST 官方提供的 LSM6DSR 驱动库，以及预处理过的两个 Markdown 格式的数据手册。\n├── CMakeLists.txt ├── datasheet │ ├── LIS3MDLTR │ │ ├── 00_Introduction.md │ │ ├── 01_Features.md │ │ ├── 02_Applications.md │ │ ├── 03_Description.md │ │ ├── 04_Contents.md │ │ ├── 05_List_of_tables.md │ │ ├── 06_List_of_figures.md │ │ ├── 07_Block_diagram_and_pin_description.md │ │ ├── 08_Magnetic_and_electrical_specifications.md │ │ ├── 09_Terminology_and_functionality.md │ │ ├── 10_Application_hints.md │ │ ├── 11_Digital_interfaces.md │ │ ├── 12_Register_mapping.md │ │ ├── 13_Registers_description.md │ │ ├── 14_Package_information.md │ │ ├── 15_Revision_history.md │ │ ├── 16_Important_notice.md │ │ └── datasheet │ └── LSM6DSR │ ├── 00_Features.md │ ├── 00_Introduction.md │ ├── 01_Applications.md │ ├── 02_Description.md │ ├── 03_Contents.md │ ├── 04_List_of_tables.md │ ├── 05_List_of_figures.md │ ├── 06_Overview.md │ ├── 07_Embedded_low_power_features.md │ ├── 08_Pin_description.md │ ├── 09_Module_specifications.md │ ├── 10_Digital_interfaces.md │ ├── 11_Functionality.md │ ├── 12_Application_hints.md │ ├── 13_Register_mapping.md │ ├── 14_Register_description.md │ ├── 15_Embedded_functions_register_mapping.md │ ├── 16_Embedded_functions_register_description.md │ ├── 17_Embedded_advanced_features_pages.md │ ├── 18_Embedded_advanced_features_register_description.md │ └── datasheet ├── driver_example │ ├── CONTRIBUTING.md │ ├── LICENSE │ ├── lsm6dsr_reg.c │ ├── lsm6dsr_reg.h │ ├── README.md │ ├── Release_Notes.html │ └── Release_Notes.md ├── examples │ ├── get-started │ │ ├── blink │ │ ├── hello_world │ │ └── README.md │ └── peripherals │ ├── spi_master │ └── usb_serial_jtag └── main ├── CMakeLists.txt └── main.c 提示词 You are an expert embedded systems engineer specializing in sensor integration with the ESP-IDF framework. Your goal is to write a complete and robust driver library for the LSM6DSR IMU sensor for the ESP32-C3, using the ESP-IDF framework. The library must include both basic IMU functionality and the advanced sensor hub feature to read from an external LIS3MDLTR magnetometer. You will also create a comprehensive example application to demonstrate the library's usage. Communication Interfaces \u0026 Pinout a) ESP32-C3 to LSM6DSR (SPI) The primary communication with the LSM6DSR will be via SPI on the HSPI (SPI2) host. * **SCLK:** `GPIO8` * **MISO (SDO):** `GPIO9` * **MOSI (SDA/SDI):** `GPIO10` * **CS (Chip Select):** `GPIO4` b) LSM6DSR to LIS3MDLTR (I2C) The LSM6DSR will act as an I2C master to communicate with the LIS3MDLTR in sensor hub mode. the example application should output sensor values using usb_serial_jtag, and you should disable the default log output of esp-idf. data output in the follow format with configurable frequency: acc_x_value acc_y_value acc_z_value,gyro_x_value gyro_y_value gyro_z_value,mag_x_value mag_y_value mag_z_value\\n ... I will provide you with a basic application template. You need to complete the missing parts. You can find datasheets in datasheet folder, some basic esp-idf examples in examples folder, and some basic driver code in driver_example folder. Claude Code - Sonnet Sonnet 4 能使用 esp-idf 组件的形式实现 lsm6dsr_driver 组件，并实现 esp32 相关的 SPI 接入代码。\nusb_serial_jtag 功能接入失败，后来改成 printf 输出；\nLSM6DSR 加速度，角速度功能能读到数据，初步校验应该正确；LIS3MDLTR 初始化失败，无法读到 ID。\nLIS3MDLTR 初始化失败问题经过多轮交互与调试依然不成功，最后通过提供商家的范例代码，成功定位到是 Sensor hub 寄存器初始化顺序问题，并成功修正。\nCodex - gpt-5-codex-high 能使用 esp-idf 组件的形式实现 lsm6dsr_driver 组件，并实现 esp32 相关的 SPI 接入代码。\nusb_serial_jtag 功能接入失败，后来改成 printf 输出；\nLSM6DSR 加速度，角速度功能能读到数据，但数据明显错误；LIS3MDLTR 初始化失败，无法读到 ID。\n提供商家的范例代码后依然无法读出正确数据，也无法读到 LIS3MDLTR ID。\nGemini - gemini-2.5-pro Claude Code 与 Codex 都是把官方驱动库拷贝到自己的组件内作为库文件，而 Gemini 通过 N 轮修改后，把官方驱动改为一个 driver_example 组件，并作为 lsm6dsr_driver 库的依赖。\nusb_serial_jtag 改成 printf 这个指令竟然都操作错误。\nspi 初始化多轮对话后依然失败。\n",
+  "wordCount" : "548",
+  "inLanguage": "zh-cn",
+  "datePublished": "2025-09-13T00:00:00Z",
+  "dateModified": "2025-09-13T00:00:00Z",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://yplam.com/posts/machinelearning/ai-coding-for-embedded/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "YPLAM",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://yplam.com/favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <div class="logo-switches">
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="https://yplam.com/" title="YPLAM">
+                    <span>HOME</span>
+
+                </a>
+            </li>
+            <li>
+                <a href="https://yplam.com/about/" title="关于YPLam">
+                    <span>ABOUT</span>
+
+                </a>
+            </li>
+            <li>
+                <a href="https://github.com/yplam" title="GITHUB">
+                    <span>GITHUB</span>
+
+                </a>
+            </li>
+            <li>
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title entry-hint-parent">
+      嵌入式 AI 编程测试：ESP32C3 LSM6DSR LIS3MDLTR
+    </h1>
+    <div class="post-meta"><span title='2025-09-13 00:00:00 +0000 UTC'>2025-09-13</span>
+
+</div>
+  </header> 
+  <div class="post-content"><p>最近买了个 LSM6DSR + LIS3MDLTR 模块准备玩玩九轴IMU，店家提供了个简单的库文件以及英飞凌的例程，因为他的库文件写得不怎么样，以及需要移植到 ESP32，所以决定试试让 AI 根据数据手册编以及官方范例写库文件以及测试例程。其中有个难点就是 LIS3MDLTR 是通过 LSM6DSR 的 Sensor Hub 功能接入。</p>
+<p>测试方法：使用统一的项目模板，统一的提示词，让 AI Agent 完成代码。如果出错则把错误信息反馈到 AI，让 AI 尝试修复。</p>
+<h2 id="硬件">硬件<a hidden class="anchor" aria-hidden="true" href="#硬件">#</a></h2>
+<p>硬件比较简单，ESP32-C3 通过 SPI 连接 LSM6DSR，而模块上 LSM6DSR 通过 I2C 连接 LIS3MDLTR，运行在 SensorHub 模式。</p>
+<p><strong>ESP32-C3 &lt;-&gt; LSM6DSR (SPI2):</strong></p>
+<ul>
+<li><strong>SCLK:</strong> <code>GPIO8</code></li>
+<li><strong>MISO (SDO):</strong> <code>GPIO9</code></li>
+<li><strong>MOSI (SDA/SDI):</strong> <code>GPIO10</code></li>
+<li><strong>CS:</strong> <code>GPIO4</code></li>
+<li><strong>VDD / VDDIO:</strong> <code>3.3V</code></li>
+<li><strong>GND:</strong> <code>GND</code></li>
+</ul>
+<h2 id="项目模板">项目模板<a hidden class="anchor" aria-hidden="true" href="#项目模板">#</a></h2>
+<p>template 项目，包含几个从 idf sdk 拷贝的范例项目，ST 官方提供的 LSM6DSR 驱动库，以及预处理过的两个 Markdown 格式的数据手册。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-text" data-lang="text"><span class="line"><span class="cl">├── CMakeLists.txt
+</span></span><span class="line"><span class="cl">├── datasheet
+</span></span><span class="line"><span class="cl">│   ├── LIS3MDLTR
+</span></span><span class="line"><span class="cl">│   │   ├── 00_Introduction.md
+</span></span><span class="line"><span class="cl">│   │   ├── 01_Features.md
+</span></span><span class="line"><span class="cl">│   │   ├── 02_Applications.md
+</span></span><span class="line"><span class="cl">│   │   ├── 03_Description.md
+</span></span><span class="line"><span class="cl">│   │   ├── 04_Contents.md
+</span></span><span class="line"><span class="cl">│   │   ├── 05_List_of_tables.md
+</span></span><span class="line"><span class="cl">│   │   ├── 06_List_of_figures.md
+</span></span><span class="line"><span class="cl">│   │   ├── 07_Block_diagram_and_pin_description.md
+</span></span><span class="line"><span class="cl">│   │   ├── 08_Magnetic_and_electrical_specifications.md
+</span></span><span class="line"><span class="cl">│   │   ├── 09_Terminology_and_functionality.md
+</span></span><span class="line"><span class="cl">│   │   ├── 10_Application_hints.md
+</span></span><span class="line"><span class="cl">│   │   ├── 11_Digital_interfaces.md
+</span></span><span class="line"><span class="cl">│   │   ├── 12_Register_mapping.md
+</span></span><span class="line"><span class="cl">│   │   ├── 13_Registers_description.md
+</span></span><span class="line"><span class="cl">│   │   ├── 14_Package_information.md
+</span></span><span class="line"><span class="cl">│   │   ├── 15_Revision_history.md
+</span></span><span class="line"><span class="cl">│   │   ├── 16_Important_notice.md
+</span></span><span class="line"><span class="cl">│   │   └── datasheet
+</span></span><span class="line"><span class="cl">│   └── LSM6DSR
+</span></span><span class="line"><span class="cl">│       ├── 00_Features.md
+</span></span><span class="line"><span class="cl">│       ├── 00_Introduction.md
+</span></span><span class="line"><span class="cl">│       ├── 01_Applications.md
+</span></span><span class="line"><span class="cl">│       ├── 02_Description.md
+</span></span><span class="line"><span class="cl">│       ├── 03_Contents.md
+</span></span><span class="line"><span class="cl">│       ├── 04_List_of_tables.md
+</span></span><span class="line"><span class="cl">│       ├── 05_List_of_figures.md
+</span></span><span class="line"><span class="cl">│       ├── 06_Overview.md
+</span></span><span class="line"><span class="cl">│       ├── 07_Embedded_low_power_features.md
+</span></span><span class="line"><span class="cl">│       ├── 08_Pin_description.md
+</span></span><span class="line"><span class="cl">│       ├── 09_Module_specifications.md
+</span></span><span class="line"><span class="cl">│       ├── 10_Digital_interfaces.md
+</span></span><span class="line"><span class="cl">│       ├── 11_Functionality.md
+</span></span><span class="line"><span class="cl">│       ├── 12_Application_hints.md
+</span></span><span class="line"><span class="cl">│       ├── 13_Register_mapping.md
+</span></span><span class="line"><span class="cl">│       ├── 14_Register_description.md
+</span></span><span class="line"><span class="cl">│       ├── 15_Embedded_functions_register_mapping.md
+</span></span><span class="line"><span class="cl">│       ├── 16_Embedded_functions_register_description.md
+</span></span><span class="line"><span class="cl">│       ├── 17_Embedded_advanced_features_pages.md
+</span></span><span class="line"><span class="cl">│       ├── 18_Embedded_advanced_features_register_description.md
+</span></span><span class="line"><span class="cl">│       └── datasheet
+</span></span><span class="line"><span class="cl">├── driver_example
+</span></span><span class="line"><span class="cl">│   ├── CONTRIBUTING.md
+</span></span><span class="line"><span class="cl">│   ├── LICENSE
+</span></span><span class="line"><span class="cl">│   ├── lsm6dsr_reg.c
+</span></span><span class="line"><span class="cl">│   ├── lsm6dsr_reg.h
+</span></span><span class="line"><span class="cl">│   ├── README.md
+</span></span><span class="line"><span class="cl">│   ├── Release_Notes.html
+</span></span><span class="line"><span class="cl">│   └── Release_Notes.md
+</span></span><span class="line"><span class="cl">├── examples
+</span></span><span class="line"><span class="cl">│   ├── get-started
+</span></span><span class="line"><span class="cl">│   │   ├── blink
+</span></span><span class="line"><span class="cl">│   │   ├── hello_world
+</span></span><span class="line"><span class="cl">│   │   └── README.md
+</span></span><span class="line"><span class="cl">│   └── peripherals
+</span></span><span class="line"><span class="cl">│       ├── spi_master
+</span></span><span class="line"><span class="cl">│       └── usb_serial_jtag
+</span></span><span class="line"><span class="cl">└── main
+</span></span><span class="line"><span class="cl">    ├── CMakeLists.txt
+</span></span><span class="line"><span class="cl">    └── main.c
+</span></span></code></pre></div><h2 id="提示词">提示词<a hidden class="anchor" aria-hidden="true" href="#提示词">#</a></h2>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-text" data-lang="text"><span class="line"><span class="cl">You are an expert embedded systems engineer specializing in sensor integration with the ESP-IDF framework.
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Your goal is to write a complete and robust driver library for the LSM6DSR IMU sensor for the ESP32-C3, using the ESP-IDF framework. The library must include both basic IMU functionality and the advanced sensor hub feature to read from an external LIS3MDLTR magnetometer. You will also create a comprehensive example application to demonstrate the library&#39;s usage.
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Communication Interfaces &amp; Pinout
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">a) ESP32-C3 to LSM6DSR (SPI)
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">The primary communication with the LSM6DSR will be via SPI on the HSPI (SPI2) host.
+</span></span><span class="line"><span class="cl">*   **SCLK:** `GPIO8`
+</span></span><span class="line"><span class="cl">*   **MISO (SDO):** `GPIO9`
+</span></span><span class="line"><span class="cl">*   **MOSI (SDA/SDI):** `GPIO10`
+</span></span><span class="line"><span class="cl">*   **CS (Chip Select):** `GPIO4`
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">b) LSM6DSR to LIS3MDLTR (I2C)
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">The LSM6DSR will act as an I2C master to communicate with the LIS3MDLTR in sensor hub mode. 
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">the example application should output sensor values using usb_serial_jtag, and you should disable the default log output of esp-idf. data output in the follow format with configurable frequency:
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">acc_x_value acc_y_value acc_z_value,gyro_x_value gyro_y_value gyro_z_value,mag_x_value mag_y_value mag_z_value\n
+</span></span><span class="line"><span class="cl">...
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">I will provide you with a basic application template. You need to complete the missing parts.
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">You can find datasheets in datasheet folder, some basic esp-idf examples in examples folder, and some basic driver code in driver_example folder.
+</span></span></code></pre></div><h2 id="claude-code---sonnet-sonnet-4">Claude Code - Sonnet Sonnet 4<a hidden class="anchor" aria-hidden="true" href="#claude-code---sonnet-sonnet-4">#</a></h2>
+<p>能使用 esp-idf 组件的形式实现 lsm6dsr_driver 组件，并实现 esp32 相关的 SPI 接入代码。</p>
+<p>usb_serial_jtag 功能接入失败，后来改成 printf 输出；</p>
+<p>LSM6DSR 加速度，角速度功能能读到数据，初步校验应该正确；LIS3MDLTR 初始化失败，无法读到 ID。</p>
+<p>LIS3MDLTR 初始化失败问题经过多轮交互与调试依然不成功，最后通过提供商家的范例代码，成功定位到是 Sensor hub 寄存器初始化顺序问题，并成功修正。</p>
+<h2 id="codex---gpt-5-codex-high">Codex - gpt-5-codex-high<a hidden class="anchor" aria-hidden="true" href="#codex---gpt-5-codex-high">#</a></h2>
+<p>能使用 esp-idf 组件的形式实现 lsm6dsr_driver 组件，并实现 esp32 相关的 SPI 接入代码。</p>
+<p>usb_serial_jtag 功能接入失败，后来改成 printf 输出；</p>
+<p>LSM6DSR 加速度，角速度功能能读到数据，但数据明显错误；LIS3MDLTR 初始化失败，无法读到 ID。</p>
+<p>提供商家的范例代码后依然无法读出正确数据，也无法读到 LIS3MDLTR ID。</p>
+<h2 id="gemini---gemini-25-pro">Gemini - gemini-2.5-pro<a hidden class="anchor" aria-hidden="true" href="#gemini---gemini-25-pro">#</a></h2>
+<p>Claude Code 与 Codex 都是把官方驱动库拷贝到自己的组件内作为库文件，而 Gemini 通过 N 轮修改后，把官方驱动改为一个 driver_example 组件，并作为 lsm6dsr_driver 库的依赖。</p>
+<p>usb_serial_jtag 改成 printf 这个指令竟然都操作错误。</p>
+<p>spi 初始化多轮对话后依然失败。</p>
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+      <li><a href="https://yplam.com/tags/machinelearning/">MachineLearning</a></li>
+      <li><a href="https://yplam.com/tags/embedded/">Embedded</a></li>
+    </ul>
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+        <span>&copy; 2025 <a href="https://yplam.com/">YPLAM</a></span> · 
+
+    <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+        CC BY-SA 4.0
+    </a>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>

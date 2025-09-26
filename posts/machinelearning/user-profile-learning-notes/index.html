@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>用户画像笔记 | YPLAM</title>
+<meta name="keywords" content="MachineLearning, UserProfiling">
+<meta name="description" content="用户画像是根据用户社会属性、生活习惯和消费行为等信息而抽象出的一个标签化的用户模型。构建用户画像的核心工作即是给用户贴“标签”，而标签是通过对用户信息分析而来的高度精炼的特征标识。">
+<meta name="author" content="">
+<link rel="canonical" href="https://yplam.com/posts/machinelearning/user-profile-learning-notes/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.8a2a5b863c538395920b4f077c6697be31878d530618647d78daca2883f21ff1.css" integrity="sha256-iipbhjxTg5WSC08HfGaXvjGHjVMGGGR9eNrKKIPyH/E=" rel="preload stylesheet" as="style">
+<link rel="icon" href="https://yplam.com/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://yplam.com/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://yplam.com/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://yplam.com/apple-touch-icon.png">
+<link rel="mask-icon" href="https://yplam.com/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="zh-cn" href="https://yplam.com/posts/machinelearning/user-profile-learning-notes/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --code-block-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript>
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-960JLZS3KY"></script>
+      <script>
+        var doNotTrack = false;
+        if ( false ) {
+          var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
+          var doNotTrack = (dnt == "1" || dnt == "yes");
+        }
+        if (!doNotTrack) {
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-960JLZS3KY');
+        }
+      </script><meta property="og:url" content="https://yplam.com/posts/machinelearning/user-profile-learning-notes/">
+  <meta property="og:site_name" content="YPLAM">
+  <meta property="og:title" content="用户画像笔记">
+  <meta property="og:description" content="用户画像是根据用户社会属性、生活习惯和消费行为等信息而抽象出的一个标签化的用户模型。构建用户画像的核心工作即是给用户贴“标签”，而标签是通过对用户信息分析而来的高度精炼的特征标识。">
+  <meta property="og:locale" content="zh-cn">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2017-02-11T00:00:00+00:00">
+    <meta property="article:modified_time" content="2017-02-11T00:00:00+00:00">
+    <meta property="article:tag" content="MachineLearning">
+    <meta property="article:tag" content="UserProfiling">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="用户画像笔记">
+<meta name="twitter:description" content="用户画像是根据用户社会属性、生活习惯和消费行为等信息而抽象出的一个标签化的用户模型。构建用户画像的核心工作即是给用户贴“标签”，而标签是通过对用户信息分析而来的高度精炼的特征标识。">
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Posts",
+      "item": "https://yplam.com/posts/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "用户画像笔记",
+      "item": "https://yplam.com/posts/machinelearning/user-profile-learning-notes/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "用户画像笔记",
+  "name": "用户画像笔记",
+  "description": "用户画像是根据用户社会属性、生活习惯和消费行为等信息而抽象出的一个标签化的用户模型。构建用户画像的核心工作即是给用户贴“标签”，而标签是通过对用户信息分析而来的高度精炼的特征标识。\n",
+  "keywords": [
+    "MachineLearning", "UserProfiling"
+  ],
+  "articleBody": "用户画像是根据用户社会属性、生活习惯和消费行为等信息而抽象出的一个标签化的用户模型。构建用户画像的核心工作即是给用户贴“标签”，而标签是通过对用户信息分析而来的高度精炼的特征标识。\n用户画像要建立在真实的数据之上 当有多个用户画像的时候,需要考虑用户画像的优先级 用户画像是处在不断修正中的 用户画像的作用 精准营销，分析产品潜在用户，针对特定群体利用短信邮件等方式进行营销； 用户统计，比如中国大学购买书籍人数 TOP10，全国分城市奶爸指数； 数据挖掘，构建智能推荐系统，利用关联规则计算，喜欢红酒的人通常喜欢什么运动品牌，利用聚类算法分析，喜欢红酒的人年龄段分布情况； 进行效果评估，完善产品运营，提升服务质量，其实这也就相当于市场调研、用户调研，迅速下定位服务群体，提供高水平的服务； 对服务或产品进行私人定制，即个性化的服务某类群体甚至每一位用户（个人认为这是目前的发展趋势，未来的消费主流）。 业务经营分析以及竞争分析，影响企业发展战略 用户画像构建流程 ![user profiling]({{ site.url }}/assets/2017/userprofiling.png “用户画像”)\n1、基础数据收集\n静态信息数据\n人口属性：性别、年龄、地域、职业、学历、月收入、婚姻状况等 商业属性：消费等级、消费周期等 动态信息数据\n网络行为数据：活跃人数、页面浏览量、访问时长、激活率、外部触点、社交数据等 服务内行为数据：浏览路径、页面停留时间、访问深度、唯一页面浏览次数等 用户内容便好数据：浏览／收藏内容、评论内容、互动内容、生活形态偏好、品牌偏好等 用户交易数据（交易类服务）：贡献率、客单价、连带率、回头率、流失率等 2、行为建模\n该阶段是对上阶段收集到数据的处理，进行行为建模，以抽象出用户的标签，这个阶段注重的应是大概率事件，通过数学算法模型尽可能地排除用户的偶然行为。在这个阶段，需要用到很多模型来给用户贴标签。\n用户汽车模型: 根据用户对“汽车”话题的关注或购买相关产品的情况来判断用户是否有车、是否准备买车 用户活跃度模型: 通过判断＋聚类算法判断用户的活跃度 身高体型模型: 根据用户购买服装鞋帽等用品判断 用户价值模型: 判断用户对于网站的价值，对于提高用户留存率非常有用（电商网站一般使用RFM 实现） 促销敏感度模型: 根据订单中优惠券与代金券占比，定义客户对促销信息的敏感度 3、构建画像\n基本属性 购买能力 行为特征 社交网络 心理特征 兴趣爱好 用户画像构建的技术 todo\n用户画像资料汇总 User Profiling Trends, Techniques and Applications Learning User Profiles from Tagging Data and Leveraging them for Personal(ized) Information Access Harvesting Multiple Sources for User Profile Learning: a Big Data Study 慕课网：电商大数据应用之用户画像 参考资料 知乎：什么是用户画像呢？一般用户画像的作用是什么？ 慕课网：电商大数据应用之用户画像 ",
+  "wordCount" : "84",
+  "inLanguage": "zh-cn",
+  "datePublished": "2017-02-11T00:00:00Z",
+  "dateModified": "2017-02-11T00:00:00Z",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://yplam.com/posts/machinelearning/user-profile-learning-notes/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "YPLAM",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://yplam.com/favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <div class="logo-switches">
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="https://yplam.com/" title="YPLAM">
+                    <span>HOME</span>
+
+                </a>
+            </li>
+            <li>
+                <a href="https://yplam.com/about/" title="关于YPLam">
+                    <span>ABOUT</span>
+
+                </a>
+            </li>
+            <li>
+                <a href="https://github.com/yplam" title="GITHUB">
+                    <span>GITHUB</span>
+
+                </a>
+            </li>
+            <li>
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title entry-hint-parent">
+      用户画像笔记
+    </h1>
+    <div class="post-meta"><span title='2017-02-11 00:00:00 +0000 UTC'>2017-02-11</span>
+
+</div>
+  </header> 
+  <div class="post-content"><p>用户画像是根据用户社会属性、生活习惯和消费行为等信息而抽象出的一个标签化的用户模型。构建用户画像的核心工作即是给用户贴“标签”，而标签是通过对用户信息分析而来的高度精炼的特征标识。</p>
+<ul>
+<li>用户画像要建立在真实的数据之上</li>
+<li>当有多个用户画像的时候,需要考虑用户画像的优先级</li>
+<li>用户画像是处在不断修正中的</li>
+</ul>
+<h3 id="用户画像的作用">用户画像的作用<a hidden class="anchor" aria-hidden="true" href="#用户画像的作用">#</a></h3>
+<ul>
+<li>精准营销，分析产品潜在用户，针对特定群体利用短信邮件等方式进行营销；</li>
+<li>用户统计，比如中国大学购买书籍人数 TOP10，全国分城市奶爸指数；</li>
+<li>数据挖掘，构建智能推荐系统，利用关联规则计算，喜欢红酒的人通常喜欢什么运动品牌，利用聚类算法分析，喜欢红酒的人年龄段分布情况；</li>
+<li>进行效果评估，完善产品运营，提升服务质量，其实这也就相当于市场调研、用户调研，迅速下定位服务群体，提供高水平的服务；</li>
+<li>对服务或产品进行私人定制，即个性化的服务某类群体甚至每一位用户（个人认为这是目前的发展趋势，未来的消费主流）。</li>
+<li>业务经营分析以及竞争分析，影响企业发展战略</li>
+</ul>
+<h3 id="用户画像构建流程">用户画像构建流程<a hidden class="anchor" aria-hidden="true" href="#用户画像构建流程">#</a></h3>
+<p>![user profiling]({{ site.url }}/assets/2017/userprofiling.png &ldquo;用户画像&rdquo;)</p>
+<p><strong>1、基础数据收集</strong></p>
+<p>静态信息数据</p>
+<ul>
+<li>人口属性：性别、年龄、地域、职业、学历、月收入、婚姻状况等</li>
+<li>商业属性：消费等级、消费周期等</li>
+</ul>
+<p>动态信息数据</p>
+<ul>
+<li>网络行为数据：活跃人数、页面浏览量、访问时长、激活率、外部触点、社交数据等</li>
+<li>服务内行为数据：浏览路径、页面停留时间、访问深度、唯一页面浏览次数等</li>
+<li>用户内容便好数据：浏览／收藏内容、评论内容、互动内容、生活形态偏好、品牌偏好等</li>
+<li>用户交易数据（交易类服务）：贡献率、客单价、连带率、回头率、流失率等</li>
+</ul>
+<p><strong>2、行为建模</strong></p>
+<p>该阶段是对上阶段收集到数据的处理，进行行为建模，以抽象出用户的标签，这个阶段注重的应是大概率事件，通过数学算法模型尽可能地排除用户的偶然行为。在这个阶段，需要用到很多模型来给用户贴标签。</p>
+<ul>
+<li>用户汽车模型: 根据用户对“汽车”话题的关注或购买相关产品的情况来判断用户是否有车、是否准备买车</li>
+<li>用户活跃度模型: 通过判断＋聚类算法判断用户的活跃度</li>
+<li>身高体型模型: 根据用户购买服装鞋帽等用品判断</li>
+<li>用户价值模型: 判断用户对于网站的价值，对于提高用户留存率非常有用（电商网站一般使用RFM 实现）</li>
+<li>促销敏感度模型: 根据订单中优惠券与代金券占比，定义客户对促销信息的敏感度</li>
+</ul>
+<p><strong>3、构建画像</strong></p>
+<ul>
+<li>基本属性</li>
+<li>购买能力</li>
+<li>行为特征</li>
+<li>社交网络</li>
+<li>心理特征</li>
+<li>兴趣爱好</li>
+</ul>
+<h3 id="用户画像构建的技术">用户画像构建的技术<a hidden class="anchor" aria-hidden="true" href="#用户画像构建的技术">#</a></h3>
+<p>todo</p>
+<h3 id="用户画像资料汇总">用户画像资料汇总<a hidden class="anchor" aria-hidden="true" href="#用户画像资料汇总">#</a></h3>
+<ul>
+<li><a href="https://arxiv.org/pdf/1503.07474.pdf">User Profiling Trends, Techniques and Applications</a></li>
+<li><a href="https://www2007.org/workshops/paper_29.pdf">Learning User Profiles from Tagging Data and Leveraging them for Personal(ized) Information Access</a></li>
+<li><a href="http://lms.comp.nus.edu.sg/sites/default/files/publication-attachments/alex.pdf">Harvesting Multiple Sources for User Profile Learning: a Big Data Study</a></li>
+<li><a href="http://www.imooc.com/learn/460">慕课网：电商大数据应用之用户画像</a></li>
+</ul>
+<h3 id="参考资料">参考资料<a hidden class="anchor" aria-hidden="true" href="#参考资料">#</a></h3>
+<ul>
+<li><a href="https://www.zhihu.com/question/19853605">知乎：什么是用户画像呢？一般用户画像的作用是什么？</a></li>
+<li><a href="http://www.imooc.com/learn/460">慕课网：电商大数据应用之用户画像</a></li>
+</ul>
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+      <li><a href="https://yplam.com/tags/machinelearning/">MachineLearning</a></li>
+      <li><a href="https://yplam.com/tags/userprofiling/">UserProfiling</a></li>
+    </ul>
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+        <span>&copy; 2025 <a href="https://yplam.com/">YPLAM</a></span> · 
+
+    <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+        CC BY-SA 4.0
+    </a>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>

@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>Chromium 源码阅读：chrome/browser/themes | YPLAM</title>
+<meta name="keywords" content="Chromium">
+<meta name="description" content="前言：最近花了几天时间解决 Chromium CRX3 文件格式编码问题，然后决定用部分业余时间学习 Chromium 源码，从 UI/Theme/Extension 开始。（因为7,8年前曾经马马虎虎地看了一遍 Theme 以及其渲染过程的代码，并且写了一个简单的 Theme 打包工具，所以现在决定还是以此作为入口。）">
+<meta name="author" content="">
+<link rel="canonical" href="https://yplam.com/posts/chromium/chromium-src-chrome-browser-themes/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.8a2a5b863c538395920b4f077c6697be31878d530618647d78daca2883f21ff1.css" integrity="sha256-iipbhjxTg5WSC08HfGaXvjGHjVMGGGR9eNrKKIPyH/E=" rel="preload stylesheet" as="style">
+<link rel="icon" href="https://yplam.com/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://yplam.com/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://yplam.com/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://yplam.com/apple-touch-icon.png">
+<link rel="mask-icon" href="https://yplam.com/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="zh-cn" href="https://yplam.com/posts/chromium/chromium-src-chrome-browser-themes/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --code-block-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript>
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-960JLZS3KY"></script>
+      <script>
+        var doNotTrack = false;
+        if ( false ) {
+          var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
+          var doNotTrack = (dnt == "1" || dnt == "yes");
+        }
+        if (!doNotTrack) {
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-960JLZS3KY');
+        }
+      </script><meta property="og:url" content="https://yplam.com/posts/chromium/chromium-src-chrome-browser-themes/">
+  <meta property="og:site_name" content="YPLAM">
+  <meta property="og:title" content="Chromium 源码阅读：chrome/browser/themes">
+  <meta property="og:description" content="前言：最近花了几天时间解决 Chromium CRX3 文件格式编码问题，然后决定用部分业余时间学习 Chromium 源码，从 UI/Theme/Extension 开始。（因为7,8年前曾经马马虎虎地看了一遍 Theme 以及其渲染过程的代码，并且写了一个简单的 Theme 打包工具，所以现在决定还是以此作为入口。）">
+  <meta property="og:locale" content="zh-cn">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2019-03-02T00:00:00+00:00">
+    <meta property="article:modified_time" content="2019-03-02T00:00:00+00:00">
+    <meta property="article:tag" content="Chromium">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Chromium 源码阅读：chrome/browser/themes">
+<meta name="twitter:description" content="前言：最近花了几天时间解决 Chromium CRX3 文件格式编码问题，然后决定用部分业余时间学习 Chromium 源码，从 UI/Theme/Extension 开始。（因为7,8年前曾经马马虎虎地看了一遍 Theme 以及其渲染过程的代码，并且写了一个简单的 Theme 打包工具，所以现在决定还是以此作为入口。）">
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Posts",
+      "item": "https://yplam.com/posts/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "Chromium 源码阅读：chrome/browser/themes",
+      "item": "https://yplam.com/posts/chromium/chromium-src-chrome-browser-themes/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Chromium 源码阅读：chrome/browser/themes",
+  "name": "Chromium 源码阅读：chrome\/browser\/themes",
+  "description": "前言：最近花了几天时间解决 Chromium CRX3 文件格式编码问题，然后决定用部分业余时间学习 Chromium 源码，从 UI/Theme/Extension 开始。（因为7,8年前曾经马马虎虎地看了一遍 Theme 以及其渲染过程的代码，并且写了一个简单的 Theme 打包工具，所以现在决定还是以此作为入口。）\n",
+  "keywords": [
+    "Chromium"
+  ],
+  "articleBody": "前言：最近花了几天时间解决 Chromium CRX3 文件格式编码问题，然后决定用部分业余时间学习 Chromium 源码，从 UI/Theme/Extension 开始。（因为7,8年前曾经马马虎虎地看了一遍 Theme 以及其渲染过程的代码，并且写了一个简单的 Theme 打包工具，所以现在决定还是以此作为入口。）\nchrome/browser/themes/\nchrome/browser/themes/ 目录包含跟 Theme 格式定义相关代码，Theme 加载相关代码，以及全局的 ThemeService，但并不包含关于 Theme 如何渲染浏览器外观的代码,不包含关于 CRX 打包解包相关代码。\n文件概览 CustomThemeSupplier\ncustom_theme_supplier.cc custom_theme_supplier.h CustomThemeSupplier 是 Theme 表示的基类，并没有提供有效的实现。\nBrowserThemePack\nbrowser_theme_pack.cc browser_theme_pack.h browser_theme_pack_unittest.cc 继承自 CustomThemeSupplier 使用DataPack优化过的Theme表示方式，在Theme安装的时候对图片等进行预处理，然后保存成mmappable文件，用来提升性能。\nIncreasedContrastThemeSupplier\nincreased_contrast_theme_supplier.cc increased_contrast_theme_supplier.h 继承自 CustomThemeSupplier，提供高对比度的 Theme\nThemeProperties\ntheme_properties.cc theme_properties.h theme_properties_unittest.cc ThemeProperties 提供 Theme 相关的属性定义，并提供默认值，Static only class for querying which properties / images are themeable and the defaults of these properties.\nThemeService\ntheme_service.h theme_service.cc theme_service_unittest.cc theme_service_browsertest.cc ThemeService 为 Theme 服务类，负责加载用户设置的 Theme，删除无用的 Theme（监听 extensions::NOTIFICATION_EXTENSIONS_READY_DEPRECATED， 并且延时后），启动 Theme 同步服务。 并且响应 OnExtensionLoaded 事件，更新 Theme。同时为 UI 层提供 ThemeProvide。\nThemeServiceWin\ntheme_service_win.cc theme_service_win.h ThemeServiceWin 继承自ThemeService，针对 Windows 10 的颜色做相关处理。\nThemeServiceAuraX11\ntheme_service_aurax11.cc theme_service_aurax11.h ThemeServiceAuraX11 继承自ThemeService，提供原生的 X11 theme 支持。\nThemeServiceFactory\ntheme_service_factory.cc theme_service_factory.h ThemeServiceFactory 为工厂模式单例，使用者通过 ThemeServiceFactory::GetForProfile 获取当前使用的 ThemeService。\nThemeSyncableService\ntheme_syncable_service.cc theme_syncable_service.h theme_syncable_service_unittest.cc ThemeSyncableService 为 Theme 同步服务，本地安装新 Theme 后同步到后端，并且响应后端同步信息的改变。\n一些流程 为 UI 层提供数据\n浏览器 UI 层，如 chrome/browser/ui/views/bookmarks/bookmark_bar_view.cc 均继承自 views::View (ui/views/view.h) 所有 View 都可以通过 ui::ThemeProvider* GetThemeProvider() ，获取 ThemeProvider 句柄，然后通过 ThemeProvider 获取经过 Theme 后的 UI 颜色、图片等。GetThemeProvider 最终会调用 ThemeService::GetThemeProviderForProfile 或者 ThemeService::GetDefaultThemeProviderForProfile，返回的为 ThemeService 的内部类：\nclass BrowserThemeProvider : public ui::ThemeProvider 在此完成 ThemeService 与 ui::ThemeProvider 的解耦与调用。\nTheme 安装流程\nThemeService 通过加载安装的 Theme，通过 BrowserThemeProvider 内部类提供 UI 层所需的数据，然后通过内部类：\nclass ThemeService::ThemeObserver : public extensions::ExtensionRegistryObserver 与 Extension 子系统的的 ExtensionRegistry 关联，当安装新扩展时，ExtensionRegistry 服务就会回调所有 ExtensionRegistryObserver 的 OnExtensionLoaded 方法，如果此扩展为 Theme，则通过 theme service 更新。\nThemeService::ThemeObserver::OnExtensionLoaded 调用回溯：\n#0 0x000055555916362b in ThemeService::ThemeObserver::OnExtensionLoaded(content::BrowserContext*, extensions::Extension const*) (this=0x3eac7df9acd0, browser_context=0x3eac7ca81ba0, extension=0x3eac7ebd1fe0) at ../../chrome/browser/themes/theme_service.cc:264 #1 0x000055555794596c in extensions::ExtensionRegistry::TriggerOnLoaded(extensions::Extension const*) (this=0x3eac7cad7a20, extension=0x3eac7ebd1fe0) at ../../extensions/browser/extension_registry.cc:64 #2 0x0000555557941c1e in extensions::ExtensionRegistrar::ActivateExtension(extensions::Extension const*, bool) (this=0x3eac7c3b2a60, extension=0x3eac7ebd1fe0, is_newly_added=true) at ../../extensions/browser/extension_registrar.cc:450 #3 0x00005555579419df in extensions::ExtensionRegistrar::AddNewExtension(scoped_refptr) (this=0x3eac7c3b2a60, extension=...) at ../../extensions/browser/extension_registrar.cc:140 #4 0x0000555557940bf1 in extensions::ExtensionRegistrar::AddExtension(scoped_refptr) (this=0x3eac7c3b2a60, extension=...) at ../../extensions/browser/extension_registrar.cc:105 #5 0x000055555a1f88d3 in extensions::ExtensionService::AddExtension(extensions::Extension const*) (this=0x3eac7c3b2820, extension=0x3eac7ebd1fe0) at ../../chrome/browser/extensions/extension_service.cc:1188 #6 0x000055555a1fad83 in extensions::ExtensionService::FinishInstallation(extensions::Extension const*) (this=0x3eac7c3b2820, extension=0x3eac7ebd1fe0) at ../../chrome/browser/extensions/extension_service.cc:1617 #7 0x000055555a1f90c5 in extensions::ExtensionService::AddNewOrUpdatedExtension(extensions::Extension const*, extensions::Extension::State, int, syncer::Ordinal const\u0026, std::__ Cr::basic_string",
+  "wordCount" : "312",
+  "inLanguage": "zh-cn",
+  "datePublished": "2019-03-02T00:00:00Z",
+  "dateModified": "2019-03-02T00:00:00Z",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://yplam.com/posts/chromium/chromium-src-chrome-browser-themes/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "YPLAM",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://yplam.com/favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <div class="logo-switches">
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="https://yplam.com/" title="YPLAM">
+                    <span>HOME</span>
+
+                </a>
+            </li>
+            <li>
+                <a href="https://yplam.com/about/" title="关于YPLam">
+                    <span>ABOUT</span>
+
+                </a>
+            </li>
+            <li>
+                <a href="https://github.com/yplam" title="GITHUB">
+                    <span>GITHUB</span>
+
+                </a>
+            </li>
+            <li>
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title entry-hint-parent">
+      Chromium 源码阅读：chrome/browser/themes
+    </h1>
+    <div class="post-meta"><span title='2019-03-02 00:00:00 +0000 UTC'>2019-03-02</span>
+
+</div>
+  </header> 
+  <div class="post-content"><p>前言：最近花了几天时间解决 Chromium CRX3 文件格式编码问题，然后决定用部分业余时间学习 Chromium 源码，从 UI/Theme/Extension 开始。（因为7,8年前曾经马马虎虎地看了一遍 Theme 以及其渲染过程的代码，并且写了一个简单的 Theme 打包工具，所以现在决定还是以此作为入口。）</p>
+<p><strong>chrome/browser/themes/</strong></p>
+<p>chrome/browser/themes/ 目录包含跟 Theme 格式定义相关代码，Theme 加载相关代码，以及全局的 ThemeService，但并不包含关于 Theme 如何渲染浏览器外观的代码,不包含关于 CRX 打包解包相关代码。</p>
+<h3 id="文件概览">文件概览<a hidden class="anchor" aria-hidden="true" href="#文件概览">#</a></h3>
+<p><strong>CustomThemeSupplier</strong></p>
+<pre tabindex="0"><code>custom_theme_supplier.cc
+custom_theme_supplier.h
+</code></pre><p>CustomThemeSupplier 是 Theme 表示的基类，并没有提供有效的实现。</p>
+<p><strong>BrowserThemePack</strong></p>
+<pre tabindex="0"><code>browser_theme_pack.cc
+browser_theme_pack.h
+browser_theme_pack_unittest.cc
+</code></pre><p>继承自 CustomThemeSupplier 使用DataPack优化过的Theme表示方式，在Theme安装的时候对图片等进行预处理，然后保存成mmappable文件，用来提升性能。</p>
+<p><strong>IncreasedContrastThemeSupplier</strong></p>
+<pre tabindex="0"><code>increased_contrast_theme_supplier.cc
+increased_contrast_theme_supplier.h
+</code></pre><p>继承自 CustomThemeSupplier，提供高对比度的 Theme</p>
+<p><strong>ThemeProperties</strong></p>
+<pre tabindex="0"><code>theme_properties.cc
+theme_properties.h
+theme_properties_unittest.cc
+</code></pre><p>ThemeProperties 提供 Theme 相关的属性定义，<strong>并提供默认值</strong>，Static only class for querying which properties / images are themeable and the defaults of these properties.</p>
+<p><strong>ThemeService</strong></p>
+<pre tabindex="0"><code>theme_service.h
+theme_service.cc
+theme_service_unittest.cc
+theme_service_browsertest.cc
+</code></pre><p>ThemeService 为 Theme 服务类，负责加载用户设置的 Theme，删除无用的 Theme（监听 extensions::NOTIFICATION_EXTENSIONS_READY_DEPRECATED， 并且延时后），启动 Theme 同步服务。
+并且响应 OnExtensionLoaded 事件，更新 Theme。同时为 UI 层提供 ThemeProvide。</p>
+<p><strong>ThemeServiceWin</strong></p>
+<pre tabindex="0"><code>theme_service_win.cc
+theme_service_win.h
+</code></pre><p>ThemeServiceWin 继承自ThemeService，针对 Windows 10 的颜色做相关处理。</p>
+<p><strong>ThemeServiceAuraX11</strong></p>
+<pre tabindex="0"><code>theme_service_aurax11.cc
+theme_service_aurax11.h
+</code></pre><p>ThemeServiceAuraX11 继承自ThemeService，提供原生的 X11 theme 支持。</p>
+<p><strong>ThemeServiceFactory</strong></p>
+<pre tabindex="0"><code>theme_service_factory.cc
+theme_service_factory.h
+</code></pre><p>ThemeServiceFactory 为工厂模式单例，使用者通过 ThemeServiceFactory::GetForProfile 获取当前使用的 ThemeService。</p>
+<p><strong>ThemeSyncableService</strong></p>
+<pre tabindex="0"><code>theme_syncable_service.cc
+theme_syncable_service.h
+theme_syncable_service_unittest.cc
+</code></pre><p>ThemeSyncableService 为 Theme 同步服务，本地安装新 Theme 后同步到后端，并且响应后端同步信息的改变。</p>
+<h3 id="一些流程">一些流程<a hidden class="anchor" aria-hidden="true" href="#一些流程">#</a></h3>
+<p><strong>为 UI 层提供数据</strong></p>
+<p>浏览器 UI 层，如 chrome/browser/ui/views/bookmarks/bookmark_bar_view.cc 均继承自 views::View (ui/views/view.h) 所有 View 都可以通过 ui::ThemeProvider* GetThemeProvider() ，获取 ThemeProvider 句柄，然后通过 ThemeProvider 获取经过 Theme 后的 UI 颜色、图片等。GetThemeProvider 最终会调用 ThemeService::GetThemeProviderForProfile 或者 ThemeService::GetDefaultThemeProviderForProfile，返回的为 ThemeService 的内部类：</p>
+<pre tabindex="0"><code>class BrowserThemeProvider : public ui::ThemeProvider
+</code></pre><p>在此完成 ThemeService 与 ui::ThemeProvider 的解耦与调用。</p>
+<p><strong>Theme 安装流程</strong></p>
+<p>ThemeService 通过加载安装的 Theme，通过 BrowserThemeProvider 内部类提供 UI 层所需的数据，然后通过内部类：</p>
+<pre tabindex="0"><code>class ThemeService::ThemeObserver
+    : public extensions::ExtensionRegistryObserver
+</code></pre><p>与 Extension 子系统的的 ExtensionRegistry 关联，当安装新扩展时，ExtensionRegistry 服务就会回调所有 ExtensionRegistryObserver 的 OnExtensionLoaded 方法，如果此扩展为 Theme，则通过 theme service 更新。</p>
+<p>ThemeService::ThemeObserver::OnExtensionLoaded 调用回溯：</p>
+<pre tabindex="0"><code>#0  0x000055555916362b in ThemeService::ThemeObserver::OnExtensionLoaded(content::BrowserContext*, extensions::Extension const*)
+    (this=0x3eac7df9acd0, browser_context=0x3eac7ca81ba0, extension=0x3eac7ebd1fe0) at ../../chrome/browser/themes/theme_service.cc:264
+#1  0x000055555794596c in extensions::ExtensionRegistry::TriggerOnLoaded(extensions::Extension const*) (this=0x3eac7cad7a20, extension=0x3eac7ebd1fe0) at ../../extensions/browser/extension_registry.cc:64
+#2  0x0000555557941c1e in extensions::ExtensionRegistrar::ActivateExtension(extensions::Extension const*, bool) (this=0x3eac7c3b2a60, extension=0x3eac7ebd1fe0, is_newly_added=true)
+    at ../../extensions/browser/extension_registrar.cc:450
+#3  0x00005555579419df in extensions::ExtensionRegistrar::AddNewExtension(scoped_refptr&lt;extensions::Extension const&gt;) (this=0x3eac7c3b2a60, extension=...)
+    at ../../extensions/browser/extension_registrar.cc:140
+#4  0x0000555557940bf1 in extensions::ExtensionRegistrar::AddExtension(scoped_refptr&lt;extensions::Extension const&gt;) (this=0x3eac7c3b2a60, extension=...)
+    at ../../extensions/browser/extension_registrar.cc:105
+#5  0x000055555a1f88d3 in extensions::ExtensionService::AddExtension(extensions::Extension const*) (this=0x3eac7c3b2820, extension=0x3eac7ebd1fe0)
+    at ../../chrome/browser/extensions/extension_service.cc:1188
+#6  0x000055555a1fad83 in extensions::ExtensionService::FinishInstallation(extensions::Extension const*) (this=0x3eac7c3b2820, extension=0x3eac7ebd1fe0)
+    at ../../chrome/browser/extensions/extension_service.cc:1617
+#7  0x000055555a1f90c5 in extensions::ExtensionService::AddNewOrUpdatedExtension(extensions::Extension const*, extensions::Extension::State, int, syncer::Ordinal&lt;syncer::StringOrdinalTraits&gt; const&amp;, std::__
+Cr::basic_string&lt;char, std::__Cr::char_traits&lt;char&gt;, std::__Cr::allocator&lt;char&gt; &gt; const&amp;, base::Optional&lt;int&gt; const&amp;)
+    (this=0x3eac7c3b2820, extension=0x3eac7ebd1fe0, initial_state=extensions::Extension::ENABLED, install_flags=8, page_ordinal=..., install_parameter=..., dnr_ruleset_checksum=...)
+    at ../../chrome/browser/extensions/extension_service.cc:1557
+#8  0x000055555a1fa268 in extensions::ExtensionService::OnExtensionInstalled(extensions::Extension const*, syncer::Ordinal&lt;syncer::StringOrdinalTraits&gt; const&amp;, int, base::Optional&lt;int&gt; const&amp;)
+    (this=0x3eac7c3b2820, extension=0x3eac7ebd1fe0, page_ordinal=..., install_flags=8, dnr_ruleset_checksum=...) at ../../chrome/browser/extensions/extension_service.cc:1484
+#9  0x000055555a1ba42a in extensions::CrxInstaller::ReportSuccessFromUIThread() (this=0x3eac7f4ed020) at ../../chrome/browser/extensions/crx_installer.cc:956
+</code></pre>
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+      <li><a href="https://yplam.com/tags/chromium/">Chromium</a></li>
+    </ul>
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+        <span>&copy; 2025 <a href="https://yplam.com/">YPLAM</a></span> · 
+
+    <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+        CC BY-SA 4.0
+    </a>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>

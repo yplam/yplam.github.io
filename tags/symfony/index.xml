@@ -1,123 +1,126 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
   <channel>
-    <title>Symfony on YP.Lam</title>
+    <title>Symfony on YPLAM</title>
     <link>https://yplam.com/tags/symfony/</link>
-    <description>Recent content in Symfony on YP.Lam</description>
-    <generator>Hugo</generator>
+    <description>Recent content in Symfony on YPLAM</description>
+    <generator>Hugo -- 0.148.2</generator>
     <language>zh-cn</language>
     <lastBuildDate>Sun, 29 Mar 2020 00:00:00 +0000</lastBuildDate>
     <atom:link href="https://yplam.com/tags/symfony/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Symfony 4 the new way</title>
-      <link>https://yplam.com/post/symfony/symfony-the-new-way/</link>
+      <link>https://yplam.com/posts/symfony/symfony-the-new-way/</link>
       <pubDate>Sun, 29 Mar 2020 00:00:00 +0000</pubDate>
-      <guid>https://yplam.com/post/symfony/symfony-the-new-way/</guid>
-      <description>&lt;p&gt;Symfony 5 已经发布了一段时间，Symfony 4 也出了 4.4 LTS 版本，于是准备把手上一个历史遗留项目升级到 4.4，然而一动手就遇到麻烦，因为现在官方已经不推荐使用之前那种传统的大 bundle，而是倾向于更通用的组件（作为一个从 Symfony 2 过来的用户，不得不说挺支持官方的做法，因为经常会因为有 bundle 不及时更新而导致 composer 冲突）。&lt;/p&gt;&#xA;&lt;p&gt;本文章将尝试从头开始创建一个 Symfony 4 基础应用。&lt;/p&gt;</description>
+      <guid>https://yplam.com/posts/symfony/symfony-the-new-way/</guid>
+      <description>&lt;p&gt;Symfony 5 已经发布了一段时间，Symfony 4 也出了 4.4 LTS 版本，于是准备把手上一个历史遗留项目升级到 4.4，然而一动手就遇到麻烦，因为现在官方已经不推荐使用之前那种传统的大 bundle，而是倾向于更通用的组件（作为一个从 Symfony 2 过来的用户，不得不说挺支持官方的做法，因为经常会因为有 bundle 不及时更新而导致 composer 冲突）。&lt;/p&gt;
+&lt;p&gt;本文章将尝试从头开始创建一个 Symfony 4 基础应用。&lt;/p&gt;</description>
     </item>
     <item>
       <title>Symfony 4 尝鲜</title>
-      <link>https://yplam.com/post/symfony/hello-symfony-4/</link>
+      <link>https://yplam.com/posts/symfony/hello-symfony-4/</link>
       <pubDate>Fri, 01 Dec 2017 00:00:00 +0000</pubDate>
-      <guid>https://yplam.com/post/symfony/hello-symfony-4/</guid>
+      <guid>https://yplam.com/posts/symfony/hello-symfony-4/</guid>
       <description>&lt;p&gt;Symfony 4 如期在11月的最后一天发布，相比与 Symfony 2 到 Symfony 3 的升级，Symfony 4 的变化似乎更大，特别是由于加入 Flex 以及 Service Autowired，开发方式都会发生比较大的变化。&lt;/p&gt;</description>
     </item>
     <item>
       <title>Symfony 性能优化</title>
-      <link>https://yplam.com/post/symfony/symfony-performance/</link>
+      <link>https://yplam.com/posts/symfony/symfony-performance/</link>
       <pubDate>Fri, 27 May 2016 00:00:00 +0000</pubDate>
-      <guid>https://yplam.com/post/symfony/symfony-performance/</guid>
+      <guid>https://yplam.com/posts/symfony/symfony-performance/</guid>
       <description>&lt;p&gt;测试环境 ubuntu 14.04, php 5.5.9，使用 ab -c 10 -t 5 的方式针对不同的Symfony配置进行性能测试。&lt;/p&gt;</description>
     </item>
     <item>
       <title>Symfony2 太“重”了？试试 Symfony2 微框架</title>
-      <link>https://yplam.com/post/symfony/symfony-micro-framework/</link>
+      <link>https://yplam.com/posts/symfony/symfony-micro-framework/</link>
       <pubDate>Thu, 19 Nov 2015 00:00:00 +0000</pubDate>
-      <guid>https://yplam.com/post/symfony/symfony-micro-framework/</guid>
+      <guid>https://yplam.com/posts/symfony/symfony-micro-framework/</guid>
       <description>&lt;p&gt;Symfony2 是一个全功能的框架，因此有些开发人员会以它太“重”了（而不是太“难”了）为理由而拒绝使用。在开发环境下，一个简单的Symfony页面大概需要花费 70ms，而prod环境下大概需要30ms（以上是个人在一个Web App上实践后数据）。虽然相对其提供的功能而言，这是一个可观的数据，但对于一个简单的REST API请求而言，这也许真的太“重”了。&lt;/p&gt;</description>
     </item>
     <item>
       <title>使用 Jenkins 与 Github 对 Symfony 2 应用进行持续集成</title>
-      <link>https://yplam.com/post/symfony/symfony-github-jenkins/</link>
+      <link>https://yplam.com/posts/symfony/symfony-github-jenkins/</link>
       <pubDate>Mon, 16 Nov 2015 00:00:00 +0000</pubDate>
-      <guid>https://yplam.com/post/symfony/symfony-github-jenkins/</guid>
+      <guid>https://yplam.com/posts/symfony/symfony-github-jenkins/</guid>
       <description>&lt;p&gt;持续集成是一种软件开发实践，对于提高软件开发效率并保障软件开发质量提供了理论基础。Jenkins 是一个开源软件项目，旨在提供一个开放易用的软件平台，使持续集成变成可能。本文记录如何使用 Jenkins 与 Github 对 Symfony 2 应用进行持续集成。&lt;/p&gt;</description>
     </item>
     <item>
       <title>如何将一个Drupal网站转到Symfony</title>
-      <link>https://yplam.com/post/symfony/drupal-2-symfony/</link>
+      <link>https://yplam.com/posts/symfony/drupal-2-symfony/</link>
       <pubDate>Tue, 11 Aug 2015 00:00:00 +0000</pubDate>
-      <guid>https://yplam.com/post/symfony/drupal-2-symfony/</guid>
+      <guid>https://yplam.com/posts/symfony/drupal-2-symfony/</guid>
       <description>&lt;p&gt;最近尝试将自己的一些Drupal网站转移到Symfony（这个个人博客就是其中之一），下面分享一些转移过程的心得，主要包括Drupal基本功能在Symfony上的实现。&lt;/p&gt;</description>
     </item>
     <item>
       <title>SonataAdminBundle创建自定义后台页面</title>
-      <link>https://yplam.com/post/symfony/sonata-admin-custom-page/</link>
+      <link>https://yplam.com/posts/symfony/sonata-admin-custom-page/</link>
       <pubDate>Tue, 14 Jul 2015 00:00:00 +0000</pubDate>
-      <guid>https://yplam.com/post/symfony/sonata-admin-custom-page/</guid>
+      <guid>https://yplam.com/posts/symfony/sonata-admin-custom-page/</guid>
       <description>&lt;p&gt;SonataAdminBundle可以非常简便地实现CRUD页面，然而，如果我们需要在后台中实现与Entity无关的管理页面，应该怎么办呢？下面分享自己在摸索工程中的一个实现方法。&lt;/p&gt;</description>
     </item>
     <item>
       <title>使用twigExtension实现页面区块功能</title>
-      <link>https://yplam.com/post/symfony/symfony-twig-block/</link>
+      <link>https://yplam.com/posts/symfony/symfony-twig-block/</link>
       <pubDate>Wed, 03 Jun 2015 00:00:00 +0000</pubDate>
-      <guid>https://yplam.com/post/symfony/symfony-twig-block/</guid>
-      <description>&lt;p&gt;所谓区块，就是在页面中展示的一块内容，可以与当前页面内容相关或者无关。譬如常见的在网站侧边栏展示&#xA;“最新文章”区块，或者在文章内容页展示“相关文章”区块。&lt;/p&gt;</description>
+      <guid>https://yplam.com/posts/symfony/symfony-twig-block/</guid>
+      <description>&lt;p&gt;所谓区块，就是在页面中展示的一块内容，可以与当前页面内容相关或者无关。譬如常见的在网站侧边栏展示
+“最新文章”区块，或者在文章内容页展示“相关文章”区块。&lt;/p&gt;</description>
     </item>
     <item>
       <title>30个最常用的Symfony组件</title>
-      <link>https://yplam.com/post/symfony/symfony-hot-bundles/</link>
+      <link>https://yplam.com/posts/symfony/symfony-hot-bundles/</link>
       <pubDate>Mon, 26 Jan 2015 00:00:00 +0000</pubDate>
-      <guid>https://yplam.com/post/symfony/symfony-hot-bundles/</guid>
+      <guid>https://yplam.com/posts/symfony/symfony-hot-bundles/</guid>
       <description>&lt;p&gt;在Symfony官网上有个投票，让用户选出工作中最有用的组件，下面是评选结果：&lt;/p&gt;</description>
     </item>
     <item>
       <title>如何通过抽象类与接口来定义关联</title>
-      <link>https://yplam.com/post/symfony/doctrine-resolve-target-entity/</link>
+      <link>https://yplam.com/posts/symfony/doctrine-resolve-target-entity/</link>
       <pubDate>Fri, 21 Jun 2013 00:00:00 +0000</pubDate>
-      <guid>https://yplam.com/post/symfony/doctrine-resolve-target-entity/</guid>
+      <guid>https://yplam.com/posts/symfony/doctrine-resolve-target-entity/</guid>
       <description>&lt;p&gt;Symfony2 文档翻译：&lt;a href=&#34;http://symfony.com/doc/current/cookbook/doctrine/resolve_target_entity.html&#34;&gt;http://symfony.com/doc/current/cookbook/doctrine/resolve_target_entity.html&lt;/a&gt;&lt;/p&gt;</description>
     </item>
     <item>
       <title>FOSUserBundle 入门</title>
-      <link>https://yplam.com/post/symfony/symfony-fosuserbundle/</link>
+      <link>https://yplam.com/posts/symfony/symfony-fosuserbundle/</link>
       <pubDate>Thu, 20 Jun 2013 00:00:00 +0000</pubDate>
-      <guid>https://yplam.com/post/symfony/symfony-fosuserbundle/</guid>
+      <guid>https://yplam.com/posts/symfony/symfony-fosuserbundle/</guid>
       <description>&lt;p&gt;这是一篇介绍FOSUserBundle的安装与配置笔记，面向Symfony2.1+，更详细的内容请参考：&lt;a href=&#34;https://github.com/FriendsOfSymfony/FOSUserBundle/blob/master/Resources/doc/index.md&#34;&gt;https://github.com/FriendsOfSymfony/FOSUserBundle/blob/master/Resources/doc/index.md&lt;/a&gt;&lt;/p&gt;</description>
     </item>
     <item>
       <title>Symfony服务容器 ( Symfony Service Container )</title>
-      <link>https://yplam.com/post/symfony/symfony-service-container/</link>
+      <link>https://yplam.com/posts/symfony/symfony-service-container/</link>
       <pubDate>Tue, 18 Jun 2013 00:00:00 +0000</pubDate>
-      <guid>https://yplam.com/post/symfony/symfony-service-container/</guid>
-      <description>&lt;p&gt;这是一篇关于Symfony2服务容器实现的笔记，原文请查看文章末尾的相关资料部分。&lt;/p&gt;&#xA;&lt;p&gt;上一篇笔记介绍了依赖注入容器，依赖注入容器使得对各种系统功能的调用变得简便，但同时引入了一个新的问题就是容器的编写与维护变得非常复杂。Symfony2试图通过ServiceContainer、ServiceContainerBuilder以及xml、yml配置文件来使容器的实现变得简单。&lt;/p&gt;</description>
+      <guid>https://yplam.com/posts/symfony/symfony-service-container/</guid>
+      <description>&lt;p&gt;这是一篇关于Symfony2服务容器实现的笔记，原文请查看文章末尾的相关资料部分。&lt;/p&gt;
+&lt;p&gt;上一篇笔记介绍了依赖注入容器，依赖注入容器使得对各种系统功能的调用变得简便，但同时引入了一个新的问题就是容器的编写与维护变得非常复杂。Symfony2试图通过ServiceContainer、ServiceContainerBuilder以及xml、yml配置文件来使容器的实现变得简单。&lt;/p&gt;</description>
     </item>
     <item>
       <title>依赖注入容器（Dependency Injection Container）</title>
-      <link>https://yplam.com/post/symfony/dependency-injection-container/</link>
+      <link>https://yplam.com/posts/symfony/dependency-injection-container/</link>
       <pubDate>Mon, 17 Jun 2013 00:00:00 +0000</pubDate>
-      <guid>https://yplam.com/post/symfony/dependency-injection-container/</guid>
+      <guid>https://yplam.com/posts/symfony/dependency-injection-container/</guid>
       <description>&lt;p&gt;这是一篇关于Symfony依赖注入容器 Dependency Injection Container 的笔记，原文地址：&lt;a href=&#34;http://fabien.potencier.org/article/12/do-you-need-a-dependency-injection-container&#34;&gt;http://fabien.potencier.org/article/12/do-you-need-a-dependency-injection-container&lt;/a&gt;&lt;/p&gt;</description>
     </item>
     <item>
       <title>依赖注入 ( Dependency Injection )</title>
-      <link>https://yplam.com/post/symfony/dependency-injection/</link>
+      <link>https://yplam.com/posts/symfony/dependency-injection/</link>
       <pubDate>Sun, 16 Jun 2013 00:00:00 +0000</pubDate>
-      <guid>https://yplam.com/post/symfony/dependency-injection/</guid>
+      <guid>https://yplam.com/posts/symfony/dependency-injection/</guid>
       <description>&lt;p&gt;这是一篇关于Symfony依赖注入（Dependency Injection）的笔记，原文地址：&lt;a href=&#34;http://fabien.potencier.org/article/11/what-is-dependency-injection&#34;&gt;http://fabien.potencier.org/article/11/what-is-dependency-injection&lt;/a&gt;&lt;/p&gt;</description>
     </item>
     <item>
       <title>Symfony2 启动流程分析</title>
-      <link>https://yplam.com/post/symfony/symfony-bootstrap/</link>
+      <link>https://yplam.com/posts/symfony/symfony-bootstrap/</link>
       <pubDate>Thu, 06 Jun 2013 00:00:00 +0000</pubDate>
-      <guid>https://yplam.com/post/symfony/symfony-bootstrap/</guid>
+      <guid>https://yplam.com/posts/symfony/symfony-bootstrap/</guid>
       <description>&lt;p&gt;Symfony2 启动流程分析&lt;/p&gt;</description>
     </item>
     <item>
       <title>使用Capifony对Symfony网站进行发布</title>
-      <link>https://yplam.com/post/symfony/symfony-capifony/</link>
+      <link>https://yplam.com/posts/symfony/symfony-capifony/</link>
       <pubDate>Tue, 21 May 2013 00:00:00 +0000</pubDate>
-      <guid>https://yplam.com/post/symfony/symfony-capifony/</guid>
+      <guid>https://yplam.com/posts/symfony/symfony-capifony/</guid>
       <description>&lt;p&gt;以前一直使用Drupal来搭建网站，由于需要定制的代码量不是很大，所以每次修改都是直接用sftp传到服务器，再到Drupal后台清一下缓存。最近使用Symfony2进行开发，到了发布环节遇到了问题。Symfony代码的发布并不像其他CMS那么方便，因为更新代码后还需要assetic:dump，assets:install，cache:clear等一系列操作，因此每次更新往往需要登录到服务器去更新代码，运行清理cache的一系列命令。 &lt;a href=&#34;http://capifony.org/&#34;&gt;capifony&lt;/a&gt;是针对Symfony开发的应用部署脚本，基于&lt;a href=&#34;https://github.com/capistrano/capistrano&#34;&gt;Capistrano&lt;/a&gt;。使用capifony只需要进行简单的配置，就可以很方便的将代码部署到不同的服务器上。&lt;/p&gt;</description>
     </item>
   </channel>

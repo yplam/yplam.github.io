@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>FFmpeg HLS Fragmented Mp4 封装过程分析 | YPLAM</title>
+<meta name="keywords" content="FFmpeg, AV">
+<meta name="description" content="本笔记记录 FFmpeg HLS Fragmented Mp4  封装过程，主要关注点为 Fragmented Mp4 容器格式。">
+<meta name="author" content="">
+<link rel="canonical" href="https://yplam.com/posts/av/ffmpeg-hls-fmp4/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.8a2a5b863c538395920b4f077c6697be31878d530618647d78daca2883f21ff1.css" integrity="sha256-iipbhjxTg5WSC08HfGaXvjGHjVMGGGR9eNrKKIPyH/E=" rel="preload stylesheet" as="style">
+<link rel="icon" href="https://yplam.com/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://yplam.com/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://yplam.com/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://yplam.com/apple-touch-icon.png">
+<link rel="mask-icon" href="https://yplam.com/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="zh-cn" href="https://yplam.com/posts/av/ffmpeg-hls-fmp4/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --code-block-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript>
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-960JLZS3KY"></script>
+      <script>
+        var doNotTrack = false;
+        if ( false ) {
+          var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
+          var doNotTrack = (dnt == "1" || dnt == "yes");
+        }
+        if (!doNotTrack) {
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-960JLZS3KY');
+        }
+      </script><meta property="og:url" content="https://yplam.com/posts/av/ffmpeg-hls-fmp4/">
+  <meta property="og:site_name" content="YPLAM">
+  <meta property="og:title" content="FFmpeg HLS Fragmented Mp4 封装过程分析">
+  <meta property="og:description" content="本笔记记录 FFmpeg HLS Fragmented Mp4 封装过程，主要关注点为 Fragmented Mp4 容器格式。">
+  <meta property="og:locale" content="zh-cn">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2023-06-10T00:00:00+00:00">
+    <meta property="article:modified_time" content="2023-06-10T00:00:00+00:00">
+    <meta property="article:tag" content="FFmpeg">
+    <meta property="article:tag" content="AV">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="FFmpeg HLS Fragmented Mp4 封装过程分析">
+<meta name="twitter:description" content="本笔记记录 FFmpeg HLS Fragmented Mp4  封装过程，主要关注点为 Fragmented Mp4 容器格式。">
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Posts",
+      "item": "https://yplam.com/posts/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "FFmpeg HLS Fragmented Mp4 封装过程分析",
+      "item": "https://yplam.com/posts/av/ffmpeg-hls-fmp4/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "FFmpeg HLS Fragmented Mp4 封装过程分析",
+  "name": "FFmpeg HLS Fragmented Mp4 封装过程分析",
+  "description": "本笔记记录 FFmpeg HLS Fragmented Mp4 封装过程，主要关注点为 Fragmented Mp4 容器格式。\n",
+  "keywords": [
+    "FFmpeg", "AV"
+  ],
+  "articleBody": "本笔记记录 FFmpeg HLS Fragmented Mp4 封装过程，主要关注点为 Fragmented Mp4 容器格式。\n测试对应的 ffmpeg 命令为:\n./ffmpeg -i 2023-06-07-07-40-44.mp4 -c:v copy -c:a copy -hls_segment_type fmp4 -hls_list_size 10 \\ -hls_flags delete_segments+append_list -hls_playlist_type event -bsf:a aac_adtstoasc -brand isom \\ -loglevel debug -v verbose /tmp/index.m3u8 功能上不涉及编解码，只是将 mp4 文件重新封装为 hls m3u8，其中分片格式使用 fmp4，主要涉及代码为 libavformat 的 hlsenc.c，基础数据结构如下：\nconst FFOutputFormat ff_hls_muxer = { .p.name = \"hls\", .p.long_name = NULL_IF_CONFIG_SMALL(\"Apple HTTP Live Streaming\"), .p.extensions = \"m3u8\", .p.audio_codec = AV_CODEC_ID_AAC, .p.video_codec = AV_CODEC_ID_H264, .p.subtitle_codec = AV_CODEC_ID_WEBVTT, .p.flags = AVFMT_NOFILE | AVFMT_GLOBALHEADER | AVFMT_ALLOW_FLUSH | AVFMT_NODIMENSIONS, .p.priv_class = \u0026hls_class, .priv_data_size = sizeof(HLSContext), .init = hls_init, .write_header = hls_write_header, .write_packet = hls_write_packet, .write_trailer = hls_write_trailer, .deinit = hls_deinit, }; typedef struct HLSContext { const AVClass *class; // Class for private options. int64_t start_sequence; uint32_t start_sequence_source_type; // enum StartSequenceSourceType int64_t time; // Set by a private option. int64_t init_time; // Set by a private option. int max_nb_segments; // Set by a private option. int hls_delete_threshold; // Set by a private option. uint32_t flags; // enum HLSFlags uint32_t pl_type; // enum PlaylistType char *segment_filename; char *fmp4_init_filename; int segment_type; int resend_init_file; ///\u003c resend init file into disk after refresh m3u8 int use_localtime; ///\u003c flag to expand filename with localtime int use_localtime_mkdir;///\u003c flag to mkdir dirname in timebased filename int allowcache; int64_t recording_time; int64_t max_seg_size; // every segment file max size char *baseurl; char *vtt_format_options_str; char *subtitle_filename; AVDictionary *format_options; int encrypt; char *key; char *key_url; char *iv; char *key_basename; int encrypt_started; char *key_info_file; char key_file[LINE_BUFFER_SIZE + 1]; char key_uri[LINE_BUFFER_SIZE + 1]; char key_string[KEYSIZE*2 + 1]; char iv_string[KEYSIZE*2 + 1]; AVDictionary *vtt_format_options; char *method; char *user_agent; VariantStream *var_streams; unsigned int nb_varstreams; ClosedCaptionsStream *cc_streams; unsigned int nb_ccstreams; int master_m3u8_created; /* status of master play-list creation */ char *master_m3u8_url; /* URL of the master m3u8 file */ int version; /* HLS version */ char *var_stream_map; /* user specified variant stream map string */ char *cc_stream_map; /* user specified closed caption streams map string */ char *master_pl_name; unsigned int master_publish_rate; int http_persistent; AVIOContext *m3u8_out; AVIOContext *sub_m3u8_out; AVIOContext *http_delete; int64_t timeout; int ignore_io_errors; char *headers; int has_default_key; /* has DEFAULT field of var_stream_map */ int has_video_m3u8; /* has video stream m3u8 list */ } HLSContext; #define OFFSET(x) offsetof(HLSContext, x) #define E AV_OPT_FLAG_ENCODING_PARAM static const AVOption options[] = { {\"start_number\", \"set first number in the sequence\", OFFSET(start_sequence),AV_OPT_TYPE_INT64, {.i64 = 0}, 0, INT64_MAX, E}, {\"hls_time\", \"set segment length\", OFFSET(time), AV_OPT_TYPE_DURATION, {.i64 = 2000000}, 0, INT64_MAX, E}, {\"hls_init_time\", \"set segment length at init list\", OFFSET(init_time), AV_OPT_TYPE_DURATION, {.i64 = 0}, 0, INT64_MAX, E}, {\"hls_list_size\", \"set maximum number of playlist entries\", OFFSET(max_nb_segments), AV_OPT_TYPE_INT, {.i64 = 5}, 0, INT_MAX, E}, {\"hls_delete_threshold\", \"set number of unreferenced segments to keep before deleting\", OFFSET(hls_delete_threshold), AV_OPT_TYPE_INT, {.i64 = 1}, 1, INT_MAX, E}, {\"hls_vtt_options\",\"set hls vtt list of options for the container format used for hls\", OFFSET(vtt_format_options_str), AV_OPT_TYPE_STRING, {.str = NULL}, 0, 0, E}, {\"hls_allow_cache\", \"explicitly set whether the client MAY (1) or MUST NOT (0) cache media segments\", OFFSET(allowcache), AV_OPT_TYPE_INT, {.i64 = -1}, INT_MIN, INT_MAX, E}, {\"hls_base_url\", \"url to prepend to each playlist entry\", OFFSET(baseurl), AV_OPT_TYPE_STRING, {.str = NULL}, 0, 0, E}, {\"hls_segment_filename\", \"filename template for segment files\", OFFSET(segment_filename), AV_OPT_TYPE_STRING, {.str = NULL}, 0, 0, E}, {\"hls_segment_options\",\"set segments files format options of hls\", OFFSET(format_options), AV_OPT_TYPE_DICT, {.str = NULL}, 0, 0, E}, {\"hls_segment_size\", \"maximum size per segment file, (in bytes)\", OFFSET(max_seg_size), AV_OPT_TYPE_INT, {.i64 = 0}, 0, INT_MAX, E}, {\"hls_key_info_file\", \"file with key URI and key file path\", OFFSET(key_info_file), AV_OPT_TYPE_STRING, {.str = NULL}, 0, 0, E}, {\"hls_enc\", \"enable AES128 encryption support\", OFFSET(encrypt), AV_OPT_TYPE_BOOL, {.i64 = 0}, 0, 1, E}, {\"hls_enc_key\", \"hex-coded 16 byte key to encrypt the segments\", OFFSET(key), AV_OPT_TYPE_STRING, .flags = E}, {\"hls_enc_key_url\", \"url to access the key to decrypt the segments\", OFFSET(key_url), AV_OPT_TYPE_STRING, {.str = NULL}, 0, 0, E}, {\"hls_enc_iv\", \"hex-coded 16 byte initialization vector\", OFFSET(iv), AV_OPT_TYPE_STRING, .flags = E}, {\"hls_subtitle_path\", \"set path of hls subtitles\", OFFSET(subtitle_filename), AV_OPT_TYPE_STRING, {.str = NULL}, 0, 0, E}, {\"hls_segment_type\", \"set hls segment files type\", OFFSET(segment_type), AV_OPT_TYPE_INT, {.i64 = SEGMENT_TYPE_MPEGTS }, 0, SEGMENT_TYPE_FMP4, E, \"segment_type\"}, {\"mpegts\", \"make segment file to mpegts files in m3u8\", 0, AV_OPT_TYPE_CONST, {.i64 = SEGMENT_TYPE_MPEGTS }, 0, UINT_MAX, E, \"segment_type\"}, {\"fmp4\", \"make segment file to fragment mp4 files in m3u8\", 0, AV_OPT_TYPE_CONST, {.i64 = SEGMENT_TYPE_FMP4 }, 0, UINT_MAX, E, \"segment_type\"}, {\"hls_fmp4_init_filename\", \"set fragment mp4 file init filename\", OFFSET(fmp4_init_filename), AV_OPT_TYPE_STRING, {.str = \"init.mp4\"}, 0, 0, E}, {\"hls_RtspServerfmp4_init_resend\", \"resend fragment mp4 init file after refresh m3u8 every time\", OFFSET(resend_init_file), AV_OPT_TYPE_BOOL, {.i64 = 0 }, 0, 1, E }, {\"hls_flags\", \"set flags affecting HLS playlist and media file generation\", OFFSET(flags), AV_OPT_TYPE_FLAGS, {.i64 = 0 }, 0, UINT_MAX, E, \"flags\"}, {\"single_file\", \"generate a single media file indexed with byte ranges\", 0, AV_OPT_TYPE_CONST, {.i64 = HLS_SINGLE_FILE }, 0, UINT_MAX, E, \"flags\"}, {\"temp_file\", \"write segment and playlist to temporary file and rename when complete\", 0, AV_OPT_TYPE_CONST, {.i64 = HLS_TEMP_FILE }, 0, UINT_MAX, E, \"flags\"}, {\"delete_segments\", \"delete segment files that are no longer part of the playlist\", 0, AV_OPT_TYPE_CONST, {.i64 = HLS_DELETE_SEGMENTS }, 0, UINT_MAX, E, \"flags\"}, {\"round_durations\", \"round durations in m3u8 to whole numbers\", 0, AV_OPT_TYPE_CONST, {.i64 = HLS_ROUND_DURATIONS }, 0, UINT_MAX, E, \"flags\"}, {\"discont_start\", \"start the playlist with a discontinuity tag\", 0, AV_OPT_TYPE_CONST, {.i64 = HLS_DISCONT_START }, 0, UINT_MAX, E, \"flags\"}, {\"omit_endlist\", \"Do not append an endlist when ending stream\", 0, AV_OPT_TYPE_CONST, {.i64 = HLS_OMIT_ENDLIST }, 0, UINT_MAX, E, \"flags\"}, {\"split_by_time\", \"split the hls segment by time which user set by hls_time\", 0, AV_OPT_TYPE_CONST, {.i64 = HLS_SPLIT_BY_TIME }, 0, UINT_MAX, E, \"flags\"}, {\"append_list\", \"append the new segments into old hls segment list\", 0, AV_OPT_TYPE_CONST, {.i64 = HLS_APPEND_LIST }, 0, UINT_MAX, E, \"flags\"}, {\"program_date_time\", \"add EXT-X-PROGRAM-DATE-TIME\", 0, AV_OPT_TYPE_CONST, {.i64 = HLS_PROGRAM_DATE_TIME }, 0, UINT_MAX, E, \"flags\"}, {\"second_level_segment_index\", \"include segment index in segment filenames when use_localtime\", 0, AV_OPT_TYPE_CONST, {.i64 = HLS_SECOND_LEVEL_SEGMENT_INDEX }, 0, UINT_MAX, E, \"flags\"}, {\"second_level_segment_duration\", \"include segment duration in segment filenames when use_localtime\", 0, AV_OPT_TYPE_CONST, {.i64 = HLS_SECOND_LEVEL_SEGMENT_DURATION }, 0, UINT_MAX, E, \"flags\"}, {\"second_level_segment_size\", \"include segment size in segment filenames when use_localtime\", 0, AV_OPT_TYPE_CONST, {.i64 = HLS_SECOND_LEVEL_SEGMENT_SIZE }, 0, UINT_MAX, E, \"flags\"}, {\"periodic_rekey\", \"reload keyinfo file periodically for re-keying\", 0, AV_OPT_TYPE_CONST, {.i64 = HLS_PERIODIC_REKEY }, 0, UINT_MAX, E, \"flags\"}, {\"independent_segments\", \"add EXT-X-INDEPENDENT-SEGMENTS, whenever applicable\", 0, AV_OPT_TYPE_CONST, { .i64 = HLS_INDEPENDENT_SEGMENTS }, 0, UINT_MAX, E, \"flags\"}, {\"iframes_only\", \"add EXT-X-I-FRAMES-ONLY, whenever applicable\", 0, AV_OPT_TYPE_CONST, { .i64 = HLS_I_FRAMES_ONLY }, 0, UINT_MAX, E, \"flags\"}, {\"strftime\", \"set filename expansion with strftime at segment creation\", OFFSET(use_localtime), AV_OPT_TYPE_BOOL, {.i64 = 0 }, 0, 1, E }, {\"strftime_mkdir\", \"create last directory component in strftime-generated filename\", OFFSET(use_localtime_mkdir), AV_OPT_TYPE_BOOL, {.i64 = 0 }, 0, 1, E }, {\"hls_playlist_type\", \"set the HLS playlist type\", OFFSET(pl_type), AV_OPT_TYPE_INT, {.i64 = PLAYLIST_TYPE_NONE }, 0, PLAYLIST_TYPE_NB-1, E, \"pl_type\" }, {\"event\", \"EVENT playlist\", 0, AV_OPT_TYPE_CONST, {.i64 = PLAYLIST_TYPE_EVENT }, INT_MIN, INT_MAX, E, \"pl_type\" }, {\"vod\", \"VOD playlist\", 0, AV_OPT_TYPE_CONST, {.i64 = PLAYLIST_TYPE_VOD }, INT_MIN, INT_MAX, E, \"pl_type\" }, {\"method\", \"set the HTTP method(default: PUT)\", OFFSET(method), AV_OPT_TYPE_STRING, {.str = NULL}, 0, 0, E}, {\"hls_start_number_source\", \"set source of first number in sequence\", OFFSET(start_sequence_source_type), AV_OPT_TYPE_INT, {.i64 = HLS_START_SEQUENCE_AS_START_NUMBER }, 0, HLS_START_SEQUENCE_LAST-1, E, \"start_sequence_source_type\" }, {\"generic\", \"start_number value (default)\", 0, AV_OPT_TYPE_CONST, {.i64 = HLS_START_SEQUENCE_AS_START_NUMBER }, INT_MIN, INT_MAX, E, \"start_sequence_source_type\" }, {\"epoch\", \"seconds since epoch\", 0, AV_OPT_TYPE_CONST, {.i64 = HLS_START_SEQUENCE_AS_SECONDS_SINCE_EPOCH }, INT_MIN, INT_MAX, E, \"start_sequence_source_type\" }, {\"epoch_us\", \"microseconds since epoch\", 0, AV_OPT_TYPE_CONST, {.i64 = HLS_START_SEQUENCE_AS_MICROSECONDS_SINCE_EPOCH }, INT_MIN, INT_MAX, E, \"start_sequence_source_type\" }, {\"datetime\", \"current datetime as YYYYMMDDhhmmss\", 0, AV_OPT_TYPE_CONST, {.i64 = HLS_START_SEQUENCE_AS_FORMATTED_DATETIME }, INT_MIN, INT_MAX, E, \"start_sequence_source_type\" }, {\"http_user_agent\", \"override User-Agent field in HTTP header\", OFFSET(user_agent), AV_OPT_TYPE_STRING, {.str = NULL}, 0, 0, E}, {\"var_stream_map\", \"Variant stream map string\", OFFSET(var_stream_map), AV_OPT_TYPE_STRING, {.str = NULL}, 0, 0, E}, {\"cc_stream_map\", \"Closed captions stream map string\", OFFSET(cc_stream_map), AV_OPT_TYPE_STRING, {.str = NULL}, 0, 0, E}, {\"master_pl_name\", \"Create HLS master playlist with this name\", OFFSET(master_pl_name), AV_OPT_TYPE_STRING, {.str = NULL}, 0, 0, E}, {\"master_pl_publish_rate\", \"Publish master play list every after this many segment intervals\", OFFSET(master_publish_rate), AV_OPT_TYPE_INT, {.i64 = 0}, 0, UINT_MAX, E}, {\"http_persistent\", \"Use persistent HTTP connections\", OFFSET(http_persistent), AV_OPT_TYPE_BOOL, {.i64 = 0 }, 0, 1, E }, {\"timeout\", \"set timeout for socket I/O operations\", OFFSET(timeout), AV_OPT_TYPE_DURATION, { .i64 = -1 }, -1, INT_MAX, .flags = E }, {\"ignore_io_errors\", \"Ignore IO errors for stable long-duration runs with network output\", OFFSET(ignore_io_errors), AV_OPT_TYPE_BOOL, { .i64 = 0 }, 0, 1, E }, {\"headers\", \"set custom HTTP headers, can override built in default headers\", OFFSET(headers), AV_OPT_TYPE_STRING, { .str = NULL }, 0, 0, E }, { NULL }, }; static const AVClass hls_class = { .class_name = \"hls muxer\", .item_name = av_default_item_name, .option = options, .version = LIBAVUTIL_VERSION_INT, }; ff_hls_muxer 调用的生命周期如下:\nh l s _ i n i t h l s _ w r i t e _ h e a d e r h l s _ w r i t e _ p a c k e t h l s _ w r i t e _ t r a i l e r h l s _ d e i n i t 其中重点关注 hls_write_packet 函数，其调用流程如下：\nmain 函数调用 ffmpeg_parse_options，通过 of_open 申请内存，初始化 Muxer，并放入全局 output_files 数组 of_open 中较关键为 avformat_alloc_output_context2 ，根据输出格式申请 AVFormatContext ffmpeg_mux.c 初始化后启动 muxer_thread，唯一参数为 Muxer， muxer_thread 轮询 mux-\u003etq 读取帧信息 AVPacket ffmpeg_mux.c write_packet 修正时间相关数据 mux.c write_packets_common, 如果该 bitstream 没有 filter 则通过 write_packet_common 处理 mux.c write_packet_common 处理帧时长，注意此时参数 AVFormatContext 为 mux-\u003efc，即 hls mux.c write_packet 修正相关数据 hlsenc.c hls_write_packet hls_write_packet 函数实现的功能如下：\n找出 AVPacket 对应的 VariantStream 与 AVFormatContext 修正 end_pts 与 start_pts 时间参数 检查是否需要切分新 Fragment，譬如是否设置 split_by_time 参数，当前帧是否为关键帧 处理 ref_pkt （暂时未知作用） 如果通过 split_by_time 参数指定分割时间，并且为I帧，则进行分割操作, 通过 av_write_frame 写入 NULL pkt，触发 movenc.c mov_write_packet 函数调用 mov_flush_fragment 完成 如果不需要分片，则将 AVPacket 发送到 ff_write_chained 处理，注意此时的 AVFormatContext 已经转换为 s-\u003epriv_data-\u003evar_streams[i]-\u003eavf，即 mp4 ff_write_chained 修正 pts 后发送到 av_write_frame 重新进入 mux.c write_packets_common，只不过此时 pkt 为 mp4 格式，会发送到 movenc.c 的 mov_write_packet 函数进行处理 mov_write_packet 为 Mp4 帧封装函数，实现的功能如下：\n如果接收到空 AVPacket，则调用 mov_flush_fragment 进行 Fragmented Mp4 封装，否则调用 mov_write_single_packet（不考虑与我们场景不相干分支） mov_write_single_packet 先修正 AVPacket 数据，获取 mov 与 trk 相关参数，判断是否需要 mov_auto_flush_fragment，然后调用 ff_mov_write_packet； ff_mov_write_packet 写入 mdat，然后将帧数据 MOVIentry 添加到 trk-\u003ecluster，后续写入 fMp4 相关数据 Box 时会大量依赖 trk-\u003ecluster mov_flush_fragment 为 Fragmented Mp4 文件封装函数，实现功能如下：\n计算、修正 track 的时长与 end_pts 写 moov box 写 moof box ",
+  "wordCount" : "1601",
+  "inLanguage": "zh-cn",
+  "datePublished": "2023-06-10T00:00:00Z",
+  "dateModified": "2023-06-10T00:00:00Z",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://yplam.com/posts/av/ffmpeg-hls-fmp4/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "YPLAM",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://yplam.com/favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <div class="logo-switches">
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="https://yplam.com/" title="YPLAM">
+                    <span>HOME</span>
+
+                </a>
+            </li>
+            <li>
+                <a href="https://yplam.com/about/" title="关于YPLam">
+                    <span>ABOUT</span>
+
+                </a>
+            </li>
+            <li>
+                <a href="https://github.com/yplam" title="GITHUB">
+                    <span>GITHUB</span>
+
+                </a>
+            </li>
+            <li>
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title entry-hint-parent">
+      FFmpeg HLS Fragmented Mp4 封装过程分析
+    </h1>
+    <div class="post-meta"><span title='2023-06-10 00:00:00 +0000 UTC'>2023-06-10</span>
+
+</div>
+  </header> 
+  <div class="post-content"><p>本笔记记录 FFmpeg HLS Fragmented Mp4  封装过程，主要关注点为 Fragmented Mp4 容器格式。</p>
+<p>测试对应的 ffmpeg 命令为:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">./ffmpeg -i 2023-06-07-07-40-44.mp4 -c:v copy -c:a copy -hls_segment_type fmp4 -hls_list_size <span class="m">10</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>  -hls_flags delete_segments+append_list -hls_playlist_type event -bsf:a aac_adtstoasc -brand isom <span class="se">\ </span>
+</span></span><span class="line"><span class="cl">  -loglevel debug -v verbose /tmp/index.m3u8
+</span></span></code></pre></div><p>功能上不涉及编解码，只是将 mp4 文件重新封装为 hls m3u8，其中分片格式使用 fmp4，主要涉及代码为 libavformat 的 hlsenc.c，基础数据结构如下：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="line"><span class="cl"><span class="k">const</span> <span class="n">FFOutputFormat</span> <span class="n">ff_hls_muxer</span> <span class="o">=</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="p">.</span><span class="n">p</span><span class="p">.</span><span class="n">name</span>           <span class="o">=</span> <span class="s">&#34;hls&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="p">.</span><span class="n">p</span><span class="p">.</span><span class="n">long_name</span>      <span class="o">=</span> <span class="nf">NULL_IF_CONFIG_SMALL</span><span class="p">(</span><span class="s">&#34;Apple HTTP Live Streaming&#34;</span><span class="p">),</span>
+</span></span><span class="line"><span class="cl">    <span class="p">.</span><span class="n">p</span><span class="p">.</span><span class="n">extensions</span>     <span class="o">=</span> <span class="s">&#34;m3u8&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="p">.</span><span class="n">p</span><span class="p">.</span><span class="n">audio_codec</span>    <span class="o">=</span> <span class="n">AV_CODEC_ID_AAC</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="p">.</span><span class="n">p</span><span class="p">.</span><span class="n">video_codec</span>    <span class="o">=</span> <span class="n">AV_CODEC_ID_H264</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="p">.</span><span class="n">p</span><span class="p">.</span><span class="n">subtitle_codec</span> <span class="o">=</span> <span class="n">AV_CODEC_ID_WEBVTT</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="p">.</span><span class="n">p</span><span class="p">.</span><span class="n">flags</span>          <span class="o">=</span> <span class="n">AVFMT_NOFILE</span> <span class="o">|</span> <span class="n">AVFMT_GLOBALHEADER</span> <span class="o">|</span> <span class="n">AVFMT_ALLOW_FLUSH</span> <span class="o">|</span> <span class="n">AVFMT_NODIMENSIONS</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="p">.</span><span class="n">p</span><span class="p">.</span><span class="n">priv_class</span>     <span class="o">=</span> <span class="o">&amp;</span><span class="n">hls_class</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="p">.</span><span class="n">priv_data_size</span> <span class="o">=</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">HLSContext</span><span class="p">),</span>
+</span></span><span class="line"><span class="cl">    <span class="p">.</span><span class="n">init</span>           <span class="o">=</span> <span class="n">hls_init</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="p">.</span><span class="n">write_header</span>   <span class="o">=</span> <span class="n">hls_write_header</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="p">.</span><span class="n">write_packet</span>   <span class="o">=</span> <span class="n">hls_write_packet</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="p">.</span><span class="n">write_trailer</span>  <span class="o">=</span> <span class="n">hls_write_trailer</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="p">.</span><span class="n">deinit</span>         <span class="o">=</span> <span class="n">hls_deinit</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="p">};</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">typedef</span> <span class="k">struct</span> <span class="n">HLSContext</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">const</span> <span class="n">AVClass</span> <span class="o">*</span><span class="n">class</span><span class="p">;</span>  <span class="c1">// Class for private options.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kt">int64_t</span> <span class="n">start_sequence</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">uint32_t</span> <span class="n">start_sequence_source_type</span><span class="p">;</span>  <span class="c1">// enum StartSequenceSourceType
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl">    <span class="kt">int64_t</span> <span class="n">time</span><span class="p">;</span>          <span class="c1">// Set by a private option.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kt">int64_t</span> <span class="n">init_time</span><span class="p">;</span>     <span class="c1">// Set by a private option.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kt">int</span> <span class="n">max_nb_segments</span><span class="p">;</span>   <span class="c1">// Set by a private option.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kt">int</span> <span class="n">hls_delete_threshold</span><span class="p">;</span> <span class="c1">// Set by a private option.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kt">uint32_t</span> <span class="n">flags</span><span class="p">;</span>        <span class="c1">// enum HLSFlags
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kt">uint32_t</span> <span class="n">pl_type</span><span class="p">;</span>      <span class="c1">// enum PlaylistType
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kt">char</span> <span class="o">*</span><span class="n">segment_filename</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">char</span> <span class="o">*</span><span class="n">fmp4_init_filename</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">int</span> <span class="n">segment_type</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">int</span> <span class="n">resend_init_file</span><span class="p">;</span>  <span class="c1">///&lt; resend init file into disk after refresh m3u8
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl">    <span class="kt">int</span> <span class="n">use_localtime</span><span class="p">;</span>      <span class="c1">///&lt; flag to expand filename with localtime
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kt">int</span> <span class="n">use_localtime_mkdir</span><span class="p">;</span><span class="c1">///&lt; flag to mkdir dirname in timebased filename
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kt">int</span> <span class="n">allowcache</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">int64_t</span> <span class="n">recording_time</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">int64_t</span> <span class="n">max_seg_size</span><span class="p">;</span> <span class="c1">// every segment file max size
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl">    <span class="kt">char</span> <span class="o">*</span><span class="n">baseurl</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">char</span> <span class="o">*</span><span class="n">vtt_format_options_str</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">char</span> <span class="o">*</span><span class="n">subtitle_filename</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">AVDictionary</span> <span class="o">*</span><span class="n">format_options</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="kt">int</span> <span class="n">encrypt</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">char</span> <span class="o">*</span><span class="n">key</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">char</span> <span class="o">*</span><span class="n">key_url</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">char</span> <span class="o">*</span><span class="n">iv</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">char</span> <span class="o">*</span><span class="n">key_basename</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">int</span> <span class="n">encrypt_started</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="kt">char</span> <span class="o">*</span><span class="n">key_info_file</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">char</span> <span class="n">key_file</span><span class="p">[</span><span class="n">LINE_BUFFER_SIZE</span> <span class="o">+</span> <span class="mi">1</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">char</span> <span class="n">key_uri</span><span class="p">[</span><span class="n">LINE_BUFFER_SIZE</span> <span class="o">+</span> <span class="mi">1</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">char</span> <span class="n">key_string</span><span class="p">[</span><span class="n">KEYSIZE</span><span class="o">*</span><span class="mi">2</span> <span class="o">+</span> <span class="mi">1</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">char</span> <span class="n">iv_string</span><span class="p">[</span><span class="n">KEYSIZE</span><span class="o">*</span><span class="mi">2</span> <span class="o">+</span> <span class="mi">1</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">    <span class="n">AVDictionary</span> <span class="o">*</span><span class="n">vtt_format_options</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="kt">char</span> <span class="o">*</span><span class="n">method</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">char</span> <span class="o">*</span><span class="n">user_agent</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">VariantStream</span> <span class="o">*</span><span class="n">var_streams</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">unsigned</span> <span class="kt">int</span> <span class="n">nb_varstreams</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">ClosedCaptionsStream</span> <span class="o">*</span><span class="n">cc_streams</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">unsigned</span> <span class="kt">int</span> <span class="n">nb_ccstreams</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="kt">int</span> <span class="n">master_m3u8_created</span><span class="p">;</span> <span class="cm">/* status of master play-list creation */</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">char</span> <span class="o">*</span><span class="n">master_m3u8_url</span><span class="p">;</span> <span class="cm">/* URL of the master m3u8 file */</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">int</span> <span class="n">version</span><span class="p">;</span> <span class="cm">/* HLS version */</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">char</span> <span class="o">*</span><span class="n">var_stream_map</span><span class="p">;</span> <span class="cm">/* user specified variant stream map string */</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">char</span> <span class="o">*</span><span class="n">cc_stream_map</span><span class="p">;</span> <span class="cm">/* user specified closed caption streams map string */</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">char</span> <span class="o">*</span><span class="n">master_pl_name</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">unsigned</span> <span class="kt">int</span> <span class="n">master_publish_rate</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">int</span> <span class="n">http_persistent</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">AVIOContext</span> <span class="o">*</span><span class="n">m3u8_out</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">AVIOContext</span> <span class="o">*</span><span class="n">sub_m3u8_out</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">AVIOContext</span> <span class="o">*</span><span class="n">http_delete</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">int64_t</span> <span class="n">timeout</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">int</span> <span class="n">ignore_io_errors</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">char</span> <span class="o">*</span><span class="n">headers</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">int</span> <span class="n">has_default_key</span><span class="p">;</span> <span class="cm">/* has DEFAULT field of var_stream_map */</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">int</span> <span class="n">has_video_m3u8</span><span class="p">;</span> <span class="cm">/* has video stream m3u8 list */</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span> <span class="n">HLSContext</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="cp">#define OFFSET(x) offsetof(HLSContext, x)
+</span></span></span><span class="line"><span class="cl"><span class="cp">#define E AV_OPT_FLAG_ENCODING_PARAM
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span><span class="k">static</span> <span class="k">const</span> <span class="n">AVOption</span> <span class="n">options</span><span class="p">[]</span> <span class="o">=</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span><span class="s">&#34;start_number&#34;</span><span class="p">,</span>  <span class="s">&#34;set first number in the sequence&#34;</span><span class="p">,</span>        <span class="nf">OFFSET</span><span class="p">(</span><span class="n">start_sequence</span><span class="p">),</span><span class="n">AV_OPT_TYPE_INT64</span><span class="p">,</span>  <span class="p">{.</span><span class="n">i64</span> <span class="o">=</span> <span class="mi">0</span><span class="p">},</span>     <span class="mi">0</span><span class="p">,</span> <span class="n">INT64_MAX</span><span class="p">,</span> <span class="n">E</span><span class="p">},</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span><span class="s">&#34;hls_time&#34;</span><span class="p">,</span>      <span class="s">&#34;set segment length&#34;</span><span class="p">,</span>                      <span class="nf">OFFSET</span><span class="p">(</span><span class="n">time</span><span class="p">),</span>          <span class="n">AV_OPT_TYPE_DURATION</span><span class="p">,</span> <span class="p">{.</span><span class="n">i64</span> <span class="o">=</span> <span class="mi">2000000</span><span class="p">},</span> <span class="mi">0</span><span class="p">,</span> <span class="n">INT64_MAX</span><span class="p">,</span> <span class="n">E</span><span class="p">},</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span><span class="s">&#34;hls_init_time&#34;</span><span class="p">,</span> <span class="s">&#34;set segment length at init list&#34;</span><span class="p">,</span>         <span class="nf">OFFSET</span><span class="p">(</span><span class="n">init_time</span><span class="p">),</span>     <span class="n">AV_OPT_TYPE_DURATION</span><span class="p">,</span> <span class="p">{.</span><span class="n">i64</span> <span class="o">=</span> <span class="mi">0</span><span class="p">},</span>       <span class="mi">0</span><span class="p">,</span> <span class="n">INT64_MAX</span><span class="p">,</span> <span class="n">E</span><span class="p">},</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span><span class="s">&#34;hls_list_size&#34;</span><span class="p">,</span> <span class="s">&#34;set maximum number of playlist entries&#34;</span><span class="p">,</span>  <span class="nf">OFFSET</span><span class="p">(</span><span class="n">max_nb_segments</span><span class="p">),</span>    <span class="n">AV_OPT_TYPE_INT</span><span class="p">,</span>    <span class="p">{.</span><span class="n">i64</span> <span class="o">=</span> <span class="mi">5</span><span class="p">},</span>     <span class="mi">0</span><span class="p">,</span> <span class="n">INT_MAX</span><span class="p">,</span> <span class="n">E</span><span class="p">},</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span><span class="s">&#34;hls_delete_threshold&#34;</span><span class="p">,</span> <span class="s">&#34;set number of unreferenced segments to keep before deleting&#34;</span><span class="p">,</span>  <span class="nf">OFFSET</span><span class="p">(</span><span class="n">hls_delete_threshold</span><span class="p">),</span>    <span class="n">AV_OPT_TYPE_INT</span><span class="p">,</span>    <span class="p">{.</span><span class="n">i64</span> <span class="o">=</span> <span class="mi">1</span><span class="p">},</span>     <span class="mi">1</span><span class="p">,</span> <span class="n">INT_MAX</span><span class="p">,</span> <span class="n">E</span><span class="p">},</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span><span class="s">&#34;hls_vtt_options&#34;</span><span class="p">,</span><span class="s">&#34;set hls vtt list of options for the container format used for hls&#34;</span><span class="p">,</span> <span class="nf">OFFSET</span><span class="p">(</span><span class="n">vtt_format_options_str</span><span class="p">),</span> <span class="n">AV_OPT_TYPE_STRING</span><span class="p">,</span> <span class="p">{.</span><span class="n">str</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">},</span>  <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span>    <span class="n">E</span><span class="p">},</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span><span class="s">&#34;hls_allow_cache&#34;</span><span class="p">,</span> <span class="s">&#34;explicitly set whether the client MAY (1) or MUST NOT (0) cache media segments&#34;</span><span class="p">,</span> <span class="nf">OFFSET</span><span class="p">(</span><span class="n">allowcache</span><span class="p">),</span> <span class="n">AV_OPT_TYPE_INT</span><span class="p">,</span> <span class="p">{.</span><span class="n">i64</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">},</span> <span class="n">INT_MIN</span><span class="p">,</span> <span class="n">INT_MAX</span><span class="p">,</span> <span class="n">E</span><span class="p">},</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span><span class="s">&#34;hls_base_url&#34;</span><span class="p">,</span>  <span class="s">&#34;url to prepend to each playlist entry&#34;</span><span class="p">,</span>   <span class="nf">OFFSET</span><span class="p">(</span><span class="n">baseurl</span><span class="p">),</span> <span class="n">AV_OPT_TYPE_STRING</span><span class="p">,</span> <span class="p">{.</span><span class="n">str</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">},</span>  <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span>       <span class="n">E</span><span class="p">},</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span><span class="s">&#34;hls_segment_filename&#34;</span><span class="p">,</span> <span class="s">&#34;filename template for segment files&#34;</span><span class="p">,</span> <span class="nf">OFFSET</span><span class="p">(</span><span class="n">segment_filename</span><span class="p">),</span>   <span class="n">AV_OPT_TYPE_STRING</span><span class="p">,</span> <span class="p">{.</span><span class="n">str</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">},</span>            <span class="mi">0</span><span class="p">,</span>       <span class="mi">0</span><span class="p">,</span>         <span class="n">E</span><span class="p">},</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span><span class="s">&#34;hls_segment_options&#34;</span><span class="p">,</span><span class="s">&#34;set segments files format options of hls&#34;</span><span class="p">,</span> <span class="nf">OFFSET</span><span class="p">(</span><span class="n">format_options</span><span class="p">),</span> <span class="n">AV_OPT_TYPE_DICT</span><span class="p">,</span> <span class="p">{.</span><span class="n">str</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">},</span>  <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span>    <span class="n">E</span><span class="p">},</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span><span class="s">&#34;hls_segment_size&#34;</span><span class="p">,</span> <span class="s">&#34;maximum size per segment file, (in bytes)&#34;</span><span class="p">,</span>  <span class="nf">OFFSET</span><span class="p">(</span><span class="n">max_seg_size</span><span class="p">),</span>    <span class="n">AV_OPT_TYPE_INT</span><span class="p">,</span>    <span class="p">{.</span><span class="n">i64</span> <span class="o">=</span> <span class="mi">0</span><span class="p">},</span>               <span class="mi">0</span><span class="p">,</span>       <span class="n">INT_MAX</span><span class="p">,</span>   <span class="n">E</span><span class="p">},</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span><span class="s">&#34;hls_key_info_file&#34;</span><span class="p">,</span>    <span class="s">&#34;file with key URI and key file path&#34;</span><span class="p">,</span> <span class="nf">OFFSET</span><span class="p">(</span><span class="n">key_info_file</span><span class="p">),</span>      <span class="n">AV_OPT_TYPE_STRING</span><span class="p">,</span> <span class="p">{.</span><span class="n">str</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">},</span>            <span class="mi">0</span><span class="p">,</span>       <span class="mi">0</span><span class="p">,</span>         <span class="n">E</span><span class="p">},</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span><span class="s">&#34;hls_enc&#34;</span><span class="p">,</span>    <span class="s">&#34;enable AES128 encryption support&#34;</span><span class="p">,</span> <span class="nf">OFFSET</span><span class="p">(</span><span class="n">encrypt</span><span class="p">),</span>      <span class="n">AV_OPT_TYPE_BOOL</span><span class="p">,</span> <span class="p">{.</span><span class="n">i64</span> <span class="o">=</span> <span class="mi">0</span><span class="p">},</span>            <span class="mi">0</span><span class="p">,</span>       <span class="mi">1</span><span class="p">,</span>         <span class="n">E</span><span class="p">},</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span><span class="s">&#34;hls_enc_key&#34;</span><span class="p">,</span>    <span class="s">&#34;hex-coded 16 byte key to encrypt the segments&#34;</span><span class="p">,</span> <span class="nf">OFFSET</span><span class="p">(</span><span class="n">key</span><span class="p">),</span>      <span class="n">AV_OPT_TYPE_STRING</span><span class="p">,</span> <span class="p">.</span><span class="n">flags</span> <span class="o">=</span> <span class="n">E</span><span class="p">},</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span><span class="s">&#34;hls_enc_key_url&#34;</span><span class="p">,</span>    <span class="s">&#34;url to access the key to decrypt the segments&#34;</span><span class="p">,</span> <span class="nf">OFFSET</span><span class="p">(</span><span class="n">key_url</span><span class="p">),</span>      <span class="n">AV_OPT_TYPE_STRING</span><span class="p">,</span> <span class="p">{.</span><span class="n">str</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">},</span>            <span class="mi">0</span><span class="p">,</span>       <span class="mi">0</span><span class="p">,</span>         <span class="n">E</span><span class="p">},</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span><span class="s">&#34;hls_enc_iv&#34;</span><span class="p">,</span>    <span class="s">&#34;hex-coded 16 byte initialization vector&#34;</span><span class="p">,</span> <span class="nf">OFFSET</span><span class="p">(</span><span class="n">iv</span><span class="p">),</span>      <span class="n">AV_OPT_TYPE_STRING</span><span class="p">,</span> <span class="p">.</span><span class="n">flags</span> <span class="o">=</span> <span class="n">E</span><span class="p">},</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span><span class="s">&#34;hls_subtitle_path&#34;</span><span class="p">,</span>     <span class="s">&#34;set path of hls subtitles&#34;</span><span class="p">,</span> <span class="nf">OFFSET</span><span class="p">(</span><span class="n">subtitle_filename</span><span class="p">),</span> <span class="n">AV_OPT_TYPE_STRING</span><span class="p">,</span> <span class="p">{.</span><span class="n">str</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">},</span>  <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span>    <span class="n">E</span><span class="p">},</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span><span class="s">&#34;hls_segment_type&#34;</span><span class="p">,</span>     <span class="s">&#34;set hls segment files type&#34;</span><span class="p">,</span> <span class="nf">OFFSET</span><span class="p">(</span><span class="n">segment_type</span><span class="p">),</span> <span class="n">AV_OPT_TYPE_INT</span><span class="p">,</span> <span class="p">{.</span><span class="n">i64</span> <span class="o">=</span> <span class="n">SEGMENT_TYPE_MPEGTS</span> <span class="p">},</span> <span class="mi">0</span><span class="p">,</span> <span class="n">SEGMENT_TYPE_FMP4</span><span class="p">,</span> <span class="n">E</span><span class="p">,</span> <span class="s">&#34;segment_type&#34;</span><span class="p">},</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span><span class="s">&#34;mpegts&#34;</span><span class="p">,</span>   <span class="s">&#34;make segment file to mpegts files in m3u8&#34;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">AV_OPT_TYPE_CONST</span><span class="p">,</span> <span class="p">{.</span><span class="n">i64</span> <span class="o">=</span> <span class="n">SEGMENT_TYPE_MPEGTS</span> <span class="p">},</span> <span class="mi">0</span><span class="p">,</span> <span class="n">UINT_MAX</span><span class="p">,</span>   <span class="n">E</span><span class="p">,</span> <span class="s">&#34;segment_type&#34;</span><span class="p">},</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span><span class="s">&#34;fmp4&#34;</span><span class="p">,</span>   <span class="s">&#34;make segment file to fragment mp4 files in m3u8&#34;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">AV_OPT_TYPE_CONST</span><span class="p">,</span> <span class="p">{.</span><span class="n">i64</span> <span class="o">=</span> <span class="n">SEGMENT_TYPE_FMP4</span> <span class="p">},</span> <span class="mi">0</span><span class="p">,</span> <span class="n">UINT_MAX</span><span class="p">,</span>   <span class="n">E</span><span class="p">,</span> <span class="s">&#34;segment_type&#34;</span><span class="p">},</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span><span class="s">&#34;hls_fmp4_init_filename&#34;</span><span class="p">,</span> <span class="s">&#34;set fragment mp4 file init filename&#34;</span><span class="p">,</span> <span class="nf">OFFSET</span><span class="p">(</span><span class="n">fmp4_init_filename</span><span class="p">),</span>   <span class="n">AV_OPT_TYPE_STRING</span><span class="p">,</span> <span class="p">{.</span><span class="n">str</span> <span class="o">=</span> <span class="s">&#34;init.mp4&#34;</span><span class="p">},</span>            <span class="mi">0</span><span class="p">,</span>       <span class="mi">0</span><span class="p">,</span>         <span class="n">E</span><span class="p">},</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span><span class="s">&#34;hls_RtspServerfmp4_init_resend&#34;</span><span class="p">,</span> <span class="s">&#34;resend fragment mp4 init file after refresh m3u8 every time&#34;</span><span class="p">,</span> <span class="nf">OFFSET</span><span class="p">(</span><span class="n">resend_init_file</span><span class="p">),</span> <span class="n">AV_OPT_TYPE_BOOL</span><span class="p">,</span> <span class="p">{.</span><span class="n">i64</span> <span class="o">=</span> <span class="mi">0</span> <span class="p">},</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">E</span> <span class="p">},</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span><span class="s">&#34;hls_flags&#34;</span><span class="p">,</span>     <span class="s">&#34;set flags affecting HLS playlist and media file generation&#34;</span><span class="p">,</span> <span class="nf">OFFSET</span><span class="p">(</span><span class="n">flags</span><span class="p">),</span> <span class="n">AV_OPT_TYPE_FLAGS</span><span class="p">,</span> <span class="p">{.</span><span class="n">i64</span> <span class="o">=</span> <span class="mi">0</span> <span class="p">},</span> <span class="mi">0</span><span class="p">,</span> <span class="n">UINT_MAX</span><span class="p">,</span> <span class="n">E</span><span class="p">,</span> <span class="s">&#34;flags&#34;</span><span class="p">},</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span><span class="s">&#34;single_file&#34;</span><span class="p">,</span>   <span class="s">&#34;generate a single media file indexed with byte ranges&#34;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">AV_OPT_TYPE_CONST</span><span class="p">,</span> <span class="p">{.</span><span class="n">i64</span> <span class="o">=</span> <span class="n">HLS_SINGLE_FILE</span> <span class="p">},</span> <span class="mi">0</span><span class="p">,</span> <span class="n">UINT_MAX</span><span class="p">,</span>   <span class="n">E</span><span class="p">,</span> <span class="s">&#34;flags&#34;</span><span class="p">},</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span><span class="s">&#34;temp_file&#34;</span><span class="p">,</span> <span class="s">&#34;write segment and playlist to temporary file and rename when complete&#34;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">AV_OPT_TYPE_CONST</span><span class="p">,</span> <span class="p">{.</span><span class="n">i64</span> <span class="o">=</span> <span class="n">HLS_TEMP_FILE</span> <span class="p">},</span> <span class="mi">0</span><span class="p">,</span> <span class="n">UINT_MAX</span><span class="p">,</span>   <span class="n">E</span><span class="p">,</span> <span class="s">&#34;flags&#34;</span><span class="p">},</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span><span class="s">&#34;delete_segments&#34;</span><span class="p">,</span> <span class="s">&#34;delete segment files that are no longer part of the playlist&#34;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">AV_OPT_TYPE_CONST</span><span class="p">,</span> <span class="p">{.</span><span class="n">i64</span> <span class="o">=</span> <span class="n">HLS_DELETE_SEGMENTS</span> <span class="p">},</span> <span class="mi">0</span><span class="p">,</span> <span class="n">UINT_MAX</span><span class="p">,</span>   <span class="n">E</span><span class="p">,</span> <span class="s">&#34;flags&#34;</span><span class="p">},</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span><span class="s">&#34;round_durations&#34;</span><span class="p">,</span> <span class="s">&#34;round durations in m3u8 to whole numbers&#34;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">AV_OPT_TYPE_CONST</span><span class="p">,</span> <span class="p">{.</span><span class="n">i64</span> <span class="o">=</span> <span class="n">HLS_ROUND_DURATIONS</span> <span class="p">},</span> <span class="mi">0</span><span class="p">,</span> <span class="n">UINT_MAX</span><span class="p">,</span>   <span class="n">E</span><span class="p">,</span> <span class="s">&#34;flags&#34;</span><span class="p">},</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span><span class="s">&#34;discont_start&#34;</span><span class="p">,</span> <span class="s">&#34;start the playlist with a discontinuity tag&#34;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">AV_OPT_TYPE_CONST</span><span class="p">,</span> <span class="p">{.</span><span class="n">i64</span> <span class="o">=</span> <span class="n">HLS_DISCONT_START</span> <span class="p">},</span> <span class="mi">0</span><span class="p">,</span> <span class="n">UINT_MAX</span><span class="p">,</span>   <span class="n">E</span><span class="p">,</span> <span class="s">&#34;flags&#34;</span><span class="p">},</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span><span class="s">&#34;omit_endlist&#34;</span><span class="p">,</span> <span class="s">&#34;Do not append an endlist when ending stream&#34;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">AV_OPT_TYPE_CONST</span><span class="p">,</span> <span class="p">{.</span><span class="n">i64</span> <span class="o">=</span> <span class="n">HLS_OMIT_ENDLIST</span> <span class="p">},</span> <span class="mi">0</span><span class="p">,</span> <span class="n">UINT_MAX</span><span class="p">,</span>   <span class="n">E</span><span class="p">,</span> <span class="s">&#34;flags&#34;</span><span class="p">},</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span><span class="s">&#34;split_by_time&#34;</span><span class="p">,</span> <span class="s">&#34;split the hls segment by time which user set by hls_time&#34;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">AV_OPT_TYPE_CONST</span><span class="p">,</span> <span class="p">{.</span><span class="n">i64</span> <span class="o">=</span> <span class="n">HLS_SPLIT_BY_TIME</span> <span class="p">},</span> <span class="mi">0</span><span class="p">,</span> <span class="n">UINT_MAX</span><span class="p">,</span>   <span class="n">E</span><span class="p">,</span> <span class="s">&#34;flags&#34;</span><span class="p">},</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span><span class="s">&#34;append_list&#34;</span><span class="p">,</span> <span class="s">&#34;append the new segments into old hls segment list&#34;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">AV_OPT_TYPE_CONST</span><span class="p">,</span> <span class="p">{.</span><span class="n">i64</span> <span class="o">=</span> <span class="n">HLS_APPEND_LIST</span> <span class="p">},</span> <span class="mi">0</span><span class="p">,</span> <span class="n">UINT_MAX</span><span class="p">,</span>   <span class="n">E</span><span class="p">,</span> <span class="s">&#34;flags&#34;</span><span class="p">},</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span><span class="s">&#34;program_date_time&#34;</span><span class="p">,</span> <span class="s">&#34;add EXT-X-PROGRAM-DATE-TIME&#34;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">AV_OPT_TYPE_CONST</span><span class="p">,</span> <span class="p">{.</span><span class="n">i64</span> <span class="o">=</span> <span class="n">HLS_PROGRAM_DATE_TIME</span> <span class="p">},</span> <span class="mi">0</span><span class="p">,</span> <span class="n">UINT_MAX</span><span class="p">,</span>   <span class="n">E</span><span class="p">,</span> <span class="s">&#34;flags&#34;</span><span class="p">},</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span><span class="s">&#34;second_level_segment_index&#34;</span><span class="p">,</span> <span class="s">&#34;include segment index in segment filenames when use_localtime&#34;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">AV_OPT_TYPE_CONST</span><span class="p">,</span> <span class="p">{.</span><span class="n">i64</span> <span class="o">=</span> <span class="n">HLS_SECOND_LEVEL_SEGMENT_INDEX</span> <span class="p">},</span> <span class="mi">0</span><span class="p">,</span> <span class="n">UINT_MAX</span><span class="p">,</span>   <span class="n">E</span><span class="p">,</span> <span class="s">&#34;flags&#34;</span><span class="p">},</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span><span class="s">&#34;second_level_segment_duration&#34;</span><span class="p">,</span> <span class="s">&#34;include segment duration in segment filenames when use_localtime&#34;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">AV_OPT_TYPE_CONST</span><span class="p">,</span> <span class="p">{.</span><span class="n">i64</span> <span class="o">=</span> <span class="n">HLS_SECOND_LEVEL_SEGMENT_DURATION</span> <span class="p">},</span> <span class="mi">0</span><span class="p">,</span> <span class="n">UINT_MAX</span><span class="p">,</span>   <span class="n">E</span><span class="p">,</span> <span class="s">&#34;flags&#34;</span><span class="p">},</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span><span class="s">&#34;second_level_segment_size&#34;</span><span class="p">,</span> <span class="s">&#34;include segment size in segment filenames when use_localtime&#34;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">AV_OPT_TYPE_CONST</span><span class="p">,</span> <span class="p">{.</span><span class="n">i64</span> <span class="o">=</span> <span class="n">HLS_SECOND_LEVEL_SEGMENT_SIZE</span> <span class="p">},</span> <span class="mi">0</span><span class="p">,</span> <span class="n">UINT_MAX</span><span class="p">,</span>   <span class="n">E</span><span class="p">,</span> <span class="s">&#34;flags&#34;</span><span class="p">},</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span><span class="s">&#34;periodic_rekey&#34;</span><span class="p">,</span> <span class="s">&#34;reload keyinfo file periodically for re-keying&#34;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">AV_OPT_TYPE_CONST</span><span class="p">,</span> <span class="p">{.</span><span class="n">i64</span> <span class="o">=</span> <span class="n">HLS_PERIODIC_REKEY</span> <span class="p">},</span> <span class="mi">0</span><span class="p">,</span> <span class="n">UINT_MAX</span><span class="p">,</span>   <span class="n">E</span><span class="p">,</span> <span class="s">&#34;flags&#34;</span><span class="p">},</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span><span class="s">&#34;independent_segments&#34;</span><span class="p">,</span> <span class="s">&#34;add EXT-X-INDEPENDENT-SEGMENTS, whenever applicable&#34;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">AV_OPT_TYPE_CONST</span><span class="p">,</span> <span class="p">{</span> <span class="p">.</span><span class="n">i64</span> <span class="o">=</span> <span class="n">HLS_INDEPENDENT_SEGMENTS</span> <span class="p">},</span> <span class="mi">0</span><span class="p">,</span> <span class="n">UINT_MAX</span><span class="p">,</span> <span class="n">E</span><span class="p">,</span> <span class="s">&#34;flags&#34;</span><span class="p">},</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span><span class="s">&#34;iframes_only&#34;</span><span class="p">,</span> <span class="s">&#34;add EXT-X-I-FRAMES-ONLY, whenever applicable&#34;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">AV_OPT_TYPE_CONST</span><span class="p">,</span> <span class="p">{</span> <span class="p">.</span><span class="n">i64</span> <span class="o">=</span> <span class="n">HLS_I_FRAMES_ONLY</span> <span class="p">},</span> <span class="mi">0</span><span class="p">,</span> <span class="n">UINT_MAX</span><span class="p">,</span> <span class="n">E</span><span class="p">,</span> <span class="s">&#34;flags&#34;</span><span class="p">},</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span><span class="s">&#34;strftime&#34;</span><span class="p">,</span> <span class="s">&#34;set filename expansion with strftime at segment creation&#34;</span><span class="p">,</span> <span class="nf">OFFSET</span><span class="p">(</span><span class="n">use_localtime</span><span class="p">),</span> <span class="n">AV_OPT_TYPE_BOOL</span><span class="p">,</span> <span class="p">{.</span><span class="n">i64</span> <span class="o">=</span> <span class="mi">0</span> <span class="p">},</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">E</span> <span class="p">},</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span><span class="s">&#34;strftime_mkdir&#34;</span><span class="p">,</span> <span class="s">&#34;create last directory component in strftime-generated filename&#34;</span><span class="p">,</span> <span class="nf">OFFSET</span><span class="p">(</span><span class="n">use_localtime_mkdir</span><span class="p">),</span> <span class="n">AV_OPT_TYPE_BOOL</span><span class="p">,</span> <span class="p">{.</span><span class="n">i64</span> <span class="o">=</span> <span class="mi">0</span> <span class="p">},</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">E</span> <span class="p">},</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span><span class="s">&#34;hls_playlist_type&#34;</span><span class="p">,</span> <span class="s">&#34;set the HLS playlist type&#34;</span><span class="p">,</span> <span class="nf">OFFSET</span><span class="p">(</span><span class="n">pl_type</span><span class="p">),</span> <span class="n">AV_OPT_TYPE_INT</span><span class="p">,</span> <span class="p">{.</span><span class="n">i64</span> <span class="o">=</span> <span class="n">PLAYLIST_TYPE_NONE</span> <span class="p">},</span> <span class="mi">0</span><span class="p">,</span> <span class="n">PLAYLIST_TYPE_NB</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">E</span><span class="p">,</span> <span class="s">&#34;pl_type&#34;</span> <span class="p">},</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span><span class="s">&#34;event&#34;</span><span class="p">,</span> <span class="s">&#34;EVENT playlist&#34;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">AV_OPT_TYPE_CONST</span><span class="p">,</span> <span class="p">{.</span><span class="n">i64</span> <span class="o">=</span> <span class="n">PLAYLIST_TYPE_EVENT</span> <span class="p">},</span> <span class="n">INT_MIN</span><span class="p">,</span> <span class="n">INT_MAX</span><span class="p">,</span> <span class="n">E</span><span class="p">,</span> <span class="s">&#34;pl_type&#34;</span> <span class="p">},</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span><span class="s">&#34;vod&#34;</span><span class="p">,</span> <span class="s">&#34;VOD playlist&#34;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">AV_OPT_TYPE_CONST</span><span class="p">,</span> <span class="p">{.</span><span class="n">i64</span> <span class="o">=</span> <span class="n">PLAYLIST_TYPE_VOD</span> <span class="p">},</span> <span class="n">INT_MIN</span><span class="p">,</span> <span class="n">INT_MAX</span><span class="p">,</span> <span class="n">E</span><span class="p">,</span> <span class="s">&#34;pl_type&#34;</span> <span class="p">},</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span><span class="s">&#34;method&#34;</span><span class="p">,</span> <span class="s">&#34;set the HTTP method(default: PUT)&#34;</span><span class="p">,</span> <span class="nf">OFFSET</span><span class="p">(</span><span class="n">method</span><span class="p">),</span> <span class="n">AV_OPT_TYPE_STRING</span><span class="p">,</span> <span class="p">{.</span><span class="n">str</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">},</span>  <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span>    <span class="n">E</span><span class="p">},</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span><span class="s">&#34;hls_start_number_source&#34;</span><span class="p">,</span> <span class="s">&#34;set source of first number in sequence&#34;</span><span class="p">,</span> <span class="nf">OFFSET</span><span class="p">(</span><span class="n">start_sequence_source_type</span><span class="p">),</span> <span class="n">AV_OPT_TYPE_INT</span><span class="p">,</span> <span class="p">{.</span><span class="n">i64</span> <span class="o">=</span> <span class="n">HLS_START_SEQUENCE_AS_START_NUMBER</span> <span class="p">},</span> <span class="mi">0</span><span class="p">,</span> <span class="n">HLS_START_SEQUENCE_LAST</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">E</span><span class="p">,</span> <span class="s">&#34;start_sequence_source_type&#34;</span> <span class="p">},</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span><span class="s">&#34;generic&#34;</span><span class="p">,</span> <span class="s">&#34;start_number value (default)&#34;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">AV_OPT_TYPE_CONST</span><span class="p">,</span> <span class="p">{.</span><span class="n">i64</span> <span class="o">=</span> <span class="n">HLS_START_SEQUENCE_AS_START_NUMBER</span> <span class="p">},</span> <span class="n">INT_MIN</span><span class="p">,</span> <span class="n">INT_MAX</span><span class="p">,</span> <span class="n">E</span><span class="p">,</span> <span class="s">&#34;start_sequence_source_type&#34;</span> <span class="p">},</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span><span class="s">&#34;epoch&#34;</span><span class="p">,</span> <span class="s">&#34;seconds since epoch&#34;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">AV_OPT_TYPE_CONST</span><span class="p">,</span> <span class="p">{.</span><span class="n">i64</span> <span class="o">=</span> <span class="n">HLS_START_SEQUENCE_AS_SECONDS_SINCE_EPOCH</span> <span class="p">},</span> <span class="n">INT_MIN</span><span class="p">,</span> <span class="n">INT_MAX</span><span class="p">,</span> <span class="n">E</span><span class="p">,</span> <span class="s">&#34;start_sequence_source_type&#34;</span> <span class="p">},</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span><span class="s">&#34;epoch_us&#34;</span><span class="p">,</span> <span class="s">&#34;microseconds since epoch&#34;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">AV_OPT_TYPE_CONST</span><span class="p">,</span> <span class="p">{.</span><span class="n">i64</span> <span class="o">=</span> <span class="n">HLS_START_SEQUENCE_AS_MICROSECONDS_SINCE_EPOCH</span> <span class="p">},</span> <span class="n">INT_MIN</span><span class="p">,</span> <span class="n">INT_MAX</span><span class="p">,</span> <span class="n">E</span><span class="p">,</span> <span class="s">&#34;start_sequence_source_type&#34;</span> <span class="p">},</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span><span class="s">&#34;datetime&#34;</span><span class="p">,</span> <span class="s">&#34;current datetime as YYYYMMDDhhmmss&#34;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">AV_OPT_TYPE_CONST</span><span class="p">,</span> <span class="p">{.</span><span class="n">i64</span> <span class="o">=</span> <span class="n">HLS_START_SEQUENCE_AS_FORMATTED_DATETIME</span> <span class="p">},</span> <span class="n">INT_MIN</span><span class="p">,</span> <span class="n">INT_MAX</span><span class="p">,</span> <span class="n">E</span><span class="p">,</span> <span class="s">&#34;start_sequence_source_type&#34;</span> <span class="p">},</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span><span class="s">&#34;http_user_agent&#34;</span><span class="p">,</span> <span class="s">&#34;override User-Agent field in HTTP header&#34;</span><span class="p">,</span> <span class="nf">OFFSET</span><span class="p">(</span><span class="n">user_agent</span><span class="p">),</span> <span class="n">AV_OPT_TYPE_STRING</span><span class="p">,</span> <span class="p">{.</span><span class="n">str</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">},</span>  <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span>    <span class="n">E</span><span class="p">},</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span><span class="s">&#34;var_stream_map&#34;</span><span class="p">,</span> <span class="s">&#34;Variant stream map string&#34;</span><span class="p">,</span> <span class="nf">OFFSET</span><span class="p">(</span><span class="n">var_stream_map</span><span class="p">),</span> <span class="n">AV_OPT_TYPE_STRING</span><span class="p">,</span> <span class="p">{.</span><span class="n">str</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">},</span>  <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span>    <span class="n">E</span><span class="p">},</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span><span class="s">&#34;cc_stream_map&#34;</span><span class="p">,</span> <span class="s">&#34;Closed captions stream map string&#34;</span><span class="p">,</span> <span class="nf">OFFSET</span><span class="p">(</span><span class="n">cc_stream_map</span><span class="p">),</span> <span class="n">AV_OPT_TYPE_STRING</span><span class="p">,</span> <span class="p">{.</span><span class="n">str</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">},</span>  <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span>    <span class="n">E</span><span class="p">},</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span><span class="s">&#34;master_pl_name&#34;</span><span class="p">,</span> <span class="s">&#34;Create HLS master playlist with this name&#34;</span><span class="p">,</span> <span class="nf">OFFSET</span><span class="p">(</span><span class="n">master_pl_name</span><span class="p">),</span> <span class="n">AV_OPT_TYPE_STRING</span><span class="p">,</span> <span class="p">{.</span><span class="n">str</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">},</span>  <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span>    <span class="n">E</span><span class="p">},</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span><span class="s">&#34;master_pl_publish_rate&#34;</span><span class="p">,</span> <span class="s">&#34;Publish master play list every after this many segment intervals&#34;</span><span class="p">,</span> <span class="nf">OFFSET</span><span class="p">(</span><span class="n">master_publish_rate</span><span class="p">),</span> <span class="n">AV_OPT_TYPE_INT</span><span class="p">,</span> <span class="p">{.</span><span class="n">i64</span> <span class="o">=</span> <span class="mi">0</span><span class="p">},</span> <span class="mi">0</span><span class="p">,</span> <span class="n">UINT_MAX</span><span class="p">,</span> <span class="n">E</span><span class="p">},</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span><span class="s">&#34;http_persistent&#34;</span><span class="p">,</span> <span class="s">&#34;Use persistent HTTP connections&#34;</span><span class="p">,</span> <span class="nf">OFFSET</span><span class="p">(</span><span class="n">http_persistent</span><span class="p">),</span> <span class="n">AV_OPT_TYPE_BOOL</span><span class="p">,</span> <span class="p">{.</span><span class="n">i64</span> <span class="o">=</span> <span class="mi">0</span> <span class="p">},</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">E</span> <span class="p">},</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span><span class="s">&#34;timeout&#34;</span><span class="p">,</span> <span class="s">&#34;set timeout for socket I/O operations&#34;</span><span class="p">,</span> <span class="nf">OFFSET</span><span class="p">(</span><span class="n">timeout</span><span class="p">),</span> <span class="n">AV_OPT_TYPE_DURATION</span><span class="p">,</span> <span class="p">{</span> <span class="p">.</span><span class="n">i64</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span> <span class="p">},</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">INT_MAX</span><span class="p">,</span> <span class="p">.</span><span class="n">flags</span> <span class="o">=</span> <span class="n">E</span> <span class="p">},</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span><span class="s">&#34;ignore_io_errors&#34;</span><span class="p">,</span> <span class="s">&#34;Ignore IO errors for stable long-duration runs with network output&#34;</span><span class="p">,</span> <span class="nf">OFFSET</span><span class="p">(</span><span class="n">ignore_io_errors</span><span class="p">),</span> <span class="n">AV_OPT_TYPE_BOOL</span><span class="p">,</span> <span class="p">{</span> <span class="p">.</span><span class="n">i64</span> <span class="o">=</span> <span class="mi">0</span> <span class="p">},</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">E</span> <span class="p">},</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span><span class="s">&#34;headers&#34;</span><span class="p">,</span> <span class="s">&#34;set custom HTTP headers, can override built in default headers&#34;</span><span class="p">,</span> <span class="nf">OFFSET</span><span class="p">(</span><span class="n">headers</span><span class="p">),</span> <span class="n">AV_OPT_TYPE_STRING</span><span class="p">,</span> <span class="p">{</span> <span class="p">.</span><span class="n">str</span> <span class="o">=</span> <span class="nb">NULL</span> <span class="p">},</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">E</span> <span class="p">},</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span> <span class="nb">NULL</span> <span class="p">},</span>
+</span></span><span class="line"><span class="cl"><span class="p">};</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">static</span> <span class="k">const</span> <span class="n">AVClass</span> <span class="n">hls_class</span> <span class="o">=</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="p">.</span><span class="n">class_name</span> <span class="o">=</span> <span class="s">&#34;hls muxer&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="p">.</span><span class="n">item_name</span>  <span class="o">=</span> <span class="n">av_default_item_name</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="p">.</span><span class="n">option</span>     <span class="o">=</span> <span class="n">options</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="p">.</span><span class="n">version</span>    <span class="o">=</span> <span class="n">LIBAVUTIL_VERSION_INT</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="p">};</span>
+</span></span></code></pre></div><p>ff_hls_muxer 调用的生命周期如下:</p>
+
+
+
+<div class="goat svg-container ">
+  
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      font-family="Menlo,Lucida Console,monospace"
+      
+        viewBox="0 0 864 105"
+      >
+      <g transform='translate(8,16)'>
+<path d='M 0,16 L 88,16' fill='none' stroke='currentColor'></path>
+<path d='M 128,16 L 280,16' fill='none' stroke='currentColor'></path>
+<path d='M 320,16 L 472,16' fill='none' stroke='currentColor'></path>
+<path d='M 536,16 L 696,16' fill='none' stroke='currentColor'></path>
+<path d='M 736,16 L 848,16' fill='none' stroke='currentColor'></path>
+<path d='M 96,32 L 112,32' fill='none' stroke='currentColor'></path>
+<path d='M 288,32 L 304,32' fill='none' stroke='currentColor'></path>
+<path d='M 480,32 L 496,32' fill='none' stroke='currentColor'></path>
+<path d='M 496,32 L 520,32' fill='none' stroke='currentColor'></path>
+<path d='M 704,32 L 720,32' fill='none' stroke='currentColor'></path>
+<path d='M 0,48 L 88,48' fill='none' stroke='currentColor'></path>
+<path d='M 128,48 L 280,48' fill='none' stroke='currentColor'></path>
+<path d='M 320,48 L 472,48' fill='none' stroke='currentColor'></path>
+<path d='M 536,48 L 696,48' fill='none' stroke='currentColor'></path>
+<path d='M 736,48 L 848,48' fill='none' stroke='currentColor'></path>
+<path d='M 384,80 L 496,80' fill='none' stroke='currentColor'></path>
+<path d='M 0,16 L 0,48' fill='none' stroke='currentColor'></path>
+<path d='M 88,16 L 88,48' fill='none' stroke='currentColor'></path>
+<path d='M 128,16 L 128,48' fill='none' stroke='currentColor'></path>
+<path d='M 280,16 L 280,48' fill='none' stroke='currentColor'></path>
+<path d='M 320,16 L 320,48' fill='none' stroke='currentColor'></path>
+<path d='M 384,64 L 384,80' fill='none' stroke='currentColor'></path>
+<path d='M 472,16 L 472,48' fill='none' stroke='currentColor'></path>
+<path d='M 496,32 L 496,80' fill='none' stroke='currentColor'></path>
+<path d='M 536,16 L 536,48' fill='none' stroke='currentColor'></path>
+<path d='M 696,16 L 696,48' fill='none' stroke='currentColor'></path>
+<path d='M 736,16 L 736,48' fill='none' stroke='currentColor'></path>
+<path d='M 848,16 L 848,48' fill='none' stroke='currentColor'></path>
+<polygon points='120.000000,32.000000 108.000000,26.400000 108.000000,37.599998' fill='currentColor' transform='rotate(0.000000, 112.000000, 32.000000)'></polygon>
+<polygon points='312.000000,32.000000 300.000000,26.400000 300.000000,37.599998' fill='currentColor' transform='rotate(0.000000, 304.000000, 32.000000)'></polygon>
+<path d='M 384,56 L 384,64' fill='none' stroke='currentColor'></path>
+<polygon points='400.000000,64.000000 388.000000,58.400002 388.000000,69.599998' fill='currentColor' transform='rotate(270.000000, 384.000000, 64.000000)'></polygon>
+<polygon points='528.000000,32.000000 516.000000,26.400000 516.000000,37.599998' fill='currentColor' transform='rotate(0.000000, 520.000000, 32.000000)'></polygon>
+<polygon points='728.000000,32.000000 716.000000,26.400000 716.000000,37.599998' fill='currentColor' transform='rotate(0.000000, 720.000000, 32.000000)'></polygon>
+<text text-anchor='middle' x='16' y='36' fill='currentColor' style='font-size:1em'>h</text>
+<text text-anchor='middle' x='24' y='36' fill='currentColor' style='font-size:1em'>l</text>
+<text text-anchor='middle' x='32' y='36' fill='currentColor' style='font-size:1em'>s</text>
+<text text-anchor='middle' x='40' y='36' fill='currentColor' style='font-size:1em'>_</text>
+<text text-anchor='middle' x='48' y='36' fill='currentColor' style='font-size:1em'>i</text>
+<text text-anchor='middle' x='56' y='36' fill='currentColor' style='font-size:1em'>n</text>
+<text text-anchor='middle' x='64' y='36' fill='currentColor' style='font-size:1em'>i</text>
+<text text-anchor='middle' x='72' y='36' fill='currentColor' style='font-size:1em'>t</text>
+<text text-anchor='middle' x='144' y='36' fill='currentColor' style='font-size:1em'>h</text>
+<text text-anchor='middle' x='152' y='36' fill='currentColor' style='font-size:1em'>l</text>
+<text text-anchor='middle' x='160' y='36' fill='currentColor' style='font-size:1em'>s</text>
+<text text-anchor='middle' x='168' y='36' fill='currentColor' style='font-size:1em'>_</text>
+<text text-anchor='middle' x='176' y='36' fill='currentColor' style='font-size:1em'>w</text>
+<text text-anchor='middle' x='184' y='36' fill='currentColor' style='font-size:1em'>r</text>
+<text text-anchor='middle' x='192' y='36' fill='currentColor' style='font-size:1em'>i</text>
+<text text-anchor='middle' x='200' y='36' fill='currentColor' style='font-size:1em'>t</text>
+<text text-anchor='middle' x='208' y='36' fill='currentColor' style='font-size:1em'>e</text>
+<text text-anchor='middle' x='216' y='36' fill='currentColor' style='font-size:1em'>_</text>
+<text text-anchor='middle' x='224' y='36' fill='currentColor' style='font-size:1em'>h</text>
+<text text-anchor='middle' x='232' y='36' fill='currentColor' style='font-size:1em'>e</text>
+<text text-anchor='middle' x='240' y='36' fill='currentColor' style='font-size:1em'>a</text>
+<text text-anchor='middle' x='248' y='36' fill='currentColor' style='font-size:1em'>d</text>
+<text text-anchor='middle' x='256' y='36' fill='currentColor' style='font-size:1em'>e</text>
+<text text-anchor='middle' x='264' y='36' fill='currentColor' style='font-size:1em'>r</text>
+<text text-anchor='middle' x='336' y='36' fill='currentColor' style='font-size:1em'>h</text>
+<text text-anchor='middle' x='344' y='36' fill='currentColor' style='font-size:1em'>l</text>
+<text text-anchor='middle' x='352' y='36' fill='currentColor' style='font-size:1em'>s</text>
+<text text-anchor='middle' x='360' y='36' fill='currentColor' style='font-size:1em'>_</text>
+<text text-anchor='middle' x='368' y='36' fill='currentColor' style='font-size:1em'>w</text>
+<text text-anchor='middle' x='376' y='36' fill='currentColor' style='font-size:1em'>r</text>
+<text text-anchor='middle' x='384' y='36' fill='currentColor' style='font-size:1em'>i</text>
+<text text-anchor='middle' x='392' y='36' fill='currentColor' style='font-size:1em'>t</text>
+<text text-anchor='middle' x='400' y='36' fill='currentColor' style='font-size:1em'>e</text>
+<text text-anchor='middle' x='408' y='36' fill='currentColor' style='font-size:1em'>_</text>
+<text text-anchor='middle' x='416' y='36' fill='currentColor' style='font-size:1em'>p</text>
+<text text-anchor='middle' x='424' y='36' fill='currentColor' style='font-size:1em'>a</text>
+<text text-anchor='middle' x='432' y='36' fill='currentColor' style='font-size:1em'>c</text>
+<text text-anchor='middle' x='440' y='36' fill='currentColor' style='font-size:1em'>k</text>
+<text text-anchor='middle' x='448' y='36' fill='currentColor' style='font-size:1em'>e</text>
+<text text-anchor='middle' x='456' y='36' fill='currentColor' style='font-size:1em'>t</text>
+<text text-anchor='middle' x='552' y='36' fill='currentColor' style='font-size:1em'>h</text>
+<text text-anchor='middle' x='560' y='36' fill='currentColor' style='font-size:1em'>l</text>
+<text text-anchor='middle' x='568' y='36' fill='currentColor' style='font-size:1em'>s</text>
+<text text-anchor='middle' x='576' y='36' fill='currentColor' style='font-size:1em'>_</text>
+<text text-anchor='middle' x='584' y='36' fill='currentColor' style='font-size:1em'>w</text>
+<text text-anchor='middle' x='592' y='36' fill='currentColor' style='font-size:1em'>r</text>
+<text text-anchor='middle' x='600' y='36' fill='currentColor' style='font-size:1em'>i</text>
+<text text-anchor='middle' x='608' y='36' fill='currentColor' style='font-size:1em'>t</text>
+<text text-anchor='middle' x='616' y='36' fill='currentColor' style='font-size:1em'>e</text>
+<text text-anchor='middle' x='624' y='36' fill='currentColor' style='font-size:1em'>_</text>
+<text text-anchor='middle' x='632' y='36' fill='currentColor' style='font-size:1em'>t</text>
+<text text-anchor='middle' x='640' y='36' fill='currentColor' style='font-size:1em'>r</text>
+<text text-anchor='middle' x='648' y='36' fill='currentColor' style='font-size:1em'>a</text>
+<text text-anchor='middle' x='656' y='36' fill='currentColor' style='font-size:1em'>i</text>
+<text text-anchor='middle' x='664' y='36' fill='currentColor' style='font-size:1em'>l</text>
+<text text-anchor='middle' x='672' y='36' fill='currentColor' style='font-size:1em'>e</text>
+<text text-anchor='middle' x='680' y='36' fill='currentColor' style='font-size:1em'>r</text>
+<text text-anchor='middle' x='760' y='36' fill='currentColor' style='font-size:1em'>h</text>
+<text text-anchor='middle' x='768' y='36' fill='currentColor' style='font-size:1em'>l</text>
+<text text-anchor='middle' x='776' y='36' fill='currentColor' style='font-size:1em'>s</text>
+<text text-anchor='middle' x='784' y='36' fill='currentColor' style='font-size:1em'>_</text>
+<text text-anchor='middle' x='792' y='36' fill='currentColor' style='font-size:1em'>d</text>
+<text text-anchor='middle' x='800' y='36' fill='currentColor' style='font-size:1em'>e</text>
+<text text-anchor='middle' x='808' y='36' fill='currentColor' style='font-size:1em'>i</text>
+<text text-anchor='middle' x='816' y='36' fill='currentColor' style='font-size:1em'>n</text>
+<text text-anchor='middle' x='824' y='36' fill='currentColor' style='font-size:1em'>i</text>
+<text text-anchor='middle' x='832' y='36' fill='currentColor' style='font-size:1em'>t</text>
+</g>
+
+    </svg>
+  
+</div>
+<p>其中重点关注 hls_write_packet 函数，其调用流程如下：</p>
+<ul>
+<li>main 函数调用 ffmpeg_parse_options，通过 of_open 申请内存，初始化 Muxer，并放入全局 output_files 数组</li>
+<li>of_open 中较关键为 avformat_alloc_output_context2 ，根据输出格式申请 AVFormatContext</li>
+<li>ffmpeg_mux.c 初始化后启动 muxer_thread，唯一参数为 Muxer，</li>
+<li>muxer_thread 轮询 mux-&gt;tq 读取帧信息 AVPacket</li>
+<li>ffmpeg_mux.c write_packet 修正时间相关数据</li>
+<li>mux.c write_packets_common, 如果该 bitstream 没有 filter 则通过 write_packet_common 处理</li>
+<li>mux.c write_packet_common 处理帧时长，注意此时参数 AVFormatContext 为 mux-&gt;fc，即 hls</li>
+<li>mux.c write_packet 修正相关数据</li>
+<li>hlsenc.c hls_write_packet</li>
+</ul>
+<p>hls_write_packet 函数实现的功能如下：</p>
+<ul>
+<li>找出 AVPacket 对应的 VariantStream 与 AVFormatContext</li>
+<li>修正 end_pts 与 start_pts 时间参数</li>
+<li>检查是否需要切分新 Fragment，譬如是否设置 split_by_time 参数，当前帧是否为关键帧</li>
+<li>处理 ref_pkt （暂时未知作用）</li>
+<li>如果通过 split_by_time 参数指定分割时间，并且为I帧，则进行分割操作, 通过 av_write_frame 写入 NULL pkt，触发 movenc.c mov_write_packet 函数调用 mov_flush_fragment 完成</li>
+<li>如果不需要分片，则将 AVPacket 发送到 ff_write_chained 处理，注意此时的 AVFormatContext 已经转换为 s-&gt;priv_data-&gt;var_streams[i]-&gt;avf，即 mp4</li>
+<li>ff_write_chained 修正 pts 后发送到 av_write_frame</li>
+<li>重新进入 mux.c write_packets_common，只不过此时 pkt 为 mp4 格式，会发送到 movenc.c 的 mov_write_packet 函数进行处理</li>
+</ul>
+<p>mov_write_packet 为 Mp4 帧封装函数，实现的功能如下：</p>
+<ul>
+<li>如果接收到空 AVPacket，则调用 mov_flush_fragment 进行 Fragmented Mp4 封装，否则调用 mov_write_single_packet（不考虑与我们场景不相干分支）</li>
+<li>mov_write_single_packet 先修正 AVPacket 数据，获取 mov 与 trk 相关参数，判断是否需要 mov_auto_flush_fragment，然后调用 ff_mov_write_packet；</li>
+<li>ff_mov_write_packet 写入 mdat，然后将帧数据 MOVIentry 添加到 trk-&gt;cluster，后续写入 fMp4 相关数据 Box 时会大量依赖 trk-&gt;cluster</li>
+</ul>
+<p>mov_flush_fragment 为 Fragmented Mp4 文件封装函数，实现功能如下：</p>
+<ul>
+<li>计算、修正 track 的时长与 end_pts</li>
+<li>写 moov box</li>
+<li>写 moof box</li>
+</ul>
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+      <li><a href="https://yplam.com/tags/ffmpeg/">FFmpeg</a></li>
+      <li><a href="https://yplam.com/tags/av/">AV</a></li>
+    </ul>
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+        <span>&copy; 2025 <a href="https://yplam.com/">YPLAM</a></span> · 
+
+    <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+        CC BY-SA 4.0
+    </a>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>

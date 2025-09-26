@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>一步步搭建 Edison ROS Indigo 环境 | YPLAM</title>
+<meta name="keywords" content="ROS">
+<meta name="description" content="最近在琢磨能不能用 CNN 来训练一个模型，用于控制一个模型小车，实现简单的循迹或者所谓的自动驾驶。于是拿出布灰已久的 Edison &#43; 两轮平衡车 &#43; 罗技摄像头，计划将这几样组装起来，上面运行 ROS 作为我的“机器人”平台，然后在笔记本上运行 master 做运算与控制。本笔记记录 ROS 在 Edison 上安装与运行 usb_cam 获取图像传输到主机的过程。">
+<meta name="author" content="">
+<link rel="canonical" href="https://yplam.com/posts/embedded/edison-ros-indigo-step-by-step/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.8a2a5b863c538395920b4f077c6697be31878d530618647d78daca2883f21ff1.css" integrity="sha256-iipbhjxTg5WSC08HfGaXvjGHjVMGGGR9eNrKKIPyH/E=" rel="preload stylesheet" as="style">
+<link rel="icon" href="https://yplam.com/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://yplam.com/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://yplam.com/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://yplam.com/apple-touch-icon.png">
+<link rel="mask-icon" href="https://yplam.com/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="zh-cn" href="https://yplam.com/posts/embedded/edison-ros-indigo-step-by-step/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --code-block-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript>
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-960JLZS3KY"></script>
+      <script>
+        var doNotTrack = false;
+        if ( false ) {
+          var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
+          var doNotTrack = (dnt == "1" || dnt == "yes");
+        }
+        if (!doNotTrack) {
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-960JLZS3KY');
+        }
+      </script><meta property="og:url" content="https://yplam.com/posts/embedded/edison-ros-indigo-step-by-step/">
+  <meta property="og:site_name" content="YPLAM">
+  <meta property="og:title" content="一步步搭建 Edison ROS Indigo 环境">
+  <meta property="og:description" content="最近在琢磨能不能用 CNN 来训练一个模型，用于控制一个模型小车，实现简单的循迹或者所谓的自动驾驶。于是拿出布灰已久的 Edison &#43; 两轮平衡车 &#43; 罗技摄像头，计划将这几样组装起来，上面运行 ROS 作为我的“机器人”平台，然后在笔记本上运行 master 做运算与控制。本笔记记录 ROS 在 Edison 上安装与运行 usb_cam 获取图像传输到主机的过程。">
+  <meta property="og:locale" content="zh-cn">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2017-03-25T00:00:00+00:00">
+    <meta property="article:modified_time" content="2017-03-25T00:00:00+00:00">
+    <meta property="article:tag" content="ROS">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="一步步搭建 Edison ROS Indigo 环境">
+<meta name="twitter:description" content="最近在琢磨能不能用 CNN 来训练一个模型，用于控制一个模型小车，实现简单的循迹或者所谓的自动驾驶。于是拿出布灰已久的 Edison &#43; 两轮平衡车 &#43; 罗技摄像头，计划将这几样组装起来，上面运行 ROS 作为我的“机器人”平台，然后在笔记本上运行 master 做运算与控制。本笔记记录 ROS 在 Edison 上安装与运行 usb_cam 获取图像传输到主机的过程。">
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Posts",
+      "item": "https://yplam.com/posts/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "一步步搭建 Edison ROS Indigo 环境",
+      "item": "https://yplam.com/posts/embedded/edison-ros-indigo-step-by-step/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "一步步搭建 Edison ROS Indigo 环境",
+  "name": "一步步搭建 Edison ROS Indigo 环境",
+  "description": "最近在琢磨能不能用 CNN 来训练一个模型，用于控制一个模型小车，实现简单的循迹或者所谓的自动驾驶。于是拿出布灰已久的 Edison + 两轮平衡车 + 罗技摄像头，计划将这几样组装起来，上面运行 ROS 作为我的“机器人”平台，然后在笔记本上运行 master 做运算与控制。本笔记记录 ROS 在 Edison 上安装与运行 usb_cam 获取图像传输到主机的过程。\n",
+  "keywords": [
+    "ROS"
+  ],
+  "articleBody": "最近在琢磨能不能用 CNN 来训练一个模型，用于控制一个模型小车，实现简单的循迹或者所谓的自动驾驶。于是拿出布灰已久的 Edison + 两轮平衡车 + 罗技摄像头，计划将这几样组装起来，上面运行 ROS 作为我的“机器人”平台，然后在笔记本上运行 master 做运算与控制。本笔记记录 ROS 在 Edison 上安装与运行 usb_cam 获取图像传输到主机的过程。\n主要还是按照 Installing ROS Indigo on Intel Edison, Installing ROS Indigo on Raspberry Pi 这两个文档进行安装，但过程中会遇到不少问题，并且由于 Edison 用户可能比较少，大多都需要找相关资料来解决。\n本笔记假设读者已经拥有基础 Linux 操作技能，某些基础操作不会细说。\n安装 ubilinux 参考下面文档：\nhttps://learn.sparkfun.com/tutorials/loading-debian-ubilinux-on-the-edison\n将 ubilinux 安装到 sd 卡启动 因为 Edison 自带的 emmc 只有 4G，安装各种包之后空间只能勉强够用，因此建议使用 8G 以上的 sd 卡安装系统，安装在sd卡上还有一个好处就是可以简单的将系统备份下来。可参考下面文档：\nhttps://github.com/sarweshkumar47/Boot-Intel-Edison-from-SDCard-with-Debian-Ubilinux\n系统初始化 配置 wifi：\nwpa_passphrase wifiid wifi_password 然后修改 /etc/network/interfaces，禁用 usb 网卡，使用 wlan0，将 wpa-ssid 跟 wpa-psk 配置上。\n初始化的配置，顺便把 locale 配置一下\napt-get update dpkg-reconfigure locale 安装 boost 1.5.3 库 Debian Wheezy 自带的 boost 库版本为 1.4.9，如果按此版本编译安装 ROS Indigo 的话会报以下错误：\nerror: macro \"BOOST_SCOPE_EXIT\" passed 2 arguments, but takes just 1 查看相关文档得知，Indigo 对应的 boost 版本为 1.5.3，可以按 Getting Started on Unix Variants 编译安装，也可以下载我编译好的 deb 包进行安装（编译一次需要 N 个小时）。当然，如果你有兴趣的话也可以尝试编译自己的deb包，参考 https://github.com/ulikoehler/deb-buildscripts/blob/master/deb-boost.sh\n下载 deb 包： [boost-all_1.53.0-1_i386.deb]({{ site.url }}/assets/2017/boost-all_1.53.0-1_i386.deb) [boost-all-dev_1.53.0-1_i386.deb]({{ site.url }}/assets/2017/boost-all-dev_1.53.0-1_i386.deb)\n安装：\napt-get install libicu48 dpkg -i boost-all_1.53.0-1_i386.deb boost-all-dev_1.53.0-1_i386.deb 安装 opencv 库 编译安装：\n下载opencv 2.4.9 代码\n环境准备\napt-get install build-essential apt-get install cmake git libgtk2.0-dev pkg-config libavcodec-dev libavformat-dev libswscale-dev ffmpeg apt-get install python-dev python-numpy 根据这里对代码进行修改 https://github.com/NextThingCo/buildroot/blob/master/package/opencv/0002-superres-Fix-return-type-value-VideoFrameSource_GPU.patch\n263 行\n- return new VideoFrameSource(fileName); + return new VideoFrameSource_GPU(fileName); 在 CMakeLists.txt 中 set(OPENCV_VCSVERSION “2.4.9”)\nmkdir release cd release cmake -D CMAKE_BUILD_TYPE=RELEASE -D CMAKE_INSTALL_PREFIX=/usr/local .. 编辑 CMakeCache.txt CPACK_BINARY_DEB:BOOL=ON make make install 上面这步可能需要运行 N 个小时\nmake package 可能会出错\nCPackDeb: dpkg-shlibdeps: dpkg-shlibdeps: need at least one executable 按照这里的 patch 对 cmake 进行修正：https://public.kitware.com/Bug/view.php?id=13488\n附预编译的 deb 包： [OpenCV-2.4.9-i686-libs.deb]({{ site.url }}/assets/2017/OpenCV-2.4.9-i686-libs.deb) [OpenCV-2.4.9-i686-dev.deb]({{ site.url }}/assets/2017/OpenCV-2.4.9-i686-dev.deb) [OpenCV-2.4.9-i686-python.deb]({{ site.url }}/assets/2017/OpenCV-2.4.9-i686-python.deb)\n编辑安装 ROS 可以参考 Installing ROS Indigo on Intel Edison, Installing ROS Indigo on Raspberry Pi 进行安装，但有两点区别：\n1.2 console_bridge:\n在运行下面命令后\nsudo checkinstall make install 输入 2 并且将包名改为 ’libconsole_bridge’ .\n3.2.2 Resolving Dependencies with rosdep\n运行 rosdep install 的时候去掉 -y 参数，并且跳过 apt-get install libboost-all-dev.\nerror while loading shared libraries: libconsole_bridge.so.0.3: cannot open shared object file: No such file or directory\n如果你遇到这个错误，可以通过下面方式处理\ncd /opt/ros/indigo/lib sudo ln -s /usr/local/lib/i386-linux-gnu/libconsole_bridge.so.0.3 libconsole_bridge.so.0.3 编译 usb_cam usb_cam 的编译跟前面 ros_comm 类似：\nmkdir catkin_ws cd catkin_ws mkdir src rosinstall_generator usb_cam image_transport_plugins --rosdistro indigo --deps --wet-only --exclude roslisp --tar \u003e indigo-usb_cam.rosinstall wstool init src indigo-usb_cam.rosinstall rosdep install --from-paths src --ignore-src --rosdistro indigo -r --os=debian:wheezy #跳过opencv boost相关的包 source /opt/ros/indigo/setup.bash catkin_make 你也可以在之前的工作区上操作，因为新工作区会导致某些包又要重新编译，但好处就是以后 make 跑的时间会短一点。\n运行 usb_cam 将 Edison 图像传输到电脑 开始运行之前请确认主机跟从机都可以相互ping通，并且可以ping通自己。\n现在主机运行：\nroscore 主机上开多一个终端，运行：\nrosrun rviz rviz Edison上编辑 launch 文件，运行\nsource devel/setup.bash roscd usb_cam vim launch/usb_cam.launch roslaunch usb_cam.launch usb_cam.launch 的内容，假设你主机的名字为 lam\n在 rviz 窗口上添加一个 Image，topic 为 /usb_cam/image_raw ，使用 compressed 传输。\nDone.\nUpdate 2017-04-22:\n最终成果，由于加上电池后二轮平衡车难以平衡起来，干脆在万能的淘宝加工了几张有机玻璃板做成三轮车。Edison用串口跟单片机通讯，控制前进后退转弯。\n发现 ROS 的确方便，除了跟底层通讯的模块用 C 写之外，其他用 python 写起来会感觉好享受。\n![Edison ROS]({{ site.url }}/assets/2017/20170422ros.jpg “Edison ROS”)\n",
+  "wordCount" : "422",
+  "inLanguage": "zh-cn",
+  "datePublished": "2017-03-25T00:00:00Z",
+  "dateModified": "2017-03-25T00:00:00Z",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://yplam.com/posts/embedded/edison-ros-indigo-step-by-step/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "YPLAM",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://yplam.com/favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <div class="logo-switches">
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="https://yplam.com/" title="YPLAM">
+                    <span>HOME</span>
+
+                </a>
+            </li>
+            <li>
+                <a href="https://yplam.com/about/" title="关于YPLam">
+                    <span>ABOUT</span>
+
+                </a>
+            </li>
+            <li>
+                <a href="https://github.com/yplam" title="GITHUB">
+                    <span>GITHUB</span>
+
+                </a>
+            </li>
+            <li>
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title entry-hint-parent">
+      一步步搭建 Edison ROS Indigo 环境
+    </h1>
+    <div class="post-meta"><span title='2017-03-25 00:00:00 +0000 UTC'>2017-03-25</span>
+
+</div>
+  </header> 
+  <div class="post-content"><p>最近在琢磨能不能用 CNN 来训练一个模型，用于控制一个模型小车，实现简单的循迹或者所谓的自动驾驶。于是拿出布灰已久的 Edison + 两轮平衡车 + 罗技摄像头，计划将这几样组装起来，上面运行 ROS 作为我的“机器人”平台，然后在笔记本上运行 master 做运算与控制。本笔记记录 ROS 在 Edison 上安装与运行 usb_cam 获取图像传输到主机的过程。</p>
+<p>主要还是按照 <a href="http://wiki.ros.org/wiki/edison">Installing ROS Indigo on Intel Edison</a>, <a href="http://wiki.ros.org/ROSberryPi/Installing%20ROS%20Indigo%20on%20Raspberry%20Pi">Installing ROS Indigo on Raspberry Pi</a> 这两个文档进行安装，但过程中会遇到不少问题，并且由于 Edison 用户可能比较少，大多都需要找相关资料来解决。</p>
+<p>本笔记假设读者已经拥有基础 Linux 操作技能，某些基础操作不会细说。</p>
+<h3 id="安装-ubilinux">安装 ubilinux<a hidden class="anchor" aria-hidden="true" href="#安装-ubilinux">#</a></h3>
+<p>参考下面文档：</p>
+<p><a href="https://learn.sparkfun.com/tutorials/loading-debian-ubilinux-on-the-edison">https://learn.sparkfun.com/tutorials/loading-debian-ubilinux-on-the-edison</a></p>
+<h3 id="将-ubilinux-安装到-sd-卡启动">将 ubilinux 安装到 sd 卡启动<a hidden class="anchor" aria-hidden="true" href="#将-ubilinux-安装到-sd-卡启动">#</a></h3>
+<p>因为 Edison 自带的 emmc 只有 4G，安装各种包之后空间只能勉强够用，因此建议使用 8G 以上的 sd 卡安装系统，安装在sd卡上还有一个好处就是可以简单的将系统备份下来。可参考下面文档：</p>
+<p><a href="https://github.com/sarweshkumar47/Boot-Intel-Edison-from-SDCard-with-Debian-Ubilinux">https://github.com/sarweshkumar47/Boot-Intel-Edison-from-SDCard-with-Debian-Ubilinux</a></p>
+<h3 id="系统初始化">系统初始化<a hidden class="anchor" aria-hidden="true" href="#系统初始化">#</a></h3>
+<p>配置 wifi：</p>
+<pre tabindex="0"><code>wpa_passphrase wifiid wifi_password
+</code></pre><p>然后修改 /etc/network/interfaces，禁用 usb 网卡，使用 wlan0，将 wpa-ssid 跟 wpa-psk 配置上。</p>
+<p>初始化的配置，顺便把 locale 配置一下</p>
+<pre tabindex="0"><code>apt-get update
+dpkg-reconfigure locale
+</code></pre><h3 id="安装-boost-153-库">安装 boost 1.5.3 库<a hidden class="anchor" aria-hidden="true" href="#安装-boost-153-库">#</a></h3>
+<p>Debian Wheezy 自带的 boost 库版本为 1.4.9，如果按此版本编译安装 ROS Indigo 的话会报以下错误：</p>
+<pre tabindex="0"><code>error: macro &#34;BOOST_SCOPE_EXIT&#34; passed 2 arguments, but takes just 1
+</code></pre><p>查看相关文档得知，Indigo 对应的 boost 版本为 1.5.3，可以按 <a href="http://www.boost.org/doc/libs/1_53_0/more/getting_started/unix-variants.html">Getting Started on Unix Variants</a> 编译安装，也可以下载我编译好的 deb 包进行安装（编译一次需要 N 个小时）。当然，如果你有兴趣的话也可以尝试编译自己的deb包，参考 <a href="https://github.com/ulikoehler/deb-buildscripts/blob/master/deb-boost.sh">https://github.com/ulikoehler/deb-buildscripts/blob/master/deb-boost.sh</a></p>
+<p>下载 deb 包： [boost-all_1.53.0-1_i386.deb]({{ site.url }}/assets/2017/boost-all_1.53.0-1_i386.deb) [boost-all-dev_1.53.0-1_i386.deb]({{ site.url }}/assets/2017/boost-all-dev_1.53.0-1_i386.deb)</p>
+<p>安装：</p>
+<pre tabindex="0"><code>apt-get install libicu48
+dpkg -i boost-all_1.53.0-1_i386.deb boost-all-dev_1.53.0-1_i386.deb
+</code></pre><h3 id="安装-opencv-库">安装 opencv 库<a hidden class="anchor" aria-hidden="true" href="#安装-opencv-库">#</a></h3>
+<p>编译安装：</p>
+<p>下载opencv 2.4.9 代码</p>
+<p>环境准备</p>
+<pre tabindex="0"><code>apt-get install build-essential
+apt-get install cmake git libgtk2.0-dev pkg-config libavcodec-dev libavformat-dev libswscale-dev ffmpeg
+apt-get install python-dev python-numpy
+</code></pre><p>根据这里对代码进行修改 <a href="https://github.com/NextThingCo/buildroot/blob/master/package/opencv/0002-superres-Fix-return-type-value-VideoFrameSource_GPU.patch">https://github.com/NextThingCo/buildroot/blob/master/package/opencv/0002-superres-Fix-return-type-value-VideoFrameSource_GPU.patch</a></p>
+<p>263 行</p>
+<pre tabindex="0"><code>
+-    return new VideoFrameSource(fileName);
++    return new VideoFrameSource_GPU(fileName);
+</code></pre><p>在 CMakeLists.txt 中 set(OPENCV_VCSVERSION &ldquo;2.4.9&rdquo;)</p>
+<pre tabindex="0"><code>mkdir release
+cd release
+cmake -D CMAKE_BUILD_TYPE=RELEASE -D CMAKE_INSTALL_PREFIX=/usr/local ..
+
+编辑 CMakeCache.txt CPACK_BINARY_DEB:BOOL=ON
+
+make
+make install
+</code></pre><p>上面这步可能需要运行 N 个小时</p>
+<pre tabindex="0"><code>make package
+</code></pre><p>可能会出错</p>
+<pre tabindex="0"><code>CPackDeb: dpkg-shlibdeps: dpkg-shlibdeps: need at least one executable
+</code></pre><p>按照这里的 patch 对 cmake 进行修正：https://public.kitware.com/Bug/view.php?id=13488</p>
+<p>附预编译的 deb 包： [OpenCV-2.4.9-i686-libs.deb]({{ site.url }}/assets/2017/OpenCV-2.4.9-i686-libs.deb) [OpenCV-2.4.9-i686-dev.deb]({{ site.url }}/assets/2017/OpenCV-2.4.9-i686-dev.deb) [OpenCV-2.4.9-i686-python.deb]({{ site.url }}/assets/2017/OpenCV-2.4.9-i686-python.deb)</p>
+<h2 id="编辑安装-ros">编辑安装 ROS<a hidden class="anchor" aria-hidden="true" href="#编辑安装-ros">#</a></h2>
+<p>可以参考 <a href="http://wiki.ros.org/wiki/edison">Installing ROS Indigo on Intel Edison</a>, <a href="http://wiki.ros.org/ROSberryPi/Installing%20ROS%20Indigo%20on%20Raspberry%20Pi">Installing ROS Indigo on Raspberry Pi</a> 进行安装，但有两点区别：</p>
+<p><strong>1.2 console_bridge:</strong></p>
+<p>在运行下面命令后</p>
+<pre tabindex="0"><code>sudo checkinstall make install
+</code></pre><p>输入 2 并且将包名改为 &rsquo;libconsole_bridge&rsquo; .</p>
+<p><strong>3.2.2 Resolving Dependencies with rosdep</strong></p>
+<p>运行 rosdep install 的时候去掉 -y 参数，并且跳过 apt-get install libboost-all-dev.</p>
+<p><strong>error while loading shared libraries: libconsole_bridge.so.0.3: cannot open shared object file: No such file or directory</strong></p>
+<p>如果你遇到这个错误，可以通过下面方式处理</p>
+<pre tabindex="0"><code>cd /opt/ros/indigo/lib
+sudo ln -s /usr/local/lib/i386-linux-gnu/libconsole_bridge.so.0.3 libconsole_bridge.so.0.3
+</code></pre><h2 id="编译-usb_cam">编译 usb_cam<a hidden class="anchor" aria-hidden="true" href="#编译-usb_cam">#</a></h2>
+<p>usb_cam 的编译跟前面 ros_comm 类似：</p>
+<pre tabindex="0"><code>mkdir catkin_ws
+cd catkin_ws
+mkdir src
+rosinstall_generator usb_cam image_transport_plugins --rosdistro indigo --deps --wet-only --exclude roslisp --tar &gt; indigo-usb_cam.rosinstall
+wstool init src indigo-usb_cam.rosinstall
+rosdep install --from-paths src --ignore-src --rosdistro indigo -r --os=debian:wheezy
+#跳过opencv boost相关的包
+source /opt/ros/indigo/setup.bash
+catkin_make
+</code></pre><p>你也可以在之前的工作区上操作，因为新工作区会导致某些包又要重新编译，但好处就是以后 make 跑的时间会短一点。</p>
+<h2 id="运行-usb_cam-将-edison-图像传输到电脑">运行 usb_cam 将 Edison 图像传输到电脑<a hidden class="anchor" aria-hidden="true" href="#运行-usb_cam-将-edison-图像传输到电脑">#</a></h2>
+<p>开始运行之前请确认主机跟从机都可以相互ping通，并且可以ping通自己。</p>
+<p>现在主机运行：</p>
+<pre tabindex="0"><code>roscore
+</code></pre><p>主机上开多一个终端，运行：</p>
+<pre tabindex="0"><code>rosrun rviz rviz
+</code></pre><p>Edison上编辑 launch 文件，运行</p>
+<pre tabindex="0"><code>source devel/setup.bash
+roscd usb_cam
+vim launch/usb_cam.launch
+roslaunch usb_cam.launch
+</code></pre><p>usb_cam.launch 的内容，假设你主机的名字为 lam</p>
+<pre tabindex="0"><code>&lt;launch&gt;
+  &lt;env name=&#34;ROS_MASTER_URI&#34; value=&#34;http://lam.local:11311&#34;/&gt; 
+  &lt;node name=&#34;usb_cam&#34; pkg=&#34;usb_cam&#34; type=&#34;usb_cam_node&#34; output=&#34;screen&#34; &gt;
+    &lt;param name=&#34;video_device&#34; value=&#34;/dev/video0&#34; /&gt;
+    &lt;param name=&#34;image_width&#34; value=&#34;640&#34; /&gt;
+    &lt;param name=&#34;image_height&#34; value=&#34;480&#34; /&gt;
+    &lt;param name=&#34;pixel_format&#34; value=&#34;yuyv&#34; /&gt;
+    &lt;param name=&#34;camera_frame_id&#34; value=&#34;usb_cam&#34; /&gt;
+    &lt;param name=&#34;io_method&#34; value=&#34;mmap&#34;/&gt;
+  &lt;/node&gt;
+&lt;/launch&gt;
+</code></pre><p>在 rviz 窗口上添加一个 Image，topic 为 /usb_cam/image_raw ，使用 compressed 传输。</p>
+<p>Done.</p>
+<p><strong>Update 2017-04-22:</strong></p>
+<p>最终成果，由于加上电池后二轮平衡车难以平衡起来，干脆在万能的淘宝加工了几张有机玻璃板做成三轮车。Edison用串口跟单片机通讯，控制前进后退转弯。</p>
+<p>发现 ROS 的确方便，除了跟底层通讯的模块用 C 写之外，其他用 python 写起来会感觉好享受。</p>
+<p>![Edison ROS]({{ site.url }}/assets/2017/20170422ros.jpg &ldquo;Edison ROS&rdquo;)</p>
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+      <li><a href="https://yplam.com/tags/ros/">ROS</a></li>
+    </ul>
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+        <span>&copy; 2025 <a href="https://yplam.com/">YPLAM</a></span> · 
+
+    <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+        CC BY-SA 4.0
+    </a>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>

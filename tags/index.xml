@@ -1,32 +1,74 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
   <channel>
-    <title>Tags on YP.Lam</title>
+    <title>Tags on YPLAM</title>
     <link>https://yplam.com/tags/</link>
-    <description>Recent content in Tags on YP.Lam</description>
-    <generator>Hugo</generator>
+    <description>Recent content in Tags on YPLAM</description>
+    <generator>Hugo -- 0.148.2</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Sun, 09 Feb 2025 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sat, 13 Sep 2025 00:00:00 +0000</lastBuildDate>
     <atom:link href="https://yplam.com/tags/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>Flux</title>
-      <link>https://yplam.com/tags/flux/</link>
-      <pubDate>Sun, 09 Feb 2025 00:00:00 +0000</pubDate>
-      <guid>https://yplam.com/tags/flux/</guid>
-      <description></description>
-    </item>
-    <item>
-      <title>Lora</title>
-      <link>https://yplam.com/tags/lora/</link>
-      <pubDate>Sun, 09 Feb 2025 00:00:00 +0000</pubDate>
-      <guid>https://yplam.com/tags/lora/</guid>
+      <title>Embedded</title>
+      <link>https://yplam.com/tags/embedded/</link>
+      <pubDate>Sat, 13 Sep 2025 00:00:00 +0000</pubDate>
+      <guid>https://yplam.com/tags/embedded/</guid>
       <description></description>
     </item>
     <item>
       <title>MachineLearning</title>
       <link>https://yplam.com/tags/machinelearning/</link>
-      <pubDate>Sun, 09 Feb 2025 00:00:00 +0000</pubDate>
+      <pubDate>Sat, 13 Sep 2025 00:00:00 +0000</pubDate>
       <guid>https://yplam.com/tags/machinelearning/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Flux</title>
+      <link>https://yplam.com/tags/flux/</link>
+      <pubDate>Sat, 23 Aug 2025 00:00:00 +0000</pubDate>
+      <guid>https://yplam.com/tags/flux/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Kontext</title>
+      <link>https://yplam.com/tags/kontext/</link>
+      <pubDate>Sat, 23 Aug 2025 00:00:00 +0000</pubDate>
+      <guid>https://yplam.com/tags/kontext/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Lora</title>
+      <link>https://yplam.com/tags/lora/</link>
+      <pubDate>Sat, 23 Aug 2025 00:00:00 +0000</pubDate>
+      <guid>https://yplam.com/tags/lora/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Go</title>
+      <link>https://yplam.com/tags/go/</link>
+      <pubDate>Sat, 10 May 2025 00:00:00 +0000</pubDate>
+      <guid>https://yplam.com/tags/go/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>React</title>
+      <link>https://yplam.com/tags/react/</link>
+      <pubDate>Sat, 10 May 2025 00:00:00 +0000</pubDate>
+      <guid>https://yplam.com/tags/react/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Flutter</title>
+      <link>https://yplam.com/tags/flutter/</link>
+      <pubDate>Sat, 14 Dec 2024 00:00:00 +0000</pubDate>
+      <guid>https://yplam.com/tags/flutter/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Rust</title>
+      <link>https://yplam.com/tags/rust/</link>
+      <pubDate>Sat, 14 Dec 2024 00:00:00 +0000</pubDate>
+      <guid>https://yplam.com/tags/rust/</guid>
       <description></description>
     </item>
     <item>
@@ -37,24 +79,52 @@
       <description></description>
     </item>
     <item>
-      <title>Flutter</title>
-      <link>https://yplam.com/tags/flutter/</link>
-      <pubDate>Wed, 01 May 2024 00:00:00 +0000</pubDate>
-      <guid>https://yplam.com/tags/flutter/</guid>
+      <title>Asynq</title>
+      <link>https://yplam.com/tags/asynq/</link>
+      <pubDate>Sat, 09 Sep 2023 00:00:00 +0000</pubDate>
+      <guid>https://yplam.com/tags/asynq/</guid>
       <description></description>
     </item>
     <item>
-      <title>Go</title>
-      <link>https://yplam.com/tags/go/</link>
-      <pubDate>Wed, 01 May 2024 00:00:00 +0000</pubDate>
-      <guid>https://yplam.com/tags/go/</guid>
+      <title>EMQX</title>
+      <link>https://yplam.com/tags/emqx/</link>
+      <pubDate>Sat, 09 Sep 2023 00:00:00 +0000</pubDate>
+      <guid>https://yplam.com/tags/emqx/</guid>
       <description></description>
     </item>
     <item>
-      <title>Embedded</title>
-      <link>https://yplam.com/tags/embedded/</link>
-      <pubDate>Sat, 26 Aug 2023 00:00:00 +0000</pubDate>
-      <guid>https://yplam.com/tags/embedded/</guid>
+      <title>InfluxDB</title>
+      <link>https://yplam.com/tags/influxdb/</link>
+      <pubDate>Sat, 09 Sep 2023 00:00:00 +0000</pubDate>
+      <guid>https://yplam.com/tags/influxdb/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>IOT</title>
+      <link>https://yplam.com/tags/iot/</link>
+      <pubDate>Sat, 09 Sep 2023 00:00:00 +0000</pubDate>
+      <guid>https://yplam.com/tags/iot/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Kafka</title>
+      <link>https://yplam.com/tags/kafka/</link>
+      <pubDate>Sat, 09 Sep 2023 00:00:00 +0000</pubDate>
+      <guid>https://yplam.com/tags/kafka/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>PostgreSQL</title>
+      <link>https://yplam.com/tags/postgresql/</link>
+      <pubDate>Sat, 09 Sep 2023 00:00:00 +0000</pubDate>
+      <guid>https://yplam.com/tags/postgresql/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Redis</title>
+      <link>https://yplam.com/tags/redis/</link>
+      <pubDate>Sat, 09 Sep 2023 00:00:00 +0000</pubDate>
+      <guid>https://yplam.com/tags/redis/</guid>
       <description></description>
     </item>
     <item>
@@ -93,6 +163,13 @@
       <description></description>
     </item>
     <item>
+      <title>OpenWRT</title>
+      <link>https://yplam.com/tags/openwrt/</link>
+      <pubDate>Sat, 08 Jul 2023 00:00:00 +0000</pubDate>
+      <guid>https://yplam.com/tags/openwrt/</guid>
+      <description></description>
+    </item>
+    <item>
       <title>AV</title>
       <link>https://yplam.com/tags/av/</link>
       <pubDate>Sat, 10 Jun 2023 00:00:00 +0000</pubDate>
@@ -104,13 +181,6 @@
       <link>https://yplam.com/tags/ffmpeg/</link>
       <pubDate>Sat, 10 Jun 2023 00:00:00 +0000</pubDate>
       <guid>https://yplam.com/tags/ffmpeg/</guid>
-      <description></description>
-    </item>
-    <item>
-      <title>Rust</title>
-      <link>https://yplam.com/tags/rust/</link>
-      <pubDate>Sat, 03 Jun 2023 00:00:00 +0000</pubDate>
-      <guid>https://yplam.com/tags/rust/</guid>
       <description></description>
     </item>
     <item>
@@ -139,13 +209,6 @@
       <link>https://yplam.com/tags/imx6ull/</link>
       <pubDate>Sat, 25 Dec 2021 00:00:00 +0000</pubDate>
       <guid>https://yplam.com/tags/imx6ull/</guid>
-      <description></description>
-    </item>
-    <item>
-      <title>OpenWRT</title>
-      <link>https://yplam.com/tags/openwrt/</link>
-      <pubDate>Sat, 25 Dec 2021 00:00:00 +0000</pubDate>
-      <guid>https://yplam.com/tags/openwrt/</guid>
       <description></description>
     </item>
     <item>
@@ -251,13 +314,6 @@
       <link>https://yplam.com/tags/nginx/</link>
       <pubDate>Thu, 29 Oct 2015 00:00:00 +0000</pubDate>
       <guid>https://yplam.com/tags/nginx/</guid>
-      <description></description>
-    </item>
-    <item>
-      <title>Redis</title>
-      <link>https://yplam.com/tags/redis/</link>
-      <pubDate>Wed, 28 Oct 2015 00:00:00 +0000</pubDate>
-      <guid>https://yplam.com/tags/redis/</guid>
       <description></description>
     </item>
     <item>

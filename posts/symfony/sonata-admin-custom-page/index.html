@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>SonataAdminBundle创建自定义后台页面 | YPLAM</title>
+<meta name="keywords" content="PHP, Symfony">
+<meta name="description" content="SonataAdminBundle可以非常简便地实现CRUD页面，然而，如果我们需要在后台中实现与Entity无关的管理页面，应该怎么办呢？下面分享自己在摸索工程中的一个实现方法。">
+<meta name="author" content="">
+<link rel="canonical" href="https://yplam.com/posts/symfony/sonata-admin-custom-page/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.8a2a5b863c538395920b4f077c6697be31878d530618647d78daca2883f21ff1.css" integrity="sha256-iipbhjxTg5WSC08HfGaXvjGHjVMGGGR9eNrKKIPyH/E=" rel="preload stylesheet" as="style">
+<link rel="icon" href="https://yplam.com/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://yplam.com/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://yplam.com/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://yplam.com/apple-touch-icon.png">
+<link rel="mask-icon" href="https://yplam.com/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="zh-cn" href="https://yplam.com/posts/symfony/sonata-admin-custom-page/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --code-block-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript>
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-960JLZS3KY"></script>
+      <script>
+        var doNotTrack = false;
+        if ( false ) {
+          var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
+          var doNotTrack = (dnt == "1" || dnt == "yes");
+        }
+        if (!doNotTrack) {
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-960JLZS3KY');
+        }
+      </script><meta property="og:url" content="https://yplam.com/posts/symfony/sonata-admin-custom-page/">
+  <meta property="og:site_name" content="YPLAM">
+  <meta property="og:title" content="SonataAdminBundle创建自定义后台页面">
+  <meta property="og:description" content="SonataAdminBundle可以非常简便地实现CRUD页面，然而，如果我们需要在后台中实现与Entity无关的管理页面，应该怎么办呢？下面分享自己在摸索工程中的一个实现方法。">
+  <meta property="og:locale" content="zh-cn">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2015-07-14T00:00:00+00:00">
+    <meta property="article:modified_time" content="2015-07-14T00:00:00+00:00">
+    <meta property="article:tag" content="PHP">
+    <meta property="article:tag" content="Symfony">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="SonataAdminBundle创建自定义后台页面">
+<meta name="twitter:description" content="SonataAdminBundle可以非常简便地实现CRUD页面，然而，如果我们需要在后台中实现与Entity无关的管理页面，应该怎么办呢？下面分享自己在摸索工程中的一个实现方法。">
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Posts",
+      "item": "https://yplam.com/posts/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "SonataAdminBundle创建自定义后台页面",
+      "item": "https://yplam.com/posts/symfony/sonata-admin-custom-page/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "SonataAdminBundle创建自定义后台页面",
+  "name": "SonataAdminBundle创建自定义后台页面",
+  "description": "SonataAdminBundle可以非常简便地实现CRUD页面，然而，如果我们需要在后台中实现与Entity无关的管理页面，应该怎么办呢？下面分享自己在摸索工程中的一个实现方法。\n",
+  "keywords": [
+    "PHP", "Symfony"
+  ],
+  "articleBody": "SonataAdminBundle可以非常简便地实现CRUD页面，然而，如果我们需要在后台中实现与Entity无关的管理页面，应该怎么办呢？下面分享自己在摸索工程中的一个实现方法。\n首先 Google 一番，发现已经有人遇到过这个问题，并且提供了一些解决方法：\nCustom page \u0026 controller in Sonata Admin Bundle\nThe page which had not been connect with entity, in SonataAdminBundle\nsonataadminbundle创建一个自定义页面\n然而，上面的方法均有一个特点，就是通过覆写SonataAdminBundle的dashboard模板来将自定义页面的链接加进去。身为一名具有处女座精神的程序猿，这种方法当然不能接受 :)\n查看代码，发现SonataAdminBundle的实现方式也很简单：实现一个Block，然后将Block配置到SonataAdmin中。\n创建Block\n假设我们需要创建一个Block来显示管理页面的链接，那么我们可以添加一个区块服务：\nservices.yml\napp.admin.block.manager_list: class: AppBundle\\Block\\AdminManagerBlockService tags: - { name: sonata.block } arguments: - app.admin.block.manager_list - @templating 在config.yml中配置这个区块：\nsonata_block: default_contexts: [cms] blocks: # Enable the SonataAdminBundle block sonata.admin.block.admin_list: contexts: [admin] app.admin.block.manager_list: contexts: [admin] sonata_admin: title: Admin dashboard: blocks: - position: left type: sonata.admin.block.admin_list - position: top type: app.admin.block.manager_list 实现Block内容输出\nnamespace AppBundle\\Block; use Sonata\\BlockBundle\\Block\\BlockContextInterface; use Symfony\\Component\\HttpFoundation\\Response; use Symfony\\Bundle\\FrameworkBundle\\Templating\\EngineInterface; use Sonata\\AdminBundle\\Form\\FormMapper; use Sonata\\AdminBundle\\Validator\\ErrorElement; use Sonata\\AdminBundle\\Admin\\Pool; use Sonata\\BlockBundle\\Model\\BlockInterface; use Sonata\\BlockBundle\\Block\\BaseBlockService; use Symfony\\Component\\OptionsResolver\\OptionsResolver; use Symfony\\Component\\OptionsResolver\\OptionsResolverInterface; /** * */ class AdminManagerBlockService extends BaseBlockService { /** * @param string $name * @param \\Symfony\\Bundle\\FrameworkBundle\\Templating\\EngineInterface $templating */ public function __construct($name, EngineInterface $templating) { parent::__construct($name, $templating); } /** * {@inheritdoc} */ public function execute(BlockContextInterface $blockContext, Response $response = null) { $settings = $blockContext-\u003egetSettings(); return $this-\u003erenderPrivateResponse('AppBundle:Block:manager_list.html.twig', array( 'block' =\u003e $blockContext-\u003egetBlock(), 'settings' =\u003e $settings, ), $response); } /** * {@inheritdoc} */ public function validateBlock(ErrorElement $errorElement, BlockInterface $block) { // TODO: Implement validateBlock() method. } /** * {@inheritdoc} */ public function buildEditForm(FormMapper $formMapper, BlockInterface $block) { } /** * {@inheritdoc} */ public function getName() { return 'Admin Manager'; } /** * {@inheritdoc} */ public function setDefaultSettings(OptionsResolverInterface $resolver) { $resolver-\u003esetDefaults(array( 'groups' =\u003e false )); $resolver-\u003esetAllowedTypes(array( 'groups' =\u003e array('bool', 'array') )); } } 继承SonataAdminBundle的模板\n{% raw %} {% extends sonata_block.templates.block_base %} {% block block %} Manager 统计数据 List {% endblock %} {% endraw %} 这样，就可以在SonataAdminBundle的Dashboard页面头部添加自己的管理区块。\n",
+  "wordCount" : "273",
+  "inLanguage": "zh-cn",
+  "datePublished": "2015-07-14T00:00:00Z",
+  "dateModified": "2015-07-14T00:00:00Z",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://yplam.com/posts/symfony/sonata-admin-custom-page/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "YPLAM",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://yplam.com/favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <div class="logo-switches">
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="https://yplam.com/" title="YPLAM">
+                    <span>HOME</span>
+
+                </a>
+            </li>
+            <li>
+                <a href="https://yplam.com/about/" title="关于YPLam">
+                    <span>ABOUT</span>
+
+                </a>
+            </li>
+            <li>
+                <a href="https://github.com/yplam" title="GITHUB">
+                    <span>GITHUB</span>
+
+                </a>
+            </li>
+            <li>
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title entry-hint-parent">
+      SonataAdminBundle创建自定义后台页面
+    </h1>
+    <div class="post-meta"><span title='2015-07-14 00:00:00 +0000 UTC'>2015-07-14</span>
+
+</div>
+  </header> 
+  <div class="post-content"><p>SonataAdminBundle可以非常简便地实现CRUD页面，然而，如果我们需要在后台中实现与Entity无关的管理页面，应该怎么办呢？下面分享自己在摸索工程中的一个实现方法。</p>
+<p>首先 Google 一番，发现已经有人遇到过这个问题，并且提供了一些解决方法：</p>
+<p><a href="http://blog.eike.se/2014/03/custom-page-controller-in-sonata-admin.html">Custom page &amp; controller in Sonata Admin Bundle</a></p>
+<p><a href="http://sysmagazine.com/posts/167543/">The page which had not been connect with entity, in SonataAdminBundle</a></p>
+<p><a href="http://www.newlifeclan.com/symfony/archives/547">sonataadminbundle创建一个自定义页面</a></p>
+<p>然而，上面的方法均有一个特点，就是通过覆写SonataAdminBundle的dashboard模板来将自定义页面的链接加进去。身为一名具有处女座精神的程序猿，这种方法当然不能接受 :)</p>
+<p>查看代码，发现SonataAdminBundle的实现方式也很简单：<strong>实现一个Block，然后将Block配置到SonataAdmin中。</strong></p>
+<p><strong>创建Block</strong></p>
+<p>假设我们需要创建一个Block来显示管理页面的链接，那么我们可以添加一个区块服务：</p>
+<p>services.yml</p>
+<pre tabindex="0"><code>    app.admin.block.manager_list:
+        class: AppBundle\Block\AdminManagerBlockService
+        tags:
+            - { name: sonata.block }
+        arguments:
+            - app.admin.block.manager_list
+            - @templating
+</code></pre><p><strong>在config.yml中配置这个区块：</strong></p>
+<pre tabindex="0"><code>sonata_block:
+    default_contexts: [cms]
+    blocks:
+        # Enable the SonataAdminBundle block
+        sonata.admin.block.admin_list:
+            contexts:   [admin]
+        app.admin.block.manager_list:
+            contexts:   [admin]
+
+sonata_admin:
+    title: Admin
+    dashboard:
+        blocks:
+            -
+                position: left
+                type: sonata.admin.block.admin_list
+            -
+                position: top
+                type: app.admin.block.manager_list
+</code></pre><p><strong>实现Block内容输出</strong></p>
+<pre tabindex="0"><code>namespace AppBundle\Block;
+
+use Sonata\BlockBundle\Block\BlockContextInterface;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
+
+use Sonata\AdminBundle\Form\FormMapper;
+use Sonata\AdminBundle\Validator\ErrorElement;
+use Sonata\AdminBundle\Admin\Pool;
+
+use Sonata\BlockBundle\Model\BlockInterface;
+use Sonata\BlockBundle\Block\BaseBlockService;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+
+/**
+ *
+ */
+class AdminManagerBlockService extends BaseBlockService
+{
+
+
+    /**
+     * @param string                                                     $name
+     * @param \Symfony\Bundle\FrameworkBundle\Templating\EngineInterface $templating
+     */
+    public function __construct($name, EngineInterface $templating)
+    {
+        parent::__construct($name, $templating);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function execute(BlockContextInterface $blockContext, Response $response = null)
+    {
+
+        $settings = $blockContext-&gt;getSettings();
+
+
+        return $this-&gt;renderPrivateResponse(&#39;AppBundle:Block:manager_list.html.twig&#39;, array(
+            &#39;block&#39;         =&gt; $blockContext-&gt;getBlock(),
+            &#39;settings&#39;      =&gt; $settings,
+        ), $response);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function validateBlock(ErrorElement $errorElement, BlockInterface $block)
+    {
+        // TODO: Implement validateBlock() method.
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function buildEditForm(FormMapper $formMapper, BlockInterface $block)
+    {
+
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getName()
+    {
+        return &#39;Admin Manager&#39;;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setDefaultSettings(OptionsResolverInterface $resolver)
+    {
+        $resolver-&gt;setDefaults(array(
+            &#39;groups&#39; =&gt; false
+        ));
+
+        $resolver-&gt;setAllowedTypes(array(
+            &#39;groups&#39; =&gt; array(&#39;bool&#39;, &#39;array&#39;)
+        ));
+    }
+}
+</code></pre><p><strong>继承SonataAdminBundle的模板</strong></p>
+<pre tabindex="0"><code>{% raw %}
+{% extends sonata_block.templates.block_base %}
+
+{% block block %}
+    &lt;div class=&#34;box&#34;&gt;
+        &lt;div class=&#34;box-header&#34;&gt;
+            &lt;h3 class=&#34;box-title&#34;&gt;Manager&lt;/h3&gt;
+        &lt;/div&gt;
+        &lt;div class=&#34;box-body&#34;&gt;
+            &lt;table class=&#34;table table-hover&#34;&gt;
+                &lt;tbody&gt;
+                    &lt;tr&gt;
+                        &lt;td class=&#34;sonata-ba-list-label&#34; width=&#34;40%&#34;&gt;
+                            统计数据
+                        &lt;/td&gt;
+                        &lt;td&gt;
+                            &lt;div class=&#34;btn-group&#34;&gt;
+                                &lt;a class=&#34;btn btn-link btn-flat&#34; href=&#34;&#34;&gt;
+                                    &lt;i class=&#34;glyphicon glyphicon-list&#34;&gt;&lt;/i&gt;List
+                                &lt;/a&gt;
+                            &lt;/div&gt;
+                        &lt;/td&gt;
+                    &lt;/tr&gt;
+                    
+                &lt;/tbody&gt;
+            &lt;/table&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+{% endblock %}
+{% endraw %}
+</code></pre><p>这样，就可以在SonataAdminBundle的Dashboard页面头部添加自己的管理区块。</p>
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+      <li><a href="https://yplam.com/tags/php/">PHP</a></li>
+      <li><a href="https://yplam.com/tags/symfony/">Symfony</a></li>
+    </ul>
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+        <span>&copy; 2025 <a href="https://yplam.com/">YPLAM</a></span> · 
+
+    <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+        CC BY-SA 4.0
+    </a>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>

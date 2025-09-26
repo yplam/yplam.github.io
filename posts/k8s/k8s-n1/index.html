@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>斐讯 N1 搭建私有 Kubernetes 集群运行 HomeAssistant | YPLAM</title>
+<meta name="keywords" content="Kubernetes, HomeAssistant">
+<meta name="description" content="手上有几台闲置的几台斐讯 N1 刚好达到安装 Kubernetes 的最低硬件要求，于是趁着五一假期在家捣弄个“高可用”斐讯 N1 K8S 集群，用于运行 HomeAssistant">
+<meta name="author" content="">
+<link rel="canonical" href="https://yplam.com/posts/k8s/k8s-n1/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.8a2a5b863c538395920b4f077c6697be31878d530618647d78daca2883f21ff1.css" integrity="sha256-iipbhjxTg5WSC08HfGaXvjGHjVMGGGR9eNrKKIPyH/E=" rel="preload stylesheet" as="style">
+<link rel="icon" href="https://yplam.com/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://yplam.com/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://yplam.com/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://yplam.com/apple-touch-icon.png">
+<link rel="mask-icon" href="https://yplam.com/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="zh-cn" href="https://yplam.com/posts/k8s/k8s-n1/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --code-block-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript>
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-960JLZS3KY"></script>
+      <script>
+        var doNotTrack = false;
+        if ( false ) {
+          var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
+          var doNotTrack = (dnt == "1" || dnt == "yes");
+        }
+        if (!doNotTrack) {
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-960JLZS3KY');
+        }
+      </script><meta property="og:url" content="https://yplam.com/posts/k8s/k8s-n1/">
+  <meta property="og:site_name" content="YPLAM">
+  <meta property="og:title" content="斐讯 N1 搭建私有 Kubernetes 集群运行 HomeAssistant">
+  <meta property="og:description" content="手上有几台闲置的几台斐讯 N1 刚好达到安装 Kubernetes 的最低硬件要求，于是趁着五一假期在家捣弄个“高可用”斐讯 N1 K8S 集群，用于运行 HomeAssistant">
+  <meta property="og:locale" content="zh-cn">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2022-05-02T00:00:00+00:00">
+    <meta property="article:modified_time" content="2022-05-02T00:00:00+00:00">
+    <meta property="article:tag" content="Kubernetes">
+    <meta property="article:tag" content="HomeAssistant">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="斐讯 N1 搭建私有 Kubernetes 集群运行 HomeAssistant">
+<meta name="twitter:description" content="手上有几台闲置的几台斐讯 N1 刚好达到安装 Kubernetes 的最低硬件要求，于是趁着五一假期在家捣弄个“高可用”斐讯 N1 K8S 集群，用于运行 HomeAssistant">
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Posts",
+      "item": "https://yplam.com/posts/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "斐讯 N1 搭建私有 Kubernetes 集群运行 HomeAssistant",
+      "item": "https://yplam.com/posts/k8s/k8s-n1/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "斐讯 N1 搭建私有 Kubernetes 集群运行 HomeAssistant",
+  "name": "斐讯 N1 搭建私有 Kubernetes 集群运行 HomeAssistant",
+  "description": "手上有几台闲置的几台斐讯 N1 刚好达到安装 Kubernetes 的最低硬件要求，于是趁着五一假期在家捣弄个“高可用”斐讯 N1 K8S 集群，用于运行 HomeAssistant\n",
+  "keywords": [
+    "Kubernetes", "HomeAssistant"
+  ],
+  "articleBody": "手上有几台闲置的几台斐讯 N1 刚好达到安装 Kubernetes 的最低硬件要求，于是趁着五一假期在家捣弄个“高可用”斐讯 N1 K8S 集群，用于运行 HomeAssistant\n硬件准备 1 台树莓派 CM4+256G SSD，5 台 N1+5 个 32G 迷你 U 盘，两个 cc2652p zigbee dongle， 一个 8 口千兆交换机，明纬 12V5A 电源，1 分 5DC 电源线，短网线若干，厚双面胶。\n一顿操作下来，刚好整整齐齐的粘成一块：\nArmbian 准备 得益于 N1 折腾生态比较完善，比较容易找到系统打包脚本，https://github.com/yunsur/phicomm-n1\n通过修改 config/boards/arm-64.conf 把不需要的包删除，尽量让操作系统保持简洁\n-------------------------- config/boards/arm-64.conf -------------------------- index 9d24069..0a1d99a 100644 @@ -25,5 +25,5 @@ EXTRAWIFI=\"no\" WIREGUARD=\"yes\" INSTALL_HEADERS=\"yes\" INSTALL_DOCKER=\"yes\" -PACKAGE_LIST_BOARD=\"bluez bluez-tools bluetooth libubootenv-tool\" -PACKAGE_LIST_FAMILY=\"autojump avahi-daemon samba samba-common-bin samba-vfs-modules smbclient tcpdump ntpdate python3 python3-pip docker-ce docker-compose\" +PACKAGE_LIST_BOARD=\"\" +PACKAGE_LIST_FAMILY=\"avahi-daemon lvm2\" ------------------ config/kernel/linux-arm-64-current.config ------------------ index fa4d782..5829e3e 100644 @@ -1783,7 +1783,7 @@ CONFIG_NET_9P=m CONFIG_NET_9P_VIRTIO=m # CONFIG_NET_9P_DEBUG is not set # CONFIG_CAIF is not set -CONFIG_CEPH_LIB=m +CONFIG_CEPH_LIB=y # CONFIG_CEPH_LIB_PRETTYDEBUG is not set # CONFIG_CEPH_LIB_USE_DNS_RESOLVER is not set CONFIG_NFC=m @@ -2238,7 +2238,7 @@ CONFIG_ZRAM_WRITEBACK=y CONFIG_BLK_DEV_LOOP=y CONFIG_BLK_DEV_LOOP_MIN_COUNT=8 CONFIG_BLK_DEV_CRYPTOLOOP=m -CONFIG_BLK_DEV_DRBD=m +CONFIG_BLK_DEV_DRBD=y # CONFIG_DRBD_FAULT_INJECTION is not set CONFIG_BLK_DEV_NBD=m # CONFIG_BLK_DEV_SX8 is not set @@ -2248,7 +2248,7 @@ CONFIG_BLK_DEV_RAM_SIZE=4096 # CONFIG_CDROM_PKTCDVD is not set CONFIG_ATA_OVER_ETH=m CONFIG_VIRTIO_BLK=m -# CONFIG_BLK_DEV_RBD is not set +CONFIG_BLK_DEV_RBD=y # CONFIG_BLK_DEV_RSXX is not set # @@ -8152,7 +8152,7 @@ CONFIG_SUNRPC_SWAP=y CONFIG_RPCSEC_GSS_KRB5=m # CONFIG_SUNRPC_DISABLE_INSECURE_ENCTYPES is not set # CONFIG_SUNRPC_DEBUG is not set -# CONFIG_CEPH_FS is not set +CONFIG_CEPH_FS=y CONFIG_CIFS=y CONFIG_CIFS_STATS2=y CONFIG_CIFS_ALLOW_INSECURE_LEGACY=y 集群部署 因为是以实验为目标，集群使用 3 master + 3 worker ，ETCD stacked，keepalived + haproxy 实现 apiserver 的高可用\n其中 master[0] 为 raspberry pi 4，其他 5 台为 N1\nvip 192.168.2.230 node1 ansible_host=192.168.2.2 node2 ansible_host=192.168.2.231 node3 ansible_host=192.168.2.232 node4 ansible_host=192.168.2.233 node5 ansible_host=192.168.2.234 node6 ansible_host=192.168.2.235 部署脚本基于 ansible，直接 clone 以下项目：https://github.com/TimeBye/kubeadm-ha，然后根据需要修改配置即可，譬如关掉系统资源检查\n注意 1：N1 为 arm64 架构，某些较旧的镜像可能不支持（譬如一些过旧的 nginx），因此适当时候要 ‘kubectl get pods -A’ 查看一下， 如果是 CrashLoopBackOff 状态可优先排查一下用到的镜像版本是否支持 arm64\n注意 2: armbian 启动默认会开启 swap，需要通过 /etc/default/armbian-zram-config 配置\n部署 lb + ingress 使用 metallb 作为二层负载均衡，nginx ingress\nhelm repo add metallb https://metallb.github.io/metallb helm upgrade --install metallb metallb/metallb --namespace metallb-system --create-namespace -f metallb.yaml helm upgrade --install ingress-nginx ingress-nginx/ingress-nginx --namespace ingress-nginx --create-namespace -f ingress.yaml 部署 nfs 尝试了一通 ceph，发现 N1 的渣资源根本跑不起来，于是决定把数据存在局域网一台 zfs 的 nas 上\nhelm repo add nfs-subdir-external-provisioner https://kubernetes-sigs.github.io/nfs-subdir-external-provisioner/ helm install nfs-subdir-external-provisioner nfs-subdir-external-provisioner/nfs-subdir-external-provisioner --set nfs.server=xxx --set nfs.path=/data/k8s --set storageClass.provisionerName=k8s-sigs.io/nfs-subdir-external-provisioner --set image.repository=xxx 部署 homeassistant 暂时只想将一些 zigbee 传感器接入，于是部署了以下三个服务：\nkubectl apply -f pvc.yaml helm install mosquitto k8s-at-home/mosquitto -f mosquitto.yaml helm install home-assistant k8s-at-home/home-assistant -f homeassistant.yaml helm install zigbee2mqtt k8s-at-home/zigbee2mqtt -f zigbee2mqtt.yaml 其中 config 文件通过 nfs pvc 配置，zigbee2mqtt 绑定到 zigbee dongle 所在的 node\ndocker 配置代理 整个过程最麻烦的反而是镜像下载被墙问题，如果你使用 docker，需要通过修改 systemd 配置\nsudo mkdir -p /etc/systemd/system/docker.service.d sudo touch /etc/systemd/system/docker.service.d/proxy.conf [Service] Environment=\"HTTP_PROXY=http://proxy.example.com:8080/\" Environment=\"HTTPS_PROXY=http://proxy.example.com:8080/\" Environment=\"NO_PROXY=localhost,127.0.0.1,.example.com\" ",
+  "wordCount" : "357",
+  "inLanguage": "zh-cn",
+  "datePublished": "2022-05-02T00:00:00Z",
+  "dateModified": "2022-05-02T00:00:00Z",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://yplam.com/posts/k8s/k8s-n1/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "YPLAM",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://yplam.com/favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <div class="logo-switches">
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="https://yplam.com/" title="YPLAM">
+                    <span>HOME</span>
+
+                </a>
+            </li>
+            <li>
+                <a href="https://yplam.com/about/" title="关于YPLam">
+                    <span>ABOUT</span>
+
+                </a>
+            </li>
+            <li>
+                <a href="https://github.com/yplam" title="GITHUB">
+                    <span>GITHUB</span>
+
+                </a>
+            </li>
+            <li>
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title entry-hint-parent">
+      斐讯 N1 搭建私有 Kubernetes 集群运行 HomeAssistant
+    </h1>
+    <div class="post-meta"><span title='2022-05-02 00:00:00 +0000 UTC'>2022-05-02</span>
+
+</div>
+  </header> 
+  <div class="post-content"><p>手上有几台闲置的几台斐讯 N1 刚好达到安装 Kubernetes 的最低硬件要求，于是趁着五一假期在家捣弄个“高可用”斐讯 N1 K8S 集群，用于运行 HomeAssistant</p>
+<h2 id="硬件准备">硬件准备<a hidden class="anchor" aria-hidden="true" href="#硬件准备">#</a></h2>
+<p>1 台树莓派 CM4+256G SSD，5 台 N1+5 个 32G 迷你 U 盘，两个 cc2652p zigbee dongle， 一个 8 口千兆交换机，明纬 12V5A 电源，1 分 5DC 电源线，短网线若干，厚双面胶。</p>
+<p>一顿操作下来，刚好整整齐齐的粘成一块：</p>
+<p><img alt="k8s-n1" loading="lazy" src="/assets/2022/n1-k8s.jpg"></p>
+<h2 id="armbian-准备">Armbian 准备<a hidden class="anchor" aria-hidden="true" href="#armbian-准备">#</a></h2>
+<p>得益于 N1 折腾生态比较完善，比较容易找到系统打包脚本，<a href="https://github.com/yunsur/phicomm-n1">https://github.com/yunsur/phicomm-n1</a></p>
+<p>通过修改 config/boards/arm-64.conf 把不需要的包删除，尽量让操作系统保持简洁</p>
+<pre tabindex="0"><code class="language-conf" data-lang="conf">-------------------------- config/boards/arm-64.conf --------------------------
+index 9d24069..0a1d99a 100644
+@@ -25,5 +25,5 @@ EXTRAWIFI=&#34;no&#34;
+ WIREGUARD=&#34;yes&#34;
+ INSTALL_HEADERS=&#34;yes&#34;
+ INSTALL_DOCKER=&#34;yes&#34;
+-PACKAGE_LIST_BOARD=&#34;bluez bluez-tools bluetooth libubootenv-tool&#34;
+-PACKAGE_LIST_FAMILY=&#34;autojump avahi-daemon samba samba-common-bin samba-vfs-modules smbclient tcpdump ntpdate python3 python3-pip docker-ce docker-compose&#34;
++PACKAGE_LIST_BOARD=&#34;&#34;
++PACKAGE_LIST_FAMILY=&#34;avahi-daemon lvm2&#34;
+
+------------------ config/kernel/linux-arm-64-current.config ------------------
+index fa4d782..5829e3e 100644
+@@ -1783,7 +1783,7 @@ CONFIG_NET_9P=m
+ CONFIG_NET_9P_VIRTIO=m
+ # CONFIG_NET_9P_DEBUG is not set
+ # CONFIG_CAIF is not set
+-CONFIG_CEPH_LIB=m
++CONFIG_CEPH_LIB=y
+ # CONFIG_CEPH_LIB_PRETTYDEBUG is not set
+ # CONFIG_CEPH_LIB_USE_DNS_RESOLVER is not set
+ CONFIG_NFC=m
+@@ -2238,7 +2238,7 @@ CONFIG_ZRAM_WRITEBACK=y
+ CONFIG_BLK_DEV_LOOP=y
+ CONFIG_BLK_DEV_LOOP_MIN_COUNT=8
+ CONFIG_BLK_DEV_CRYPTOLOOP=m
+-CONFIG_BLK_DEV_DRBD=m
++CONFIG_BLK_DEV_DRBD=y
+ # CONFIG_DRBD_FAULT_INJECTION is not set
+ CONFIG_BLK_DEV_NBD=m
+ # CONFIG_BLK_DEV_SX8 is not set
+@@ -2248,7 +2248,7 @@ CONFIG_BLK_DEV_RAM_SIZE=4096
+ # CONFIG_CDROM_PKTCDVD is not set
+ CONFIG_ATA_OVER_ETH=m
+ CONFIG_VIRTIO_BLK=m
+-# CONFIG_BLK_DEV_RBD is not set
++CONFIG_BLK_DEV_RBD=y
+ # CONFIG_BLK_DEV_RSXX is not set
+ 
+ #
+@@ -8152,7 +8152,7 @@ CONFIG_SUNRPC_SWAP=y
+ CONFIG_RPCSEC_GSS_KRB5=m
+ # CONFIG_SUNRPC_DISABLE_INSECURE_ENCTYPES is not set
+ # CONFIG_SUNRPC_DEBUG is not set
+-# CONFIG_CEPH_FS is not set
++CONFIG_CEPH_FS=y
+ CONFIG_CIFS=y
+ CONFIG_CIFS_STATS2=y
+ CONFIG_CIFS_ALLOW_INSECURE_LEGACY=y
+</code></pre><h2 id="集群部署">集群部署<a hidden class="anchor" aria-hidden="true" href="#集群部署">#</a></h2>
+<p>因为是以实验为目标，集群使用 3 master + 3 worker ，ETCD stacked，keepalived + haproxy 实现 apiserver 的高可用</p>
+<p>其中 master[0] 为 raspberry pi 4，其他 5 台为 N1</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-ini" data-lang="ini"><span class="line"><span class="cl"><span class="na">vip 192.168.2.230</span>
+</span></span><span class="line"><span class="cl"><span class="na">node1 ansible_host</span><span class="o">=</span><span class="s">192.168.2.2</span>
+</span></span><span class="line"><span class="cl"><span class="na">node2 ansible_host</span><span class="o">=</span><span class="s">192.168.2.231</span>
+</span></span><span class="line"><span class="cl"><span class="na">node3 ansible_host</span><span class="o">=</span><span class="s">192.168.2.232</span>
+</span></span><span class="line"><span class="cl"><span class="na">node4 ansible_host</span><span class="o">=</span><span class="s">192.168.2.233</span>
+</span></span><span class="line"><span class="cl"><span class="na">node5 ansible_host</span><span class="o">=</span><span class="s">192.168.2.234</span>
+</span></span><span class="line"><span class="cl"><span class="na">node6 ansible_host</span><span class="o">=</span><span class="s">192.168.2.235</span>
+</span></span></code></pre></div><p>部署脚本基于 ansible，直接 clone 以下项目：<a href="https://github.com/TimeBye/kubeadm-ha">https://github.com/TimeBye/kubeadm-ha</a>，然后根据需要修改配置即可，譬如关掉系统资源检查</p>
+<p>注意 1：N1 为 arm64 架构，某些较旧的镜像可能不支持（譬如一些过旧的 nginx），因此适当时候要 &lsquo;kubectl get pods -A&rsquo; 查看一下，
+如果是 CrashLoopBackOff 状态可优先排查一下用到的镜像版本是否支持 arm64</p>
+<p>注意 2: armbian 启动默认会开启 swap，需要通过 /etc/default/armbian-zram-config 配置</p>
+<h2 id="部署-lb--ingress">部署 lb + ingress<a hidden class="anchor" aria-hidden="true" href="#部署-lb--ingress">#</a></h2>
+<p>使用 metallb 作为二层负载均衡，nginx ingress</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">helm repo add metallb https://metallb.github.io/metallb
+</span></span><span class="line"><span class="cl">helm upgrade --install metallb metallb/metallb --namespace metallb-system --create-namespace -f metallb.yaml
+</span></span><span class="line"><span class="cl">helm upgrade --install ingress-nginx ingress-nginx/ingress-nginx --namespace ingress-nginx --create-namespace -f ingress.yaml
+</span></span></code></pre></div><h2 id="部署-nfs">部署 nfs<a hidden class="anchor" aria-hidden="true" href="#部署-nfs">#</a></h2>
+<p>尝试了一通 ceph，发现 N1 的渣资源根本跑不起来，于是决定把数据存在局域网一台 zfs 的 nas 上</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">helm repo add nfs-subdir-external-provisioner https://kubernetes-sigs.github.io/nfs-subdir-external-provisioner/
+</span></span><span class="line"><span class="cl">helm install nfs-subdir-external-provisioner nfs-subdir-external-provisioner/nfs-subdir-external-provisioner  --set nfs.server<span class="o">=</span>xxx  --set nfs.path<span class="o">=</span>/data/k8s --set storageClass.provisionerName<span class="o">=</span>k8s-sigs.io/nfs-subdir-external-provisioner --set image.repository<span class="o">=</span>xxx
+</span></span></code></pre></div><h2 id="部署-homeassistant">部署 homeassistant<a hidden class="anchor" aria-hidden="true" href="#部署-homeassistant">#</a></h2>
+<p>暂时只想将一些 zigbee 传感器接入，于是部署了以下三个服务：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">kubectl apply -f pvc.yaml
+</span></span><span class="line"><span class="cl">helm install mosquitto k8s-at-home/mosquitto -f mosquitto.yaml
+</span></span><span class="line"><span class="cl">helm install home-assistant k8s-at-home/home-assistant -f homeassistant.yaml
+</span></span><span class="line"><span class="cl">helm install zigbee2mqtt k8s-at-home/zigbee2mqtt -f zigbee2mqtt.yaml
+</span></span></code></pre></div><p>其中 config 文件通过 nfs pvc 配置，zigbee2mqtt 绑定到 zigbee dongle 所在的 node</p>
+<h2 id="docker-配置代理">docker 配置代理<a hidden class="anchor" aria-hidden="true" href="#docker-配置代理">#</a></h2>
+<p>整个过程最麻烦的反而是镜像下载被墙问题，如果你使用 docker，需要通过修改 systemd 配置</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">sudo mkdir -p /etc/systemd/system/docker.service.d
+</span></span><span class="line"><span class="cl">sudo touch /etc/systemd/system/docker.service.d/proxy.conf
+</span></span></code></pre></div><pre tabindex="0"><code class="language-conf" data-lang="conf">[Service]
+Environment=&#34;HTTP_PROXY=http://proxy.example.com:8080/&#34;
+Environment=&#34;HTTPS_PROXY=http://proxy.example.com:8080/&#34;
+Environment=&#34;NO_PROXY=localhost,127.0.0.1,.example.com&#34;
+</code></pre>
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+      <li><a href="https://yplam.com/tags/kubernetes/">Kubernetes</a></li>
+      <li><a href="https://yplam.com/tags/homeassistant/">HomeAssistant</a></li>
+    </ul>
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+        <span>&copy; 2025 <a href="https://yplam.com/">YPLAM</a></span> · 
+
+    <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+        CC BY-SA 4.0
+    </a>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>

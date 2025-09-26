@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>Symfony2 启动流程分析 | YPLAM</title>
+<meta name="keywords" content="PHP, Symfony">
+<meta name="description" content="Symfony2 启动流程分析">
+<meta name="author" content="">
+<link rel="canonical" href="https://yplam.com/posts/symfony/symfony-bootstrap/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.8a2a5b863c538395920b4f077c6697be31878d530618647d78daca2883f21ff1.css" integrity="sha256-iipbhjxTg5WSC08HfGaXvjGHjVMGGGR9eNrKKIPyH/E=" rel="preload stylesheet" as="style">
+<link rel="icon" href="https://yplam.com/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://yplam.com/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://yplam.com/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://yplam.com/apple-touch-icon.png">
+<link rel="mask-icon" href="https://yplam.com/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="zh-cn" href="https://yplam.com/posts/symfony/symfony-bootstrap/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --code-block-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript>
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-960JLZS3KY"></script>
+      <script>
+        var doNotTrack = false;
+        if ( false ) {
+          var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
+          var doNotTrack = (dnt == "1" || dnt == "yes");
+        }
+        if (!doNotTrack) {
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-960JLZS3KY');
+        }
+      </script><meta property="og:url" content="https://yplam.com/posts/symfony/symfony-bootstrap/">
+  <meta property="og:site_name" content="YPLAM">
+  <meta property="og:title" content="Symfony2 启动流程分析">
+  <meta property="og:description" content="Symfony2 启动流程分析">
+  <meta property="og:locale" content="zh-cn">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2013-06-06T00:00:00+00:00">
+    <meta property="article:modified_time" content="2013-06-06T00:00:00+00:00">
+    <meta property="article:tag" content="PHP">
+    <meta property="article:tag" content="Symfony">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Symfony2 启动流程分析">
+<meta name="twitter:description" content="Symfony2 启动流程分析">
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Posts",
+      "item": "https://yplam.com/posts/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "Symfony2 启动流程分析",
+      "item": "https://yplam.com/posts/symfony/symfony-bootstrap/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Symfony2 启动流程分析",
+  "name": "Symfony2 启动流程分析",
+  "description": "Symfony2 启动流程分析\n",
+  "keywords": [
+    "PHP", "Symfony"
+  ],
+  "articleBody": "Symfony2 启动流程分析\n入口文件app.php\n\u003c?php use Symfony\\Component\\ClassLoader\\ApcClassLoader; use Symfony\\Component\\HttpFoundation\\Request; $loader = require_once __DIR__.'/../app/bootstrap.php.cache'; // Use APC for autoloading to improve performance. // Change 'sf2' to a unique prefix in order to prevent cache key conflicts // with other applications also using APC. /* $loader = new ApcClassLoader('sf2', $loader); $loader-\u003eregister(true); */ require_once __DIR__.'/../app/AppKernel.php'; //require_once __DIR__.'/../app/AppCache.php'; $kernel = new AppKernel('prod', false); $kernel-\u003eloadClassCache(); //$kernel = new AppCache($kernel); Request::enableHttpMethodParameterOverride(); $request = Request::createFromGlobals(); $response = $kernel-\u003ehandle($request); $response-\u003esend(); $kernel-\u003eterminate($request, $response); 入口文件app_dev.php\n\u003c?php use Symfony\\Component\\HttpFoundation\\Request; use Symfony\\Component\\Debug\\Debug; // If you don't want to setup permissions the proper way, just uncomment the following PHP line // read http://symfony.com/doc/current/book/installation.html#configuration-and-setup for more information //umask(0000); // This check prevents access to debug front controllers that are deployed by accident to production servers. // Feel free to remove this, extend it, or make something more sophisticated. if (isset($_SERVER['HTTP_CLIENT_IP']) || isset($_SERVER['HTTP_X_FORWARDED_FOR']) || !in_array(@$_SERVER['REMOTE_ADDR'], array('127.0.0.1', 'fe80::1', '::1')) ) { header('HTTP/1.0 403 Forbidden'); exit('You are not allowed to access this file. Check '.basename(__FILE__).' for more information.'); } $loader = require_once __DIR__.'/../app/bootstrap.php.cache'; Debug::enable(); require_once __DIR__.'/../app/AppKernel.php'; $kernel = new AppKernel('dev', true); $kernel-\u003eloadClassCache(); Request::enableHttpMethodParameterOverride(); $request = Request::createFromGlobals(); $response = $kernel-\u003ehandle($request); $response-\u003esend(); $kernel-\u003eterminate($request, $response); app_dev.php相对于app.php的主要区别在于 environment 与 debug 参数。\napp/bootstrap.php.cache：\nbootstrap.php.cache 在运行composer update或者composer install 的时候由脚本生成，主要的功能是将Symfony中必须要用到的核心类打包到单个文件中，同时提供classloader。\napp/AppKernel.php\n扩展自Kernel类，对系统进行配置。创建AppKernel的时候会传入environment 与 debug 参数，environment参数会影响配置文件路径，缓存文件路径，debug参数会影响到缓存文件路径以及系统对cache的处理。\n\u003c?php use Symfony\\Component\\HttpKernel\\Kernel; use Symfony\\Component\\Config\\Loader\\LoaderInterface; class AppKernel extends Kernel { public function registerBundles() { $bundles = array( new Symfony\\Bundle\\FrameworkBundle\\FrameworkBundle(), new Symfony\\Bundle\\SecurityBundle\\SecurityBundle(), new Symfony\\Bundle\\TwigBundle\\TwigBundle(), new Symfony\\Bundle\\MonologBundle\\MonologBundle(), new Symfony\\Bundle\\SwiftmailerBundle\\SwiftmailerBundle(), new Symfony\\Bundle\\AsseticBundle\\AsseticBundle(), new Doctrine\\Bundle\\DoctrineBundle\\DoctrineBundle(), new Sensio\\Bundle\\FrameworkExtraBundle\\SensioFrameworkExtraBundle(), ); if (in_array($this-\u003egetEnvironment(), array('dev', 'test'))) { $bundles[] = new Acme\\DemoBundle\\AcmeDemoBundle(); $bundles[] = new Symfony\\Bundle\\WebProfilerBundle\\WebProfilerBundle(); $bundles[] = new Sensio\\Bundle\\DistributionBundle\\SensioDistributionBundle(); $bundles[] = new Sensio\\Bundle\\GeneratorBundle\\SensioGeneratorBundle(); } return $bundles; } public function registerContainerConfiguration(LoaderInterface $loader) { $loader-\u003eload(__DIR__.'/config/config_'.$this-\u003egetEnvironment().'.yml'); } } $kernel-\u003eloadClassCache();\n做一个需要加载cache的标记，但不会进行加载工作。\nRequest::enableHttpMethodParameterOverride()\n是否允许通过发送的参数来修改请求的方法，只对POST有效。\n$request = Request::createFromGlobals();\n创建request对象，通过获取$_GET,$_POST等数据，创建request对象。\n$response = $kernel-\u003ehandle($request);\n处理请求。symfony内核在此处启动。\npublic function handle(Request $request, $type = HttpKernelInterface::MASTER_REQUEST, $catch = true) { if (false === $this-\u003ebooted) { $this-\u003eboot(); } return $this-\u003egetHttpKernel()-\u003ehandle($request, $type, $catch); } boot方法启动内核，进行初始化配置\npublic function boot() { if (true === $this-\u003ebooted) { return; } if ($this-\u003eloadClassCache) { $this-\u003edoLoadClassCache($this-\u003eloadClassCache[0], $this-\u003eloadClassCache[1]); } // init bundles $this-\u003einitializeBundles(); // init container $this-\u003einitializeContainer(); foreach ($this-\u003egetBundles() as $bundle) { $bundle-\u003esetContainer($this-\u003econtainer); $bundle-\u003eboot(); } $this-\u003ebooted = true; } doLoadClassCache会根据前面loadClassCache的调用，将加载cache目录下的classes.php，如果缓存不存在，则根据classes.map文件来生成。如果debug=true则还会检测每个classes对应原文件的修改时间来判断是否需要重新生成。 初始化bundle，主要是处理bundle的继承关系\n/** * Initializes the data structures related to the bundle management. * * - the bundles property maps a bundle name to the bundle instance, * - the bundleMap property maps a bundle name to the bundle inheritance hierarchy (most derived bundle first). * * @throws \\LogicException if two bundles share a common name * @throws \\LogicException if a bundle tries to extend a non-registered bundle * @throws \\LogicException if a bundle tries to extend itself * @throws \\LogicException if two bundles extend the same ancestor */ protected function initializeBundles() { // init bundles $this-\u003ebundles = array(); $topMostBundles = array(); $directChildren = array(); foreach ($this-\u003eregisterBundles() as $bundle) { $name = $bundle-\u003egetName(); if (isset($this-\u003ebundles[$name])) { throw new \\LogicException(sprintf('Trying to register two bundles with the same name \"%s\"', $name)); } $this-\u003ebundles[$name] = $bundle; if ($parentName = $bundle-\u003egetParent()) { if (isset($directChildren[$parentName])) { throw new \\LogicException(sprintf('Bundle \"%s\" is directly extended by two bundles \"%s\" and \"%s\".', $parentName, $name, $directChildren[$parentName])); } if ($parentName == $name) { throw new \\LogicException(sprintf('Bundle \"%s\" can not extend itself.', $name)); } $directChildren[$parentName] = $name; } else { $topMostBundles[$name] = $bundle; } } // look for orphans if (count($diff = array_values(array_diff(array_keys($directChildren), array_keys($this-\u003ebundles))))) { throw new \\LogicException(sprintf('Bundle \"%s\" extends bundle \"%s\", which is not registered.', $directChildren[$diff[0]], $diff[0])); } // inheritance $this-\u003ebundleMap = array(); foreach ($topMostBundles as $name =\u003e $bundle) { $bundleMap = array($bundle); $hierarchy = array($name); while (isset($directChildren[$name])) { $name = $directChildren[$name]; array_unshift($bundleMap, $this-\u003ebundles[$name]); $hierarchy[] = $name; } foreach ($hierarchy as $bundle) { $this-\u003ebundleMap[$bundle] = $bundleMap; array_pop($bundleMap); } } } 初始化container，为symfony的核心，原理与实现方式请参考下面的文章。基本流程为：如果container缓存存在，则直接使用缓存，如果不存在则创建container，获取每个bundle与container相关的信息，加载配置文件，配置每个bundle，打包生成缓存。 Introduction to the Symfony Service Container Dependency Injection /** * Initializes the service container. * * The cached version of the service container is used when fresh, otherwise the * container is built. */ protected function initializeContainer() { $class = $this-\u003egetContainerClass(); $cache = new ConfigCache($this-\u003egetCacheDir().'/'.$class.'.php', $this-\u003edebug); $fresh = true; if (!$cache-\u003eisFresh()) { $container = $this-\u003ebuildContainer(); $container-\u003ecompile(); $this-\u003edumpContainer($cache, $container, $class, $this-\u003egetContainerBaseClass()); $fresh = false; } require_once $cache; $this-\u003econtainer = new $class(); $this-\u003econtainer-\u003eset('kernel', $this); if (!$fresh \u0026\u0026 $this-\u003econtainer-\u003ehas('cache_warmer')) { $this-\u003econtainer-\u003eget('cache_warmer')-\u003ewarmUp($this-\u003econtainer-\u003egetParameter('kernel.cache_dir')); } } getHttpKernel()-\u003ehandle()，此时可以通过contianer来获取http_kernel服务对请求进行处理。 $response-\u003esend(); 发送内容 $kernel-\u003eterminate($request, $response); 结束 ",
+  "wordCount" : "677",
+  "inLanguage": "zh-cn",
+  "datePublished": "2013-06-06T00:00:00Z",
+  "dateModified": "2013-06-06T00:00:00Z",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://yplam.com/posts/symfony/symfony-bootstrap/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "YPLAM",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://yplam.com/favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <div class="logo-switches">
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="https://yplam.com/" title="YPLAM">
+                    <span>HOME</span>
+
+                </a>
+            </li>
+            <li>
+                <a href="https://yplam.com/about/" title="关于YPLam">
+                    <span>ABOUT</span>
+
+                </a>
+            </li>
+            <li>
+                <a href="https://github.com/yplam" title="GITHUB">
+                    <span>GITHUB</span>
+
+                </a>
+            </li>
+            <li>
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title entry-hint-parent">
+      Symfony2 启动流程分析
+    </h1>
+    <div class="post-meta"><span title='2013-06-06 00:00:00 +0000 UTC'>2013-06-06</span>
+
+</div>
+  </header> 
+  <div class="post-content"><p>Symfony2 启动流程分析</p>
+<p><strong>入口文件app.php</strong></p>
+<p><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-php" data-lang="php"><span class="line"><span class="cl">    <span class="o">&lt;?</span><span class="nx">php</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="k">use</span> <span class="nx">Symfony\Component\ClassLoader\ApcClassLoader</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">use</span> <span class="nx">Symfony\Component\HttpFoundation\Request</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="nv">$loader</span> <span class="o">=</span> <span class="k">require_once</span> <span class="no">__DIR__</span><span class="o">.</span><span class="s1">&#39;/../app/bootstrap.php.cache&#39;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="c1">// Use APC for autoloading to improve performance.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="c1">// Change &#39;sf2&#39; to a unique prefix in order to prevent cache key conflicts
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="c1">// with other applications also using APC.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="cm">/*
+</span></span></span><span class="line"><span class="cl"><span class="cm">    $loader = new ApcClassLoader(&#39;sf2&#39;, $loader);
+</span></span></span><span class="line"><span class="cl"><span class="cm">    $loader-&gt;register(true);
+</span></span></span><span class="line"><span class="cl"><span class="cm">    */</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="k">require_once</span> <span class="no">__DIR__</span><span class="o">.</span><span class="s1">&#39;/../app/AppKernel.php&#39;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">//require_once __DIR__.&#39;/../app/AppCache.php&#39;;
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    
+</span></span><span class="line"><span class="cl">    <span class="nv">$kernel</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">AppKernel</span><span class="p">(</span><span class="s1">&#39;prod&#39;</span><span class="p">,</span> <span class="k">false</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="nv">$kernel</span><span class="o">-&gt;</span><span class="na">loadClassCache</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">//$kernel = new AppCache($kernel);
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nx">Request</span><span class="o">::</span><span class="na">enableHttpMethodParameterOverride</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">    <span class="nv">$request</span> <span class="o">=</span> <span class="nx">Request</span><span class="o">::</span><span class="na">createFromGlobals</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">    <span class="nv">$response</span> <span class="o">=</span> <span class="nv">$kernel</span><span class="o">-&gt;</span><span class="na">handle</span><span class="p">(</span><span class="nv">$request</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="nv">$response</span><span class="o">-&gt;</span><span class="na">send</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">    <span class="nv">$kernel</span><span class="o">-&gt;</span><span class="na">terminate</span><span class="p">(</span><span class="nv">$request</span><span class="p">,</span> <span class="nv">$response</span><span class="p">);</span></span></span></code></pre></div>
+入口文件app_dev.php</p>
+<p><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-php" data-lang="php"><span class="line"><span class="cl">    <span class="o">&lt;?</span><span class="nx">php</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="k">use</span> <span class="nx">Symfony\Component\HttpFoundation\Request</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">use</span> <span class="nx">Symfony\Component\Debug\Debug</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="c1">// If you don&#39;t want to setup permissions the proper way, just uncomment the following PHP line
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="c1">// read http://symfony.com/doc/current/book/installation.html#configuration-and-setup for more information
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="c1">//umask(0000);
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    
+</span></span><span class="line"><span class="cl">    <span class="c1">// This check prevents access to debug front controllers that are deployed by accident to production servers.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="c1">// Feel free to remove this, extend it, or make something more sophisticated.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">if</span> <span class="p">(</span><span class="nx">isset</span><span class="p">(</span><span class="nv">$_SERVER</span><span class="p">[</span><span class="s1">&#39;HTTP_CLIENT_IP&#39;</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl">        <span class="o">||</span> <span class="nx">isset</span><span class="p">(</span><span class="nv">$_SERVER</span><span class="p">[</span><span class="s1">&#39;HTTP_X_FORWARDED_FOR&#39;</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl">        <span class="o">||</span> <span class="o">!</span><span class="nx">in_array</span><span class="p">(</span><span class="o">@</span><span class="nv">$_SERVER</span><span class="p">[</span><span class="s1">&#39;REMOTE_ADDR&#39;</span><span class="p">],</span> <span class="k">array</span><span class="p">(</span><span class="s1">&#39;127.0.0.1&#39;</span><span class="p">,</span> <span class="s1">&#39;fe80::1&#39;</span><span class="p">,</span> <span class="s1">&#39;::1&#39;</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">    <span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">header</span><span class="p">(</span><span class="s1">&#39;HTTP/1.0 403 Forbidden&#39;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="k">exit</span><span class="p">(</span><span class="s1">&#39;You are not allowed to access this file. Check &#39;</span><span class="o">.</span><span class="nx">basename</span><span class="p">(</span><span class="no">__FILE__</span><span class="p">)</span><span class="o">.</span><span class="s1">&#39; for more information.&#39;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="nv">$loader</span> <span class="o">=</span> <span class="k">require_once</span> <span class="no">__DIR__</span><span class="o">.</span><span class="s1">&#39;/../app/bootstrap.php.cache&#39;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">Debug</span><span class="o">::</span><span class="na">enable</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="k">require_once</span> <span class="no">__DIR__</span><span class="o">.</span><span class="s1">&#39;/../app/AppKernel.php&#39;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="nv">$kernel</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">AppKernel</span><span class="p">(</span><span class="s1">&#39;dev&#39;</span><span class="p">,</span> <span class="k">true</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="nv">$kernel</span><span class="o">-&gt;</span><span class="na">loadClassCache</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">Request</span><span class="o">::</span><span class="na">enableHttpMethodParameterOverride</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">    <span class="nv">$request</span> <span class="o">=</span> <span class="nx">Request</span><span class="o">::</span><span class="na">createFromGlobals</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">    <span class="nv">$response</span> <span class="o">=</span> <span class="nv">$kernel</span><span class="o">-&gt;</span><span class="na">handle</span><span class="p">(</span><span class="nv">$request</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="nv">$response</span><span class="o">-&gt;</span><span class="na">send</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">    <span class="nv">$kernel</span><span class="o">-&gt;</span><span class="na">terminate</span><span class="p">(</span><span class="nv">$request</span><span class="p">,</span> <span class="nv">$response</span><span class="p">);</span></span></span></code></pre></div>
+app_dev.php相对于app.php的主要区别在于 environment 与 debug 参数。</p>
+<p><strong>app/bootstrap.php.cache：</strong></p>
+<p>bootstrap.php.cache 在运行composer update或者composer install 的时候由脚本生成，主要的功能是将Symfony中必须要用到的核心类打包到单个文件中，同时提供classloader。</p>
+<p><strong>app/AppKernel.php</strong></p>
+<p>扩展自Kernel类，对系统进行配置。创建AppKernel的时候会传入environment 与 debug 参数，environment参数会影响配置文件路径，缓存文件路径，debug参数会影响到缓存文件路径以及系统对cache的处理。</p>
+<p><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-php" data-lang="php"><span class="line"><span class="cl">    <span class="o">&lt;?</span><span class="nx">php</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="k">use</span> <span class="nx">Symfony\Component\HttpKernel\Kernel</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">use</span> <span class="nx">Symfony\Component\Config\Loader\LoaderInterface</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="k">class</span> <span class="nc">AppKernel</span> <span class="k">extends</span> <span class="nx">Kernel</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">public</span> <span class="k">function</span> <span class="nf">registerBundles</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">        <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="nv">$bundles</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">                <span class="k">new</span> <span class="nx">Symfony\Bundle\FrameworkBundle\FrameworkBundle</span><span class="p">(),</span>
+</span></span><span class="line"><span class="cl">                <span class="k">new</span> <span class="nx">Symfony\Bundle\SecurityBundle\SecurityBundle</span><span class="p">(),</span>
+</span></span><span class="line"><span class="cl">                <span class="k">new</span> <span class="nx">Symfony\Bundle\TwigBundle\TwigBundle</span><span class="p">(),</span>
+</span></span><span class="line"><span class="cl">                <span class="k">new</span> <span class="nx">Symfony\Bundle\MonologBundle\MonologBundle</span><span class="p">(),</span>
+</span></span><span class="line"><span class="cl">                <span class="k">new</span> <span class="nx">Symfony\Bundle\SwiftmailerBundle\SwiftmailerBundle</span><span class="p">(),</span>
+</span></span><span class="line"><span class="cl">                <span class="k">new</span> <span class="nx">Symfony\Bundle\AsseticBundle\AsseticBundle</span><span class="p">(),</span>
+</span></span><span class="line"><span class="cl">                <span class="k">new</span> <span class="nx">Doctrine\Bundle\DoctrineBundle\DoctrineBundle</span><span class="p">(),</span>
+</span></span><span class="line"><span class="cl">                <span class="k">new</span> <span class="nx">Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle</span><span class="p">(),</span>
+</span></span><span class="line"><span class="cl">            <span class="p">);</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">            <span class="k">if</span> <span class="p">(</span><span class="nx">in_array</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">getEnvironment</span><span class="p">(),</span> <span class="k">array</span><span class="p">(</span><span class="s1">&#39;dev&#39;</span><span class="p">,</span> <span class="s1">&#39;test&#39;</span><span class="p">)))</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">                <span class="nv">$bundles</span><span class="p">[]</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Acme\DemoBundle\AcmeDemoBundle</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">                <span class="nv">$bundles</span><span class="p">[]</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Symfony\Bundle\WebProfilerBundle\WebProfilerBundle</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">                <span class="nv">$bundles</span><span class="p">[]</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Sensio\Bundle\DistributionBundle\SensioDistributionBundle</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">                <span class="nv">$bundles</span><span class="p">[]</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Sensio\Bundle\GeneratorBundle\SensioGeneratorBundle</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">            <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">            <span class="k">return</span> <span class="nv">$bundles</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">        <span class="k">public</span> <span class="k">function</span> <span class="nf">registerContainerConfiguration</span><span class="p">(</span><span class="nx">LoaderInterface</span> <span class="nv">$loader</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="nv">$loader</span><span class="o">-&gt;</span><span class="na">load</span><span class="p">(</span><span class="no">__DIR__</span><span class="o">.</span><span class="s1">&#39;/config/config_&#39;</span><span class="o">.</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">getEnvironment</span><span class="p">()</span><span class="o">.</span><span class="s1">&#39;.yml&#39;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span></span></span></code></pre></div>
+<strong>$kernel-&gt;loadClassCache();</strong></p>
+<p>做一个需要加载cache的标记，但不会进行加载工作。</p>
+<p><strong>Request::enableHttpMethodParameterOverride()</strong></p>
+<p>是否允许通过发送的参数来修改请求的方法，只对POST有效。</p>
+<p><strong>$request = Request::createFromGlobals();</strong></p>
+<p>创建request对象，通过获取$_GET,$_POST等数据，创建request对象。</p>
+<p><strong>$response = $kernel-&gt;handle($request);</strong></p>
+<p>处理请求。symfony内核在此处启动。</p>
+<p><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-php" data-lang="php"><span class="line"><span class="cl">        <span class="k">public</span> <span class="k">function</span> <span class="nf">handle</span><span class="p">(</span><span class="nx">Request</span> <span class="nv">$request</span><span class="p">,</span> <span class="nv">$type</span> <span class="o">=</span> <span class="nx">HttpKernelInterface</span><span class="o">::</span><span class="na">MASTER_REQUEST</span><span class="p">,</span> <span class="nv">$catch</span> <span class="o">=</span> <span class="k">true</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="k">if</span> <span class="p">(</span><span class="k">false</span> <span class="o">===</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">booted</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">                <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">boot</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">            <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">            <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">getHttpKernel</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">handle</span><span class="p">(</span><span class="nv">$request</span><span class="p">,</span> <span class="nv">$type</span><span class="p">,</span> <span class="nv">$catch</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span></span></span></code></pre></div>
+boot方法启动内核，进行初始化配置</p>
+<p><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-php" data-lang="php"><span class="line"><span class="cl">        <span class="k">public</span> <span class="k">function</span> <span class="nf">boot</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">        <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="k">if</span> <span class="p">(</span><span class="k">true</span> <span class="o">===</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">booted</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">                <span class="k">return</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">            <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">            <span class="k">if</span> <span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">loadClassCache</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">                <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">doLoadClassCache</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">loadClassCache</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">loadClassCache</span><span class="p">[</span><span class="mi">1</span><span class="p">]);</span>
+</span></span><span class="line"><span class="cl">            <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">            <span class="c1">// init bundles
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">initializeBundles</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">            <span class="c1">// init container
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">initializeContainer</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">            <span class="k">foreach</span> <span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">getBundles</span><span class="p">()</span> <span class="k">as</span> <span class="nv">$bundle</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">                <span class="nv">$bundle</span><span class="o">-&gt;</span><span class="na">setContainer</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">container</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">                <span class="nv">$bundle</span><span class="o">-&gt;</span><span class="na">boot</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">            <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">            <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">booted</span> <span class="o">=</span> <span class="k">true</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span></span></span></code></pre></div>
+doLoadClassCache会根据前面loadClassCache的调用，将加载cache目录下的classes.php，如果缓存不存在，则根据classes.map文件来生成。如果debug=true则还会检测每个classes对应原文件的修改时间来判断是否需要重新生成。 初始化bundle，主要是处理bundle的继承关系</p>
+<p><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-php" data-lang="php"><span class="line"><span class="cl">        <span class="sd">/**
+</span></span></span><span class="line"><span class="cl"><span class="sd">         * Initializes the data structures related to the bundle management.
+</span></span></span><span class="line"><span class="cl"><span class="sd">         *
+</span></span></span><span class="line"><span class="cl"><span class="sd">         *  - the bundles property maps a bundle name to the bundle instance,
+</span></span></span><span class="line"><span class="cl"><span class="sd">         *  - the bundleMap property maps a bundle name to the bundle inheritance hierarchy (most derived bundle first).
+</span></span></span><span class="line"><span class="cl"><span class="sd">         *
+</span></span></span><span class="line"><span class="cl"><span class="sd">         * @throws \LogicException if two bundles share a common name
+</span></span></span><span class="line"><span class="cl"><span class="sd">         * @throws \LogicException if a bundle tries to extend a non-registered bundle
+</span></span></span><span class="line"><span class="cl"><span class="sd">         * @throws \LogicException if a bundle tries to extend itself
+</span></span></span><span class="line"><span class="cl"><span class="sd">         * @throws \LogicException if two bundles extend the same ancestor
+</span></span></span><span class="line"><span class="cl"><span class="sd">         */</span>
+</span></span><span class="line"><span class="cl">        <span class="k">protected</span> <span class="k">function</span> <span class="nf">initializeBundles</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">        <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// init bundles
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">bundles</span> <span class="o">=</span> <span class="k">array</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">            <span class="nv">$topMostBundles</span> <span class="o">=</span> <span class="k">array</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">            <span class="nv">$directChildren</span> <span class="o">=</span> <span class="k">array</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">            <span class="k">foreach</span> <span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">registerBundles</span><span class="p">()</span> <span class="k">as</span> <span class="nv">$bundle</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">                <span class="nv">$name</span> <span class="o">=</span> <span class="nv">$bundle</span><span class="o">-&gt;</span><span class="na">getName</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">                <span class="k">if</span> <span class="p">(</span><span class="nx">isset</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">bundles</span><span class="p">[</span><span class="nv">$name</span><span class="p">]))</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">                    <span class="k">throw</span> <span class="k">new</span> <span class="nx">\LogicException</span><span class="p">(</span><span class="nx">sprintf</span><span class="p">(</span><span class="s1">&#39;Trying to register two bundles with the same name &#34;%s&#34;&#39;</span><span class="p">,</span> <span class="nv">$name</span><span class="p">));</span>
+</span></span><span class="line"><span class="cl">                <span class="p">}</span>
+</span></span><span class="line"><span class="cl">                <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">bundles</span><span class="p">[</span><span class="nv">$name</span><span class="p">]</span> <span class="o">=</span> <span class="nv">$bundle</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">                <span class="k">if</span> <span class="p">(</span><span class="nv">$parentName</span> <span class="o">=</span> <span class="nv">$bundle</span><span class="o">-&gt;</span><span class="na">getParent</span><span class="p">())</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">                    <span class="k">if</span> <span class="p">(</span><span class="nx">isset</span><span class="p">(</span><span class="nv">$directChildren</span><span class="p">[</span><span class="nv">$parentName</span><span class="p">]))</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">                        <span class="k">throw</span> <span class="k">new</span> <span class="nx">\LogicException</span><span class="p">(</span><span class="nx">sprintf</span><span class="p">(</span><span class="s1">&#39;Bundle &#34;%s&#34; is directly extended by two bundles &#34;%s&#34; and &#34;%s&#34;.&#39;</span><span class="p">,</span> <span class="nv">$parentName</span><span class="p">,</span> <span class="nv">$name</span><span class="p">,</span> <span class="nv">$directChildren</span><span class="p">[</span><span class="nv">$parentName</span><span class="p">]));</span>
+</span></span><span class="line"><span class="cl">                    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">                    <span class="k">if</span> <span class="p">(</span><span class="nv">$parentName</span> <span class="o">==</span> <span class="nv">$name</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">                        <span class="k">throw</span> <span class="k">new</span> <span class="nx">\LogicException</span><span class="p">(</span><span class="nx">sprintf</span><span class="p">(</span><span class="s1">&#39;Bundle &#34;%s&#34; can not extend itself.&#39;</span><span class="p">,</span> <span class="nv">$name</span><span class="p">));</span>
+</span></span><span class="line"><span class="cl">                    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">                    <span class="nv">$directChildren</span><span class="p">[</span><span class="nv">$parentName</span><span class="p">]</span> <span class="o">=</span> <span class="nv">$name</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">                <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">                    <span class="nv">$topMostBundles</span><span class="p">[</span><span class="nv">$name</span><span class="p">]</span> <span class="o">=</span> <span class="nv">$bundle</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">                <span class="p">}</span>
+</span></span><span class="line"><span class="cl">            <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">            <span class="c1">// look for orphans
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="k">if</span> <span class="p">(</span><span class="nx">count</span><span class="p">(</span><span class="nv">$diff</span> <span class="o">=</span> <span class="nx">array_values</span><span class="p">(</span><span class="nx">array_diff</span><span class="p">(</span><span class="nx">array_keys</span><span class="p">(</span><span class="nv">$directChildren</span><span class="p">),</span> <span class="nx">array_keys</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">bundles</span><span class="p">)))))</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">                <span class="k">throw</span> <span class="k">new</span> <span class="nx">\LogicException</span><span class="p">(</span><span class="nx">sprintf</span><span class="p">(</span><span class="s1">&#39;Bundle &#34;%s&#34; extends bundle &#34;%s&#34;, which is not registered.&#39;</span><span class="p">,</span> <span class="nv">$directChildren</span><span class="p">[</span><span class="nv">$diff</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="nv">$diff</span><span class="p">[</span><span class="mi">0</span><span class="p">]));</span>
+</span></span><span class="line"><span class="cl">            <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">            <span class="c1">// inheritance
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">bundleMap</span> <span class="o">=</span> <span class="k">array</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">            <span class="k">foreach</span> <span class="p">(</span><span class="nv">$topMostBundles</span> <span class="k">as</span> <span class="nv">$name</span> <span class="o">=&gt;</span> <span class="nv">$bundle</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">                <span class="nv">$bundleMap</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span><span class="nv">$bundle</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">                <span class="nv">$hierarchy</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span><span class="nv">$name</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">                <span class="k">while</span> <span class="p">(</span><span class="nx">isset</span><span class="p">(</span><span class="nv">$directChildren</span><span class="p">[</span><span class="nv">$name</span><span class="p">]))</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">                    <span class="nv">$name</span> <span class="o">=</span> <span class="nv">$directChildren</span><span class="p">[</span><span class="nv">$name</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">                    <span class="nx">array_unshift</span><span class="p">(</span><span class="nv">$bundleMap</span><span class="p">,</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">bundles</span><span class="p">[</span><span class="nv">$name</span><span class="p">]);</span>
+</span></span><span class="line"><span class="cl">                    <span class="nv">$hierarchy</span><span class="p">[]</span> <span class="o">=</span> <span class="nv">$name</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">                <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">                <span class="k">foreach</span> <span class="p">(</span><span class="nv">$hierarchy</span> <span class="k">as</span> <span class="nv">$bundle</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">                    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">bundleMap</span><span class="p">[</span><span class="nv">$bundle</span><span class="p">]</span> <span class="o">=</span> <span class="nv">$bundleMap</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">                    <span class="nx">array_pop</span><span class="p">(</span><span class="nv">$bundleMap</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">                <span class="p">}</span>
+</span></span><span class="line"><span class="cl">            <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">        <span class="p">}</span></span></span></code></pre></div>
+初始化container，为symfony的核心，原理与实现方式请参考下面的文章。基本流程为：如果container缓存存在，则直接使用缓存，如果不存在则创建container，获取每个bundle与container相关的信息，加载配置文件，配置每个bundle，打包生成缓存。 <a href="http://fabien.potencier.org/article/13/introduction-to-the-symfony-service-container">Introduction to the Symfony Service Container</a> <a href="http://symfony.com/doc/current/components/dependency_injection/index.html">Dependency Injection</a>  </p>
+<p><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-php" data-lang="php"><span class="line"><span class="cl">        <span class="sd">/**
+</span></span></span><span class="line"><span class="cl"><span class="sd">         * Initializes the service container.
+</span></span></span><span class="line"><span class="cl"><span class="sd">         *
+</span></span></span><span class="line"><span class="cl"><span class="sd">         * The cached version of the service container is used when fresh, otherwise the
+</span></span></span><span class="line"><span class="cl"><span class="sd">         * container is built.
+</span></span></span><span class="line"><span class="cl"><span class="sd">         */</span>
+</span></span><span class="line"><span class="cl">        <span class="k">protected</span> <span class="k">function</span> <span class="nf">initializeContainer</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">        <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="nv">$class</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">getContainerClass</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">            <span class="nv">$cache</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">ConfigCache</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">getCacheDir</span><span class="p">()</span><span class="o">.</span><span class="s1">&#39;/&#39;</span><span class="o">.</span><span class="nv">$class</span><span class="o">.</span><span class="s1">&#39;.php&#39;</span><span class="p">,</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">debug</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">            <span class="nv">$fresh</span> <span class="o">=</span> <span class="k">true</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nv">$cache</span><span class="o">-&gt;</span><span class="na">isFresh</span><span class="p">())</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">                <span class="nv">$container</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">buildContainer</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">                <span class="nv">$container</span><span class="o">-&gt;</span><span class="na">compile</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">                <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">dumpContainer</span><span class="p">(</span><span class="nv">$cache</span><span class="p">,</span> <span class="nv">$container</span><span class="p">,</span> <span class="nv">$class</span><span class="p">,</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">getContainerBaseClass</span><span class="p">());</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">                <span class="nv">$fresh</span> <span class="o">=</span> <span class="k">false</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">            <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">            <span class="k">require_once</span> <span class="nv">$cache</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">            <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">container</span> <span class="o">=</span> <span class="k">new</span> <span class="nv">$class</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">            <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">container</span><span class="o">-&gt;</span><span class="na">set</span><span class="p">(</span><span class="s1">&#39;kernel&#39;</span><span class="p">,</span> <span class="nv">$this</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nv">$fresh</span> <span class="o">&amp;&amp;</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">container</span><span class="o">-&gt;</span><span class="na">has</span><span class="p">(</span><span class="s1">&#39;cache_warmer&#39;</span><span class="p">))</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">                <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">container</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;cache_warmer&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">warmUp</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">container</span><span class="o">-&gt;</span><span class="na">getParameter</span><span class="p">(</span><span class="s1">&#39;kernel.cache_dir&#39;</span><span class="p">));</span>
+</span></span><span class="line"><span class="cl">            <span class="p">}</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span></span></span></code></pre></div>
+getHttpKernel()-&gt;handle()，此时可以通过contianer来获取http_kernel服务对请求进行处理。 $response-&gt;send(); 发送内容 $kernel-&gt;terminate($request, $response); 结束  </p>
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+      <li><a href="https://yplam.com/tags/php/">PHP</a></li>
+      <li><a href="https://yplam.com/tags/symfony/">Symfony</a></li>
+    </ul>
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+        <span>&copy; 2025 <a href="https://yplam.com/">YPLAM</a></span> · 
+
+    <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+        CC BY-SA 4.0
+    </a>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>

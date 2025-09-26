@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>使用Capifony对Symfony网站进行发布 | YPLAM</title>
+<meta name="keywords" content="PHP, Symfony">
+<meta name="description" content="以前一直使用Drupal来搭建网站，由于需要定制的代码量不是很大，所以每次修改都是直接用sftp传到服务器，再到Drupal后台清一下缓存。最近使用Symfony2进行开发，到了发布环节遇到了问题。Symfony代码的发布并不像其他CMS那么方便，因为更新代码后还需要assetic:dump，assets:install，cache:clear等一系列操作，因此每次更新往往需要登录到服务器去更新代码，运行清理cache的一系列命令。 capifony是针对Symfony开发的应用部署脚本，基于Capistrano。使用capifony只需要进行简单的配置，就可以很方便的将代码部署到不同的服务器上。">
+<meta name="author" content="">
+<link rel="canonical" href="https://yplam.com/posts/symfony/symfony-capifony/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.8a2a5b863c538395920b4f077c6697be31878d530618647d78daca2883f21ff1.css" integrity="sha256-iipbhjxTg5WSC08HfGaXvjGHjVMGGGR9eNrKKIPyH/E=" rel="preload stylesheet" as="style">
+<link rel="icon" href="https://yplam.com/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://yplam.com/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://yplam.com/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://yplam.com/apple-touch-icon.png">
+<link rel="mask-icon" href="https://yplam.com/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="zh-cn" href="https://yplam.com/posts/symfony/symfony-capifony/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --code-block-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript>
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-960JLZS3KY"></script>
+      <script>
+        var doNotTrack = false;
+        if ( false ) {
+          var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
+          var doNotTrack = (dnt == "1" || dnt == "yes");
+        }
+        if (!doNotTrack) {
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-960JLZS3KY');
+        }
+      </script><meta property="og:url" content="https://yplam.com/posts/symfony/symfony-capifony/">
+  <meta property="og:site_name" content="YPLAM">
+  <meta property="og:title" content="使用Capifony对Symfony网站进行发布">
+  <meta property="og:description" content="以前一直使用Drupal来搭建网站，由于需要定制的代码量不是很大，所以每次修改都是直接用sftp传到服务器，再到Drupal后台清一下缓存。最近使用Symfony2进行开发，到了发布环节遇到了问题。Symfony代码的发布并不像其他CMS那么方便，因为更新代码后还需要assetic:dump，assets:install，cache:clear等一系列操作，因此每次更新往往需要登录到服务器去更新代码，运行清理cache的一系列命令。 capifony是针对Symfony开发的应用部署脚本，基于Capistrano。使用capifony只需要进行简单的配置，就可以很方便的将代码部署到不同的服务器上。">
+  <meta property="og:locale" content="zh-cn">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2013-05-21T00:00:00+00:00">
+    <meta property="article:modified_time" content="2013-05-21T00:00:00+00:00">
+    <meta property="article:tag" content="PHP">
+    <meta property="article:tag" content="Symfony">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="使用Capifony对Symfony网站进行发布">
+<meta name="twitter:description" content="以前一直使用Drupal来搭建网站，由于需要定制的代码量不是很大，所以每次修改都是直接用sftp传到服务器，再到Drupal后台清一下缓存。最近使用Symfony2进行开发，到了发布环节遇到了问题。Symfony代码的发布并不像其他CMS那么方便，因为更新代码后还需要assetic:dump，assets:install，cache:clear等一系列操作，因此每次更新往往需要登录到服务器去更新代码，运行清理cache的一系列命令。 capifony是针对Symfony开发的应用部署脚本，基于Capistrano。使用capifony只需要进行简单的配置，就可以很方便的将代码部署到不同的服务器上。">
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Posts",
+      "item": "https://yplam.com/posts/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "使用Capifony对Symfony网站进行发布",
+      "item": "https://yplam.com/posts/symfony/symfony-capifony/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "使用Capifony对Symfony网站进行发布",
+  "name": "使用Capifony对Symfony网站进行发布",
+  "description": "以前一直使用Drupal来搭建网站，由于需要定制的代码量不是很大，所以每次修改都是直接用sftp传到服务器，再到Drupal后台清一下缓存。最近使用Symfony2进行开发，到了发布环节遇到了问题。Symfony代码的发布并不像其他CMS那么方便，因为更新代码后还需要assetic:dump，assets:install，cache:clear等一系列操作，因此每次更新往往需要登录到服务器去更新代码，运行清理cache的一系列命令。 capifony是针对Symfony开发的应用部署脚本，基于Capistrano。使用capifony只需要进行简单的配置，就可以很方便的将代码部署到不同的服务器上。\n",
+  "keywords": [
+    "PHP", "Symfony"
+  ],
+  "articleBody": "以前一直使用Drupal来搭建网站，由于需要定制的代码量不是很大，所以每次修改都是直接用sftp传到服务器，再到Drupal后台清一下缓存。最近使用Symfony2进行开发，到了发布环节遇到了问题。Symfony代码的发布并不像其他CMS那么方便，因为更新代码后还需要assetic:dump，assets:install，cache:clear等一系列操作，因此每次更新往往需要登录到服务器去更新代码，运行清理cache的一系列命令。 capifony是针对Symfony开发的应用部署脚本，基于Capistrano。使用capifony只需要进行简单的配置，就可以很方便的将代码部署到不同的服务器上。\n安装\ngem install capifony 设置项目\n在项目中生成初始化配置\ncd path/to/your/project capifony . 这会在你的项目根目录中生成一个Capfile文件，在config/（Symfony 1.x）或者app/config/(Symfony 2)目录中生成deploy.rb配置文件。\n配置\n首先，你需要选择你的发布方式，然后将你的服务器的连接信息填到config/deploy.rb (或者 app/config/deploy.rb)。\na) deployment → scm → production\n第一种方式是通过git库来发布到产线，在这种情况下，产线服务器必须可以访问到git库并且可以运行pull；你还必须可以在发布服务器上通过ssh访问产线服务器。\n# deploy.rb set :application, \"My App\" set :deploy_to, \"/var/www/my-app.com\" set :domain, \"my-app.com\" set :scm, :git set :repository, \"ssh-gitrepo-domain.com:/path/to/repo.git\" role :web, domain role :app, domain, :primary =\u003e true set :use_sudo, false set :keep_releases, 3 在这种情况下，运行 cap deploy, capifony 会进行以下步骤:\nssh 登录产线服务器 (my-app.com) 创建一个新的版本目录 (/var/www/my-app.com/releases/…) 从git版本库 clone 最新的项目版本 (ssh-gitrepo-domain.com) 复制代码。pull git 版本到新版本目录 运行发布钩子(cache:warmup, cc, 等。) 注意：默认情况下 capifony 不会清除旧版本，你必须设置 keep_releases 参数，并且在 deploy.rb 中添加任务来使其运行，如： after “deploy”, “deploy:cleanup” 。\n如果你不想每次都 clone 整个版本库，你可以设置 :deploy_via 参数：\nset :deploy_via, :remote_cache 这样，服务端会保存一个git版本库，而 Capifony 只会 fetch 上一次发布以来的修改。\nb) deployment → production (通过复制)\n第二种方式通过复制开发机到产线来发布。这种情况下，开发机（可能是你的本地电脑）需要有访问git版本库的权限，并且可以执行pull操作。\n由于产线服务器也需要安装vendors，因此如果你的vendors使用远程的私有源，那么产线服务器也必须拥有这些源的pull权限，否则 composer 或者 bin/vendors 安装时会失败。如果你想在发布前在本地安装 vendors ，请参考下面的手册：Install vendors locally before deploy。\n使用此方式时发布服务器也必须可以 ssh 访问产线服务器：\n# deploy.rb set :application, \"My App\" set :deploy_to, \"/var/www/my-app.com\" set :domain, \"my-app.com\" set :scm, :git set :repository, \"file:///Users/deployer/sites/my-app\" set :deploy_via, :copy role :web, domain role :app, domain, :primary =\u003e true set :use_sudo, false set :keep_releases, 3 在这种情况下，运行 cap deploy, capifony 会进行以下步骤:\nssh 登录产线服务器 (my-app.com) 创建一个新的版本目录 (/var/www/my-app.com/releases/…) 从本地git版本库 clone 最新的项目版本 复制代码。pull git 版本到产线服务器 运行发布钩子(cache:warmup, cc, 等。) 当然，每次发布都要复制整个项目，是昂贵而且缓慢的，幸好你可以通过 capistrano_rsync_with_remote_cache gem 来优化流程:\ngem install capistrano_rsync_with_remote_cache 然后，在 deploy.rb 中修改发布流程:\nset :deploy_via, :rsync_with_remote_cache 这样，rsync会在你的产线服务器上生成缓存，并且只提交两次发布简修改的文件。\n4. 配置服务器\n现在你可以开始发布了！cd 到你的本地项目目录，运行下面命令来使产线服务器设置好 Capistrano 要求的目录结构：\ncap deploy:setup ( 你只需要运行这个命令一次 )\n此命令会在你的服务器上创建类似的目录结构。详细的结构会根据你发布的是 symfony 1.x 还是 symfony 2 而有所不同：\n`-- /var/www/my-app.com |-- current → /var/www/my-app.com/releases/20100512131539 |-- releases | `-- 20100512131539 | `-- 20100509150741 | `-- 20100509145325 `-- shared |-- web | `-- uploads |-- log `-- config `-- databases.yml release 目录下的是实际的发布代码，以时间戳来命名。以 symfony 1.x 为例，Capistrano 链接 app 中的 log 与 web/uploads 目录到一个共享目录，这样你发布一个新版本后这些内容不会被清除。\n你可以使用以下命令来快速设置一个新服务器：\ncap HOSTS=new.server.com deploy:setup 5. 发布\n运行下面命令来发布：\ncap deploy 根据配置的不同，你可能需要 ssh 登录到你的服务器来进行一些附加的配置，在第一次发布后共享文件（如 app/config/parameters.yml，如果你是使用下面的方式来发布 Symfony2 的话）。\nSomething went wrong??? cap deploy:rollback Symfony2 发布\n如果你需要发布 Symfony2 应用，那么此部分内容是为你而设的。本节介绍如何配置 capifony 来发布一个使用 bin/vendors 来管理 vendor 库，并且使用 app/config/parameters.yml 来进行服务器相关配置（如数据库连接信息）的应用。\n首先，在 app/config/deploy.rb 添加以下内容，设置 parameters.yml 在不同的发布版本简时共享的：\nset :shared_files, [\"app/config/parameters.yml\"] 然后，在不同发布简共享 vendor 目录，这样发布起来会快一点：\nset :shared_children, [app_path + \"/logs\", web_path + \"/uploads\", \"vendor\"] capifony 默认情况下依赖于 bin/verdors 来安装第三方库。然而现在默认的依赖管理工具时 Composer，你可以使用下面的配置来使用： set :use_composer, true\n如果你想升级第三方包，请配置以下参数:\nset :update_vendors, true 这样它会运行 composer.phar（如果你使用Composer） 或者 bin/vendors。需要注意的时 bin/vendors 可以通过配置 :vendors_mode 参数来指定运行哪个操作(upgrade, install, 或者 reinstall)。\n最后一步时配置你的 app/config/parameters.yml 文件。最好的方式是手动在服务器的共享目录中创建：\nssh your_deploy_server mkdir -p /var/www/my-app.com/shared/app/config vim /var/www/my-app.com/shared/app/config/parameters.yml parameters.yml文件正确配置后，你应该可以测试你发布的应用。每次新的发布后，同一个 app/config/parameters.yml 会链接到你的应用，因此你只需要在初次发布时配置它。\n有用的任务\n如果你需要发布并且运行迁移命令，运行：\ncap deploy:migrations 运行以下命令，在产线运行测试:\ncap deploy:test_all 通过下面命令来运行任务/命令:\ncap symfony 通过下面命令获取所有可用任务的信息:\ncap -vT Capifony 自动重启Apache\n如果你的服务器安装了APC，你会发现每次 Deploy 完后都需要重启 Apache（php-fpm）来使新代码生效。 Capifony 提供了重启的任务，你只需要进行覆写：\n# Custom(ised) tasks namespace :deploy do # Apache needs to be restarted to make sure that the APC cache is cleared. # This overwrites the :restart task in the parent config which is empty. desc \"Restart Apache\" task :restart, :except =\u003e { :no_release =\u003e true }, :roles =\u003e :app do run \"sudo /etc/init.d/php5-fpm restart\" puts \"--\u003e PHP successfully restarted\".green end end 更新：Symfony3 发布\n现时（2016-05）Capifony只支持Symfony 1或者Symfony 2的发布，而由于Symfony 3的更改并不大，可以通过修改配置的方式让其兼容。\nSymfony 3主要的更改在于原来位于app目录中的console，logs，cache等目录，现在变成了更加规范的结构，console在bin目录下，而其他几个可写目录则存放在独立的var目录\n对 deploy.rb 配置文件进行以下修改\nset :symfony_console, \"bin/console\" set :cache_path, \"var/cache\" set :log_path, \"var/logs\" set :shared_children, [\"var/logs\", web_path + \"/files\", web_path + \"/uploads\", \"vendor\", \"var/sessions\", \"var/cache\"] set :writable_dirs, [\"var/cache\", \"var/logs\", \"var/sessions\"] 以上具体的项根据项目的不同可能有所区别。\n",
+  "wordCount" : "461",
+  "inLanguage": "zh-cn",
+  "datePublished": "2013-05-21T00:00:00Z",
+  "dateModified": "2013-05-21T00:00:00Z",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://yplam.com/posts/symfony/symfony-capifony/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "YPLAM",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://yplam.com/favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <div class="logo-switches">
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="https://yplam.com/" title="YPLAM">
+                    <span>HOME</span>
+
+                </a>
+            </li>
+            <li>
+                <a href="https://yplam.com/about/" title="关于YPLam">
+                    <span>ABOUT</span>
+
+                </a>
+            </li>
+            <li>
+                <a href="https://github.com/yplam" title="GITHUB">
+                    <span>GITHUB</span>
+
+                </a>
+            </li>
+            <li>
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title entry-hint-parent">
+      使用Capifony对Symfony网站进行发布
+    </h1>
+    <div class="post-meta"><span title='2013-05-21 00:00:00 +0000 UTC'>2013-05-21</span>
+
+</div>
+  </header> 
+  <div class="post-content"><p>以前一直使用Drupal来搭建网站，由于需要定制的代码量不是很大，所以每次修改都是直接用sftp传到服务器，再到Drupal后台清一下缓存。最近使用Symfony2进行开发，到了发布环节遇到了问题。Symfony代码的发布并不像其他CMS那么方便，因为更新代码后还需要assetic:dump，assets:install，cache:clear等一系列操作，因此每次更新往往需要登录到服务器去更新代码，运行清理cache的一系列命令。 <a href="http://capifony.org/">capifony</a>是针对Symfony开发的应用部署脚本，基于<a href="https://github.com/capistrano/capistrano">Capistrano</a>。使用capifony只需要进行简单的配置，就可以很方便的将代码部署到不同的服务器上。</p>
+<p><strong>安装</strong></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">gem install capifony</span></span></code></pre></div>
+<p><strong>设置项目</strong></p>
+<p>在项目中生成初始化配置</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="nb">cd</span> path/to/your/project
+</span></span><span class="line"><span class="cl">capifony .</span></span></code></pre></div>
+<p>这会在你的项目根目录中生成一个Capfile文件，在config/（Symfony 1.x）或者app/config/(Symfony 2)目录中生成deploy.rb配置文件。</p>
+<p><strong>配置</strong></p>
+<p>首先，你需要选择你的发布方式，然后将你的服务器的连接信息填到config/deploy.rb (或者 app/config/deploy.rb)。</p>
+<p>a) deployment → scm → production</p>
+<p>第一种方式是通过git库来发布到产线，在这种情况下，产线服务器必须可以访问到git库并且可以运行pull；你还必须可以在发布服务器上通过ssh访问产线服务器。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-ruby" data-lang="ruby"><span class="line"><span class="cl"><span class="c1"># deploy.rb</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">set</span>   <span class="ss">:application</span><span class="p">,</span>   <span class="s2">&#34;My App&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="n">set</span>   <span class="ss">:deploy_to</span><span class="p">,</span>     <span class="s2">&#34;/var/www/my-app.com&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="n">set</span>   <span class="ss">:domain</span><span class="p">,</span>        <span class="s2">&#34;my-app.com&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">set</span>   <span class="ss">:scm</span><span class="p">,</span>           <span class="ss">:git</span>
+</span></span><span class="line"><span class="cl"><span class="n">set</span>   <span class="ss">:repository</span><span class="p">,</span>    <span class="s2">&#34;ssh-gitrepo-domain.com:/path/to/repo.git&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">role</span>  <span class="ss">:web</span><span class="p">,</span>           <span class="n">domain</span>
+</span></span><span class="line"><span class="cl"><span class="n">role</span>  <span class="ss">:app</span><span class="p">,</span>           <span class="n">domain</span><span class="p">,</span> <span class="ss">:primary</span> <span class="o">=&gt;</span> <span class="kp">true</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">set</span>   <span class="ss">:use_sudo</span><span class="p">,</span>      <span class="kp">false</span>
+</span></span><span class="line"><span class="cl"><span class="n">set</span>   <span class="ss">:keep_releases</span><span class="p">,</span> <span class="mi">3</span></span></span></code></pre></div>
+<p>在这种情况下，运行 cap deploy, capifony 会进行以下步骤:</p>
+<ul>
+<li>ssh 登录产线服务器 (my-app.com)</li>
+<li>创建一个新的版本目录 (/var/www/my-app.com/releases/&hellip;)</li>
+<li>从git版本库 clone 最新的项目版本 (ssh-gitrepo-domain.com)</li>
+<li>复制代码。pull git 版本到新版本目录</li>
+<li>运行发布钩子(cache:warmup, cc, 等。)</li>
+</ul>
+<p><strong>注意</strong>：默认情况下 capifony 不会清除旧版本，你必须设置 keep_releases 参数，并且在 deploy.rb 中添加任务来使其运行，如： after &ldquo;deploy&rdquo;, &ldquo;deploy:cleanup&rdquo; 。</p>
+<p>如果你不想每次都 clone 整个版本库，你可以设置 :deploy_via 参数：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-ruby" data-lang="ruby"><span class="line"><span class="cl"><span class="n">set</span> <span class="ss">:deploy_via</span><span class="p">,</span> <span class="ss">:remote_cache</span></span></span></code></pre></div>
+<p>这样，服务端会保存一个git版本库，而 Capifony 只会 fetch 上一次发布以来的修改。</p>
+<p>b) deployment → production (通过复制)</p>
+<p>第二种方式通过复制开发机到产线来发布。这种情况下，开发机（可能是你的本地电脑）需要有访问git版本库的权限，并且可以执行pull操作。</p>
+<p>由于产线服务器也需要安装vendors，因此如果你的vendors使用远程的私有源，那么产线服务器也必须拥有这些源的pull权限，否则 composer 或者 bin/vendors 安装时会失败。如果你想在发布前在本地安装 vendors ，请参考下面的手册：<a href="http://capifony.org/cookbook/copy-deps-locally-strategy.html">Install vendors locally before deploy</a>。</p>
+<p>使用此方式时发布服务器也必须可以 ssh 访问产线服务器：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-ruby" data-lang="ruby"><span class="line"><span class="cl"><span class="c1"># deploy.rb</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">set</span>   <span class="ss">:application</span><span class="p">,</span>   <span class="s2">&#34;My App&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="n">set</span>   <span class="ss">:deploy_to</span><span class="p">,</span>     <span class="s2">&#34;/var/www/my-app.com&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="n">set</span>   <span class="ss">:domain</span><span class="p">,</span>        <span class="s2">&#34;my-app.com&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">set</span>   <span class="ss">:scm</span><span class="p">,</span>           <span class="ss">:git</span>
+</span></span><span class="line"><span class="cl"><span class="n">set</span>   <span class="ss">:repository</span><span class="p">,</span>    <span class="s2">&#34;file:///Users/deployer/sites/my-app&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="n">set</span>   <span class="ss">:deploy_via</span><span class="p">,</span>    <span class="ss">:copy</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">role</span>  <span class="ss">:web</span><span class="p">,</span>           <span class="n">domain</span>
+</span></span><span class="line"><span class="cl"><span class="n">role</span>  <span class="ss">:app</span><span class="p">,</span>           <span class="n">domain</span><span class="p">,</span> <span class="ss">:primary</span> <span class="o">=&gt;</span> <span class="kp">true</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">set</span>   <span class="ss">:use_sudo</span><span class="p">,</span>      <span class="kp">false</span>
+</span></span><span class="line"><span class="cl"><span class="n">set</span>   <span class="ss">:keep_releases</span><span class="p">,</span> <span class="mi">3</span></span></span></code></pre></div>
+<p>在这种情况下，运行 cap deploy, capifony 会进行以下步骤:</p>
+<ul>
+<li>ssh 登录产线服务器 (my-app.com)</li>
+<li>创建一个新的版本目录 (/var/www/my-app.com/releases/&hellip;)</li>
+<li>从本地git版本库 clone 最新的项目版本</li>
+<li>复制代码。pull git 版本到产线服务器</li>
+<li>运行发布钩子(cache:warmup, cc, 等。)</li>
+</ul>
+<p>当然，每次发布都要复制整个项目，是昂贵而且缓慢的，幸好你可以通过 capistrano_rsync_with_remote_cache gem 来优化流程:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-ruby" data-lang="ruby"><span class="line"><span class="cl"><span class="n">gem</span> <span class="n">install</span> <span class="n">capistrano_rsync_with_remote_cache</span></span></span></code></pre></div>
+<p>然后，在 deploy.rb 中修改发布流程:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-ruby" data-lang="ruby"><span class="line"><span class="cl"><span class="n">set</span> <span class="ss">:deploy_via</span><span class="p">,</span> <span class="ss">:rsync_with_remote_cache</span></span></span></code></pre></div>
+<p>这样，rsync会在你的产线服务器上生成缓存，并且只提交两次发布简修改的文件。</p>
+<p><strong>4. 配置服务器</strong></p>
+<p>现在你可以开始发布了！cd 到你的本地项目目录，运行下面命令来使产线服务器设置好 Capistrano 要求的目录结构：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">cap deploy:setup</span></span></code></pre></div>
+<p>( 你只需要运行这个命令一次 )</p>
+<p>此命令会在你的服务器上创建类似的目录结构。详细的结构会根据你发布的是 symfony 1.x 还是 symfony 2 而有所不同：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="sb">`</span>-- /var/www/my-app.com
+</span></span><span class="line"><span class="cl"><span class="p">|</span>-- current → /var/www/my-app.com/releases/20100512131539
+</span></span><span class="line"><span class="cl"><span class="p">|</span>-- releases
+</span></span><span class="line"><span class="cl"><span class="p">|</span>   <span class="sb">`</span>-- <span class="m">20100512131539</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span>   <span class="sb">`</span>-- <span class="m">20100509150741</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span>   <span class="sb">`</span>-- <span class="m">20100509145325</span>
+</span></span><span class="line"><span class="cl"><span class="sb">`</span>-- shared
+</span></span><span class="line"><span class="cl">   <span class="p">|</span>-- web
+</span></span><span class="line"><span class="cl">   <span class="p">|</span>    <span class="sb">`</span>-- uploads
+</span></span><span class="line"><span class="cl">   <span class="p">|</span>-- log
+</span></span><span class="line"><span class="cl">   <span class="sb">`</span>-- config
+</span></span><span class="line"><span class="cl">       <span class="sb">`</span>-- databases.yml</span></span></code></pre></div>
+<p>release 目录下的是实际的发布代码，以时间戳来命名。以 symfony 1.x 为例，Capistrano 链接 app 中的 log 与 web/uploads 目录到一个共享目录，这样你发布一个新版本后这些内容不会被清除。</p>
+<p>你可以使用以下命令来快速设置一个新服务器：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">cap <span class="nv">HOSTS</span><span class="o">=</span>new.server.com deploy:setup</span></span></code></pre></div>
+<p><strong>5. 发布</strong></p>
+<p>运行下面命令来发布：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">cap deploy</span></span></code></pre></div>
+<p>根据配置的不同，你可能需要 ssh 登录到你的服务器来进行一些附加的配置，在第一次发布后共享文件（如 app/config/parameters.yml，如果你是使用下面的方式来发布 Symfony2 的话）。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">Something went wrong???
+</span></span><span class="line"><span class="cl">cap deploy:rollback</span></span></code></pre></div>
+<p><strong>Symfony2 发布</strong></p>
+<p>如果你需要发布 Symfony2 应用，那么此部分内容是为你而设的。本节介绍如何配置 capifony 来发布一个使用 bin/vendors 来管理 vendor 库，并且使用 app/config/parameters.yml 来进行服务器相关配置（如数据库连接信息）的应用。</p>
+<p>首先，在 app/config/deploy.rb 添加以下内容，设置 parameters.yml 在不同的发布版本简时共享的：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-ruby" data-lang="ruby"><span class="line"><span class="cl"><span class="n">set</span> <span class="ss">:shared_files</span><span class="p">,</span>      <span class="o">[</span><span class="s2">&#34;app/config/parameters.yml&#34;</span><span class="o">]</span></span></span></code></pre></div>
+<p>然后，在不同发布简共享 vendor 目录，这样发布起来会快一点：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-ruby" data-lang="ruby"><span class="line"><span class="cl"><span class="n">set</span> <span class="ss">:shared_children</span><span class="p">,</span>     <span class="o">[</span><span class="n">app_path</span> <span class="o">+</span> <span class="s2">&#34;/logs&#34;</span><span class="p">,</span> <span class="n">web_path</span> <span class="o">+</span> <span class="s2">&#34;/uploads&#34;</span><span class="p">,</span> <span class="s2">&#34;vendor&#34;</span><span class="o">]</span></span></span></code></pre></div>
+<p>capifony 默认情况下依赖于 bin/verdors 来安装第三方库。然而现在默认的依赖管理工具时 Composer，你可以使用下面的配置来使用：
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-ruby" data-lang="ruby"><span class="line"><span class="cl"><span class="n">set</span> <span class="ss">:use_composer</span><span class="p">,</span> <span class="kp">true</span></span></span></code></pre></div></p>
+<p>如果你想升级第三方包，请配置以下参数:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-ruby" data-lang="ruby"><span class="line"><span class="cl"><span class="n">set</span> <span class="ss">:update_vendors</span><span class="p">,</span> <span class="kp">true</span></span></span></code></pre></div>
+<p>这样它会运行 composer.phar（如果你使用Composer） 或者 bin/vendors。需要注意的时 bin/vendors 可以通过配置 :vendors_mode 参数来指定运行哪个操作(upgrade, install, 或者 reinstall)。</p>
+<p>最后一步时配置你的 app/config/parameters.yml 文件。最好的方式是手动在服务器的共享目录中创建：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">ssh your_deploy_server
+</span></span><span class="line"><span class="cl">mkdir -p /var/www/my-app.com/shared/app/config
+</span></span><span class="line"><span class="cl">vim /var/www/my-app.com/shared/app/config/parameters.yml</span></span></code></pre></div>
+<p>parameters.yml文件正确配置后，你应该可以测试你发布的应用。每次新的发布后，同一个 app/config/parameters.yml 会链接到你的应用，因此你只需要在初次发布时配置它。</p>
+<p><strong>有用的任务</strong></p>
+<p>如果你需要发布并且运行迁移命令，运行：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">cap deploy:migrations</span></span></code></pre></div>
+<p>运行以下命令，在产线运行测试:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">cap deploy:test_all</span></span></code></pre></div>
+<p>通过下面命令来运行任务/命令:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">cap symfony</span></span></code></pre></div>
+<p>通过下面命令获取所有可用任务的信息:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">cap -vT</span></span></code></pre></div>
+<p><strong>Capifony 自动重启Apache</strong></p>
+<p>如果你的服务器安装了APC，你会发现每次 Deploy 完后都需要重启 Apache（php-fpm）来使新代码生效。
+Capifony 提供了重启的任务，你只需要进行覆写：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-ruby" data-lang="ruby"><span class="line"><span class="cl"><span class="c1"># Custom(ised) tasks</span>
+</span></span><span class="line"><span class="cl"><span class="n">namespace</span> <span class="ss">:deploy</span> <span class="k">do</span>
+</span></span><span class="line"><span class="cl">	<span class="c1"># Apache needs to be restarted to make sure that the APC cache is cleared.</span>
+</span></span><span class="line"><span class="cl">	<span class="c1"># This overwrites the :restart task in the parent config which is empty.</span>
+</span></span><span class="line"><span class="cl">	<span class="n">desc</span> <span class="s2">&#34;Restart Apache&#34;</span>
+</span></span><span class="line"><span class="cl">	<span class="n">task</span> <span class="ss">:restart</span><span class="p">,</span> <span class="ss">:except</span> <span class="o">=&gt;</span> <span class="p">{</span> <span class="ss">:no_release</span> <span class="o">=&gt;</span> <span class="kp">true</span> <span class="p">},</span> <span class="ss">:roles</span> <span class="o">=&gt;</span> <span class="ss">:app</span> <span class="k">do</span>
+</span></span><span class="line"><span class="cl">		<span class="n">run</span> <span class="s2">&#34;sudo /etc/init.d/php5-fpm restart&#34;</span>
+</span></span><span class="line"><span class="cl">		<span class="nb">puts</span> <span class="s2">&#34;--&gt; PHP successfully restarted&#34;</span><span class="o">.</span><span class="n">green</span>
+</span></span><span class="line"><span class="cl">	<span class="k">end</span>
+</span></span><span class="line"><span class="cl"><span class="k">end</span></span></span></code></pre></div>
+<p><strong>更新：Symfony3 发布</strong></p>
+<p>现时（2016-05）Capifony只支持Symfony 1或者Symfony 2的发布，而由于Symfony 3的更改并不大，可以通过修改配置的方式让其兼容。</p>
+<p>Symfony 3主要的更改在于原来位于app目录中的console，logs，cache等目录，现在变成了更加规范的结构，console在bin目录下，而其他几个可写目录则存放在独立的var目录</p>
+<p>对 deploy.rb 配置文件进行以下修改</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-ruby" data-lang="ruby"><span class="line"><span class="cl"><span class="n">set</span> <span class="ss">:symfony_console</span><span class="p">,</span> <span class="s2">&#34;bin/console&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="n">set</span> <span class="ss">:cache_path</span><span class="p">,</span> <span class="s2">&#34;var/cache&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="n">set</span> <span class="ss">:log_path</span><span class="p">,</span> <span class="s2">&#34;var/logs&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">set</span> <span class="ss">:shared_children</span><span class="p">,</span>     <span class="o">[</span><span class="s2">&#34;var/logs&#34;</span><span class="p">,</span> <span class="n">web_path</span> <span class="o">+</span> <span class="s2">&#34;/files&#34;</span><span class="p">,</span> <span class="n">web_path</span> <span class="o">+</span> <span class="s2">&#34;/uploads&#34;</span><span class="p">,</span> <span class="s2">&#34;vendor&#34;</span><span class="p">,</span> <span class="s2">&#34;var/sessions&#34;</span><span class="p">,</span> <span class="s2">&#34;var/cache&#34;</span><span class="o">]</span>
+</span></span><span class="line"><span class="cl"><span class="n">set</span> <span class="ss">:writable_dirs</span><span class="p">,</span>       <span class="o">[</span><span class="s2">&#34;var/cache&#34;</span><span class="p">,</span> <span class="s2">&#34;var/logs&#34;</span><span class="p">,</span> <span class="s2">&#34;var/sessions&#34;</span><span class="o">]</span></span></span></code></pre></div>
+<p>以上具体的项根据项目的不同可能有所区别。</p>
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+      <li><a href="https://yplam.com/tags/php/">PHP</a></li>
+      <li><a href="https://yplam.com/tags/symfony/">Symfony</a></li>
+    </ul>
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+        <span>&copy; 2025 <a href="https://yplam.com/">YPLAM</a></span> · 
+
+    <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+        CC BY-SA 4.0
+    </a>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>
