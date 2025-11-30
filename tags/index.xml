@@ -4,7 +4,7 @@
     <title>Tags on YPLAM</title>
     <link>https://yplam.com/tags/</link>
     <description>Recent content in Tags on YPLAM</description>
-    <generator>Hugo -- 0.148.2</generator>
+    <generator>Hugo -- 0.150.0</generator>
     <language>zh-cn</language>
     <lastBuildDate>Sat, 13 Sep 2025 00:00:00 +0000</lastBuildDate>
     <atom:link href="https://yplam.com/tags/index.xml" rel="self" type="application/rss+xml" />
@@ -44,30 +44,30 @@
       <description></description>
     </item>
     <item>
-      <title>Go</title>
-      <link>https://yplam.com/tags/go/</link>
+      <title>Cubit</title>
+      <link>https://yplam.com/tags/cubit/</link>
       <pubDate>Sat, 10 May 2025 00:00:00 +0000</pubDate>
-      <guid>https://yplam.com/tags/go/</guid>
+      <guid>https://yplam.com/tags/cubit/</guid>
       <description></description>
     </item>
     <item>
-      <title>React</title>
-      <link>https://yplam.com/tags/react/</link>
+      <title>FFI</title>
+      <link>https://yplam.com/tags/ffi/</link>
       <pubDate>Sat, 10 May 2025 00:00:00 +0000</pubDate>
-      <guid>https://yplam.com/tags/react/</guid>
+      <guid>https://yplam.com/tags/ffi/</guid>
       <description></description>
     </item>
     <item>
       <title>Flutter</title>
       <link>https://yplam.com/tags/flutter/</link>
-      <pubDate>Sat, 14 Dec 2024 00:00:00 +0000</pubDate>
+      <pubDate>Sat, 10 May 2025 00:00:00 +0000</pubDate>
       <guid>https://yplam.com/tags/flutter/</guid>
       <description></description>
     </item>
     <item>
       <title>Rust</title>
       <link>https://yplam.com/tags/rust/</link>
-      <pubDate>Sat, 14 Dec 2024 00:00:00 +0000</pubDate>
+      <pubDate>Sat, 10 May 2025 00:00:00 +0000</pubDate>
       <guid>https://yplam.com/tags/rust/</guid>
       <description></description>
     </item>
@@ -76,6 +76,13 @@
       <link>https://yplam.com/tags/jlink/</link>
       <pubDate>Sat, 27 Jul 2024 00:00:00 +0000</pubDate>
       <guid>https://yplam.com/tags/jlink/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Go</title>
+      <link>https://yplam.com/tags/go/</link>
+      <pubDate>Wed, 01 May 2024 00:00:00 +0000</pubDate>
+      <guid>https://yplam.com/tags/go/</guid>
       <description></description>
     </item>
     <item>

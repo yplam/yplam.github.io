@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>Flutter &#43; Rust &#43; Cubit：打造高性能跨平台应用 | YPLAM</title>
+<meta name="keywords" content="Rust, Flutter, Cubit, FFI">
+<meta name="description" content="在移动端跨平台开发领域，Flutter 凭借其优秀的渲染引擎和开发体验独树一帜。然而，当面临密集型计算、底层系统交互或需要复用现有的 C/C&#43;&#43; 库时，单纯依靠 Dart 往往力不从心。
+Flutter 虽然支持通过 MethodChannel 与原生平台（Android/iOS）通讯，但在处理跨平台通用业务逻辑时，我们更希望有一种“一次编写，到处运行”且性能强劲的方案。本文将介绍一种 Flutter &#43; Rust &#43; Cubit 的高性能应用开发模式：利用 Rust 统一业务逻辑与底层服务，利用 Cubit 桥接 UI 与数据状态。">
+<meta name="author" content="">
+<link rel="canonical" href="https://yplam.com/posts/rust/flutter-rust-ffi-cubit/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.45e9646c1d4a681ebbffe4c0f5bdd79d96646d99daf08cf8a3488605487f2ba1.css" integrity="sha256-RelkbB1KaB67/&#43;TA9b3XnZZkbZna8Iz4o0iGBUh/K6E=" rel="preload stylesheet" as="style">
+<link rel="icon" href="https://yplam.com/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://yplam.com/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://yplam.com/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://yplam.com/apple-touch-icon.png">
+<link rel="mask-icon" href="https://yplam.com/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="zh-cn" href="https://yplam.com/posts/rust/flutter-rust-ffi-cubit/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --code-block-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript>
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-960JLZS3KY"></script>
+      <script>
+        var doNotTrack = false;
+        if ( false ) {
+          var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
+          var doNotTrack = (dnt == "1" || dnt == "yes");
+        }
+        if (!doNotTrack) {
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-960JLZS3KY');
+        }
+      </script><meta property="og:url" content="https://yplam.com/posts/rust/flutter-rust-ffi-cubit/">
+  <meta property="og:site_name" content="YPLAM">
+  <meta property="og:title" content="Flutter &#43; Rust &#43; Cubit：打造高性能跨平台应用">
+  <meta property="og:description" content="在移动端跨平台开发领域，Flutter 凭借其优秀的渲染引擎和开发体验独树一帜。然而，当面临密集型计算、底层系统交互或需要复用现有的 C/C&#43;&#43; 库时，单纯依靠 Dart 往往力不从心。
+Flutter 虽然支持通过 MethodChannel 与原生平台（Android/iOS）通讯，但在处理跨平台通用业务逻辑时，我们更希望有一种“一次编写，到处运行”且性能强劲的方案。本文将介绍一种 Flutter &#43; Rust &#43; Cubit 的高性能应用开发模式：利用 Rust 统一业务逻辑与底层服务，利用 Cubit 桥接 UI 与数据状态。">
+  <meta property="og:locale" content="zh-cn">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2025-05-10T00:00:00+00:00">
+    <meta property="article:modified_time" content="2025-05-10T00:00:00+00:00">
+    <meta property="article:tag" content="Rust">
+    <meta property="article:tag" content="Flutter">
+    <meta property="article:tag" content="Cubit">
+    <meta property="article:tag" content="FFI">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Flutter &#43; Rust &#43; Cubit：打造高性能跨平台应用">
+<meta name="twitter:description" content="在移动端跨平台开发领域，Flutter 凭借其优秀的渲染引擎和开发体验独树一帜。然而，当面临密集型计算、底层系统交互或需要复用现有的 C/C&#43;&#43; 库时，单纯依靠 Dart 往往力不从心。
+Flutter 虽然支持通过 MethodChannel 与原生平台（Android/iOS）通讯，但在处理跨平台通用业务逻辑时，我们更希望有一种“一次编写，到处运行”且性能强劲的方案。本文将介绍一种 Flutter &#43; Rust &#43; Cubit 的高性能应用开发模式：利用 Rust 统一业务逻辑与底层服务，利用 Cubit 桥接 UI 与数据状态。">
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Posts",
+      "item": "https://yplam.com/posts/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "Flutter + Rust + Cubit：打造高性能跨平台应用",
+      "item": "https://yplam.com/posts/rust/flutter-rust-ffi-cubit/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Flutter + Rust + Cubit：打造高性能跨平台应用",
+  "name": "Flutter \u002b Rust \u002b Cubit：打造高性能跨平台应用",
+  "description": "在移动端跨平台开发领域，Flutter 凭借其优秀的渲染引擎和开发体验独树一帜。然而，当面临密集型计算、底层系统交互或需要复用现有的 C/C++ 库时，单纯依靠 Dart 往往力不从心。\nFlutter 虽然支持通过 MethodChannel 与原生平台（Android/iOS）通讯，但在处理跨平台通用业务逻辑时，我们更希望有一种“一次编写，到处运行”且性能强劲的方案。本文将介绍一种 Flutter + Rust + Cubit 的高性能应用开发模式：利用 Rust 统一业务逻辑与底层服务，利用 Cubit 桥接 UI 与数据状态。\n",
+  "keywords": [
+    "Rust", "Flutter", "Cubit", "FFI"
+  ],
+  "articleBody": "在移动端跨平台开发领域，Flutter 凭借其优秀的渲染引擎和开发体验独树一帜。然而，当面临密集型计算、底层系统交互或需要复用现有的 C/C++ 库时，单纯依靠 Dart 往往力不从心。\nFlutter 虽然支持通过 MethodChannel 与原生平台（Android/iOS）通讯，但在处理跨平台通用业务逻辑时，我们更希望有一种“一次编写，到处运行”且性能强劲的方案。本文将介绍一种 Flutter + Rust + Cubit 的高性能应用开发模式：利用 Rust 统一业务逻辑与底层服务，利用 Cubit 桥接 UI 与数据状态。\n官方方案：Flutter + MethodChannel Flutter 官方提供的标准与原生代码交互的方式：MethodChannel。MethodChannel 是 Flutter 端（Dart）与宿主平台端之间的桥梁。 Dart 端发送一个异步消息调用，平台端接收并处理，然后返回结果。由于 Dart 对象与原生对象内存布局不同，数据传输需要经过序列化（Encode）和反序列化（Decode）。Flutter 使用 StandardMessageCodec 支持 JSON 等常见数据类型的转换。\n尽管 MethodChannel 功能强大，但在构建高性能应用时存在问题。同一套业务逻辑（如复杂的加密算法、本地数据库封装），需要分别为 Android 和 iOS 等编写多套代码。频繁的跨语言序列化与反序列化在大数据量传输时会成为性能瓶颈。\nFlutter + Rust + Cubit 为了解决上述问题，我们将架构演进为 Flutter + Rust + Cubit。\n2.1 核心思想 Rust：负责核心业务逻辑、网络请求、文件 IO、密集计算。利用 Rust 的内存安全和零成本抽象，实现真正的逻辑跨平台。 Flutter：只负责 UI 渲染和用户交互，保持轻量级。 Cubit：作为中间层，负责管理 UI 状态，调用 Rust 接口，并响应 Rust 推送的数据变化。 2.2 架构优势 高性能：Rust 编译为机器码，通过 FFI (Foreign Function Interface) 与 Dart 直接内存交互，配合 Rust 的异步模型，可以实现高性能。 代码复用：90% 的非 UI 代码只需用 Rust 编写一次，即可在 Android, iOS, Windows, Linux, macOS 上运行。 响应式流：结合 Dart 的 Stream 和 Rust 的 Channel，形成完美的数据驱动 UI 模式。 状态管理：为什么选择 Cubit？ 在 Flutter 生态中，flutter_bloc 是最流行的状态管理库。它包含两种模式：Bloc 和 Cubit。\nBloc vs Cubit\nBloc (Business Logic Component)：\n基于 Events (事件) 驱动。 流程：UI 添加 Event -\u003e Bloc 处理 Event -\u003e Bloc 发送 State 变更。 优点：可追溯性强，适合极其复杂的逻辑流。 缺点：样板代码多（需定义各种 Event 类），相对繁琐。 Cubit：\n基于 Functions (函数) 驱动。 流程：UI 调用 Cubit 方法 -\u003e Cubit 执行逻辑 -\u003e Cubit 发送 State 变更。 优点：代码简洁，直观，易于理解。 在 Flutter + Rust 模式下，Dart 端的逻辑主要是“转发”：UI 触发操作，Dart 转发给 Rust。Cubit 的函数式调用可以完美契合 FFI 的调用方式（Dart 直接调用 Rust 导出的 C ABI 函数）。我们不需要复杂的 Event 定义，因为真正的复杂逻辑已经被下沉到了 Rust 层。\n实现：FFI 与 Isolate 通讯机制 这是本模式的核心实现细节。UI 通过 Cubit 触发 Rust 操作，Rust 通过 Isolate Port 机制异步通知 UI 更新。\n初始化：Dart 在初始化 Rust 服务时，通过 FFI 传入一个 SendPort.nativePort (int64)。Rust 端将其转换为 Dart_Port 并保存。 UI 交互 (Dart -\u003e Rust)：Cubit 调用 Rust 导出的 FFI 函数。这些函数通常是非阻塞的，或者在 Rust 内部的线程池中运行，仅返回一个简短的 Result（如 “RequestAccepted”）。 状态更新 (Rust -\u003e Dart)：Rust 业务完成后（或有主动推送时），通过保存的 Port 发送序列化后的数据。 UI 渲染 (Dart Stream -\u003e UI)：Dart 端的 ReceivePort 监听到消息，转换为应用状态，Cubit emit 新状态，UI 重绘。 与 MethodChannel 类似，状态更新也需要一次 Rust 序列化，Dart 反序列化的过程，然而与 MethodChannel 不同的是我们可以根据 State 结构选择更高性能的序列化方式，如 Flatbuffers，Protobuf，Simple SErialization（Flutter Rust Bridge）。更重要的是UI状态更新是一个相对低频的过程，因为就算业务逻辑与状态在高频变化，我们也可以在 Rust 端控制 State 更新频率在 120 fps 以下。\n",
+  "wordCount" : "264",
+  "inLanguage": "zh-cn",
+  "datePublished": "2025-05-10T00:00:00Z",
+  "dateModified": "2025-05-10T00:00:00Z",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://yplam.com/posts/rust/flutter-rust-ffi-cubit/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "YPLAM",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://yplam.com/favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <div class="logo-switches">
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="https://yplam.com/" title="YPLAM">
+                    <span>HOME</span>
+
+                </a>
+            </li>
+            <li>
+                <a href="https://yplam.com/about/" title="关于YPLam">
+                    <span>ABOUT</span>
+
+                </a>
+            </li>
+            <li>
+                <a href="https://github.com/yplam" title="GITHUB">
+                    <span>GITHUB</span>
+
+                </a>
+            </li>
+            <li>
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title entry-hint-parent">
+      Flutter &#43; Rust &#43; Cubit：打造高性能跨平台应用
+    </h1>
+    <div class="post-meta"><span title='2025-05-10 00:00:00 +0000 UTC'>2025-05-10</span>
+
+</div>
+  </header> 
+  <div class="post-content"><p>在移动端跨平台开发领域，Flutter 凭借其优秀的渲染引擎和开发体验独树一帜。然而，当面临密集型计算、底层系统交互或需要复用现有的 C/C++ 库时，单纯依靠 Dart 往往力不从心。</p>
+<p>Flutter 虽然支持通过 MethodChannel 与原生平台（Android/iOS）通讯，但在处理跨平台通用业务逻辑时，我们更希望有一种“一次编写，到处运行”且性能强劲的方案。本文将介绍一种 <strong>Flutter + Rust + Cubit</strong> 的高性能应用开发模式：利用 Rust 统一业务逻辑与底层服务，利用 Cubit 桥接 UI 与数据状态。</p>
+<h2 id="官方方案flutter--methodchannel">官方方案：Flutter + MethodChannel<a hidden class="anchor" aria-hidden="true" href="#官方方案flutter--methodchannel">#</a></h2>
+<p>Flutter 官方提供的标准与原生代码交互的方式：<strong>MethodChannel</strong>。MethodChannel 是 Flutter 端（Dart）与宿主平台端之间的桥梁。 Dart 端发送一个异步消息调用，平台端接收并处理，然后返回结果。由于 Dart 对象与原生对象内存布局不同，数据传输需要经过序列化（Encode）和反序列化（Decode）。Flutter 使用 <code>StandardMessageCodec</code> 支持 JSON 等常见数据类型的转换。</p>
+<p>尽管 MethodChannel 功能强大，但在构建高性能应用时存在问题。同一套业务逻辑（如复杂的加密算法、本地数据库封装），需要分别为 Android 和 iOS 等编写多套代码。频繁的跨语言序列化与反序列化在大数据量传输时会成为性能瓶颈。</p>
+<h2 id="flutter--rust--cubit">Flutter + Rust + Cubit<a hidden class="anchor" aria-hidden="true" href="#flutter--rust--cubit">#</a></h2>
+<p>为了解决上述问题，我们将架构演进为 <strong>Flutter + Rust + Cubit</strong>。</p>
+<h3 id="21-核心思想">2.1 核心思想<a hidden class="anchor" aria-hidden="true" href="#21-核心思想">#</a></h3>
+<ul>
+<li><strong>Rust</strong>：负责核心业务逻辑、网络请求、文件 IO、密集计算。利用 Rust 的内存安全和零成本抽象，实现真正的逻辑跨平台。</li>
+<li><strong>Flutter</strong>：只负责 UI 渲染和用户交互，保持轻量级。</li>
+<li><strong>Cubit</strong>：作为中间层，负责管理 UI 状态，调用 Rust 接口，并响应 Rust 推送的数据变化。</li>
+</ul>
+<h3 id="22-架构优势">2.2 架构优势<a hidden class="anchor" aria-hidden="true" href="#22-架构优势">#</a></h3>
+<ul>
+<li><strong>高性能</strong>：Rust 编译为机器码，通过 FFI (Foreign Function Interface) 与 Dart 直接内存交互，配合 Rust 的异步模型，可以实现高性能。</li>
+<li><strong>代码复用</strong>：90% 的非 UI 代码只需用 Rust 编写一次，即可在 Android, iOS, Windows, Linux, macOS 上运行。</li>
+<li><strong>响应式流</strong>：结合 Dart 的 Stream 和 Rust 的 Channel，形成完美的数据驱动 UI 模式。</li>
+</ul>
+<h2 id="状态管理为什么选择-cubit">状态管理：为什么选择 Cubit？<a hidden class="anchor" aria-hidden="true" href="#状态管理为什么选择-cubit">#</a></h2>
+<p>在 Flutter 生态中，<code>flutter_bloc</code> 是最流行的状态管理库。它包含两种模式：<strong>Bloc</strong> 和 <strong>Cubit</strong>。</p>
+<p><strong>Bloc vs Cubit</strong></p>
+<ul>
+<li>
+<p><strong>Bloc (Business Logic Component)</strong>：</p>
+<ul>
+<li>基于 <strong>Events (事件)</strong> 驱动。</li>
+<li>流程：UI 添加 Event -&gt; Bloc 处理 Event -&gt; Bloc 发送 State 变更。</li>
+<li>优点：可追溯性强，适合极其复杂的逻辑流。</li>
+<li>缺点：样板代码多（需定义各种 Event 类），相对繁琐。</li>
+</ul>
+</li>
+<li>
+<p><strong>Cubit</strong>：</p>
+<ul>
+<li>基于 <strong>Functions (函数)</strong> 驱动。</li>
+<li>流程：UI 调用 Cubit 方法 -&gt; Cubit 执行逻辑 -&gt; Cubit 发送 State 变更。</li>
+<li>优点：代码简洁，直观，易于理解。</li>
+</ul>
+</li>
+</ul>
+<p>在 Flutter + Rust 模式下，Dart 端的逻辑主要是“转发”：UI 触发操作，Dart 转发给 Rust。Cubit 的函数式调用可以完美契合 FFI 的调用方式（Dart 直接调用 Rust 导出的 C ABI 函数）。我们不需要复杂的 Event 定义，因为真正的复杂逻辑已经被下沉到了 Rust 层。</p>
+<h2 id="实现ffi-与-isolate-通讯机制">实现：FFI 与 Isolate 通讯机制<a hidden class="anchor" aria-hidden="true" href="#实现ffi-与-isolate-通讯机制">#</a></h2>
+<p>这是本模式的核心实现细节。UI 通过 Cubit 触发 Rust 操作，Rust 通过 Isolate Port 机制异步通知 UI 更新。</p>
+<ol>
+<li><strong>初始化</strong>：Dart 在初始化 Rust 服务时，通过 FFI 传入一个 <code>SendPort.nativePort</code> (int64)。Rust 端将其转换为 <code>Dart_Port</code> 并保存。</li>
+<li><strong>UI 交互 (Dart -&gt; Rust)</strong>：Cubit 调用 Rust 导出的 FFI 函数。这些函数通常是非阻塞的，或者在 Rust 内部的线程池中运行，仅返回一个简短的 Result（如 &ldquo;RequestAccepted&rdquo;）。</li>
+<li><strong>状态更新 (Rust -&gt; Dart)</strong>：Rust 业务完成后（或有主动推送时），通过保存的 Port 发送序列化后的数据。</li>
+<li><strong>UI 渲染 (Dart Stream -&gt; UI)</strong>：Dart 端的 <code>ReceivePort</code> 监听到消息，转换为应用状态，Cubit <code>emit</code> 新状态，UI 重绘。</li>
+</ol>
+<p>与 MethodChannel 类似，状态更新也需要一次 Rust 序列化，Dart 反序列化的过程，然而与 MethodChannel 不同的是我们可以根据 State 结构选择更高性能的序列化方式，如 Flatbuffers，Protobuf，Simple SErialization（Flutter Rust Bridge）。更重要的是UI状态更新是一个相对低频的过程，因为就算业务逻辑与状态在高频变化，我们也可以在 Rust 端控制 State 更新频率在 120 fps 以下。</p>
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+      <li><a href="https://yplam.com/tags/rust/">Rust</a></li>
+      <li><a href="https://yplam.com/tags/flutter/">Flutter</a></li>
+      <li><a href="https://yplam.com/tags/cubit/">Cubit</a></li>
+      <li><a href="https://yplam.com/tags/ffi/">FFI</a></li>
+    </ul>
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+        <span>&copy; 2025 <a href="https://yplam.com/">YPLAM</a></span> · 
+
+    <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+        CC BY-SA 4.0
+    </a>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>

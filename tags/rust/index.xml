@@ -4,10 +4,18 @@
     <title>Rust on YPLAM</title>
     <link>https://yplam.com/tags/rust/</link>
     <description>Recent content in Rust on YPLAM</description>
-    <generator>Hugo -- 0.148.2</generator>
+    <generator>Hugo -- 0.150.0</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Sat, 14 Dec 2024 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sat, 10 May 2025 00:00:00 +0000</lastBuildDate>
     <atom:link href="https://yplam.com/tags/rust/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Flutter &#43; Rust &#43; Cubit：打造高性能跨平台应用</title>
+      <link>https://yplam.com/posts/rust/flutter-rust-ffi-cubit/</link>
+      <pubDate>Sat, 10 May 2025 00:00:00 +0000</pubDate>
+      <guid>https://yplam.com/posts/rust/flutter-rust-ffi-cubit/</guid>
+      <description>&lt;p&gt;在移动端跨平台开发领域，Flutter 凭借其优秀的渲染引擎和开发体验独树一帜。然而，当面临密集型计算、底层系统交互或需要复用现有的 C/C++ 库时，单纯依靠 Dart 往往力不从心。&lt;/p&gt;
+&lt;p&gt;Flutter 虽然支持通过 MethodChannel 与原生平台（Android/iOS）通讯，但在处理跨平台通用业务逻辑时，我们更希望有一种“一次编写，到处运行”且性能强劲的方案。本文将介绍一种 &lt;strong&gt;Flutter + Rust + Cubit&lt;/strong&gt; 的高性能应用开发模式：利用 Rust 统一业务逻辑与底层服务，利用 Cubit 桥接 UI 与数据状态。&lt;/p&gt;</description>
+    </item>
     <item>
       <title>Flutter &#43; Rust 跨平台应用开发</title>
       <link>https://yplam.com/posts/rust/flutter-rust/</link>

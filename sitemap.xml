@@ -52,17 +52,27 @@
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url><url>
-    <loc>https://yplam.com/tags/go/</loc>
+    <loc>https://yplam.com/tags/cubit/</loc>
     <lastmod>2025-05-10T00:00:00+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url><url>
-    <loc>https://yplam.com/tags/react/</loc>
+    <loc>https://yplam.com/tags/ffi/</loc>
     <lastmod>2025-05-10T00:00:00+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url><url>
-    <loc>https://yplam.com/posts/tech/tech-stack-for-full-stack-2025/</loc>
+    <loc>https://yplam.com/tags/flutter/</loc>
+    <lastmod>2025-05-10T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url><url>
+    <loc>https://yplam.com/posts/rust/flutter-rust-ffi-cubit/</loc>
+    <lastmod>2025-05-10T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url><url>
+    <loc>https://yplam.com/tags/rust/</loc>
     <lastmod>2025-05-10T00:00:00+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
@@ -82,17 +92,7 @@
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url><url>
-    <loc>https://yplam.com/tags/flutter/</loc>
-    <lastmod>2024-12-14T00:00:00+00:00</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url><url>
     <loc>https://yplam.com/posts/rust/flutter-rust/</loc>
-    <lastmod>2024-12-14T00:00:00+00:00</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url><url>
-    <loc>https://yplam.com/tags/rust/</loc>
     <lastmod>2024-12-14T00:00:00+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
@@ -113,6 +113,11 @@
     <priority>0.5</priority>
   </url><url>
     <loc>https://yplam.com/posts/go/flutter-go-mobile/</loc>
+    <lastmod>2024-05-01T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url><url>
+    <loc>https://yplam.com/tags/go/</loc>
     <lastmod>2024-05-01T00:00:00+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>

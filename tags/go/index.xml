@@ -4,18 +4,10 @@
     <title>Go on YPLAM</title>
     <link>https://yplam.com/tags/go/</link>
     <description>Recent content in Go on YPLAM</description>
-    <generator>Hugo -- 0.148.2</generator>
+    <generator>Hugo -- 0.150.0</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Sat, 10 May 2025 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Wed, 01 May 2024 00:00:00 +0000</lastBuildDate>
     <atom:link href="https://yplam.com/tags/go/index.xml" rel="self" type="application/rss+xml" />
-    <item>
-      <title>全栈技术栈选型 2025</title>
-      <link>https://yplam.com/posts/tech/tech-stack-for-full-stack-2025/</link>
-      <pubDate>Sat, 10 May 2025 00:00:00 +0000</pubDate>
-      <guid>https://yplam.com/posts/tech/tech-stack-for-full-stack-2025/</guid>
-      <description>&lt;p&gt;结合个人经验，技术发展，AI编程等，探讨一下作为全栈工程师，在2025年应该选择哪些技术栈。针对的是常规 Web 应用，包括一个 SEO 优化，多端兼容的网站前端，跨平台 APP，后端 REST 风格 API，管理后台，以及简单的AI功能整合。&lt;/p&gt;
-&lt;p&gt;未完待续。&lt;/p&gt;</description>
-    </item>
     <item>
       <title>Flutter &#43; Go 跨平台应用开发</title>
       <link>https://yplam.com/posts/go/flutter-go-mobile/</link>

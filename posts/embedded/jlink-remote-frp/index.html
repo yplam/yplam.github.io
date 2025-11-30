@@ -10,7 +10,7 @@
 <meta name="description" content="JLink 软件包提供 JLinkRemoteServer，通过监听 19020 端口，为其他调试客户端提供网络远程调试功能，同时官方提供 tunnel 服务，实现跨局域网调试。如果自己有外网服务器，也可以非常简单地通过 FRP 自建 JLink 中转服务。">
 <meta name="author" content="">
 <link rel="canonical" href="https://yplam.com/posts/embedded/jlink-remote-frp/">
-<link crossorigin="anonymous" href="/assets/css/stylesheet.8a2a5b863c538395920b4f077c6697be31878d530618647d78daca2883f21ff1.css" integrity="sha256-iipbhjxTg5WSC08HfGaXvjGHjVMGGGR9eNrKKIPyH/E=" rel="preload stylesheet" as="style">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.45e9646c1d4a681ebbffe4c0f5bdd79d96646d99daf08cf8a3488605487f2ba1.css" integrity="sha256-RelkbB1KaB67/&#43;TA9b3XnZZkbZna8Iz4o0iGBUh/K6E=" rel="preload stylesheet" as="style">
 <link rel="icon" href="https://yplam.com/favicon.ico">
 <link rel="icon" type="image/png" sizes="16x16" href="https://yplam.com/favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="https://yplam.com/favicon-32x32.png">
@@ -212,13 +212,13 @@
   <div class="post-content"><p>JLink 软件包提供 JLinkRemoteServer，通过监听 19020 端口，为其他调试客户端提供网络远程调试功能，同时官方提供 tunnel 服务，实现跨局域网调试。如果自己有外网服务器，也可以非常简单地通过 FRP 自建 JLink 中转服务。</p>
 <h2 id="jlink-docker-镜像">JLink Docker 镜像<a hidden class="anchor" aria-hidden="true" href="#jlink-docker-镜像">#</a></h2>
 <p>根据运行 Jlink的环境不同，从官方网站下载对应 deb 安装包，譬如 JLink_Linux_V698e_arm64.deb， JLink_Linux_V698e_x86_64.deb，然后在同一目录编写 Dockerfile ：</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-Dockerfile" data-lang="Dockerfile"><span class="line"><span class="cl"><span class="k">FROM</span><span class="s"> debian:bookworm-slim</span><span class="err">
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-Dockerfile" data-lang="Dockerfile"><span class="line"><span class="cl"><span class="k">FROM</span><span class="w"> </span><span class="s">debian:bookworm-slim</span><span class="err">
 </span></span></span><span class="line"><span class="cl"><span class="err">
 </span></span></span><span class="line"><span class="cl"><span class="err"></span><span class="k">COPY</span> JLink_Linux_V698e_x86_64.deb /tmp<span class="err">
 </span></span></span><span class="line"><span class="cl"><span class="err"></span><span class="k">RUN</span> dpkg -i /tmp/JLink_Linux_V698e_x86_64.deb <span class="se">\
 </span></span></span><span class="line"><span class="cl"><span class="se"></span>  <span class="o">&amp;&amp;</span> rm /tmp/JLink_Linux_V698e_x86_64.deb <span class="err">
 </span></span></span><span class="line"><span class="cl"><span class="err">
-</span></span></span><span class="line"><span class="cl"><span class="err"></span><span class="k">EXPOSE</span><span class="s"> 19020</span><span class="err">
+</span></span></span><span class="line"><span class="cl"><span class="err"></span><span class="k">EXPOSE</span><span class="w"> </span><span class="s">19020</span><span class="err">
 </span></span></span><span class="line"><span class="cl"><span class="err"></span><span class="k">CMD</span> <span class="p">[</span><span class="s2">&#34;/usr/bin/JLinkRemoteServer&#34;</span><span class="p">]</span><span class="err">
 </span></span></span></code></pre></div><p>打包 Docker 镜像 ，建议直接在连接 JLink 的机器上打包。</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">docker build -t jlink .
