@@ -6,8 +6,15 @@
     <description>Recent content in Flutter on YPLAM</description>
     <generator>Hugo -- 0.150.0</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Sat, 10 May 2025 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Wed, 03 Dec 2025 00:00:00 +0000</lastBuildDate>
     <atom:link href="https://yplam.com/tags/flutter/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Flutter GenUI 初探</title>
+      <link>https://yplam.com/posts/machinelearning/flutter-genui/</link>
+      <pubDate>Wed, 03 Dec 2025 00:00:00 +0000</pubDate>
+      <guid>https://yplam.com/posts/machinelearning/flutter-genui/</guid>
+      <description>&lt;p&gt;Flutter 官方最近发布了 &lt;a href=&#34;https://docs.flutter.dev/ai/genui&#34;&gt;GenUI SDK for Flutter&lt;/a&gt; , 其理念就是通过 GenUI SDK 作为编排层，将用户与 AI Agent 间的交互从文本转变为丰富的交互式UI。&lt;/p&gt;</description>
+    </item>
     <item>
       <title>Flutter &#43; Rust &#43; Cubit：打造高性能跨平台应用</title>
       <link>https://yplam.com/posts/rust/flutter-rust-ffi-cubit/</link>

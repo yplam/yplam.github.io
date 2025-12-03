@@ -6,20 +6,27 @@
     <description>Recent content in Tags on YPLAM</description>
     <generator>Hugo -- 0.150.0</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Sat, 13 Sep 2025 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Wed, 03 Dec 2025 00:00:00 +0000</lastBuildDate>
     <atom:link href="https://yplam.com/tags/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>Embedded</title>
-      <link>https://yplam.com/tags/embedded/</link>
-      <pubDate>Sat, 13 Sep 2025 00:00:00 +0000</pubDate>
-      <guid>https://yplam.com/tags/embedded/</guid>
+      <title>Flutter</title>
+      <link>https://yplam.com/tags/flutter/</link>
+      <pubDate>Wed, 03 Dec 2025 00:00:00 +0000</pubDate>
+      <guid>https://yplam.com/tags/flutter/</guid>
       <description></description>
     </item>
     <item>
       <title>MachineLearning</title>
       <link>https://yplam.com/tags/machinelearning/</link>
-      <pubDate>Sat, 13 Sep 2025 00:00:00 +0000</pubDate>
+      <pubDate>Wed, 03 Dec 2025 00:00:00 +0000</pubDate>
       <guid>https://yplam.com/tags/machinelearning/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Embedded</title>
+      <link>https://yplam.com/tags/embedded/</link>
+      <pubDate>Sat, 13 Sep 2025 00:00:00 +0000</pubDate>
+      <guid>https://yplam.com/tags/embedded/</guid>
       <description></description>
     </item>
     <item>
@@ -55,13 +62,6 @@
       <link>https://yplam.com/tags/ffi/</link>
       <pubDate>Sat, 10 May 2025 00:00:00 +0000</pubDate>
       <guid>https://yplam.com/tags/ffi/</guid>
-      <description></description>
-    </item>
-    <item>
-      <title>Flutter</title>
-      <link>https://yplam.com/tags/flutter/</link>
-      <pubDate>Sat, 10 May 2025 00:00:00 +0000</pubDate>
-      <guid>https://yplam.com/tags/flutter/</guid>
       <description></description>
     </item>
     <item>
